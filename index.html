@@ -56,6 +56,7 @@
 
 		<script>
 
+var g_valid_entries = [];
 var g_pages = [];
 var g_page_index = 0;
 
@@ -109,11 +110,25 @@ function setComicData(name, size, type) {
 }
 
 function loadCurrentPage() {
-	$('#pageHolder').empty();
-	if (g_pages.length > 0) {
-		$('#pageHolder').append(g_pages[g_page_index]);
-		console.info('Loading page: ' + g_page_index + ', ' + g_pages[g_page_index].title);
+	var img = g_pages[g_page_index];
+	if (img.src && img.src.length > 0) {
+		console.info('!!! Cached page: ' + g_page_index + ', ' + img.title);
+	} else {
+		var entry = g_valid_entries[g_page_index];
+		entry.getData(new zip.BlobWriter(), function(blob) {
+	//		console.info(entry.filename);
+	//		console.info(blob);
+			blobToDataURI(blob, function(data_uri) {
+				// Load the blob into an image
+				var img = g_pages[entry.index];
+				img.src = data_uri;
+			});
+		});
 	}
+
+	$('#pageHolder').empty();
+	$('#pageHolder').append(g_pages[g_page_index]);
+	console.info('Loading page: ' + g_page_index + ', ' + g_pages[g_page_index].title);
 }
 
 function clearComicData() {
@@ -141,15 +156,15 @@ function onLoaded(data) {
 			setComicData(data.name, data.size, data.type);
 
 			// Get only the entries that are valid images
-			var valid_entries = [];
+			g_valid_entries = [];
 			entries.forEach(function(entry) {
 				if (! entry.directory && isValidImageType(entry.filename)) {
-					valid_entries.push(entry);
+					g_valid_entries.push(entry);
 				}
 			});
 
 			// Sort the entries by their file names
-			valid_entries.sort(function(a, b){
+			g_valid_entries.sort(function(a, b){
 				if(a.filename < b.filename) return -1;
 				if(a.filename > b.filename) return 1;
 				return 0;
@@ -157,37 +172,18 @@ function onLoaded(data) {
 
 			// Create empty images for each page
 			var i = 0;
-			valid_entries.forEach(function(entry) {
-				g_pages.push(document.createElement('img'));
+			g_valid_entries.forEach(function(entry) {
+				var img = document.createElement('img');
+				img.title = entry.filename;
+	//			img.width = 100;
+				img.style.width = '100%';
+				g_pages.push(img);
 				entry.index = i;
 				i++;
 			});
 
-			valid_entries.forEach(function(entry) {
-				entry.getData(new zip.BlobWriter(), function(blob) {
-//					console.info(entry.filename);
-//					console.info(blob);
-					blobToDataURI(blob, function(data_uri) {
-						// Load the blob into an image
-						var img = g_pages[entry.index];
-						img.title = entry.filename;
-//						img.width = 100;
-						img.style.width = '100%';
-						img.src = data_uri;
-
-						// On the first image load
-						if (entry.index === 0) {
-							g_page_index = 0;
-							loadCurrentPage();
-						}
-
-						// On the last image load
-						if (entry.index === valid_entries.length - 1) {
-							
-						}
-					});
-				});
-			});
+			g_page_index = 0;
+			loadCurrentPage();
 		});
 	}, function(e) {
 		onError('Failed to read file!');
@@ -218,6 +214,8 @@ $(document).ready(function() {
 	// Detect tap and press events
 	mc.on('tap press', function(ev) {
 		mainPanel.textContent = ev.type + ' gesture detected.';
+		g_page_index++;
+		loadCurrentPage();
 	});
 
 	// Detect pan events
