@@ -110,11 +110,50 @@ function loadComic() {
 }
 
 function loadCurrentPage() {
-	var img = g_images[g_image_index];
-	if (img.src && img.src.length > 0) {
-		console.info('!!! Cached page: ' + g_image_index + ', ' + img.title);
+	// Load the current page
+	updatePageCache(g_image_index);
+	$('#pageHolder').empty();
+	$('#pageHolder').append(g_images[g_image_index]);
+
+	// Cache the next image
+	delayedUpdateNextPageCache(g_image_index, 2);
+
+	// Cache the previous image
+	delayedUpdatePreviousPageCache(g_image_index, 2);
+}
+
+function delayedUpdateNextPageCache(index, depth) {
+	if (index < g_images.length - 1) {
+		index++;
+		setTimeout(function() {
+			if (depth > 0) {
+				depth--;
+				delayedUpdateNextPageCache(index, depth);
+			}
+			updatePageCache(index);
+		}, 333);
+	}
+}
+
+function delayedUpdatePreviousPageCache(index, depth) {
+	if (index > 0) {
+		index--;
+		setTimeout(function() {
+			if (depth > 0) {
+				depth--;
+				delayedUpdatePreviousPageCache(index, depth);
+			}
+			updatePageCache(index);
+		}, 333);
+	}
+}
+
+function updatePageCache(index) {
+	var img = g_images[index];
+	if (img.is_loaded) {
+		console.info('!!! Cached page: ' + index + ', ' + img.title);
 	} else {
-		var entry = g_entries[g_image_index];
+		var entry = g_entries[index];
 		entry.getData(new zip.BlobWriter(), function(blob) {
 	//		console.info(entry.filename);
 	//		console.info(blob);
@@ -122,13 +161,11 @@ function loadCurrentPage() {
 				// Load the blob into an image
 				var img = g_images[entry.index];
 				img.src = data_uri;
+				img.is_loaded = true;
+				console.info('Loaded page: ' + index + ', ' + img.title);
 			});
 		});
 	}
-
-	$('#pageHolder').empty();
-	$('#pageHolder').append(g_images[g_image_index]);
-	console.info('Loading page: ' + g_image_index + ', ' + g_images[g_image_index].title);
 }
 
 function setComicData(name, size, type) {
@@ -220,13 +257,6 @@ $(document).ready(function() {
 	// Have gestures work in all directions
 	mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
-	// Detect tap and press events
-	mc.on('tap press', function(ev) {
-		mainPanel.textContent = 'Next page';
-		g_image_index++;
-		loadCurrentPage();
-	});
-
 	// Show the file load menu when panning up
 	mc.on('panup', function(ev) {
 		mainPanel.textContent = 'Show load menu';
@@ -240,18 +270,18 @@ $(document).ready(function() {
 	});
 
 	// Show the next page when panning left
-	mc.on('panleft', function(ev) {
-		mainPanel.textContent = 'Next page';
+	mc.on('panleft tap', function(ev) {
 		if (g_image_index < g_images.length -1) {
+			mainPanel.textContent = 'Next page';
 			g_image_index++;
 			loadCurrentPage();
 		}
 	});
 
 	// Show the previous page when panning right
-	mc.on('panright', function(ev) {
-		mainPanel.textContent = 'Previous page';
-		if (ev.type === 'panright' && g_image_index > 0) {
+	mc.on('panright press', function(ev) {
+		if (g_image_index > 0) {
+			mainPanel.textContent = 'Previous page';
 			g_image_index--;
 			loadCurrentPage();
 		}
