@@ -102,13 +102,6 @@ function loadComic() {
 	reader.readAsArrayBuffer(file);
 }
 
-function setComicData(name, size, type) {
-	$('#comicData').show();
-	$('#nameValue').text(name);
-	$('#sizeValue').text(size);
-	$('#typeValue').text(type);
-}
-
 function loadCurrentPage() {
 	var img = g_images[g_image_index];
 	if (img.src && img.src.length > 0) {
@@ -129,6 +122,13 @@ function loadCurrentPage() {
 	$('#pageHolder').empty();
 	$('#pageHolder').append(g_images[g_image_index]);
 	console.info('Loading page: ' + g_image_index + ', ' + g_images[g_image_index].title);
+}
+
+function setComicData(name, size, type) {
+	$('#comicData').show();
+	$('#nameValue').text(name);
+	$('#sizeValue').text(size);
+	$('#typeValue').text(type);
 }
 
 function clearComicData() {
