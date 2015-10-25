@@ -6,7 +6,7 @@
 		<title>Comic Book Reader</title>
 		<style>
 #mainPanel {
-	border: 1px solid green;
+	border: 10px solid green;
 	background: silver;
 	height: 300px;
 	text-align: center;
@@ -14,8 +14,14 @@
 	opacity: 0.4;
 }
 
+#loadPanel {
+	border: 10px solid blue;
+	background: silver;
+	height: 300px;
+	text-align: center;
+}
+
 #pageHolder {
-	border: 1px solid red;
 	pointer-events: none;
 	width: 100%;
 	position: absolute;
@@ -29,12 +35,12 @@
 		<script src="js/zip.js"></script>
 	</head>
 	<body>
-		<form id="comicForm">
-			<input id="fileInput" type="file" required="required" />
-			<button type="submit">Load Comic</button>
-		</form>
+		<div id="loadPanel">
+			<form id="comicForm">
+				<input id="fileInput" type="file" required="required" />
+				<button type="submit">Load Comic</button>
+			</form>
 
-		<div>
 			<progress id="loadProgress" max="1" value="0"></progress>
 			<p><span id="loadError"></span></p>
 			<div id="comicData">
@@ -102,13 +108,24 @@ function setComicData(name, size, type) {
 	$('#typeValue').text(type);
 }
 
+function loadCurrentPage() {
+	$('#pageHolder').empty();
+	if (g_pages.length > 0) {
+		$('#pageHolder').append(g_pages[g_page_index]);
+		console.info('Loading page: ' + g_page_index + ', ' + g_pages[g_page_index].title);
+	}
+}
+
 function clearComicData() {
 	// Remove the old images
-	for (var i=0; i<g_pages.length; ++i) {
-		g_pages[i].parentElement.removeChild(g_pages[i]);
+	if (g_pages.length > 0) {
+		for (var i=0; i<g_pages.length; ++i) {
+			g_pages[i].parentElement.removeChild(g_pages[i]);
+		}
+		g_pages = [];
 	}
-	g_pages = [];
 	g_page_index = 0;
+	$('#pageHolder').empty();
 
 	$('#loadProgress').val(0).show();
 	$('#loadError').hide();
@@ -123,45 +140,53 @@ function onLoaded(data) {
 		reader.getEntries(function(entries) {
 			setComicData(data.name, data.size, data.type);
 
+			// Get only the entries that are valid images
+			var valid_entries = [];
+			entries.forEach(function(entry) {
+				if (! entry.directory && isValidImageType(entry.filename)) {
+					valid_entries.push(entry);
+				}
+			});
+
 			// Sort the entries by their file names
-			entries.sort(function(a, b){
+			valid_entries.sort(function(a, b){
 				if(a.filename < b.filename) return -1;
 				if(a.filename > b.filename) return 1;
 				return 0;
 			});
 
-			var counter = entries.length;
-			entries.forEach(function(entry) {
-				if (! entry.directory && isValidImageType(entry.filename)) {
-					entry.getData(new zip.BlobWriter(), function(blob) {
-//						console.info(entry.filename);
-//						console.info(blob);
-						blobToDataURI(blob, function(data_uri) {
-							// Load the blob into an image
-							var img = document.createElement('img');
-							img.title = entry.filename;
-//							img.width = 100;
-							img.style.width = '100%';
-							img.src = data_uri;
-							g_pages.push(img);
+			// Create empty images for each page
+			var i = 0;
+			valid_entries.forEach(function(entry) {
+				g_pages.push(document.createElement('img'));
+				entry.index = i;
+				i++;
+			});
 
-							// On the first image load
-							if (g_pages.length === 1) {
-								g_page_index = 0;
-								loadCurrentPage();
-							}
+			valid_entries.forEach(function(entry) {
+				entry.getData(new zip.BlobWriter(), function(blob) {
+//					console.info(entry.filename);
+//					console.info(blob);
+					blobToDataURI(blob, function(data_uri) {
+						// Load the blob into an image
+						var img = g_pages[entry.index];
+						img.title = entry.filename;
+//						img.width = 100;
+						img.style.width = '100%';
+						img.src = data_uri;
 
-							// On the last image load
-							counter--;
-//							console.info(counter);
-							if (counter === 0) {
-								
-							}
-						});
+						// On the first image load
+						if (entry.index === 0) {
+							g_page_index = 0;
+							loadCurrentPage();
+						}
+
+						// On the last image load
+						if (entry.index === valid_entries.length - 1) {
+							
+						}
 					});
-				} else {
-					counter--;
-				}
+				});
 			});
 		});
 	}, function(e) {
@@ -177,14 +202,6 @@ function onError(msg) {
 
 function onProgress(loaded, total) {
 	$('#loadProgress').val(loaded / total);
-}
-
-function loadCurrentPage() {
-	$('#pageHolder').empty();
-	if (g_pages.length > 0) {
-		$('#pageHolder').append(g_pages[g_page_index]);
-		console.info('Loading page: ' + g_page_index);
-	}
 }
 
 $(document).ready(function() {
