@@ -6,12 +6,16 @@
 		<title>Comic Book Reader</title>
 		<style>
 #mainPanel {
+	padding: 0;
+	margin: 0;
 	border: 10px solid green;
 	background: silver;
-	height: 300px;
+	height: 100%;
+	width: 100%;
 	text-align: center;
 	font: 30px/300px Helvetica, Arial, sans-serif;
 	opacity: 0.4;
+	position: fixed;
 }
 
 #loadPanel {
@@ -34,7 +38,7 @@
 		<script src="https://hammerjs.github.io/dist/hammer.js"></script>
 		<script src="js/zip.js"></script>
 	</head>
-	<body>
+	<body style="margin: 0; padding: 0;">
 		<div id="loadPanel">
 			<form id="comicForm">
 				<input id="fileInput" type="file" required="required" />
@@ -77,6 +81,9 @@ function isValidImageType(file_name) {
 }
 
 function loadComic() {
+	$('#loadPanel').hide();
+	$('#mainPanel').show();
+
 	var file_input = $('#fileInput');
 	var fileList = file_input[0].files;
 	var file = fileList[0];
@@ -86,7 +93,7 @@ function loadComic() {
 		type: file.type,
 		data: null
 	};
- 
+
 	var reader = new FileReader();
 	reader.onload = function(e) {
 		results.data = e.target.result;
@@ -206,6 +213,8 @@ $(document).ready(function() {
 
 	// Tell Hammer to use the main pannel
 	var mainPanel = document.getElementById('mainPanel');
+	$('#mainPanel').hide();
+	mainPanel.textContent = 'Touch and swipe here';
 	var mc = new Hammer(mainPanel);
 
 	// Have gestures work in all directions
@@ -213,18 +222,36 @@ $(document).ready(function() {
 
 	// Detect tap and press events
 	mc.on('tap press', function(ev) {
-		mainPanel.textContent = ev.type + ' gesture detected.';
+		mainPanel.textContent = 'Next page';
 		g_image_index++;
 		loadCurrentPage();
 	});
 
-	// Detect pan events
-	mc.on('panleft panright panup pandown', function(ev) {
-		mainPanel.textContent = ev.type + ' gesture detected.';
-		if (ev.type === 'panleft' && g_image_index < g_images.length -1) {
+	// Show the file load menu when panning up
+	mc.on('panup', function(ev) {
+		mainPanel.textContent = 'Show load menu';
+		$('#loadPanel').show();
+	});
+
+	// Hide the file load menu when panning down
+	mc.on('pandown', function(ev) {
+		mainPanel.textContent = 'Show comic';
+		$('#loadPanel').hide();
+	});
+
+	// Show the next page when panning left
+	mc.on('panleft', function(ev) {
+		mainPanel.textContent = 'Next page';
+		if (g_image_index < g_images.length -1) {
 			g_image_index++;
 			loadCurrentPage();
-		} else if (ev.type === 'panright' && g_image_index > 0) {
+		}
+	});
+
+	// Show the previous page when panning right
+	mc.on('panright', function(ev) {
+		mainPanel.textContent = 'Previous page';
+		if (ev.type === 'panright' && g_image_index > 0) {
 			g_image_index--;
 			loadCurrentPage();
 		}
