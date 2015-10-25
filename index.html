@@ -6,10 +6,22 @@
 		<title>Comic Book Reader</title>
 		<style>
 #mainPanel {
+	border: 1px solid green;
 	background: silver;
 	height: 300px;
 	text-align: center;
 	font: 30px/300px Helvetica, Arial, sans-serif;
+	opacity: 0.4;
+}
+
+#pageHolder {
+	border: 1px solid red;
+	pointer-events: none;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -100;
 }
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -31,10 +43,15 @@
 				<b>Type:</b> <span id="typeValue"></span><br>
 			</div>
 		</div>
-		
+
 		<div id="mainPanel"></div>
 
+		<div id="pageHolder"></div>
+
 		<script>
+
+var g_pages = [];
+var g_page_index = 0;
 
 function blobToDataURI(blob, cb) {
 	var a = new FileReader();
@@ -86,6 +103,13 @@ function setComicData(name, size, type) {
 }
 
 function clearComicData() {
+	// Remove the old images
+	for (var i=0; i<g_pages.length; ++i) {
+		g_pages[i].parentElement.removeChild(g_pages[i]);
+	}
+	g_pages = [];
+	g_page_index = 0;
+
 	$('#loadProgress').val(0).show();
 	$('#loadError').hide();
 	$('#comicData').hide();
@@ -99,19 +123,44 @@ function onLoaded(data) {
 		reader.getEntries(function(entries) {
 			setComicData(data.name, data.size, data.type);
 
+			// Sort the entries by their file names
+			entries.sort(function(a, b){
+				if(a.filename < b.filename) return -1;
+				if(a.filename > b.filename) return 1;
+				return 0;
+			});
+
+			var counter = entries.length;
 			entries.forEach(function(entry) {
 				if (! entry.directory && isValidImageType(entry.filename)) {
 					entry.getData(new zip.BlobWriter(), function(blob) {
 //						console.info(entry.filename);
 //						console.info(blob);
 						blobToDataURI(blob, function(data_uri) {
+							// Load the blob into an image
 							var img = document.createElement('img');
 							img.title = entry.filename;
-							img.width = 100;
+//							img.width = 100;
+							img.style.width = '100%';
 							img.src = data_uri;
-							document.body.appendChild(img);
+							g_pages.push(img);
+
+							// On the first image load
+							if (g_pages.length === 1) {
+								g_page_index = 0;
+								loadCurrentPage();
+							}
+
+							// On the last image load
+							counter--;
+//							console.info(counter);
+							if (counter === 0) {
+								
+							}
 						});
 					});
+				} else {
+					counter--;
 				}
 			});
 		});
@@ -129,7 +178,15 @@ function onError(msg) {
 function onProgress(loaded, total) {
 	$('#loadProgress').val(loaded / total);
 }
- 
+
+function loadCurrentPage() {
+	$('#pageHolder').empty();
+	if (g_pages.length > 0) {
+		$('#pageHolder').append(g_pages[g_page_index]);
+		console.info('Loading page: ' + g_page_index);
+	}
+}
+
 $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/';
@@ -141,9 +198,21 @@ $(document).ready(function() {
 	// Have gestures work in all directions
 	mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
-	// Detect touch events
-	mc.on('panleft panright panup pandown tap press', function(ev) {
+	// Detect tap and press events
+	mc.on('tap press', function(ev) {
 		mainPanel.textContent = ev.type + ' gesture detected.';
+	});
+
+	// Detect pan events
+	mc.on('panleft panright panup pandown', function(ev) {
+		mainPanel.textContent = ev.type + ' gesture detected.';
+		if (ev.type === 'panleft' && g_page_index < g_pages.length -1) {
+			g_page_index++;
+			loadCurrentPage();
+		} else if (ev.type === 'panright' && g_page_index > 0) {
+			g_page_index--;
+			loadCurrentPage();
+		}
 	});
 
 	// Setup the comic load form
