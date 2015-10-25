@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Comic Book Reader</title>
+		<style>
+#mainPanel {
+	background: silver;
+	height: 300px;
+	text-align: center;
+	font: 30px/300px Helvetica, Arial, sans-serif;
+}
+		</style>
+		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script src="https://hammerjs.github.io/dist/hammer.js"></script>
+		<script src="js/zip.js"></script>
+	</head>
+	<body>
+		<form id="comicForm">
+			<input id="fileInput" type="file" required="required" />
+			<button type="submit">Load Comic</button>
+		</form>
+
+		<div>
+			<progress id="loadProgress" max="1" value="0"></progress>
+			<p><span id="loadError"></span></p>
+			<div id="comicData">
+				<b>Name:</b> <span id="nameValue"></span><br>
+				<b>Size:</b> <span id="sizeValue"></span><br>
+				<b>Type:</b> <span id="typeValue"></span><br>
+			</div>
+		</div>
+		
+		<div id="mainPanel"></div>
+
+		<script>
+
+function blobToDataURI(blob, cb) {
+	var a = new FileReader();
+	a.onload = function(e) {
+		cb(e.target.result);
+	};
+	a.readAsDataURL(blob);
+}
+
+function isValidImageType(file_name) {
+	file_name = file_name.toLowerCase();
+	return file_name.endsWith('.jpeg') || 
+			file_name.endsWith('.jpg') ||
+			file_name.endsWith('.png') || 
+			file_name.endsWith('.bmp');
+}
+
+function loadComic() {
+	var file_input = $('#fileInput');
+	var fileList = file_input[0].files;
+	var file = fileList[0];
+	var results = {
+		name: file.name,
+		size: file.size,
+		type: file.type,
+		data: null
+	};
+ 
+	var reader = new FileReader();
+	reader.onload = function(e) {
+		results.data = e.target.result;
+		onProgress(1, 1);
+		onLoaded(results);
+	};
+	reader.onerror = function(e) {
+		onError(e.target.error.name);
+	};
+	reader.onprogress = function(e) {
+		onProgress(e.loaded, e.total);
+	};
+	reader.readAsArrayBuffer(file);
+}
+
+function setComicData(name, size, type) {
+	$('#comicData').show();
+	$('#nameValue').text(name);
+	$('#sizeValue').text(size);
+	$('#typeValue').text(type);
+}
+
+function clearComicData() {
+	$('#loadProgress').val(0).show();
+	$('#loadError').hide();
+	$('#comicData').hide();
+	setComicData('?', '?', '?');
+}
+
+function onLoaded(data) {
+	var blob = new Blob([data.data], {type : 'application/zip'});
+	var reader = new zip.BlobReader(blob);
+	zip.createReader(reader, function(reader) {
+		reader.getEntries(function(entries) {
+			setComicData(data.name, data.size, data.type);
+
+			entries.forEach(function(entry) {
+				if (! entry.directory && isValidImageType(entry.filename)) {
+					entry.getData(new zip.BlobWriter(), function(blob) {
+//						console.info(entry.filename);
+//						console.info(blob);
+						blobToDataURI(blob, function(data_uri) {
+							var img = document.createElement('img');
+							img.title = entry.filename;
+							img.width = 100;
+							img.src = data_uri;
+							document.body.appendChild(img);
+						});
+					});
+				}
+			});
+		});
+	}, function(e) {
+		onError('Failed to read file!');
+	});
+}
+
+function onError(msg) {
+	$('#comicData').hide();
+	$('#loadError').text('Error: ' + msg);
+	$('#loadError').show();
+}
+
+function onProgress(loaded, total) {
+	$('#loadProgress').val(loaded / total);
+}
+ 
+$(document).ready(function() {
+	// Tell zip.js where it can find the worker js file
+	zip.workerScriptsPath = 'js/';
+
+	// Tell Hammer to use the main pannel
+	var mainPanel = document.getElementById('mainPanel');
+	var mc = new Hammer(mainPanel);
+
+	// Have gestures work in all directions
+	mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+
+	// Detect touch events
+	mc.on('panleft panright panup pandown tap press', function(ev) {
+		mainPanel.textContent = ev.type + ' gesture detected.';
+	});
+
+	// Setup the comic load form
+	$('#comicForm').submit(function(e) {
+		e.preventDefault();
+		clearComicData();
+		loadComic();
+	});
+	clearComicData();
+});
+		</script>
+	</body>
+
+</html>
