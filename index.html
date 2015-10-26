@@ -8,7 +8,6 @@
 #mainPanel {
 	padding: 0;
 	margin: 0;
-	border: 10px solid green;
 	background: silver;
 	height: 100%;
 	width: 100%;
@@ -19,7 +18,10 @@
 }
 
 #loadPanel {
-	border: 10px solid blue;
+	border: 1px solid black;
+	margin: 20px;
+	padding: 20px;
+	box-shadow: 10px 10px 5px #888888;
 	background: silver;
 	height: 300px;
 	text-align: center;
@@ -32,6 +34,11 @@
 	top: 0;
 	left: 0;
 	z-index: -100;
+}
+
+#loadProgress {
+	width: 100%;
+	display: none;
 }
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -64,6 +71,18 @@ var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
 
+function toFrieldlySize(size) {
+	if (size >= 1024000000) {
+		return (size / 1024000000).toFixed(2) + ' GB';
+	} else if (size >= 1024000) {
+		return (size / 1024000).toFixed(2) + ' MB';
+	} else if (size >= 1024) {
+		return (size / 1024).toFixed(2) + ' KB';
+	}
+
+	return (size / 1).toFixed(2) + ' B';
+}
+
 function blobToDataURI(blob, cb) {
 	var a = new FileReader();
 	a.onload = function(e) {
@@ -81,24 +100,19 @@ function isValidImageType(file_name) {
 }
 
 function loadComic() {
-	$('#loadPanel').hide();
-	$('#mainPanel').show();
-
 	var file_input = $('#fileInput');
 	var fileList = file_input[0].files;
 	var file = fileList[0];
-	var results = {
-		name: file.name,
-		size: file.size,
-		type: file.type,
-		data: null
-	};
+	setComicData(file.name, file.size, file.type);
 
 	var reader = new FileReader();
 	reader.onload = function(e) {
-		results.data = e.target.result;
 		onProgress(1, 1);
-		onLoaded(results);
+		$('#loadProgress').hide();
+		$('#loadPanel').hide();
+		$('#mainPanel').show();
+
+		onLoaded(e.target.result);
 	};
 	reader.onerror = function(e) {
 		onError(e.target.error.name);
@@ -171,7 +185,7 @@ function updatePageCache(index) {
 function setComicData(name, size, type) {
 	$('#comicData').show();
 	$('#nameValue').text(name);
-	$('#sizeValue').text(size);
+	$('#sizeValue').text(toFrieldlySize(size));
 	$('#typeValue').text(type);
 }
 
@@ -179,26 +193,26 @@ function clearComicData() {
 	// Remove the old images
 	if (g_images.length > 0) {
 		for (var i=0; i<g_images.length; ++i) {
-			g_images[i].parentElement.removeChild(g_images[i]);
+			if (g_images[i].parentElement) {
+				g_images[i].parentElement.removeChild(g_images[i]);
+			}
 		}
 		g_images = [];
 	}
 	g_image_index = 0;
 	$('#pageHolder').empty();
 
-	$('#loadProgress').val(0).show();
+	$('#loadProgress').val(0);
 	$('#loadError').hide();
 	$('#comicData').hide();
 	setComicData('?', '?', '?');
 }
 
 function onLoaded(data) {
-	var blob = new Blob([data.data], {type : 'application/zip'});
+	var blob = new Blob([data], {type : 'application/zip'});
 	var reader = new zip.BlobReader(blob);
 	zip.createReader(reader, function(reader) {
 		reader.getEntries(function(entries) {
-			setComicData(data.name, data.size, data.type);
-
 			// Get only the entries that are valid images
 			g_entries = [];
 			entries.forEach(function(entry) {
@@ -241,6 +255,7 @@ function onError(msg) {
 }
 
 function onProgress(loaded, total) {
+	$('#loadProgress').show();
 	$('#loadProgress').val(loaded / total);
 }
 
@@ -257,14 +272,14 @@ $(document).ready(function() {
 	// Have gestures work in all directions
 	mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
-	// Show the file load menu when panning up
-	mc.on('panup', function(ev) {
+	// Show the file load menu when panning down
+	mc.on('pandown', function(ev) {
 		mainPanel.textContent = 'Show load menu';
 		$('#loadPanel').show();
 	});
 
-	// Hide the file load menu when panning down
-	mc.on('pandown', function(ev) {
+	// Hide the file load menu when panning up
+	mc.on('panup', function(ev) {
 		mainPanel.textContent = 'Show comic';
 		$('#loadPanel').hide();
 	});
