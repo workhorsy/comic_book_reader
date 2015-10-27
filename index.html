@@ -298,6 +298,11 @@ $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/';
 
+	// Stop the right click menu from popping up
+	$(document).on('contextmenu', function(e) {
+		e.preventDefault();
+	});
+
 	// Toggle full screen
 	$('#btnFullScreen').click(function () {
 		if (screenfull.enabled) {
