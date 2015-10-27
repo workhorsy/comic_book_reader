@@ -18,14 +18,33 @@
 	position: fixed;
 }
 
-#loadPanel {
+#topPanel {
+	opacity: 0.8;
 	border: 1px solid black;
 	margin: 20px;
+	margin-top: 0px;
 	padding: 20px;
+	padding-top: 0px;
 	box-shadow: 10px 10px 5px #888888;
 	background: silver;
-	height: 300px;
 	text-align: center;
+}
+
+#loadProgress {
+	width: 100%;
+	display: none;
+}
+
+#btnFullScreen {
+	font: 30px/100px Helvetica, Arial, sans-serif;
+}
+
+#fileInput {
+	display: none;
+}
+
+#fileLoad {
+	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 
 #pageHolder {
@@ -36,27 +55,6 @@
 	left: 0;
 	z-index: -100;
 }
-
-#loadProgress {
-	width: 100%;
-	display: none;
-}
-
-#btnFullScreen {
-	position: absolute;
-	top: 0;
-	right: 0;
-	font: 30px/100px Helvetica, Arial, sans-serif;
-	opacity: 0.4;
-}
-
-#fileInput {
-	display: none;
-}
-
-#fileLoad {
-	font: 30px/100px Helvetica, Arial, sans-serif;
-}
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 		<script src="https://hammerjs.github.io/dist/hammer.js"></script>
@@ -64,9 +62,10 @@
 		<script src="js/screenfull.js/screenfull.js"></script>
 	</head>
 	<body style="margin: 0; padding: 0;">
-		<div id="loadPanel">
+		<div id="topPanel">
 			<input id="fileInput" type="file" required="required" />
 			<button id="fileLoad">Load comic from your computer</button>
+
 			<button id="btnFullScreen">Full Screen</button>
 
 			<progress id="loadProgress" max="1" value="0"></progress>
@@ -136,7 +135,7 @@ function loadComic() {
 	reader.onload = function(e) {
 		onProgress(1, 1);
 		$('#loadProgress').hide();
-		$('#loadPanel').hide();
+		$('#topPanel').hide();
 		$('#mainPanel').show();
 
 		var blob = new Blob([e.target.result], {type : 'application/zip'});
@@ -315,29 +314,35 @@ $(document).ready(function() {
 
 	// Show the file load menu when panning down
 	mc.on('pandown', function(ev) {
-		$('#loadPanel').show();
+		$('#topPanel').show();
 	});
 
 	// Hide the file load menu when panning up
 	mc.on('panup', function(ev) {
-		$('#loadPanel').hide();
+		$('#topPanel').hide();
 	});
 
 	// Show the next page when panning left
 	mc.on('panleft tap', function(ev) {
-		$('#loadPanel').hide();
-		if (g_image_index < g_images.length -1) {
-			g_image_index++;
-			loadCurrentPage();
+		if ($('#topPanel').is(':visible')) {
+			$('#topPanel').hide();
+		} else {
+			if (g_image_index < g_images.length -1) {
+				g_image_index++;
+				loadCurrentPage();
+			}
 		}
 	});
 
 	// Show the previous page when panning right
 	mc.on('panright press', function(ev) {
-		$('#loadPanel').hide();
-		if (g_image_index > 0) {
-			g_image_index--;
-			loadCurrentPage();
+		if ($('#topPanel').is(':visible')) {
+			$('#topPanel').hide();
+		} else {
+			if (g_image_index > 0) {
+				g_image_index--;
+				loadCurrentPage();
+			}
 		}
 	});
 
