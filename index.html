@@ -95,7 +95,7 @@ function toFrieldlySize(size) {
 		return (size / 1024000).toFixed(2) + ' MB';
 	} else if (size >= 1024) {
 		return (size / 1024).toFixed(2) + ' KB';
-	} else if (size > 1) {
+	} else if (size >= 1) {
 		return (size / 1).toFixed(2) + ' B';
 	}
 
