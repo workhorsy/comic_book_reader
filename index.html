@@ -94,9 +94,11 @@ function toFrieldlySize(size) {
 		return (size / 1024000).toFixed(2) + ' MB';
 	} else if (size >= 1024) {
 		return (size / 1024).toFixed(2) + ' KB';
+	} else if (size > 1) {
+		return (size / 1).toFixed(2) + ' B';
 	}
 
-	return (size / 1).toFixed(2) + ' B';
+	return '?';
 }
 
 function blobToDataURI(blob, cb) {
@@ -124,6 +126,7 @@ function loadComic() {
 	}
 
 	// Load the file's info
+	clearComicData();
 	var file = file_input[0].files[0];
 	setComicData(file.name, file.size, file.type);
 
@@ -214,22 +217,26 @@ function setComicData(name, size, type) {
 }
 
 function clearComicData() {
-	// Remove the old images
-	if (g_images.length > 0) {
-		for (var i=0; i<g_images.length; ++i) {
-			if (g_images[i].parentElement) {
-				g_images[i].parentElement.removeChild(g_images[i]);
-			}
-		}
-		g_images = [];
-	}
-	g_image_index = 0;
-	$('#pageHolder').empty();
-
-	$('#loadProgress').val(0);
+	// Reset the UI
 	$('#loadError').hide();
 	$('#comicData').hide();
+	$('#loadProgress').val(0);
 	setComicData('?', '?', '?');
+
+	// Remove all the old images
+	$('#pageHolder').empty();
+	g_image_index = 0;
+	if (g_images.length > 0) {
+		for (var i=0; i<g_images.length; ++i) {
+			delete g_images[i];
+		}
+	}
+	delete g_images;
+	g_images = [];
+
+	// Remove all the old entries
+	delete g_entries;
+	g_entries = [];
 }
 
 function onLoaded(blob) {
@@ -334,7 +341,6 @@ $(document).ready(function() {
 
 	// When a file is selected, load it
 	$('#fileInput').change(function(e) {
-		clearComicData();
 		loadComic();
 	});
 
