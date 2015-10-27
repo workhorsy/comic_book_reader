@@ -307,27 +307,25 @@ $(document).ready(function() {
 	});
 
 	// Tell Hammer to use the main pannel
-	var mainPanel = $('#mainPanel')[0];
 	$('#mainPanel').hide();
-	var mc = new Hammer(mainPanel);
+	var mc = new Hammer($('#mainPanel')[0]);
 
 	// Have gestures work in all directions
 	mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
 	// Show the file load menu when panning down
 	mc.on('pandown', function(ev) {
-		mainPanel.textContent = 'Show load menu';
 		$('#loadPanel').show();
 	});
 
 	// Hide the file load menu when panning up
 	mc.on('panup', function(ev) {
-		mainPanel.textContent = 'Show comic';
 		$('#loadPanel').hide();
 	});
 
 	// Show the next page when panning left
 	mc.on('panleft tap', function(ev) {
+		$('#loadPanel').hide();
 		if (g_image_index < g_images.length -1) {
 			g_image_index++;
 			loadCurrentPage();
@@ -336,6 +334,7 @@ $(document).ready(function() {
 
 	// Show the previous page when panning right
 	mc.on('panright press', function(ev) {
+		$('#loadPanel').hide();
 		if (g_image_index > 0) {
 			g_image_index--;
 			loadCurrentPage();
