@@ -229,19 +229,10 @@ function clearComicData() {
 	$('#loadProgress').val(0);
 	setComicData('?', '?', '?');
 
-	// Remove all the old images
+	// Remove all the old images and compressed file entries
 	$('#pageHolder').empty();
 	g_image_index = 0;
-	if (g_images.length > 0) {
-		for (var i=0; i<g_images.length; ++i) {
-			delete g_images[i];
-		}
-	}
-	delete g_images;
 	g_images = [];
-
-	// Remove all the old entries
-	delete g_entries;
 	g_entries = [];
 }
 
