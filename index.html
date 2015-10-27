@@ -8,12 +8,13 @@
 #mainPanel {
 	padding: 0;
 	margin: 0;
-	background: silver;
+	background: rgba(0, 0, 0, 0.0);
 	height: 100%;
 	width: 100%;
 	text-align: center;
-	font: 30px/300px Helvetica, Arial, sans-serif;
-	opacity: 0.4;
+	font: 100px/300px Helvetica, Arial, sans-serif;
+	text-shadow: 4px 4px 20px white;
+	opacity: 0.5;
 	position: fixed;
 }
 
@@ -150,11 +151,16 @@ function loadComic() {
 	reader.readAsArrayBuffer(file);
 }
 
+function friendlyPageNumber() {
+	return 'Page ' + (g_image_index + 1) + ' of ' + g_images.length;
+}
+
 function loadCurrentPage() {
 	// Load the current page
 	updatePageCache(g_image_index);
 	$('#pageHolder').empty();
 	$('#pageHolder').append(g_images[g_image_index]);
+	$('#mainPanel')[0].textContent = friendlyPageNumber();
 
 	// Cache the next image
 	delayedUpdateNextPageCache(g_image_index, 2);
@@ -301,9 +307,8 @@ $(document).ready(function() {
 	});
 
 	// Tell Hammer to use the main pannel
-	var mainPanel = document.getElementById('mainPanel');
+	var mainPanel = $('#mainPanel')[0];
 	$('#mainPanel').hide();
-	mainPanel.textContent = 'Touch and swipe here';
 	var mc = new Hammer(mainPanel);
 
 	// Have gestures work in all directions
@@ -324,7 +329,6 @@ $(document).ready(function() {
 	// Show the next page when panning left
 	mc.on('panleft tap', function(ev) {
 		if (g_image_index < g_images.length -1) {
-			mainPanel.textContent = 'Next page';
 			g_image_index++;
 			loadCurrentPage();
 		}
@@ -333,7 +337,6 @@ $(document).ready(function() {
 	// Show the previous page when panning right
 	mc.on('panright press', function(ev) {
 		if (g_image_index > 0) {
-			mainPanel.textContent = 'Previous page';
 			g_image_index--;
 			loadCurrentPage();
 		}
