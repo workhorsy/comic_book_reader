@@ -45,6 +45,16 @@
 	position: absolute;
 	top: 0;
 	right: 0;
+	font: 30px/100px Helvetica, Arial, sans-serif;
+	opacity: 0.4;
+}
+
+#fileInput {
+	display: none;
+}
+
+#fileLoad {
+	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -54,10 +64,8 @@
 	</head>
 	<body style="margin: 0; padding: 0;">
 		<div id="loadPanel">
-			<form id="comicForm">
-				<input id="fileInput" type="file" required="required" />
-				<button type="submit">Load Comic</button>
-			</form>
+			<input id="fileInput" type="file" required="required" />
+			<button id="fileLoad">Load comic from your computer</button>
 			<button id="btnFullScreen">Full Screen</button>
 
 			<progress id="loadProgress" max="1" value="0"></progress>
@@ -109,10 +117,17 @@ function isValidImageType(file_name) {
 
 function loadComic() {
 	var file_input = $('#fileInput');
-	var fileList = file_input[0].files;
-	var file = fileList[0];
+
+	// Just return if there is no file selected
+	if (file_input[0].files.length === 0) {
+		return;
+	}
+
+	// Load the file's info
+	var file = file_input[0].files[0];
 	setComicData(file.name, file.size, file.type);
 
+	// Read the file
 	var reader = new FileReader();
 	reader.onload = function(e) {
 		onProgress(1, 1);
@@ -120,7 +135,8 @@ function loadComic() {
 		$('#loadPanel').hide();
 		$('#mainPanel').show();
 
-		onLoaded(e.target.result);
+		var blob = new Blob([e.target.result], {type : 'application/zip'});
+		onLoaded(blob);
 	};
 	reader.onerror = function(e) {
 		onError(e.target.error.name);
@@ -216,8 +232,7 @@ function clearComicData() {
 	setComicData('?', '?', '?');
 }
 
-function onLoaded(data) {
-	var blob = new Blob([data], {type : 'application/zip'});
+function onLoaded(blob) {
 	var reader = new zip.BlobReader(blob);
 	zip.createReader(reader, function(reader) {
 		reader.getEntries(function(entries) {
@@ -317,11 +332,15 @@ $(document).ready(function() {
 		}
 	});
 
-	// Setup the comic load form
-	$('#comicForm').submit(function(e) {
-		e.preventDefault();
+	// When a file is selected, load it
+	$('#fileInput').change(function(e) {
 		clearComicData();
 		loadComic();
+	});
+
+	// When the button is clicked, click the hidden file load button
+	$('#fileLoad').click(function(e) {
+		$('#fileInput').click();
 	});
 	clearComicData();
 });
