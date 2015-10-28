@@ -132,23 +132,13 @@ function loadComic() {
 	setComicData(file.name, file.size, file.type);
 
 	// Read the file
-	var reader = new FileReader();
-	reader.onload = function(e) {
-		onProgress(1, 1);
-		$('#loadProgress').hide();
-		$('#topPanel').hide();
-		$('#mainPanel').show();
+	onProgress(1, 1);
+	$('#loadProgress').hide();
+	$('#topPanel').hide();
+	$('#mainPanel').show();
 
-		var blob = new Blob([e.target.result], {type : 'application/zip'});
-		onLoaded(blob);
-	};
-	reader.onerror = function(e) {
-		onError(e.target.error.name);
-	};
-	reader.onprogress = function(e) {
-		onProgress(e.loaded, e.total);
-	};
-	reader.readAsArrayBuffer(file);
+	var blob = file.slice();
+	onLoaded(blob);
 }
 
 function friendlyPageNumber() {
