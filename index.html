@@ -19,7 +19,7 @@
 }
 
 #topPanel {
-	opacity: 0.8;
+	opacity: 0.9;
 	border: 1px solid black;
 	margin: 20px;
 	margin-top: 0px;
@@ -266,9 +266,11 @@ function onLoaded(blob) {
 }
 
 function onError(msg) {
+	$('#mainPanel').hide();
 	$('#comicData').hide();
 	$('#loadError').text('Error: ' + msg);
 	$('#loadError').show();
+	$('#topPanel').show();
 }
 
 function onProgress(loaded, total) {
