@@ -103,11 +103,11 @@ function toFrieldlySize(size) {
 }
 
 function blobToDataURI(blob, cb) {
-	var a = new FileReader();
-	a.onload = function(e) {
+	var reader = new FileReader();
+	reader.onload = function(e) {
 		cb(e.target.result);
 	};
-	a.readAsDataURL(blob);
+	reader.readAsDataURL(blob);
 }
 
 function isValidImageType(file_name) {
