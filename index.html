@@ -58,7 +58,9 @@
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 		<script src="js/polyfill/polyfill.js"></script>
+<!--
 		<script src="https://hammerjs.github.io/dist/hammer.js"></script>
+-->
 		<script src="js/zip.js"></script>
 		<script src="js/screenfull.js/screenfull.js"></script>
 	</head>
@@ -81,6 +83,20 @@
 		<div id="mainPanel"></div>
 
 		<div id="pageHolder"></div>
+
+		<div id="imageHolder" style="overflow: hidden; width: 100%">
+			<div id="draggableContainer" style="overflow: hidden; width: 100%">
+				<div id="draggableLeft" style="text-align: center; background-color: red; width: 100px; height: 100px; float: left;">
+					Left Page
+				</div>
+				<div id="draggableMiddle" style="text-align: center; background-color: green; width: 100px; height: 100px; float: left;">
+					Middle Page
+				</div>
+				<div id="draggableRight" style="text-align: center; background-color: blue; width: 100px; height: 100px; float: left;">
+					Right Page
+				</div>
+			</div>
+		</div>
 
 		<script>
 
@@ -259,6 +275,7 @@ function onLoaded(blob) {
 
 			g_image_index = 0;
 			loadCurrentPage();
+			onResize();
 		});
 	}, function(e) {
 		onError('Failed to read file!');
@@ -278,22 +295,40 @@ function onProgress(loaded, total) {
 	$('#loadProgress').val(loaded / total);
 }
 
+function onResize() {
+	var width = $('#imageHolder').width();
+	//width = 200;
+	//console.info(width);
+	$('#draggableContainer')[0].style.width = (width * 3) + 'px';
+	$('#draggableLeft')[0].style.transitionDuration = '0.0s';
+	$('#draggableMiddle')[0].style.transitionDuration = '0.0s';
+	$('#draggableRight')[0].style.transitionDuration = '0.0s';
+
+	$('#draggableLeft')[0].style.width = width + 'px';
+	$('#draggableMiddle')[0].style.width = width + 'px';
+	$('#draggableRight')[0].style.width = width + 'px';
+
+	$('#draggableContainer')[0].style.transitionDuration = '0.0s';
+	$('#draggableContainer')[0].style.transform = 'translate3d(-' + width + 'px, 0px, 0px)';
+}
+
 $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/';
 
+/*
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
 		e.preventDefault();
 	});
-
+*/
 	// Toggle full screen
 	$('#btnFullScreen').click(function () {
 		if (screenfull.enabled) {
 			screenfull.toggle();
 		}
 	});
-
+/*
 	// Tell Hammer to use the main pannel
 	$('#mainPanel').hide();
 	var mc = new Hammer($('#mainPanel')[0]);
@@ -334,6 +369,56 @@ $(document).ready(function() {
 			}
 		}
 	});
+*/
+
+
+	var is_mouse_down = false;
+	var mouse_start_x = 0;
+	$('#draggableMiddle').mousedown(function(e) {
+		is_mouse_down = true;
+		mouse_start_x = e.pageX;
+	});
+
+	$(window).resize(function(e) {
+		onResize();
+	});
+
+	$('#draggableContainer').on('mouseup mouseleave', function(e) {
+		is_mouse_down = false;
+		var style = $('#draggableLeft')[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(0px, 0px, 0px)';
+
+		style = $('#draggableMiddle')[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(0px, 0px, 0px)';
+
+		style = $('#draggableRight')[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(0px, 0px, 0px)';
+	});
+	$('#draggableContainer').mousemove(function(e) {
+		if (! is_mouse_down) {
+			return;
+		}
+
+		var x = e.pageX - mouse_start_x;
+		var style = $('#draggableMiddle')[0].style;
+		style.transitionDuration = '0.0s';
+		style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+		if (x > 0) {
+			var style = $('#draggableLeft')[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+		} else {
+			var style = $('#draggableRight')[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+		}
+	});
+
+	$('#mainPanel').hide();
 
 	// When a file is selected, load it
 	$('#fileInput').change(function(e) {
