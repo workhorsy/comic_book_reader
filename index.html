@@ -47,6 +47,15 @@
 	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 
+.fuck {
+	pointer-events: none;
+	width: 100%;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+/*
 #pageHolder {
 	pointer-events: none;
 	width: 100%;
@@ -55,6 +64,7 @@
 	left: 0;
 	z-index: -100;
 }
+*/
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 		<script src="js/polyfill/polyfill.js"></script>
@@ -82,17 +92,15 @@
 
 		<div id="mainPanel"></div>
 
-		<div id="pageHolder"></div>
-
-		<div id="imageHolder" style="overflow: hidden; width: 100%">
-			<div id="draggableContainer" style="overflow: hidden; width: 100%">
-				<div id="draggableLeft" style="text-align: center; background-color: red; width: 100px; height: 100px; float: left;">
+		<div id="imageHolder" style="border: 10px solid orange; overflow: hidden;">
+			<div id="draggableContainer" style="border: 10px solid black; overflow: hidden;">
+				<div id="draggableLeft" style="position: absolute; z-index: 0px; opacity: 0.5; text-align: center; background-color: red;">
 					Left Page
 				</div>
-				<div id="draggableMiddle" style="text-align: center; background-color: green; width: 100px; height: 100px; float: left;">
+				<div id="draggableMiddle" style="position: absolute; z-index: 0px; opacity: 0.5; text-align: center; background-color: green;">
 					Middle Page
 				</div>
-				<div id="draggableRight" style="text-align: center; background-color: blue; width: 100px; height: 100px; float: left;">
+				<div id="draggableRight" style="position: absolute; z-index: 0px; opacity: 0.5; text-align: center; background-color: blue;">
 					Right Page
 				</div>
 			</div>
@@ -103,6 +111,14 @@
 var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
+var g_is_mouse_down = false;
+var g_mouse_start_x = 0;
+var g_screen_width = 0;
+var g_is_swiping_right = false;
+var g_is_swiping_left = false;
+var g_left = null;
+var g_middle = null;
+var g_right = null;
 
 function toFrieldlySize(size) {
 	if (size >= 1024000000) {
@@ -164,9 +180,21 @@ function friendlyPageNumber() {
 function loadCurrentPage() {
 	// Load the current page
 	updatePageCache(g_image_index);
-	$('#pageHolder').empty();
-	$('#pageHolder').append(g_images[g_image_index]);
+	g_middle.empty();
+	g_middle.append(g_images[g_image_index]);
 	$('#mainPanel')[0].textContent = friendlyPageNumber();
+
+	// Load next page
+	if (g_image_index < g_images.length -1) {
+		g_right.empty();
+		g_right.append(g_images[g_image_index + 1]);
+	}
+
+	// Load previous page
+	if (g_image_index > 0) {
+		g_left.empty();
+		g_left.append(g_images[g_image_index - 1]);
+	}
 
 	// Cache the next image
 	delayedUpdateNextPageCache(g_image_index, 2);
@@ -236,7 +264,9 @@ function clearComicData() {
 	setComicData('?', '?', '?');
 
 	// Remove all the old images and compressed file entries
-	$('#pageHolder').empty();
+	g_middle.empty();
+	g_left.empty();
+	g_right.empty();
 	g_image_index = 0;
 	g_images = [];
 	g_entries = [];
@@ -266,8 +296,7 @@ function onLoaded(blob) {
 			g_entries.forEach(function(entry) {
 				var img = document.createElement('img');
 				img.title = entry.filename;
-	//			img.width = 100;
-				img.style.width = '100%';
+				img.className = 'fuck';
 				g_images.push(img);
 				entry.index = i;
 				i++;
@@ -275,7 +304,8 @@ function onLoaded(blob) {
 
 			g_image_index = 0;
 			loadCurrentPage();
-			onResize();
+			var width = $(window).width();
+			onResize(width);
 		});
 	}, function(e) {
 		onError('Failed to read file!');
@@ -295,27 +325,47 @@ function onProgress(loaded, total) {
 	$('#loadProgress').val(loaded / total);
 }
 
-function onResize() {
-	var width = $('#imageHolder').width();
-	//width = 200;
-	//console.info(width);
-	$('#draggableContainer')[0].style.width = (width * 3) + 'px';
-	$('#draggableLeft')[0].style.transitionDuration = '0.0s';
-	$('#draggableMiddle')[0].style.transitionDuration = '0.0s';
-	$('#draggableRight')[0].style.transitionDuration = '0.0s';
+function onResize(screen_width) {
+	g_screen_width = screen_width;
+	$('#imageHolder')[0].style.width = (g_screen_width * 3) + 'px';
 
-	$('#draggableLeft')[0].style.width = width + 'px';
-	$('#draggableMiddle')[0].style.width = width + 'px';
-	$('#draggableRight')[0].style.width = width + 'px';
+	var style = $('#draggableContainer')[0].style;
+	style.width = (g_screen_width * 3) + 'px';
+	style.height = '200px';
+	style.transitionDuration = '0.0s';
+//	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
 
-	$('#draggableContainer')[0].style.transitionDuration = '0.0s';
-	$('#draggableContainer')[0].style.transform = 'translate3d(-' + width + 'px, 0px, 0px)';
+	style = g_left[0].style;
+	style.width = g_screen_width + 'px';
+	style.height = '200px';
+	style.transitionDuration = '0.0s';
+	g_left[0].translatedX = 0;
+	style.transform = 'translate3d(' + g_left[0].translatedX + 'px, 0px, 0px)';
+
+	style = g_middle[0].style;
+	style.width = g_screen_width + 'px';
+	style.height = '200px';
+	style.transitionDuration = '0.0s';
+	g_middle[0].translatedX = g_screen_width * 1;
+	style.transform = 'translate3d(' + g_middle[0].translatedX + 'px, 0px, 0px)';
+
+	style = g_right[0].style;
+	style.width = g_screen_width + 'px';
+	style.height = '200px';
+	style.transitionDuration = '0.0s';
+	g_right[0].translatedX = g_screen_width * 2;
+	style.transform = 'translate3d(' + g_right[0].translatedX + 'px, 0px, 0px)';
 }
 
 $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/';
 
+	g_left = $('#draggableLeft');
+	g_middle = $('#draggableMiddle');
+	g_right = $('#draggableRight');
+	var width = 200; // FIXME: Debug initial size
+	onResize(width);
 /*
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
@@ -371,51 +421,134 @@ $(document).ready(function() {
 	});
 */
 
+	var g_moving_pannel = null;
 
-	var is_mouse_down = false;
-	var mouse_start_x = 0;
-	$('#draggableMiddle').mousedown(function(e) {
-		is_mouse_down = true;
-		mouse_start_x = e.pageX;
+	g_left.mousedown(function(e) {
+		g_moving_pannel = g_left;
+	});
+
+	g_middle.mousedown(function(e) {
+		g_moving_pannel = g_middle;
+	});
+
+	g_right.mousedown(function(e) {
+		g_moving_pannel = g_right;
+	});
+
+	$('#draggableContainer').mousedown(function(e) {
+		g_is_mouse_down = true;
+		g_mouse_start_x = e.clientX;
+		console.info(g_mouse_start_x);
 	});
 
 	$(window).resize(function(e) {
-		onResize();
+		var width = $(window).width();
+		onResize(width);
 	});
 
 	$('#draggableContainer').on('mouseup mouseleave', function(e) {
-		is_mouse_down = false;
-		var style = $('#draggableLeft')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(0px, 0px, 0px)';
+		console.info('mouse up ' + g_is_mouse_down);
+		if (! g_is_mouse_down) {
+			return;
+		}
+		g_is_mouse_down = false;
+		g_moving_pannel = null;
+/*
+		
 
-		style = $('#draggableMiddle')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(0px, 0px, 0px)';
+		if (g_is_swiping_right) {
+			g_is_swiping_right = false;
+			if (g_image_index > 0) {
+				g_image_index--;
+				loadCurrentPage();
+			}
+		} else if (g_is_swiping_left) {
+			g_is_swiping_left = false;
 
-		style = $('#draggableRight')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(0px, 0px, 0px)';
+			var style = g_right[0].style;
+			style.transitionDuration = '0.3s';
+			style.transform = 'translate3d(-' + (g_screen_width) + 'px, 0px, 0px)';
+
+			style = g_middle[0].style;
+			style.transitionDuration = '0.3s';
+			style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
+
+			// Update the page orderings, after the pages move into position
+			setTimeout(function() {
+				console.info('herp ............................');
+				var old_left = g_left;
+				var old_middle = g_middle;
+				var old_right = g_right;
+				g_left = old_middle;
+				g_middle = old_right;
+				g_right = old_left;
+
+				var style = g_left[0].style;
+				style.transitionDuration = '0.3s';
+				style.transform = 'translate3d(-' + (g_screen_width) + 'px, 0px, 0px)';
+
+				style = g_middle[0].style;
+				style.transitionDuration = '0.3s';
+				style.transform = 'translate3d(0px, 0px, 0px)';
+
+				style = g_right[0].style;
+				style.transitionDuration = '0.3s';
+				style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
+			}, 5000);
+//			if (g_image_index < g_images.length -1) {
+//				g_image_index++;
+//				loadCurrentPage();
+//			}
+		} else {
+			var style = g_left[0].style;
+			style.transitionDuration = '0.3s';
+			style.transform = 'translate3d(0px, 0px, 0px)';
+
+			style = g_middle[0].style;
+			style.transitionDuration = '0.3s';
+			style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, 0px, 0px)';
+
+			style = g_right[0].style;
+			style.transitionDuration = '0.3s';
+			style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
+		}
+*/
 	});
+
 	$('#draggableContainer').mousemove(function(e) {
-		if (! is_mouse_down) {
+		if (! g_is_mouse_down) {
 			return;
 		}
 
-		var x = e.pageX - mouse_start_x;
-		var style = $('#draggableMiddle')[0].style;
+		var x_offset = e.clientX - g_mouse_start_x;
+		var x = g_moving_pannel[0].translatedX + x_offset;
+		console.info('screen:'+e.clientX + ', start:'+g_mouse_start_x + ', x:'+x);
+		var style = g_moving_pannel[0].style;
 		style.transitionDuration = '0.0s';
 		style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
-		if (x > 0) {
-			var style = $('#draggableLeft')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+		if (x_offset > 0) {
+/*
+			if (Math.abs(x) > g_screen_width / 2) {
+//				console.info(Math.abs(x) + ' > ' + (g_screen_width / 2));
+				g_is_swiping_right = true;
+			} else {
+				g_is_swiping_right = false;
+				g_is_swiping_left = false;
+			}
+*/
 		} else {
-			var style = $('#draggableRight')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+			// FIXME: if moving left, move the g_right pannel left
+/*
+			if (Math.abs(x) > g_screen_width / 2) {
+				console.info(Math.abs(x) + ' > ' + (g_screen_width / 2));
+				g_is_swiping_left = true;
+			} else {
+				g_is_swiping_right = false;
+				g_is_swiping_left = false;
+			}
 		}
+*/
 	});
 
 	$('#mainPanel').hide();
