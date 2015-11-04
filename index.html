@@ -43,6 +43,7 @@
 	user-select: none;
 	-moz-user-select: none;
 	-webkit-user-select: none;
+	-webkit-user-drag: none;
 }
 
 #comicPannel {
@@ -323,6 +324,7 @@ function onLoaded(blob) {
 				img.title = entry.filename;
 				img.className = 'comicImage';
 				img.ondragstart = function() { return false; }
+				img.draggable = 'false';
 				g_images.push(img);
 				entry.index = i;
 				i++;
