@@ -46,7 +46,7 @@
 	-webkit-user-drag: none;
 }
 
-#comicPannel {
+#comicPanel {
 	position: absolute;
 	z-index: 0px;
 	/*border: 10px solid orange;*/
@@ -110,7 +110,7 @@
 			</div>
 		</div>
 
-		<div id="comicPannel" touchable>
+		<div id="comicPanel" touchable>
 			<div id="pageContainer" touchable>
 				<div id="pageLeft" touchable>
 					Left Page
@@ -131,7 +131,7 @@
 var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
-var g_moving_pannel = null;
+var g_moving_panel = null;
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
 var g_mouse_start_y = 0;
@@ -213,7 +213,7 @@ function loadComic() {
 	// Read the file
 	onProgress(1, 1);
 	$('#loadProgress').hide();
-	$('#comicPannel').show();
+	$('#comicPanel').show();
 
 	hideTopPanel(false);
 
@@ -350,7 +350,7 @@ function onLoaded(blob) {
 }
 
 function onError(msg) {
-	$('#comicPannel').hide();
+	$('#comicPanel').hide();
 	$('#comicData').hide();
 	$('#loadError').text('Error: ' + msg);
 	$('#loadError').show();
@@ -417,7 +417,7 @@ function onResize(screen_width) {
 
 	// Make the panel as wide as the screen
 	g_needs_resize = false;
-	$('#comicPannel')[0].style.width = (g_screen_width * 1) + 'px';
+	$('#comicPanel')[0].style.width = (g_screen_width * 1) + 'px';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	var style = $('#pageContainer')[0].style;
@@ -487,25 +487,25 @@ $(document).ready(function() {
 
 	g_left.mousedown(function(e) {
 		if (this.panel_index === 1) {
-			g_moving_pannel = this;
+			g_moving_panel = this;
 		} else {
-			g_moving_pannel = null;
+			g_moving_panel = null;
 		}
 	});
 
 	g_middle.mousedown(function(e) {
 		if (this.panel_index === 1) {
-			g_moving_pannel = this;
+			g_moving_panel = this;
 		} else {
-			g_moving_pannel = null;
+			g_moving_panel = null;
 		}
 	});
 
 	g_right.mousedown(function(e) {
 		if (this.panel_index === 1) {
-			g_moving_pannel = this;
+			g_moving_panel = this;
 		} else {
-			g_moving_pannel = null;
+			g_moving_panel = null;
 		}
 	});
 
@@ -535,7 +535,7 @@ $(document).ready(function() {
 			return;
 		}
 		g_is_mouse_down = false;
-		g_moving_pannel = null;
+		g_moving_panel = null;
 		g_scroll_y_start += g_scroll_y_temp;
 		g_scroll_y_temp = 0;
 
@@ -631,7 +631,7 @@ $(document).ready(function() {
 		}
 
 		// Figure out if we are moving vertically or horizontally
-//		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_pannel.panel_index + ', ' + g_moving_pannel.id);
+//		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_panel.panel_index + ', ' + g_moving_panel.id);
 		if (Math.abs(e.clientY - g_mouse_start_y) > Math.abs(e.clientX - g_mouse_start_x)) {
 			g_is_vertical = true;
 		} else {
@@ -647,7 +647,7 @@ $(document).ready(function() {
 
 		//console.info(g_mouse_start_y);
 //		console.info(g_is_vertical + ', ' + x_offset + ', ' + y_offset);
-		if (g_is_vertical && g_moving_pannel) {
+		if (g_is_vertical && g_moving_panel) {
 //			console.info('vertical ...');
 			// Show the top panel if we are swiping down from the top
 			if (g_mouse_start_y < 200 && y_offset > 0) {
@@ -670,9 +670,9 @@ $(document).ready(function() {
 		}
 
 		// Scroll the comic panels if we are swiping right or left
-		if (! g_is_vertical && g_moving_pannel) {
-			var x = (g_moving_pannel.panel_index * g_screen_width) + x_offset;
-			var style = g_moving_pannel.style;
+		if (! g_is_vertical && g_moving_panel) {
+			var x = (g_moving_panel.panel_index * g_screen_width) + x_offset;
+			var style = g_moving_panel.style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
@@ -706,7 +706,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#comicPannel').hide();
+	$('#comicPanel').hide();
 
 	// When a file is selected, load it
 	$('#fileInput').change(function(e) {
