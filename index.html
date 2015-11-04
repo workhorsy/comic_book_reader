@@ -198,9 +198,11 @@ function replaceIfDifferentImage(parent, image) {
 	var children = parent.children();
 	if (children.length === 0) {
 		parent.append(image);
-	} else if (children.length && children[0].src !== image.src) {
+	} else if (children.length && children[0].id !== image.id) {
 		parent.empty();
 		parent.append(image);
+		console.info(children[0].id);
+		console.info(image.id);
 	}
 }
 
@@ -293,6 +295,7 @@ function onLoaded(blob) {
 			var i = 0;
 			g_entries.forEach(function(entry) {
 				var img = document.createElement('img');
+				img.id = 'page_' + i;
 				img.title = entry.filename;
 				img.className = 'comicImage';
 				g_images.push(img);
