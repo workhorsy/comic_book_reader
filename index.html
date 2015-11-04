@@ -319,6 +319,7 @@ function onLoaded(blob) {
 				img.id = 'page_' + i;
 				img.title = entry.filename;
 				img.className = 'comicImage';
+				img.ondragstart = function() { return false; }
 				g_images.push(img);
 				entry.index = i;
 				i++;
