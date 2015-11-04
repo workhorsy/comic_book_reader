@@ -7,6 +7,8 @@
 		<style>
 #topPanel {
 	opacity: 0.9;
+	position: absolute;
+	z-index: 1000;
 	border: 1px solid black;
 	margin: 20px;
 	margin-top: 0px;
@@ -43,6 +45,8 @@
 }
 
 #comicPannel {
+	position: absolute;
+	z-index: 0px;
 	/*border: 10px solid orange;*/
 	overflow: hidden;
 }
@@ -104,18 +108,18 @@
 			</div>
 		</div>
 
-		<div id="comicPannel">
-			<div id="pageContainer">
-				<div id="pageLeft">
+		<div id="comicPannel" touchable>
+			<div id="pageContainer" touchable>
+				<div id="pageLeft" touchable>
 					Left Page
 				</div>
-				<div id="pageMiddle">
+				<div id="pageMiddle" touchable>
 					Middle Page
 				</div>
-				<div id="pageRight">
+				<div id="pageRight" touchable>
 					Right Page
 				</div>
-				<div id="pageOverlay">
+				<div id="pageOverlay" touchable>
 				</div>
 			</div>
 		</div>
@@ -125,11 +129,15 @@
 var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
+var g_moving_pannel = null;
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
+var g_mouse_start_y = 0;
+var g_is_vertical = false;
 var g_screen_width = 0;
 var g_is_swiping_right = false;
 var g_is_swiping_left = false;
+var g_top_visible = 0.0;
 var g_left = null;
 var g_middle = null;
 var g_right = null;
@@ -164,6 +172,23 @@ function isValidImageType(file_name) {
 			file_name.endsWith('.bmp');
 }
 
+function hideTopPanel() {
+	var style = $('#topPanel')[0].style;
+	style.transitionDuration = '0.3s';
+	var height = $('#topPanel').outerHeight() + 10;
+	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
+	g_top_visible = 0.0;
+}
+
+function showTopPanel(y_offset) {
+	var style = $('#topPanel')[0].style;
+	style.transitionDuration = '0.2s';
+	var height = $('#topPanel').outerHeight();
+	var offset = -height + (height * y_offset);
+	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
+	g_top_visible = y_offset;
+}
+
 function loadComic() {
 	var file_input = $('#fileInput');
 
@@ -180,8 +205,9 @@ function loadComic() {
 	// Read the file
 	onProgress(1, 1);
 	$('#loadProgress').hide();
-	$('#topPanel').hide();
 	$('#comicPannel').show();
+
+	hideTopPanel();
 
 	var blob = file.slice();
 	onLoaded(blob);
@@ -313,7 +339,7 @@ function onError(msg) {
 	$('#comicData').hide();
 	$('#loadError').text('Error: ' + msg);
 	$('#loadError').show();
-	$('#topPanel').show();
+	showTopPanel(1.0);
 }
 
 function onProgress(loaded, total) {
@@ -382,8 +408,6 @@ $(document).ready(function() {
 		}
 	});
 
-	var g_moving_pannel = null;
-
 	g_left.mousedown(function(e) {
 		if (this.panel_index === 1) {
 			g_moving_pannel = this;
@@ -408,10 +432,21 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#pageContainer').mousedown(function(e) {
+	$('body').mousedown(function(e) {
+		// Skip if clicking on something that is no touchable
+		if (! e.target.hasAttribute('touchable')) {
+			return;
+		}
+
+		// If the top menu is showing, hide it
+		if (e.target.hasAttribute('touchable') && g_top_visible > 0.0) {
+			hideTopPanel();
+			return;
+		}
+
 		g_is_mouse_down = true;
 		g_mouse_start_x = e.clientX;
-		//console.info(g_mouse_start_x);
+		g_mouse_start_y = e.clientY;
 	});
 
 	$(window).resize(function(e) {
@@ -419,7 +454,11 @@ $(document).ready(function() {
 		onResize(width);
 	});
 
-	$('#pageContainer').on('mouseup mouseleave', function(e) {
+	$('body').on('mouseup mouseleave', function(e) {
+		if (g_top_visible > 0.0 && g_top_visible < 1.0) {
+			hideTopPanel();
+		}
+
 		if (! g_is_mouse_down) {
 			return;
 		}
@@ -508,44 +547,69 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#pageContainer').mousemove(function(e) {
-		if (! g_is_mouse_down || ! g_moving_pannel) {
+	$('body').mousemove(function(e) {
+		if (! g_is_mouse_down) {
 			return;
 		}
+
+		// Figure out if we are moving vertically or horizontally
 //		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_pannel.panel_index + ', ' + g_moving_pannel.id);
-		var x_offset = e.clientX - g_mouse_start_x;
-		var x = (g_moving_pannel.panel_index * g_screen_width) + x_offset;
-//		console.info('screen:'+e.clientX + ', start:'+g_mouse_start_x + ', x:'+x);
-//		console.info(x_offset);
-		var style = g_moving_pannel.style;
-		style.transitionDuration = '0.0s';
-		style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-		if (x_offset > 0) {
-			var x = (g_left[0].panel_index * g_screen_width) + x_offset;
-			var style = g_left[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index > 0) {
-//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
-				g_is_swiping_right = true;
-			} else {
-				g_is_swiping_right = false;
-				g_is_swiping_left = false;
-			}
+		if (Math.abs(e.clientY - g_mouse_start_y) > Math.abs(e.clientX - g_mouse_start_x)) {
+			g_is_vertical = true;
 		} else {
-			var x = (g_right[0].panel_index * g_screen_width) + x_offset;
-			var style = g_right[0].style;
+			g_is_vertical = false;
+		}
+
+		// Get how far we have moved since pressing down
+//		console.info(g_is_vertical);
+//		console.info(e.clientX + ', ' + e.clientY + ', ' + g_is_vertical);
+		var x_offset = e.clientX - g_mouse_start_x;
+		var y_offset = e.clientY - g_mouse_start_y;
+//		console.info(y_offset);
+
+		// Show the top panel if we are swiping down from the top
+//		console.info(g_is_vertical + ', ' + x_offset + ', ' + y_offset);
+		if (g_mouse_start_y < 200 && g_is_vertical && y_offset > 10) {
+			var y = y_offset > 200.0 ? 200.0 : y_offset;
+//			console.info(y / 200.0);
+			showTopPanel(y / 200.0);
+		}
+
+		// Scroll the comic panels if we are swiping right or left
+		if (! g_is_vertical && g_moving_pannel) {
+			var x = (g_moving_pannel.panel_index * g_screen_width) + x_offset;
+//			console.info('screen:'+e.clientX + ', start:'+g_mouse_start_x + ', x:'+x);
+//			console.info(x_offset);
+			var style = g_moving_pannel.style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
-			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_images.length -1) {
-//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
-				g_is_swiping_left = true;
+			if (x_offset > 0) {
+				var x = (g_left[0].panel_index * g_screen_width) + x_offset;
+				var style = g_left[0].style;
+				style.transitionDuration = '0.0s';
+				style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+				if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index > 0) {
+	//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
+					g_is_swiping_right = true;
+				} else {
+					g_is_swiping_right = false;
+					g_is_swiping_left = false;
+				}
 			} else {
-				g_is_swiping_right = false;
-				g_is_swiping_left = false;
+				var x = (g_right[0].panel_index * g_screen_width) + x_offset;
+				var style = g_right[0].style;
+				style.transitionDuration = '0.0s';
+				style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+				if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_images.length -1) {
+	//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
+					g_is_swiping_left = true;
+				} else {
+					g_is_swiping_right = false;
+					g_is_swiping_left = false;
+				}
 			}
 		}
 	});
