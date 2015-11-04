@@ -143,6 +143,9 @@ var g_top_visible = 1.0;
 var g_left = null;
 var g_middle = null;
 var g_right = null;
+var g_scroll_y_temp = 0;
+var g_scroll_y_start = 0;
+var g_needs_resize = false;
 
 function toFrieldlySize(size) {
 	if (size >= 1024000000) {
@@ -174,10 +177,11 @@ function isValidImageType(file_name) {
 			file_name.endsWith('.bmp');
 }
 
-function hideTopPanel() {
+function hideTopPanel(is_instant) {
+	var speed = is_instant ? '0.0s' : '0.3s';
 	var height = $('#topPanel').outerHeight() + 10;
 	var style = $('#topPanel')[0].style;
-	style.transitionDuration = '0.3s';
+	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 	g_top_visible = 0.0;
 }
@@ -211,7 +215,7 @@ function loadComic() {
 	$('#loadProgress').hide();
 	$('#comicPannel').show();
 
-	hideTopPanel();
+	hideTopPanel(false);
 
 	var blob = file.slice();
 	onLoaded(blob);
@@ -324,6 +328,11 @@ function onLoaded(blob) {
 				img.title = entry.filename;
 				img.className = 'comicImage';
 				img.ondragstart = function() { return false; }
+				img.onload = function() {
+					if (g_needs_resize) {
+						onResize(g_screen_width);
+					}
+				};
 				img.draggable = 'false';
 				g_images.push(img);
 				entry.index = i;
@@ -353,31 +362,71 @@ function onProgress(loaded, total) {
 	$('#loadProgress').val(loaded / total);
 }
 
-function onResize(screen_width) {
-//	screen_width = 100;
-	g_screen_width = screen_width;
-	var height = $(window).height();
-	$('#comicPannel')[0].style.width = (g_screen_width * 1) + 'px';
+function largestNumber(a, b, c) {
+	var larger = a > b ? a : b;
+	larger = larger > c ? larger : c;
+	return larger;
+}
 
-	if (g_top_visible < 1.0) {
-		hideTopPanel();
-	} else {
-		showTopPanel(g_top_visible, true);
+function largestPageNaturalHeight() {
+	var left_children = g_left.children();
+	var middle_children = g_middle.children();
+	var right_children = g_right.children();
+
+	var left_width = left_children.length > 0 ? left_children[0].naturalWidth : 0;
+	var middle_width = middle_children.length > 0 ? middle_children[0].naturalWidth : 0;
+	var right_width = right_children.length > 0 ? right_children[0].naturalWidth : 0;
+
+	var left_ratio = left_width !== 0 ? g_screen_width / left_width : 0;
+	var middle_ratio = middle_width !== 0 ? g_screen_width / middle_width : 0;
+	var right_ratio = right_width !== 0 ? g_screen_width / right_width : 0;
+
+	var left_height = left_children.length > 0 ? left_ratio * left_children[0].naturalHeight : 0;
+	var middle_height = middle_children.length > 0 ? middle_ratio * middle_children[0].naturalHeight : 0;
+	var right_height =  right_children.length > 0 ?  right_ratio *  right_children[0].naturalHeight : 0;
+
+	return largestNumber(left_height, middle_height, right_height);
+}
+
+function onResize(screen_width) {
+//	console.info('Resize called ...');
+	g_screen_width = screen_width;
+
+	// Figure out if the images are loaded yet.
+	// If not, we will manually fire the resize event when they do
+	var children = g_middle.children();
+	if (children.length === 0) {
+		g_needs_resize = true;
+//		console.info('Needs resize ...');
+		return;
+	} else if (children[0].naturalWidth === 0) {
+		g_needs_resize = true;
+//		console.info('Needs resize ...');
+		return;
 	}
 
+	// Find the largest natural height from the images
+	var height = largestPageNaturalHeight();
+
+	// Make the panel as wide as the screen
+	g_needs_resize = false;
+	$('#comicPannel')[0].style.width = (g_screen_width * 1) + 'px';
+
+	// Make it as wide as the screen and as tall as the tallest image
 	var style = $('#pageContainer')[0].style;
 	style.width = (g_screen_width * 3) + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
 
-	var overlay = $('#pageOverlay');
-	style = overlay[0].style;
+	// Make it as wide as the screen and as tall as the tallest image
+	style = $('#pageOverlay')[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(' + (1 * g_screen_width) + 'px, 0px, 0px)';
 
+	// Make it as wide as the screen and as tall as the tallest image
 	style = g_left[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = height + 'px';
@@ -385,6 +434,7 @@ function onResize(screen_width) {
 	g_left[0].panel_index = 0;
 	style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
+	// Make it as wide as the screen and as tall as the tallest image
 	style = g_middle[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = height + 'px';
@@ -392,12 +442,20 @@ function onResize(screen_width) {
 	g_middle[0].panel_index = 1;
 	style.transform = 'translate3d(' + (g_middle[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
+	// Make it as wide as the screen and as tall as the tallest image
 	style = g_right[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	g_right[0].panel_index = 2;
 	style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+
+	// Move the top panel to the new top
+	if (g_top_visible < 1.0) {
+		hideTopPanel(true);
+	} else {
+		showTopPanel(g_top_visible, true);
+	}
 }
 
 $(document).ready(function() {
@@ -452,7 +510,7 @@ $(document).ready(function() {
 
 		// If the top menu is showing, hide it
 		if (e.target.hasAttribute('touchable') && g_top_visible > 0.0) {
-			hideTopPanel();
+			hideTopPanel(false);
 			return;
 		}
 
@@ -468,7 +526,7 @@ $(document).ready(function() {
 
 	$('body').on('mouseup mouseleave', function(e) {
 		if (g_top_visible > 0.0 && g_top_visible < 1.0) {
-			hideTopPanel();
+			hideTopPanel(false);
 		}
 
 		if (! g_is_mouse_down) {
@@ -476,6 +534,8 @@ $(document).ready(function() {
 		}
 		g_is_mouse_down = false;
 		g_moving_pannel = null;
+		g_scroll_y_start += g_scroll_y_temp;
+		g_scroll_y_temp = 0;
 
 
 		if (g_is_swiping_right) {
@@ -488,6 +548,8 @@ $(document).ready(function() {
 			style = g_left[0].style;
 			style.transitionDuration = '0.3s';
 			style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+			g_scroll_y_start = 0;
+			window.scrollTo(0, 0);
 
 			// Update the page orderings, after the pages move into position
 			setTimeout(function() {
@@ -521,6 +583,8 @@ $(document).ready(function() {
 			style = g_right[0].style;
 			style.transitionDuration = '0.3s';
 			style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+			g_scroll_y_start = 0;
+			window.scrollTo(0, 0);
 
 			// Update the page orderings, after the pages move into position
 			setTimeout(function() {
@@ -579,19 +643,33 @@ $(document).ready(function() {
 		var y_offset = e.clientY - g_mouse_start_y;
 //		console.info(y_offset);
 
-		// Show the top panel if we are swiping down from the top
+		//console.info(g_mouse_start_y);
 //		console.info(g_is_vertical + ', ' + x_offset + ', ' + y_offset);
-		if (g_mouse_start_y < 200 && g_is_vertical && y_offset > 10) {
-			var y = y_offset > 200.0 ? 200.0 : y_offset;
-//			console.info(y / 200.0);
-			showTopPanel(y / 200.0, false);
+		if (g_is_vertical && g_moving_pannel) {
+//			console.info('vertical ...');
+			// Show the top panel if we are swiping down from the top
+			if (g_mouse_start_y < 200 && y_offset > 0) {
+				var y = y_offset > 200.0 ? 200.0 : y_offset;
+	//			console.info(y / 200.0);
+				showTopPanel(y / 200.0, false);
+			// Scroll the page up and down
+			} else {
+				var window_height = $(window).height();
+				var image_height = $('#' + g_middle.children()[0].id).height();
+
+				// Only scroll down if the top of the image is above the screen top
+				var new_offset = y_offset + g_scroll_y_start;
+				if (new_offset >= 0 && image_height - new_offset > window_height) {
+					g_scroll_y_temp = y_offset;
+					window.scrollTo(0, new_offset);
+//					console.info(image_height + ' + ' + new_offset + '(' + (image_height - new_offset)  + ') > ' + window_height);
+				}
+			}
 		}
 
 		// Scroll the comic panels if we are swiping right or left
 		if (! g_is_vertical && g_moving_pannel) {
 			var x = (g_moving_pannel.panel_index * g_screen_width) + x_offset;
-//			console.info('screen:'+e.clientX + ', start:'+g_mouse_start_x + ', x:'+x);
-//			console.info(x_offset);
 			var style = g_moving_pannel.style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
