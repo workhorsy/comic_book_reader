@@ -93,14 +93,14 @@
 		<div id="mainPanel"></div>
 
 		<div id="imageHolder" style="border: 10px solid orange; overflow: hidden;">
-			<div id="draggableContainer" style="border: 10px solid black; overflow: hidden;">
-				<div id="draggableLeft" style="position: absolute; z-index: 0px; opacity: 0.5; text-align: center; background-color: red;">
+			<div id="draggableContainer" style="border: 20px solid black; overflow: visible;">
+				<div id="draggableLeft" style="position: absolute; z-index: 0px; text-align: center; background-color: red;">
 					Left Page
 				</div>
-				<div id="draggableMiddle" style="position: absolute; z-index: 0px; opacity: 0.5; text-align: center; background-color: green;">
+				<div id="draggableMiddle" style="position: absolute; z-index: 0px; text-align: center; background-color: green;">
 					Middle Page
 				</div>
-				<div id="draggableRight" style="position: absolute; z-index: 0px; opacity: 0.5; text-align: center; background-color: blue;">
+				<div id="draggableRight" style="position: absolute; z-index: 0px; text-align: center; background-color: blue;">
 					Right Page
 				</div>
 			</div>
@@ -185,13 +185,17 @@ function loadCurrentPage() {
 	$('#mainPanel')[0].textContent = friendlyPageNumber();
 
 	// Load next page
-	if (g_image_index < g_images.length -1) {
+	if (g_image_index === g_images.length -1) {
+		g_right.empty();
+	} else if (g_image_index < g_images.length -1) {
 		g_right.empty();
 		g_right.append(g_images[g_image_index + 1]);
 	}
 
 	// Load previous page
-	if (g_image_index > 0) {
+	if (g_image_index === 0) {
+		g_left.empty();
+	} else if (g_image_index > 0) {
 		g_left.empty();
 		g_left.append(g_images[g_image_index - 1]);
 	}
@@ -327,31 +331,32 @@ function onProgress(loaded, total) {
 
 function onResize(screen_width) {
 	g_screen_width = screen_width;
-	$('#imageHolder')[0].style.width = (g_screen_width * 3) + 'px';
+	var height = $(window).height();
+	$('#imageHolder')[0].style.width = (g_screen_width * 1) + 'px';
 
 	var style = $('#draggableContainer')[0].style;
 	style.width = (g_screen_width * 3) + 'px';
-	style.height = '200px';
+	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
-//	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
+	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
 
 	style = g_left[0].style;
 	style.width = g_screen_width + 'px';
-	style.height = '200px';
+	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	g_left[0].panel_index = 0;
 	style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	style = g_middle[0].style;
 	style.width = g_screen_width + 'px';
-	style.height = '200px';
+	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	g_middle[0].panel_index = 1;
 	style.transform = 'translate3d(' + (g_middle[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	style = g_right[0].style;
 	style.width = g_screen_width + 'px';
-	style.height = '200px';
+	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	g_right[0].panel_index = 2;
 	style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
@@ -494,6 +499,11 @@ $(document).ready(function() {
 				style = g_left[0].style;
 				style.transitionDuration = '0.0s';
 				style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+
+				if (g_image_index > 0) {
+					g_image_index--;
+					loadCurrentPage();
+				}
 			}, 300);
 		} else if (g_is_swiping_left) {
 			g_is_swiping_left = false;
@@ -522,11 +532,12 @@ $(document).ready(function() {
 				style = g_right[0].style;
 				style.transitionDuration = '0.0s';
 				style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+
+				if (g_image_index < g_images.length -1) {
+					g_image_index++;
+					loadCurrentPage();
+				}
 			}, 300);
-//			if (g_image_index < g_images.length -1) {
-//				g_image_index++;
-//				loadCurrentPage();
-//			}
 		} else {
 			var style = g_left[0].style;
 			style.transitionDuration = '0.3s';
