@@ -339,22 +339,22 @@ function onResize(screen_width) {
 	style.width = g_screen_width + 'px';
 	style.height = '200px';
 	style.transitionDuration = '0.0s';
-	g_left[0].translatedX = 0;
-	style.transform = 'translate3d(' + g_left[0].translatedX + 'px, 0px, 0px)';
+	g_left[0].panel_index = 0;
+	style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	style = g_middle[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = '200px';
 	style.transitionDuration = '0.0s';
-	g_middle[0].translatedX = g_screen_width * 1;
-	style.transform = 'translate3d(' + g_middle[0].translatedX + 'px, 0px, 0px)';
+	g_middle[0].panel_index = 1;
+	style.transform = 'translate3d(' + (g_middle[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	style = g_right[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = '200px';
 	style.transitionDuration = '0.0s';
-	g_right[0].translatedX = g_screen_width * 2;
-	style.transform = 'translate3d(' + g_right[0].translatedX + 'px, 0px, 0px)';
+	g_right[0].panel_index = 2;
+	style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 }
 
 $(document).ready(function() {
@@ -475,13 +475,13 @@ $(document).ready(function() {
 				g_middle = old_left;
 				g_left = old_right;
 
-				g_left[0].translatedX = g_screen_width * 0;
-				g_middle[0].translatedX = g_screen_width * 1;
-				g_right[0].translatedX = g_screen_width * 2;
+				g_left[0].panel_index = 0;
+				g_middle[0].panel_index = 1;
+				g_right[0].panel_index = 2;
 
 				style = g_left[0].style;
 				style.transitionDuration = '0.0s';
-				style.transform = 'translate3d(' + g_left[0].translatedX + 'px, 0px, 0px)';
+				style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 			}, 300);
 		} else if (g_is_swiping_left) {
 			g_is_swiping_left = false;
@@ -503,13 +503,13 @@ $(document).ready(function() {
 				g_middle = old_right;
 				g_right = old_left;
 
-				g_left[0].translatedX = g_screen_width * 0;
-				g_middle[0].translatedX = g_screen_width * 1;
-				g_right[0].translatedX = g_screen_width * 2;
+				g_left[0].panel_index = 0;
+				g_middle[0].panel_index = 1;
+				g_right[0].panel_index = 2;
 
 				style = g_right[0].style;
 				style.transitionDuration = '0.0s';
-				style.transform = 'translate3d(' + g_right[0].translatedX + 'px, 0px, 0px)';
+				style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 			}, 300);
 //			if (g_image_index < g_images.length -1) {
 //				g_image_index++;
@@ -534,9 +534,9 @@ $(document).ready(function() {
 		if (! g_is_mouse_down) {
 			return;
 		}
-//		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_pannel.translatedX + ', ' + g_moving_pannel.id);
+//		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_pannel.panel_index + ', ' + g_moving_pannel.id);
 		var x_offset = e.clientX - g_mouse_start_x;
-		var x = g_moving_pannel.translatedX + x_offset;
+		var x = (g_moving_pannel.panel_index * g_screen_width) + x_offset;
 //		console.info('screen:'+e.clientX + ', start:'+g_mouse_start_x + ', x:'+x);
 //		console.info(x_offset);
 		var style = g_moving_pannel.style;
@@ -544,7 +544,7 @@ $(document).ready(function() {
 		style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
 		if (x_offset > 0) {
-			var x = g_left[0].translatedX + x_offset;
+			var x = (g_left[0].panel_index * g_screen_width) + x_offset;
 			var style = g_left[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
@@ -557,7 +557,7 @@ $(document).ready(function() {
 				g_is_swiping_left = false;
 			}
 		} else {
-			var x = g_right[0].translatedX + x_offset;
+			var x = (g_right[0].panel_index * g_screen_width) + x_offset;
 			var style = g_right[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
