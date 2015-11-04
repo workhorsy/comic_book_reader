@@ -8,6 +8,8 @@
 #topPanel {
 	opacity: 0.9;
 	position: absolute;
+	top: 0px;
+	left: 0px;
 	z-index: 1000;
 	border: 1px solid black;
 	margin: 20px;
@@ -137,7 +139,7 @@ var g_is_vertical = false;
 var g_screen_width = 0;
 var g_is_swiping_right = false;
 var g_is_swiping_left = false;
-var g_top_visible = 0.0;
+var g_top_visible = 1.0;
 var g_left = null;
 var g_middle = null;
 var g_right = null;
@@ -353,6 +355,12 @@ function onResize(screen_width) {
 	g_screen_width = screen_width;
 	var height = $(window).height();
 	$('#comicPannel')[0].style.width = (g_screen_width * 1) + 'px';
+
+	if (g_top_visible < 1.0) {
+		hideTopPanel();
+	} else {
+		showTopPanel(g_top_visible);
+	}
 
 	var style = $('#pageContainer')[0].style;
 	style.width = (g_screen_width * 3) + 'px';
