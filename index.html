@@ -5,19 +5,6 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>Comic Book Reader</title>
 		<style>
-#mainPanel {
-	padding: 0;
-	margin: 0;
-	background: rgba(0, 0, 0, 0.0);
-	height: 100%;
-	width: 100%;
-	text-align: center;
-	font: 100px/300px Helvetica, Arial, sans-serif;
-	text-shadow: 4px 4px 20px white;
-	opacity: 0.5;
-	position: fixed;
-}
-
 #topPanel {
 	opacity: 0.9;
 	border: 1px solid black;
@@ -55,35 +42,45 @@
 	-webkit-user-select: none;
 }
 
-#imageHolder {
+#comicPannel {
 	border: 10px solid orange;
 	overflow: hidden;
 }
 
-#draggableContainer {
+#pageContainer {
 	border: 20px solid black;
 	overflow: visible;
 }
 
-#draggableLeft {
+#pageLeft {
 	position: absolute;
 	z-index: 0px;
 	text-align: center;
 	background-color: red;
 }
 
-#draggableMiddle {
+#pageMiddle {
 	position: absolute;
 	z-index: 0px;
 	text-align: center;
 	background-color: green;
 }
 
-#draggableRight {
+#pageRight {
 	position: absolute;
 	z-index: 0px;
 	text-align: center;
 	background-color: blue;
+}
+
+#pageOverlay {
+	position: absolute;
+	z-index: 1px;
+	pointer-events: none;
+	text-align: center;
+	font: 100px/300px Helvetica, Arial, sans-serif;
+	text-shadow: 4px 4px 20px white;
+	opacity: 0.5;
 }
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -110,18 +107,18 @@
 			</div>
 		</div>
 
-		<div id="mainPanel"></div>
-
-		<div id="imageHolder">
-			<div id="draggableContainer">
-				<div id="draggableLeft">
+		<div id="comicPannel">
+			<div id="pageContainer">
+				<div id="pageLeft">
 					Left Page
 				</div>
-				<div id="draggableMiddle">
+				<div id="pageMiddle">
 					Middle Page
 				</div>
-				<div id="draggableRight">
+				<div id="pageRight">
 					Right Page
+				</div>
+				<div id="pageOverlay">
 				</div>
 			</div>
 		</div>
@@ -187,7 +184,7 @@ function loadComic() {
 	onProgress(1, 1);
 	$('#loadProgress').hide();
 	$('#topPanel').hide();
-	$('#mainPanel').show();
+	$('#comicPannel').show();
 
 	var blob = file.slice();
 	onLoaded(blob);
@@ -202,7 +199,7 @@ function loadCurrentPage() {
 	updatePageCache(g_image_index);
 	g_middle.empty();
 	g_middle.append(g_images[g_image_index]);
-	$('#mainPanel')[0].textContent = friendlyPageNumber();
+	$('#pageOverlay')[0].innerHTML = friendlyPageNumber();
 
 	// Load next page
 	if (g_image_index === g_images.length -1) {
@@ -337,7 +334,7 @@ function onLoaded(blob) {
 }
 
 function onError(msg) {
-	$('#mainPanel').hide();
+	$('#comicPannel').hide();
 	$('#comicData').hide();
 	$('#loadError').text('Error: ' + msg);
 	$('#loadError').show();
@@ -350,15 +347,23 @@ function onProgress(loaded, total) {
 }
 
 function onResize(screen_width) {
+//	screen_width = 100;
 	g_screen_width = screen_width;
 	var height = $(window).height();
-	$('#imageHolder')[0].style.width = (g_screen_width * 1) + 'px';
+	$('#comicPannel')[0].style.width = (g_screen_width * 1) + 'px';
 
-	var style = $('#draggableContainer')[0].style;
+	var style = $('#pageContainer')[0].style;
 	style.width = (g_screen_width * 3) + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
+
+	var overlay = $('#pageOverlay');
+	style = overlay[0].style;
+	style.width = g_screen_width + 'px';
+	style.height = height + 'px';
+	style.transitionDuration = '0.0s';
+	style.transform = 'translate3d(' + (1 * g_screen_width) + 'px, 0px, 0px)';
 
 	style = g_left[0].style;
 	style.width = g_screen_width + 'px';
@@ -386,11 +391,10 @@ $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/';
 
-	g_left = $('#draggableLeft');
-	g_middle = $('#draggableMiddle');
-	g_right = $('#draggableRight');
-	var width = 200; // FIXME: Debug initial size
-	onResize(width);
+	g_left = $('#pageLeft');
+	g_middle = $('#pageMiddle');
+	g_right = $('#pageRight');
+
 /*
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
@@ -472,7 +476,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#draggableContainer').mousedown(function(e) {
+	$('#pageContainer').mousedown(function(e) {
 		g_is_mouse_down = true;
 		g_mouse_start_x = e.clientX;
 		//console.info(g_mouse_start_x);
@@ -483,7 +487,7 @@ $(document).ready(function() {
 		onResize(width);
 	});
 
-	$('#draggableContainer').on('mouseup mouseleave', function(e) {
+	$('#pageContainer').on('mouseup mouseleave', function(e) {
 		console.info('mouse up ' + g_is_mouse_down);
 		if (! g_is_mouse_down) {
 			return;
@@ -573,7 +577,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#draggableContainer').mousemove(function(e) {
+	$('#pageContainer').mousemove(function(e) {
 		if (! g_is_mouse_down || ! g_moving_pannel) {
 			return;
 		}
@@ -615,7 +619,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#mainPanel').hide();
+	$('#comicPannel').hide();
 
 	// When a file is selected, load it
 	$('#fileInput').change(function(e) {
