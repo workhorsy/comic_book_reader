@@ -392,6 +392,13 @@ function onResize(screen_width) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
 
+	// Move the top panel to the new top
+	if (g_top_visible < 1.0) {
+		hideTopPanel(true);
+	} else {
+		showTopPanel(g_top_visible, true);
+	}
+
 	// Figure out if the images are loaded yet.
 	// If not, we will manually fire the resize event when they do
 	var children = g_middle.children();
@@ -449,13 +456,6 @@ function onResize(screen_width) {
 	style.transitionDuration = '0.0s';
 	g_right[0].panel_index = 2;
 	style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
-
-	// Move the top panel to the new top
-	if (g_top_visible < 1.0) {
-		hideTopPanel(true);
-	} else {
-		showTopPanel(g_top_visible, true);
-	}
 }
 
 $(document).ready(function() {
@@ -465,6 +465,13 @@ $(document).ready(function() {
 	g_left = $('#pageLeft');
 	g_middle = $('#pageMiddle');
 	g_right = $('#pageRight');
+
+	// Resize everything when the browser resizes
+	$(window).resize(function(e) {
+		var width = $(window).width();
+		onResize(width);
+	});
+	$(window).trigger('resize');
 
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
@@ -517,11 +524,6 @@ $(document).ready(function() {
 		g_is_mouse_down = true;
 		g_mouse_start_x = e.clientX;
 		g_mouse_start_y = e.clientY;
-	});
-
-	$(window).resize(function(e) {
-		var width = $(window).width();
-		onResize(width);
 	});
 
 	$('body').on('mouseup mouseleave', function(e) {
