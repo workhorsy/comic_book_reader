@@ -43,12 +43,12 @@
 }
 
 #comicPannel {
-	border: 10px solid orange;
+	/*border: 10px solid orange;*/
 	overflow: hidden;
 }
 
 #pageContainer {
-	border: 20px solid black;
+	/*border: 20px solid black;*/
 	overflow: visible;
 }
 
@@ -201,8 +201,6 @@ function replaceIfDifferentImage(parent, image) {
 	} else if (children.length && children[0].id !== image.id) {
 		parent.empty();
 		parent.append(image);
-		console.info(children[0].id);
-		console.info(image.id);
 	}
 }
 
