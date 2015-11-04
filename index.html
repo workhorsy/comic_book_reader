@@ -663,7 +663,7 @@ $(document).ready(function() {
 				var new_offset = y_offset + g_scroll_y_start;
 				if (new_offset >= 0 && image_height - new_offset > window_height) {
 					g_scroll_y_temp = y_offset;
-					 $('html, body').animate({scrollTop: new_offset}, 300);
+					 window.scrollTo(0, new_offset);
 //					console.info(image_height + ' + ' + new_offset + '(' + (image_height - new_offset)  + ') > ' + window_height);
 				}
 			}
