@@ -595,7 +595,7 @@ $(document).ready(function() {
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
-			if (Math.abs(x_offset) > g_screen_width / 2) {
+			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index > 0) {
 //				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
 				g_is_swiping_right = true;
 			} else {
@@ -608,7 +608,7 @@ $(document).ready(function() {
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
-			if (Math.abs(x_offset) > g_screen_width / 2) {
+			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_images.length -1) {
 //				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
 				g_is_swiping_left = true;
 			} else {
