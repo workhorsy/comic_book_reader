@@ -47,7 +47,7 @@
 	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 
-.fuck {
+.comicImage {
 	pointer-events: none;
 	width: 100%;
 	user-select: none;
@@ -55,16 +55,36 @@
 	-webkit-user-select: none;
 }
 
-/*
-#pageHolder {
-	pointer-events: none;
-	width: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: -100;
+#imageHolder {
+	border: 10px solid orange;
+	overflow: hidden;
 }
-*/
+
+#draggableContainer {
+	border: 20px solid black;
+	overflow: visible;
+}
+
+#draggableLeft {
+	position: absolute;
+	z-index: 0px;
+	text-align: center;
+	background-color: red;
+}
+
+#draggableMiddle {
+	position: absolute;
+	z-index: 0px;
+	text-align: center;
+	background-color: green;
+}
+
+#draggableRight {
+	position: absolute;
+	z-index: 0px;
+	text-align: center;
+	background-color: blue;
+}
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 		<script src="js/polyfill/polyfill.js"></script>
@@ -92,15 +112,15 @@
 
 		<div id="mainPanel"></div>
 
-		<div id="imageHolder" style="border: 10px solid orange; overflow: hidden;">
-			<div id="draggableContainer" style="border: 20px solid black; overflow: visible;">
-				<div id="draggableLeft" style="position: absolute; z-index: 0px; text-align: center; background-color: red;">
+		<div id="imageHolder">
+			<div id="draggableContainer">
+				<div id="draggableLeft">
 					Left Page
 				</div>
-				<div id="draggableMiddle" style="position: absolute; z-index: 0px; text-align: center; background-color: green;">
+				<div id="draggableMiddle">
 					Middle Page
 				</div>
-				<div id="draggableRight" style="position: absolute; z-index: 0px; text-align: center; background-color: blue;">
+				<div id="draggableRight">
 					Right Page
 				</div>
 			</div>
@@ -300,7 +320,7 @@ function onLoaded(blob) {
 			g_entries.forEach(function(entry) {
 				var img = document.createElement('img');
 				img.title = entry.filename;
-				img.className = 'fuck';
+				img.className = 'comicImage';
 				g_images.push(img);
 				entry.index = i;
 				i++;
