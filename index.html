@@ -194,59 +194,36 @@ function friendlyPageNumber() {
 	return 'Page ' + (g_image_index + 1) + ' of ' + g_images.length;
 }
 
+function replaceIfDifferentImage(parent, image) {
+	var children = parent.children();
+	if (children.length === 0) {
+		parent.append(image);
+	} else if (children.length && children[0].src !== image.src) {
+		parent.empty();
+		parent.append(image);
+	}
+}
+
 function loadCurrentPage() {
-	// Load the current page
+	// Load the middle page
 	updatePageCache(g_image_index);
-	g_middle.empty();
-	g_middle.append(g_images[g_image_index]);
+	replaceIfDifferentImage(g_middle, g_images[g_image_index]);
 	$('#pageOverlay')[0].innerHTML = friendlyPageNumber();
 
-	// Load next page
+	// Load right page
 	if (g_image_index === g_images.length -1) {
 		g_right.empty();
 	} else if (g_image_index < g_images.length -1) {
-		g_right.empty();
-		g_right.append(g_images[g_image_index + 1]);
+		updatePageCache(g_image_index + 1);
+		replaceIfDifferentImage(g_right, g_images[g_image_index + 1]);
 	}
 
-	// Load previous page
+	// Load left page
 	if (g_image_index === 0) {
 		g_left.empty();
 	} else if (g_image_index > 0) {
-		g_left.empty();
-		g_left.append(g_images[g_image_index - 1]);
-	}
-
-	// Cache the next image
-	delayedUpdateNextPageCache(g_image_index, 2);
-
-	// Cache the previous image
-	delayedUpdatePreviousPageCache(g_image_index, 2);
-}
-
-function delayedUpdateNextPageCache(index, depth) {
-	if (index < g_images.length - 1) {
-		index++;
-		setTimeout(function() {
-			if (depth > 0) {
-				depth--;
-				delayedUpdateNextPageCache(index, depth);
-			}
-			updatePageCache(index);
-		}, 333);
-	}
-}
-
-function delayedUpdatePreviousPageCache(index, depth) {
-	if (index > 0) {
-		index--;
-		setTimeout(function() {
-			if (depth > 0) {
-				depth--;
-				delayedUpdatePreviousPageCache(index, depth);
-			}
-			updatePageCache(index);
-		}, 333);
+		updatePageCache(g_image_index - 1);
+		replaceIfDifferentImage(g_left, g_images[g_image_index - 1]);
 	}
 }
 
@@ -487,7 +464,6 @@ $(document).ready(function() {
 	});
 
 	$('#pageContainer').on('mouseup mouseleave', function(e) {
-		console.info('mouse up ' + g_is_mouse_down);
 		if (! g_is_mouse_down) {
 			return;
 		}
