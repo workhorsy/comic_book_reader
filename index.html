@@ -146,6 +146,7 @@ var g_right = null;
 var g_scroll_y_temp = 0;
 var g_scroll_y_start = 0;
 var g_needs_resize = false;
+var g_file_name = null;
 
 function toFrieldlySize(size) {
 	if (size >= 1024000000) {
@@ -222,7 +223,7 @@ function loadComic() {
 }
 
 function friendlyPageNumber() {
-	return 'Page ' + (g_image_index + 1) + ' of ' + g_images.length;
+	return '(' + (g_image_index + 1) + ' of ' + g_images.length + ')';
 }
 
 function replaceIfDifferentImage(parent, image) {
@@ -239,7 +240,9 @@ function loadCurrentPage() {
 	// Load the middle page
 	updatePageCache(g_image_index);
 	replaceIfDifferentImage(g_middle, g_images[g_image_index]);
-	$('#pageOverlay')[0].innerHTML = friendlyPageNumber();
+	var page = friendlyPageNumber();
+	$('#pageOverlay')[0].innerHTML = page;
+	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
 	// Load right page
 	if (g_image_index === g_images.length -1) {
@@ -279,6 +282,7 @@ function updatePageCache(index) {
 }
 
 function setComicData(name, size, type) {
+	g_file_name = name;
 	$('#comicData').show();
 	$('#nameValue').text(name);
 	$('#sizeValue').text(toFrieldlySize(size));
