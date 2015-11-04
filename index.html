@@ -568,7 +568,7 @@ $(document).ready(function() {
 				style.transitionDuration = '0.0s';
 				style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 				g_scroll_y_start = 0;
-				window.scrollTo(0, 0);
+				 $('html, body').animate({scrollTop: 0}, 300);
 
 				if (g_image_index > 0) {
 					g_image_index--;
@@ -603,7 +603,7 @@ $(document).ready(function() {
 				style.transitionDuration = '0.0s';
 				style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 				g_scroll_y_start = 0;
-				window.scrollTo(0, 0);
+				 $('html, body').animate({scrollTop: 0}, 300);
 
 				if (g_image_index < g_images.length -1) {
 					g_image_index++;
@@ -663,7 +663,7 @@ $(document).ready(function() {
 				var new_offset = y_offset + g_scroll_y_start;
 				if (new_offset >= 0 && image_height - new_offset > window_height) {
 					g_scroll_y_temp = y_offset;
-					window.scrollTo(0, new_offset);
+					 $('html, body').animate({scrollTop: new_offset}, 300);
 //					console.info(image_height + ' + ' + new_offset + '(' + (image_height - new_offset)  + ') > ' + window_height);
 				}
 			}
