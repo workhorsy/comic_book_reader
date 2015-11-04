@@ -144,9 +144,9 @@ function blobToDataURI(blob, cb) {
 
 function isValidImageType(file_name) {
 	file_name = file_name.toLowerCase();
-	return file_name.endsWith('.jpeg') || 
+	return file_name.endsWith('.jpeg') ||
 			file_name.endsWith('.jpg') ||
-			file_name.endsWith('.png') || 
+			file_name.endsWith('.png') ||
 			file_name.endsWith('.bmp');
 }
 
@@ -424,21 +424,21 @@ $(document).ready(function() {
 	var g_moving_pannel = null;
 
 	g_left.mousedown(function(e) {
-		g_moving_pannel = g_left;
+		g_moving_pannel = this;
 	});
 
 	g_middle.mousedown(function(e) {
-		g_moving_pannel = g_middle;
+		g_moving_pannel = this;
 	});
 
 	g_right.mousedown(function(e) {
-		g_moving_pannel = g_right;
+		g_moving_pannel = this;
 	});
 
 	$('#draggableContainer').mousedown(function(e) {
 		g_is_mouse_down = true;
 		g_mouse_start_x = e.clientX;
-		console.info(g_mouse_start_x);
+		//console.info(g_mouse_start_x);
 	});
 
 	$(window).resize(function(e) {
@@ -453,29 +453,49 @@ $(document).ready(function() {
 		}
 		g_is_mouse_down = false;
 		g_moving_pannel = null;
-/*
-		
+
 
 		if (g_is_swiping_right) {
 			g_is_swiping_right = false;
-			if (g_image_index > 0) {
-				g_image_index--;
-				loadCurrentPage();
-			}
-		} else if (g_is_swiping_left) {
-			g_is_swiping_left = false;
 
-			var style = g_right[0].style;
+			var style = g_middle[0].style;
 			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(-' + (g_screen_width) + 'px, 0px, 0px)';
+			style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 
-			style = g_middle[0].style;
+			style = g_left[0].style;
 			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
+			style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
 			// Update the page orderings, after the pages move into position
 			setTimeout(function() {
-				console.info('herp ............................');
+				var old_left = g_left;
+				var old_middle = g_middle;
+				var old_right = g_right;
+				g_right = old_middle;
+				g_middle = old_left;
+				g_left = old_right;
+
+				g_left[0].translatedX = g_screen_width * 0;
+				g_middle[0].translatedX = g_screen_width * 1;
+				g_right[0].translatedX = g_screen_width * 2;
+
+				style = g_left[0].style;
+				style.transitionDuration = '0.0s';
+				style.transform = 'translate3d(' + g_left[0].translatedX + 'px, 0px, 0px)';
+			}, 300);
+		} else if (g_is_swiping_left) {
+			g_is_swiping_left = false;
+
+			var style = g_middle[0].style;
+			style.transitionDuration = '0.3s';
+			style.transform = 'translate3d(0px, 0px, 0px)';
+
+			style = g_right[0].style;
+			style.transitionDuration = '0.3s';
+			style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+
+			// Update the page orderings, after the pages move into position
+			setTimeout(function() {
 				var old_left = g_left;
 				var old_middle = g_middle;
 				var old_right = g_right;
@@ -483,18 +503,14 @@ $(document).ready(function() {
 				g_middle = old_right;
 				g_right = old_left;
 
-				var style = g_left[0].style;
-				style.transitionDuration = '0.3s';
-				style.transform = 'translate3d(-' + (g_screen_width) + 'px, 0px, 0px)';
-
-				style = g_middle[0].style;
-				style.transitionDuration = '0.3s';
-				style.transform = 'translate3d(0px, 0px, 0px)';
+				g_left[0].translatedX = g_screen_width * 0;
+				g_middle[0].translatedX = g_screen_width * 1;
+				g_right[0].translatedX = g_screen_width * 2;
 
 				style = g_right[0].style;
-				style.transitionDuration = '0.3s';
-				style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
-			}, 5000);
+				style.transitionDuration = '0.0s';
+				style.transform = 'translate3d(' + g_right[0].translatedX + 'px, 0px, 0px)';
+			}, 300);
 //			if (g_image_index < g_images.length -1) {
 //				g_image_index++;
 //				loadCurrentPage();
@@ -512,43 +528,48 @@ $(document).ready(function() {
 			style.transitionDuration = '0.3s';
 			style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 		}
-*/
 	});
 
 	$('#draggableContainer').mousemove(function(e) {
 		if (! g_is_mouse_down) {
 			return;
 		}
-
+//		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_pannel.translatedX + ', ' + g_moving_pannel.id);
 		var x_offset = e.clientX - g_mouse_start_x;
-		var x = g_moving_pannel[0].translatedX + x_offset;
-		console.info('screen:'+e.clientX + ', start:'+g_mouse_start_x + ', x:'+x);
-		var style = g_moving_pannel[0].style;
+		var x = g_moving_pannel.translatedX + x_offset;
+//		console.info('screen:'+e.clientX + ', start:'+g_mouse_start_x + ', x:'+x);
+//		console.info(x_offset);
+		var style = g_moving_pannel.style;
 		style.transitionDuration = '0.0s';
 		style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
 		if (x_offset > 0) {
-/*
-			if (Math.abs(x) > g_screen_width / 2) {
-//				console.info(Math.abs(x) + ' > ' + (g_screen_width / 2));
+			var x = g_left[0].translatedX + x_offset;
+			var style = g_left[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+			if (Math.abs(x_offset) > g_screen_width / 2) {
+//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
 				g_is_swiping_right = true;
 			} else {
 				g_is_swiping_right = false;
 				g_is_swiping_left = false;
 			}
-*/
 		} else {
-			// FIXME: if moving left, move the g_right pannel left
-/*
-			if (Math.abs(x) > g_screen_width / 2) {
-				console.info(Math.abs(x) + ' > ' + (g_screen_width / 2));
+			var x = g_right[0].translatedX + x_offset;
+			var style = g_right[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+			if (Math.abs(x_offset) > g_screen_width / 2) {
+//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
 				g_is_swiping_left = true;
 			} else {
 				g_is_swiping_right = false;
 				g_is_swiping_left = false;
 			}
 		}
-*/
 	});
 
 	$('#mainPanel').hide();
