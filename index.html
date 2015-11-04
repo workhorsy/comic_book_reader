@@ -9,7 +9,6 @@
 	opacity: 0.9;
 	position: absolute;
 	top: 0px;
-	left: 0px;
 	z-index: 1000;
 	border: 1px solid black;
 	margin: 20px;
@@ -175,19 +174,21 @@ function isValidImageType(file_name) {
 }
 
 function hideTopPanel() {
+	var height = $('#topPanel').outerHeight() + 10;
 	var style = $('#topPanel')[0].style;
 	style.transitionDuration = '0.3s';
-	var height = $('#topPanel').outerHeight() + 10;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 	g_top_visible = 0.0;
 }
 
-function showTopPanel(y_offset) {
-	var style = $('#topPanel')[0].style;
-	style.transitionDuration = '0.2s';
+function showTopPanel(y_offset, is_instant) {
+	var speed = is_instant ? '0.0s' : '0.2s';
 	var height = $('#topPanel').outerHeight();
 	var offset = -height + (height * y_offset);
+	var style = $('#topPanel')[0].style;
+	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
+	style.width = (g_screen_width - 80) + 'px';
 	g_top_visible = y_offset;
 }
 
@@ -342,7 +343,7 @@ function onError(msg) {
 	$('#comicData').hide();
 	$('#loadError').text('Error: ' + msg);
 	$('#loadError').show();
-	showTopPanel(1.0);
+	showTopPanel(1.0, true);
 }
 
 function onProgress(loaded, total) {
@@ -359,7 +360,7 @@ function onResize(screen_width) {
 	if (g_top_visible < 1.0) {
 		hideTopPanel();
 	} else {
-		showTopPanel(g_top_visible);
+		showTopPanel(g_top_visible, true);
 	}
 
 	var style = $('#pageContainer')[0].style;
@@ -581,7 +582,7 @@ $(document).ready(function() {
 		if (g_mouse_start_y < 200 && g_is_vertical && y_offset > 10) {
 			var y = y_offset > 200.0 ? 200.0 : y_offset;
 //			console.info(y / 200.0);
-			showTopPanel(y / 200.0);
+			showTopPanel(y / 200.0, false);
 		}
 
 		// Scroll the comic panels if we are swiping right or left
