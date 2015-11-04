@@ -424,15 +424,27 @@ $(document).ready(function() {
 	var g_moving_pannel = null;
 
 	g_left.mousedown(function(e) {
-		g_moving_pannel = this;
+		if (this.panel_index === 1) {
+			g_moving_pannel = this;
+		} else {
+			g_moving_pannel = null;
+		}
 	});
 
 	g_middle.mousedown(function(e) {
-		g_moving_pannel = this;
+		if (this.panel_index === 1) {
+			g_moving_pannel = this;
+		} else {
+			g_moving_pannel = null;
+		}
 	});
 
 	g_right.mousedown(function(e) {
-		g_moving_pannel = this;
+		if (this.panel_index === 1) {
+			g_moving_pannel = this;
+		} else {
+			g_moving_pannel = null;
+		}
 	});
 
 	$('#draggableContainer').mousedown(function(e) {
@@ -531,7 +543,7 @@ $(document).ready(function() {
 	});
 
 	$('#draggableContainer').mousemove(function(e) {
-		if (! g_is_mouse_down) {
+		if (! g_is_mouse_down || ! g_moving_pannel) {
 			return;
 		}
 //		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_pannel.panel_index + ', ' + g_moving_pannel.id);
