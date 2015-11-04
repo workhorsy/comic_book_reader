@@ -548,8 +548,6 @@ $(document).ready(function() {
 			style = g_left[0].style;
 			style.transitionDuration = '0.3s';
 			style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
-			g_scroll_y_start = 0;
-			window.scrollTo(0, 0);
 
 			// Update the page orderings, after the pages move into position
 			setTimeout(function() {
@@ -567,6 +565,8 @@ $(document).ready(function() {
 				style = g_left[0].style;
 				style.transitionDuration = '0.0s';
 				style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+				g_scroll_y_start = 0;
+				window.scrollTo(0, 0);
 
 				if (g_image_index > 0) {
 					g_image_index--;
@@ -583,8 +583,6 @@ $(document).ready(function() {
 			style = g_right[0].style;
 			style.transitionDuration = '0.3s';
 			style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
-			g_scroll_y_start = 0;
-			window.scrollTo(0, 0);
 
 			// Update the page orderings, after the pages move into position
 			setTimeout(function() {
@@ -602,6 +600,8 @@ $(document).ready(function() {
 				style = g_right[0].style;
 				style.transitionDuration = '0.0s';
 				style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+				g_scroll_y_start = 0;
+				window.scrollTo(0, 0);
 
 				if (g_image_index < g_images.length -1) {
 					g_image_index++;
