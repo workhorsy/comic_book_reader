@@ -37,12 +37,21 @@
 	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 
+.unselectable {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-drag: none;
+}
+
 .comicImage {
 	pointer-events: none;
 	width: 100%;
 	user-select: none;
 	-moz-user-select: none;
 	-webkit-user-select: none;
+	-ms-user-select: none;
 	-webkit-user-drag: none;
 }
 
@@ -95,7 +104,7 @@
 		<script src="js/screenfull.js/screenfull.js"></script>
 	</head>
 	<body style="margin: 0; padding: 0;">
-		<div id="topPanel">
+		<div id="topPanel" class="unselectable">
 			<input id="fileInput" type="file" required="required" />
 			<button id="fileLoad">Load comic from your computer</button>
 
@@ -110,18 +119,18 @@
 			</div>
 		</div>
 
-		<div id="comicPanel" touchable>
-			<div id="pageContainer" touchable>
-				<div id="pageLeft" touchable>
+		<div id="comicPanel" class="unselectable" touchable>
+			<div id="pageContainer" class="unselectable" touchable>
+				<div id="pageLeft" class="unselectable" touchable>
 					Left Page
 				</div>
-				<div id="pageMiddle" touchable>
+				<div id="pageMiddle" class="unselectable" touchable>
 					Middle Page
 				</div>
-				<div id="pageRight" touchable>
+				<div id="pageRight" class="unselectable" touchable>
 					Right Page
 				</div>
-				<div id="pageOverlay" touchable>
+				<div id="pageOverlay" class="unselectable" touchable>
 				</div>
 			</div>
 		</div>
