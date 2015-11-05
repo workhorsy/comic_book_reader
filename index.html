@@ -91,7 +91,7 @@
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 		<script src="js/polyfill/polyfill.js"></script>
-		<script src="js/zip.js"></script>
+		<script src="js/zip/zip.js"></script>
 		<script src="js/screenfull.js/screenfull.js"></script>
 	</head>
 	<body style="margin: 0; padding: 0;">
@@ -465,7 +465,7 @@ function onResize(screen_width) {
 
 $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
-	zip.workerScriptsPath = 'js/';
+	zip.workerScriptsPath = 'js/zip/';
 
 	g_left = $('#pageLeft');
 	g_middle = $('#pageMiddle');
