@@ -1,0 +1,108 @@
+
+body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+#topPanel {
+	opacity: 0.9;
+	position: fixed;
+	top: 0px;
+	z-index: 1000;
+	border: 1px solid black;
+	margin: 20px;
+	margin-top: 0px;
+	padding: 20px;
+	padding-top: 0px;
+	box-shadow: 10px 10px 5px #888888;
+	background: silver;
+	text-align: center;
+}
+
+#loadProgress {
+	width: 100%;
+	display: none;
+}
+
+#btnFullScreen {
+	font: 30px/100px Helvetica, Arial, sans-serif;
+}
+
+#fileInput {
+	display: none;
+}
+
+#fileLoad {
+	font: 30px/100px Helvetica, Arial, sans-serif;
+}
+
+.unselectable {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-drag: none;
+}
+
+.comicImage {
+	pointer-events: none;
+	width: 100%;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-drag: none;
+}
+
+#comicPanel {
+	position: absolute;
+	/*border: 10px solid orange;*/
+	overflow: hidden;
+}
+
+#pageContainer {
+	/*border: 20px solid black;*/
+	overflow: visible;
+}
+
+#pageLeft {
+	position: absolute;
+	text-align: center;
+	background-color: red;
+}
+
+#pageMiddle {
+	position: absolute;
+	text-align: center;
+	background-color: green;
+}
+
+#pageRight {
+	position: absolute;
+	text-align: center;
+	background-color: blue;
+}
+
+#pageOverlay {
+	position: absolute;
+	pointer-events: none;
+	text-align: center;
+	font: 100px/300px Helvetica, Arial, sans-serif;
+	text-shadow: 4px 4px 20px white;
+	opacity: 0.5;
+}
+
+#scrollBar {
+	position: fixed;
+	z-index: 500;
+	padding: 0px;
+	margin: 10px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	background-color: silver;
+	width: 20px;
+	height: 50px;
+	opacity: 0.9;
+	display: none;
+}
