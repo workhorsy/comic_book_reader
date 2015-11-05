@@ -92,6 +92,20 @@
 	text-shadow: 4px 4px 20px white;
 	opacity: 0.5;
 }
+
+#scrollBar {
+	position: fixed;
+	z-index: 500;
+	padding: 0px;
+	margin: 10px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	background-color: silver;
+	width: 20px;
+	height: 50px;
+	opacity: 0.9;
+	display: none;
+}
 		</style>
 		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 		<script src="js/polyfill/polyfill.js"></script>
@@ -99,6 +113,9 @@
 		<script src="js/screenfull.js/screenfull.js"></script>
 	</head>
 	<body style="margin: 0; padding: 0; overflow: hidden;">
+		<div id="scrollBar">
+		</div>
+
 		<div id="topPanel" class="unselectable">
 			<input id="fileInput" type="file" required="required" />
 			<button id="fileLoad">Load comic from your computer</button>
@@ -263,6 +280,8 @@ function loadCurrentPage() {
 		updatePageCache(g_image_index - 1);
 		replaceIfDifferentImage(g_left, g_images[g_image_index - 1]);
 	}
+
+	updateScrollBar();
 }
 
 function updatePageCache(index) {
@@ -466,6 +485,40 @@ function onResize(screen_width) {
 	style.transitionDuration = '0.0s';
 	g_right[0].panel_index = 2;
 	style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+
+	updateScrollBar();
+}
+
+function updateScrollBar() {
+	// Get the heights
+	var window_height = $(window).height();
+	var image_height = $('#' + g_middle.children()[0].id).height();
+	if (window_height < 1 || image_height < 1) {
+		return;
+	}
+
+	// Get the percentage of screen height to image height
+	var height_percentage = window_height / image_height;
+	if (height_percentage > 1.0) {
+		height_percentage = 1.0;
+	}
+
+	// Get the percentage of scroll height
+	var y = g_scroll_y_temp + g_scroll_y_start;
+	var y_percentage = (image_height + y) / image_height;
+
+	// Update the scroll bar size and position
+	var scroll_bar = $('#scrollBar');
+	style = scroll_bar[0].style;
+	style.height = (height_percentage * window_height) + 'px';
+	style.top = (window_height - (y_percentage * window_height)) + 'px';
+
+	// Hide the scroll bar if it is at least 98% full size
+	if (height_percentage >= 0.98) {
+		scroll_bar.hide();
+	} else if (scroll_bar.is(':hidden')) {
+		scroll_bar.show();
+	}
 }
 
 $(document).ready(function() {
@@ -683,6 +736,8 @@ $(document).ready(function() {
 					var style = g_moving_panel.style;
 					style.transitionDuration = '0.0s';
 					style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+
+					updateScrollBar();
 				}
 			}
 		}
