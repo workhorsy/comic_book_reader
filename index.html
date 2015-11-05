@@ -98,7 +98,7 @@
 		<script src="js/zip/zip.js"></script>
 		<script src="js/screenfull.js/screenfull.js"></script>
 	</head>
-	<body style="margin: 0; padding: 0;">
+	<body style="margin: 0; padding: 0; overflow: hidden;">
 		<div id="topPanel" class="unselectable">
 			<input id="fileInput" type="file" required="required" />
 			<button id="fileLoad">Load comic from your computer</button>
@@ -475,6 +475,12 @@ $(document).ready(function() {
 	g_left = $('#pageLeft');
 	g_middle = $('#pageMiddle');
 	g_right = $('#pageRight');
+
+	// Stop the mouse wheel from scrolling
+	$('body').on('mousewheel', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	});
 
 	// Resize everything when the browser resizes
 	$(window).resize(function(e) {
