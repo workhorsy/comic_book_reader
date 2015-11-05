@@ -347,7 +347,6 @@ function onLoaded(blob) {
 				i++;
 			});
 
-			$('html, body').animate({scrollTop: 0}, 300);
 			g_image_index = 0;
 			loadCurrentPage();
 			var width = $(window).width();
@@ -456,7 +455,9 @@ function onResize(screen_width) {
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	g_middle[0].panel_index = 1;
-	style.transform = 'translate3d(' + (g_middle[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+	var x = g_middle[0].panel_index * g_screen_width;
+	var y = g_scroll_y_temp + g_scroll_y_start;
+	style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_right[0].style;
@@ -577,7 +578,6 @@ $(document).ready(function() {
 				style.transitionDuration = '0.0s';
 				style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 				g_scroll_y_start = 0;
-				 $('html, body').animate({scrollTop: 0}, 300);
 
 				if (g_image_index > 0) {
 					g_image_index--;
@@ -612,7 +612,6 @@ $(document).ready(function() {
 				style.transitionDuration = '0.0s';
 				style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 				g_scroll_y_start = 0;
-				 $('html, body').animate({scrollTop: 0}, 300);
 
 				if (g_image_index < g_images.length -1) {
 					g_image_index++;
@@ -624,9 +623,10 @@ $(document).ready(function() {
 			style.transitionDuration = '0.3s';
 			style.transform = 'translate3d(0px, 0px, 0px)';
 
+			var y = g_scroll_y_temp + g_scroll_y_start;
 			style = g_middle[0].style;
 			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, 0px, 0px)';
+			style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, ' + y + 'px, 0px)';
 
 			style = g_right[0].style;
 			style.transitionDuration = '0.3s';
@@ -666,14 +666,17 @@ $(document).ready(function() {
 			// Scroll the page up and down
 			} else {
 				var window_height = $(window).height();
-				var image_height = $('#' + g_middle.children()[0].id).height();
+				var image_height = $('#' + g_moving_panel.children[0].id).height();
 
 				// Only scroll down if the top of the image is above the screen top
 				var new_offset = y_offset + g_scroll_y_start;
-				if (new_offset >= 0 && image_height - new_offset > window_height) {
+				if (new_offset <= 0 && image_height + new_offset > window_height) {
 					g_scroll_y_temp = y_offset;
-					 window.scrollTo(0, new_offset);
-//					console.info(image_height + ' + ' + new_offset + '(' + (image_height - new_offset)  + ') > ' + window_height);
+
+					var x = (g_moving_panel.panel_index * g_screen_width);
+					var style = g_moving_panel.style;
+					style.transitionDuration = '0.0s';
+					style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
 				}
 			}
 		}
@@ -681,9 +684,10 @@ $(document).ready(function() {
 		// Scroll the comic panels if we are swiping right or left
 		if (! g_is_vertical && g_moving_panel) {
 			var x = (g_moving_panel.panel_index * g_screen_width) + x_offset;
+			var y = g_scroll_y_temp + g_scroll_y_start;
 			var style = g_moving_panel.style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+			style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
 
 			if (x_offset > 0) {
 				var x = (g_left[0].panel_index * g_screen_width) + x_offset;
