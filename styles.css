@@ -69,19 +69,19 @@ body {
 #pageLeft {
 	position: absolute;
 	text-align: center;
-	background-color: red;
+	/*background-color: red;*/
 }
 
 #pageMiddle {
 	position: absolute;
 	text-align: center;
-	background-color: green;
+	/*background-color: green;*/
 }
 
 #pageRight {
 	position: absolute;
 	text-align: center;
-	background-color: blue;
+	/*background-color: blue;*/
 }
 
 #pageOverlay {
