@@ -59,6 +59,7 @@ body {
 	position: absolute;
 	/*border: 10px solid orange;*/
 	overflow: hidden;
+	background-color: black;
 }
 
 #pageContainer {

@@ -61,10 +61,11 @@ function hideTopPanel(is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 	g_top_visible = 0.0;
+	$('#pageContainer')[0].style.opacity = 1.0;
 }
 
 function showTopPanel(y_offset, is_instant) {
-	var speed = is_instant ? '0.0s' : '0.2s';
+	var speed = is_instant ? '0.0s' : '0.1s';
 	var height = $('#topPanel').outerHeight();
 	var offset = -height + (height * y_offset);
 	var style = $('#topPanel')[0].style;
@@ -72,6 +73,7 @@ function showTopPanel(y_offset, is_instant) {
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	style.width = (g_screen_width - 80) + 'px';
 	g_top_visible = y_offset;
+	$('#pageContainer')[0].style.opacity = 1.0 - (0.9 * g_top_visible);
 }
 
 function loadComic() {
