@@ -373,9 +373,52 @@ function updateScrollBar() {
 
 	// Hide the scroll bar if it is at least 98% full size
 	if (height_percentage >= 0.98) {
-		scroll_bar.hide();
+		overlayHide();
 	} else if (scroll_bar.is(':hidden')) {
+		overlayShow(true);
+	} else {
+		overlayShow(false);
+	}
+}
+
+function overlayHide() {
+//	console.info('hide ...');
+	var scroll_bar = $('#scrollBar');
+	scroll_bar.hide();
+//	var overlay = $('#pageOverlay');
+//	overlay.hide();
+}
+
+function overlayShow(is_fading) {
+	if (is_fading) {
+//		console.info('show with fade ...');
+	} else {
+//		console.info('show ...');
+	}
+	var scroll_bar = $('#scrollBar');
+	scroll_bar.stop();
+	scroll_bar[0].style.opacity = 0.5;
+	if (is_fading) {
 		scroll_bar.show();
+		scroll_bar.animate({
+			opacity: 0.0
+		}, 5000, function() {
+			scroll_bar.hide();
+//			console.info('fade stop ...');
+		});
+	}
+
+	var overlay = $('#pageOverlay');
+	overlay.stop();
+	overlay[0].style.opacity = 0.5;
+	if (is_fading) {
+		overlay.show();
+		overlay.animate({
+			opacity: 0.0
+		}, 5000, function() {
+			overlay.hide();
+//			console.info('fade stop ...');
+		});
 	}
 }
 
@@ -555,6 +598,8 @@ $(document).ready(function() {
 			style.transitionDuration = '0.3s';
 			style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 		}
+
+		overlayShow(true);
 	});
 
 	$('body').mousemove(function(e) {
