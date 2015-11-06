@@ -43,7 +43,7 @@ body {
 	display: none;
 }
 
-#btnFullScreen {
+#btnFullScreen, #btnOpenGithub {
 	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 

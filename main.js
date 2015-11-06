@@ -411,6 +411,12 @@ $(document).ready(function() {
 		}
 	});
 
+	// Open github in a new tab
+	$('#btnOpenGithub').click(function () {
+		var url = "https://github.com/workhorsy/comic_book_reader";
+		window.open(url, '_blank');
+	});
+
 	g_left.mousedown(function(e) {
 		if (this.panel_index === 1) {
 			g_moving_panel = this;
