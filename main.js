@@ -22,6 +22,7 @@ var g_scroll_y_temp = 0;
 var g_scroll_y_start = 0;
 var g_needs_resize = false;
 var g_file_name = null;
+var g_down_swipe_size = 100.0;
 
 function toFrieldlySize(size) {
 	if (size >= 1024000000) {
@@ -581,10 +582,10 @@ $(document).ready(function() {
 		if (g_is_vertical && g_moving_panel) {
 //			console.info('vertical ...');
 			// Show the top panel if we are swiping down from the top
-			if (g_mouse_start_y < 200 && y_offset > 0) {
-				var y = y_offset > 200.0 ? 200.0 : y_offset;
-	//			console.info(y / 200.0);
-				showTopPanel(y / 200.0, false);
+			if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
+				var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
+	//			console.info(y / g_down_swipe_size);
+				showTopPanel(y / g_down_swipe_size, false);
 			// Scroll the page up and down
 			} else {
 				var window_height = $(window).height();
