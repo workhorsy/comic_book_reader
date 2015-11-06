@@ -144,12 +144,13 @@ function updatePageCache(index) {
 		console.info('!!! Cached page: ' + index + ', ' + img.title);
 	} else {
 		var entry = g_entries[index];
+		var entry_index = entry.index;
 		entry.getData(new zip.BlobWriter(), function(blob) {
 	//		console.info(entry.filename);
 	//		console.info(blob);
 			blobToDataURI(blob, function(data_uri) {
 				// Load the blob into an image
-				var img = g_images[entry.index];
+				var img = g_images[entry_index];
 				img.src = data_uri;
 				img.is_loaded = true;
 				console.info('Loaded page: ' + index + ', ' + img.title);

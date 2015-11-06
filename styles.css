@@ -5,6 +5,24 @@ body {
 	overflow: hidden;
 }
 
+.unselectable {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-drag: none;
+}
+
+.comicImage {
+	pointer-events: none;
+	width: 100%;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-drag: none;
+}
+
 #topPanel {
 	opacity: 0.9;
 	position: fixed;
@@ -35,24 +53,6 @@ body {
 
 #fileLoad {
 	font: 30px/100px Helvetica, Arial, sans-serif;
-}
-
-.unselectable {
-	user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	-webkit-user-drag: none;
-}
-
-.comicImage {
-	pointer-events: none;
-	width: 100%;
-	user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	-webkit-user-drag: none;
 }
 
 #comicPanel {
