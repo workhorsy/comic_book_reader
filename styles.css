@@ -53,11 +53,7 @@ body {
 	display: none;
 }
 
-#btnFullScreen, #btnOpenGithub {
-	font: 30px/100px Helvetica, Arial, sans-serif;
-}
-
-#btnFileLoad {
+#btnFullScreen, #btnOpenGithub, #btnFileLoad {
 	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 
