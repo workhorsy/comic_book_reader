@@ -105,6 +105,7 @@ body {
 }
 
 #scrollBar {
+	pointer-events: none;
 	position: fixed;
 	z-index: 500;
 	padding: 0px;
