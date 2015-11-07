@@ -97,8 +97,10 @@ body {
 #pageOverlay {
 	position: absolute;
 	pointer-events: none;
-	text-align: center;
-	font: 100px/300px Helvetica, Arial, sans-serif;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font: 100px Helvetica, Arial, sans-serif;
 	color: DeepSkyBlue;
 	text-shadow: 4px 4px 20px black;
 	opacity: 0.5;

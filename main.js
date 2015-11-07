@@ -319,9 +319,16 @@ function onResize(screen_width) {
 	// Make it as wide as the screen and as tall as the tallest image
 	style = $('#pageOverlay')[0].style;
 	style.width = g_screen_width + 'px';
-	style.height = height + 'px';
+	style.height = $(window).height() + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(' + (1 * g_screen_width) + 'px, 0px, 0px)';
+
+	// Make the overlay font 10% the screen width
+	var size = g_screen_width / 10;
+	if (size < 50) {
+		size = 50;
+	}
+	style.fontSize = size + 'px';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_left[0].style;
