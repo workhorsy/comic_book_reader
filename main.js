@@ -6,6 +6,7 @@
 var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
+var g_urls = {};
 var g_moving_panel = null;
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
@@ -112,7 +113,7 @@ function replaceIfDifferentImage(parent, image) {
 
 function loadCurrentPage() {
 	// Load the middle page
-	updatePageCache(g_image_index);
+	loadImage(g_image_index);
 	replaceIfDifferentImage(g_middle, g_images[g_image_index]);
 	var page = friendlyPageNumber();
 	$('#pageOverlay')[0].innerHTML = page;
@@ -122,7 +123,7 @@ function loadCurrentPage() {
 	if (g_image_index === g_images.length -1) {
 		g_right.empty();
 	} else if (g_image_index < g_images.length -1) {
-		updatePageCache(g_image_index + 1);
+		loadImage(g_image_index + 1);
 		replaceIfDifferentImage(g_right, g_images[g_image_index + 1]);
 	}
 
@@ -130,30 +131,41 @@ function loadCurrentPage() {
 	if (g_image_index === 0) {
 		g_left.empty();
 	} else if (g_image_index > 0) {
-		updatePageCache(g_image_index - 1);
+		loadImage(g_image_index - 1);
 		replaceIfDifferentImage(g_left, g_images[g_image_index - 1]);
 	}
 
 	updateScrollBar();
 }
 
-function updatePageCache(index) {
+function loadImage(index) {
 	var img = g_images[index];
-	if (img.is_loaded) {
-		console.info('!!! Cached page: ' + index + ', ' + img.title);
-	} else {
-		var entry = g_entries[index];
-		var entry_index = entry.index;
-		entry.getData(new zip.BlobWriter(), function(blob) {
-	//		console.info(entry.filename);
-	//		console.info(blob);
-
-			// Load the blob into an image
-			var url = URL.createObjectURL(blob);
-			var img = g_images[entry_index];
+	if (! img.is_loaded) {
+		uncompressImage(index, function(j, url, filename) {
+			var img = g_images[j];
 			img.src = url;
 			img.is_loaded = true;
-			console.info('Loaded page: ' + index + ', ' + img.title);
+			console.info('!!! Loading image ' + index + ': ' + img.title);
+		});
+	}
+}
+
+function uncompressImage(i, cb) {
+	var entry = g_entries[i];
+
+	// Image is already uncompressed and an Object URL
+//	console.info(g_urls);
+	if (g_urls.hasOwnProperty(i)) {
+		var url = g_urls[i];
+//		console.info('??? Already Uncompressed ' + i + ': ' + entry.filename);
+		cb(entry.index, url, entry.filename);
+	// Image needs to be uncompressed and converted to an Object URL
+	} else {
+		entry.getData(new zip.BlobWriter(), function(blob) {
+			var url = URL.createObjectURL(blob);
+			g_urls[i] = url;
+			console.info('!!! Uncompressing image ' + i + ': ' +  entry.filename);
+			cb(entry.index, url, entry.filename);
 		});
 	}
 }
@@ -172,22 +184,24 @@ function clearComicData() {
 	$('#comicData').hide();
 	$('#loadProgress').val(0);
 	setComicData('?', '?', '?');
-
-	// Remove all the Object URLs
-	for (var i=0; i<g_images.length; ++i) {
-		var img = g_images[i];
-		if (img.src && img.src.length > 0) {
-			URL.revokeObjectURL(img.src);
-		}
-	}
-
-	// Remove all the old images and compressed file entries
 	g_middle.empty();
 	g_left.empty();
 	g_right.empty();
+
+	// Remove all the Object URLs
+	Object.keys(g_urls).forEach(function(i) {
+		var url = g_urls[i];
+		URL.revokeObjectURL(url);
+	});
+	g_images.forEach(function(img) {
+		img.src = '';
+	});
+
+	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
 	g_images = [];
 	g_entries = [];
+	g_urls = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 }
