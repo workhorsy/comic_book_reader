@@ -491,6 +491,20 @@ function onMouseMove(e) {
 	}
 }
 
+function onMouseWheel(e) {
+	var e = window.event || e;
+	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+	if (delta === 1) {
+		console.info('!!! scroll down');
+	} else if (delta === -1) {
+		console.info('!!! scroll up');
+	}
+
+	e.preventDefault();
+	e.stopPropagation();
+}
+
 function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
@@ -660,12 +674,6 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
-	// Stop the mouse wheel from scrolling
-	$('body').on('mousewheel', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-	});
-
 	// Resize everything when the browser resizes
 	$(window).resize(function() {
 		var width = $(window).width();
@@ -705,6 +713,10 @@ $(document).ready(function() {
 	$('body').mousedown(onMouseDown);
 	$('body').on('mouseup mouseleave', onMouseUp);
 	$('body').mousemove(onMouseMove);
+
+	// Mouse wheel events
+	document.body.addEventListener('mousewheel', onMouseWheel, false);
+	document.body.addEventListener('DOMMouseScroll', onMouseWheel, false);
 
 	// Reset everything
 	$('#comicPanel').hide();
