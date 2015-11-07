@@ -280,6 +280,217 @@ function largestPageNaturalHeight() {
 	return largestNumber(left_height, middle_height, right_height);
 }
 
+function onPageMouseDown(e) {
+	if (this.panel_index === 1) {
+		g_moving_panel = this;
+	} else {
+		g_moving_panel = null;
+	}
+}
+
+function onMouseDown(e) {
+	// Skip if clicking on something that is no touchable
+	if (! e.target.hasAttribute('touchable')) {
+		return;
+	}
+
+	// If the top menu is showing, hide it
+	if (e.target.hasAttribute('touchable') && g_top_visible > 0.0) {
+		hideTopPanel(false);
+		return;
+	}
+
+	g_is_mouse_down = true;
+	g_mouse_start_x = e.clientX;
+	g_mouse_start_y = e.clientY;
+}
+
+function onMouseUp(e) {
+	if (g_top_visible > 0.0 && g_top_visible < 1.0) {
+		hideTopPanel(false);
+	}
+
+	if (! g_is_mouse_down) {
+		return;
+	}
+	g_is_mouse_down = false;
+	g_moving_panel = null;
+	g_scroll_y_start += g_scroll_y_temp;
+	g_scroll_y_temp = 0;
+
+
+	if (g_is_swiping_right) {
+		g_is_swiping_right = false;
+
+		var style = g_middle[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
+
+		style = g_left[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+
+		// Update the page orderings, after the pages move into position
+		setTimeout(function() {
+			var old_left = g_left;
+			var old_middle = g_middle;
+			var old_right = g_right;
+			g_right = old_middle;
+			g_middle = old_left;
+			g_left = old_right;
+
+			g_left[0].panel_index = 0;
+			g_middle[0].panel_index = 1;
+			g_right[0].panel_index = 2;
+
+			style = g_left[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+			g_scroll_y_start = 0;
+
+			if (g_image_index > 0) {
+				g_image_index--;
+				loadCurrentPage();
+			}
+		}, 300);
+	} else if (g_is_swiping_left) {
+		g_is_swiping_left = false;
+
+		var style = g_middle[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(0px, 0px, 0px)';
+
+		style = g_right[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+
+		// Update the page orderings, after the pages move into position
+		setTimeout(function() {
+			var old_left = g_left;
+			var old_middle = g_middle;
+			var old_right = g_right;
+			g_left = old_middle;
+			g_middle = old_right;
+			g_right = old_left;
+
+			g_left[0].panel_index = 0;
+			g_middle[0].panel_index = 1;
+			g_right[0].panel_index = 2;
+
+			style = g_right[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+			g_scroll_y_start = 0;
+
+			if (g_image_index < g_images.length -1) {
+				g_image_index++;
+				loadCurrentPage();
+			}
+		}, 300);
+	} else {
+		var style = g_left[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(0px, 0px, 0px)';
+
+		var y = g_scroll_y_temp + g_scroll_y_start;
+		style = g_middle[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, ' + y + 'px, 0px)';
+
+		style = g_right[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
+	}
+
+	overlayShow(true);
+}
+
+function onMouseMove(e) {
+	if (! g_is_mouse_down) {
+		return;
+	}
+
+	// Figure out if we are moving vertically or horizontally
+//		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_panel.panel_index + ', ' + g_moving_panel.id);
+	if (Math.abs(e.clientY - g_mouse_start_y) > Math.abs(e.clientX - g_mouse_start_x)) {
+		g_is_vertical = true;
+	} else {
+		g_is_vertical = false;
+	}
+
+	// Get how far we have moved since pressing down
+//		console.info(g_is_vertical);
+//		console.info(e.clientX + ', ' + e.clientY + ', ' + g_is_vertical);
+	var x_offset = e.clientX - g_mouse_start_x;
+	var y_offset = e.clientY - g_mouse_start_y;
+//		console.info(y_offset);
+
+	//console.info(g_mouse_start_y);
+//		console.info(g_is_vertical + ', ' + x_offset + ', ' + y_offset);
+	if (g_is_vertical && g_moving_panel) {
+//			console.info('vertical ...');
+		// Show the top panel if we are swiping down from the top
+		if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
+			var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
+//			console.info(y / g_down_swipe_size);
+			showTopPanel(y / g_down_swipe_size, false);
+		// Scroll the page up and down
+		} else {
+			var image_height = $('#' + g_moving_panel.children[0].id).height();
+
+			// Only scroll down if the top of the image is above the screen top
+			var new_offset = y_offset + g_scroll_y_start;
+			if (new_offset <= 0 && image_height + new_offset > g_screen_height) {
+				g_scroll_y_temp = y_offset;
+
+				var x = (g_moving_panel.panel_index * g_screen_width);
+				var style = g_moving_panel.style;
+				style.transitionDuration = '0.0s';
+				style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+
+				updateScrollBar();
+			}
+		}
+	}
+
+	// Scroll the comic panels if we are swiping right or left
+	if (! g_is_vertical && g_moving_panel) {
+		var x = (g_moving_panel.panel_index * g_screen_width) + x_offset;
+		var y = g_scroll_y_temp + g_scroll_y_start;
+		var style = g_moving_panel.style;
+		style.transitionDuration = '0.0s';
+		style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
+
+		if (x_offset > 0) {
+			var x = (g_left[0].panel_index * g_screen_width) + x_offset;
+			var style = g_left[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index > 0) {
+//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
+				g_is_swiping_right = true;
+			} else {
+				g_is_swiping_right = false;
+				g_is_swiping_left = false;
+			}
+		} else {
+			var x = (g_right[0].panel_index * g_screen_width) + x_offset;
+			var style = g_right[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_images.length -1) {
+//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
+				g_is_swiping_left = true;
+			} else {
+				g_is_swiping_right = false;
+				g_is_swiping_left = false;
+			}
+		}
+	}
+}
+
 function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
@@ -476,232 +687,15 @@ $(document).ready(function() {
 		window.open(url, '_blank');
 	});
 
-	g_left.mousedown(function(e) {
-		if (this.panel_index === 1) {
-			g_moving_panel = this;
-		} else {
-			g_moving_panel = null;
-		}
-	});
+	// Mouse events for the pages
+	g_left.mousedown(onPageMouseDown);
+	g_middle.mousedown(onPageMouseDown);
+	g_right.mousedown(onPageMouseDown);
 
-	g_middle.mousedown(function(e) {
-		if (this.panel_index === 1) {
-			g_moving_panel = this;
-		} else {
-			g_moving_panel = null;
-		}
-	});
-
-	g_right.mousedown(function(e) {
-		if (this.panel_index === 1) {
-			g_moving_panel = this;
-		} else {
-			g_moving_panel = null;
-		}
-	});
-
-	$('body').mousedown(function(e) {
-		// Skip if clicking on something that is no touchable
-		if (! e.target.hasAttribute('touchable')) {
-			return;
-		}
-
-		// If the top menu is showing, hide it
-		if (e.target.hasAttribute('touchable') && g_top_visible > 0.0) {
-			hideTopPanel(false);
-			return;
-		}
-
-		g_is_mouse_down = true;
-		g_mouse_start_x = e.clientX;
-		g_mouse_start_y = e.clientY;
-	});
-
-	$('body').on('mouseup mouseleave', function(e) {
-		if (g_top_visible > 0.0 && g_top_visible < 1.0) {
-			hideTopPanel(false);
-		}
-
-		if (! g_is_mouse_down) {
-			return;
-		}
-		g_is_mouse_down = false;
-		g_moving_panel = null;
-		g_scroll_y_start += g_scroll_y_temp;
-		g_scroll_y_temp = 0;
-
-
-		if (g_is_swiping_right) {
-			g_is_swiping_right = false;
-
-			var style = g_middle[0].style;
-			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
-
-			style = g_left[0].style;
-			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
-
-			// Update the page orderings, after the pages move into position
-			setTimeout(function() {
-				var old_left = g_left;
-				var old_middle = g_middle;
-				var old_right = g_right;
-				g_right = old_middle;
-				g_middle = old_left;
-				g_left = old_right;
-
-				g_left[0].panel_index = 0;
-				g_middle[0].panel_index = 1;
-				g_right[0].panel_index = 2;
-
-				style = g_left[0].style;
-				style.transitionDuration = '0.0s';
-				style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
-				g_scroll_y_start = 0;
-
-				if (g_image_index > 0) {
-					g_image_index--;
-					loadCurrentPage();
-				}
-			}, 300);
-		} else if (g_is_swiping_left) {
-			g_is_swiping_left = false;
-
-			var style = g_middle[0].style;
-			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(0px, 0px, 0px)';
-
-			style = g_right[0].style;
-			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
-
-			// Update the page orderings, after the pages move into position
-			setTimeout(function() {
-				var old_left = g_left;
-				var old_middle = g_middle;
-				var old_right = g_right;
-				g_left = old_middle;
-				g_middle = old_right;
-				g_right = old_left;
-
-				g_left[0].panel_index = 0;
-				g_middle[0].panel_index = 1;
-				g_right[0].panel_index = 2;
-
-				style = g_right[0].style;
-				style.transitionDuration = '0.0s';
-				style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
-				g_scroll_y_start = 0;
-
-				if (g_image_index < g_images.length -1) {
-					g_image_index++;
-					loadCurrentPage();
-				}
-			}, 300);
-		} else {
-			var style = g_left[0].style;
-			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(0px, 0px, 0px)';
-
-			var y = g_scroll_y_temp + g_scroll_y_start;
-			style = g_middle[0].style;
-			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, ' + y + 'px, 0px)';
-
-			style = g_right[0].style;
-			style.transitionDuration = '0.3s';
-			style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
-		}
-
-		overlayShow(true);
-	});
-
-	$('body').mousemove(function(e) {
-		if (! g_is_mouse_down) {
-			return;
-		}
-
-		// Figure out if we are moving vertically or horizontally
-//		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_panel.panel_index + ', ' + g_moving_panel.id);
-		if (Math.abs(e.clientY - g_mouse_start_y) > Math.abs(e.clientX - g_mouse_start_x)) {
-			g_is_vertical = true;
-		} else {
-			g_is_vertical = false;
-		}
-
-		// Get how far we have moved since pressing down
-//		console.info(g_is_vertical);
-//		console.info(e.clientX + ', ' + e.clientY + ', ' + g_is_vertical);
-		var x_offset = e.clientX - g_mouse_start_x;
-		var y_offset = e.clientY - g_mouse_start_y;
-//		console.info(y_offset);
-
-		//console.info(g_mouse_start_y);
-//		console.info(g_is_vertical + ', ' + x_offset + ', ' + y_offset);
-		if (g_is_vertical && g_moving_panel) {
-//			console.info('vertical ...');
-			// Show the top panel if we are swiping down from the top
-			if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
-				var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
-	//			console.info(y / g_down_swipe_size);
-				showTopPanel(y / g_down_swipe_size, false);
-			// Scroll the page up and down
-			} else {
-				var image_height = $('#' + g_moving_panel.children[0].id).height();
-
-				// Only scroll down if the top of the image is above the screen top
-				var new_offset = y_offset + g_scroll_y_start;
-				if (new_offset <= 0 && image_height + new_offset > g_screen_height) {
-					g_scroll_y_temp = y_offset;
-
-					var x = (g_moving_panel.panel_index * g_screen_width);
-					var style = g_moving_panel.style;
-					style.transitionDuration = '0.0s';
-					style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
-
-					updateScrollBar();
-				}
-			}
-		}
-
-		// Scroll the comic panels if we are swiping right or left
-		if (! g_is_vertical && g_moving_panel) {
-			var x = (g_moving_panel.panel_index * g_screen_width) + x_offset;
-			var y = g_scroll_y_temp + g_scroll_y_start;
-			var style = g_moving_panel.style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
-
-			if (x_offset > 0) {
-				var x = (g_left[0].panel_index * g_screen_width) + x_offset;
-				var style = g_left[0].style;
-				style.transitionDuration = '0.0s';
-				style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-				if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index > 0) {
-	//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
-					g_is_swiping_right = true;
-				} else {
-					g_is_swiping_right = false;
-					g_is_swiping_left = false;
-				}
-			} else {
-				var x = (g_right[0].panel_index * g_screen_width) + x_offset;
-				var style = g_right[0].style;
-				style.transitionDuration = '0.0s';
-				style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-				if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_images.length -1) {
-	//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
-					g_is_swiping_left = true;
-				} else {
-					g_is_swiping_right = false;
-					g_is_swiping_left = false;
-				}
-			}
-		}
-	});
+	// Mouse events for the body
+	$('body').mousedown(onMouseDown);
+	$('body').on('mouseup mouseleave', onMouseUp);
+	$('body').mousemove(onMouseMove);
 
 	$('#comicPanel').hide();
 
