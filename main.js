@@ -56,8 +56,10 @@ function isValidImageType(file_name) {
 
 function hideTopPanel(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
-	var height = $('#topPanel').outerHeight() + 10;
-	var style = $('#topPanel')[0].style;
+	var top_panel = $('#topPanel');
+	var style = top_panel[0].style;
+	style.width = (g_screen_width - 80) + 'px';
+	var height = top_panel.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 	g_top_visible = 0.0;
