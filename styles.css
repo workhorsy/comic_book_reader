@@ -23,6 +23,15 @@ body {
 	-webkit-user-drag: none;
 }
 
+#wallPaper {
+	background-color: silver;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+
 #topPanel {
 	opacity: 0.9;
 	position: fixed;
@@ -59,7 +68,6 @@ body {
 	position: absolute;
 	/*border: 10px solid orange;*/
 	overflow: hidden;
-	background-color: black;
 }
 
 #pageContainer {

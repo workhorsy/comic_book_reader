@@ -61,7 +61,7 @@ function hideTopPanel(is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 	g_top_visible = 0.0;
-	$('#pageContainer')[0].style.opacity = 1.0;
+	$('#wallPaper')[0].style.opacity = 1.0;
 }
 
 function showTopPanel(y_offset, is_instant) {
@@ -73,13 +73,14 @@ function showTopPanel(y_offset, is_instant) {
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	style.width = (g_screen_width - 80) + 'px';
 	g_top_visible = y_offset;
-	$('#pageContainer')[0].style.opacity = 1.0 - (0.9 * g_top_visible);
+	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * g_top_visible);
 }
 
 function loadComic() {
-	var file_input = $('#fileInput');
+	$('body')[0].style.backgroundColor = 'black';
 
 	// Just return if there is no file selected
+	var file_input = $('#fileInput');
 	if (file_input[0].files.length === 0) {
 		return;
 	}
