@@ -39,14 +39,6 @@ function toFrieldlySize(size) {
 	return '?';
 }
 
-function blobToDataURI(blob, cb) {
-	var reader = new FileReader();
-	reader.onload = function(e) {
-		cb(e.target.result);
-	};
-	reader.readAsDataURL(blob);
-}
-
 function isValidImageType(file_name) {
 	file_name = file_name.toLowerCase();
 	return file_name.endsWith('.jpeg') ||
@@ -155,13 +147,13 @@ function updatePageCache(index) {
 		entry.getData(new zip.BlobWriter(), function(blob) {
 	//		console.info(entry.filename);
 	//		console.info(blob);
-			blobToDataURI(blob, function(data_uri) {
-				// Load the blob into an image
-				var img = g_images[entry_index];
-				img.src = data_uri;
-				img.is_loaded = true;
-				console.info('Loaded page: ' + index + ', ' + img.title);
-			});
+
+			// Load the blob into an image
+			var url = URL.createObjectURL(blob);
+			var img = g_images[entry_index];
+			img.src = url;
+			img.is_loaded = true;
+			console.info('Loaded page: ' + index + ', ' + img.title);
 		});
 	}
 }
@@ -180,6 +172,14 @@ function clearComicData() {
 	$('#comicData').hide();
 	$('#loadProgress').val(0);
 	setComicData('?', '?', '?');
+
+	// Remove all the Object URLs
+	for (var i=0; i<g_images.length; ++i) {
+		var img = g_images[i];
+		if (img.src && img.src.length > 0) {
+			URL.revokeObjectURL(img.src);
+		}
+	}
 
 	// Remove all the old images and compressed file entries
 	g_middle.empty();
