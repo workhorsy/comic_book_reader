@@ -57,12 +57,12 @@ body {
 	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 
-#fileInput {
-	display: none;
+#btnFileLoad {
+	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 
-#fileLoad {
-	font: 30px/100px Helvetica, Arial, sans-serif;
+#fileInput {
+	display: none;
 }
 
 #comicPanel {

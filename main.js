@@ -655,6 +655,11 @@ $(document).ready(function() {
 	g_middle = $('#pageMiddle');
 	g_right = $('#pageRight');
 
+	// Stop the right click menu from popping up
+	$(document).on('contextmenu', function(e) {
+		e.preventDefault();
+	});
+
 	// Stop the mouse wheel from scrolling
 	$('body').on('mousewheel', function(e) {
 		e.preventDefault();
@@ -662,16 +667,10 @@ $(document).ready(function() {
 	});
 
 	// Resize everything when the browser resizes
-	$(window).resize(function(e) {
+	$(window).resize(function() {
 		var width = $(window).width();
 		var height = $(window).height();
 		onResize(width, height);
-	});
-	$(window).trigger('resize');
-
-	// Stop the right click menu from popping up
-	$(document).on('contextmenu', function(e) {
-		e.preventDefault();
 	});
 
 	// Toggle full screen
@@ -687,6 +686,16 @@ $(document).ready(function() {
 		window.open(url, '_blank');
 	});
 
+	// Open the file selection box
+	$('#btnFileLoad').click(function() {
+		$('#fileInput').click();
+	});
+
+	// Load the selected file
+	$('#fileInput').change(function() {
+		loadComic();
+	});
+
 	// Mouse events for the pages
 	g_left.mousedown(onPageMouseDown);
 	g_middle.mousedown(onPageMouseDown);
@@ -697,16 +706,8 @@ $(document).ready(function() {
 	$('body').on('mouseup mouseleave', onMouseUp);
 	$('body').mousemove(onMouseMove);
 
+	// Reset everything
 	$('#comicPanel').hide();
-
-	// When a file is selected, load it
-	$('#fileInput').change(function(e) {
-		loadComic();
-	});
-
-	// When the button is clicked, click the hidden file load button
-	$('#fileLoad').click(function(e) {
-		$('#fileInput').click();
-	});
+	$(window).trigger('resize');
 	clearComicData();
 });
