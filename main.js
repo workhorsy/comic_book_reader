@@ -12,6 +12,7 @@ var g_mouse_start_x = 0;
 var g_mouse_start_y = 0;
 var g_is_vertical = false;
 var g_screen_width = 0;
+var g_screen_height = 0;
 var g_is_swiping_right = false;
 var g_is_swiping_left = false;
 var g_top_visible = 1.0;
@@ -220,7 +221,7 @@ function onLoaded(blob) {
 				img.ondragstart = function() { return false; }
 				img.onload = function() {
 					if (g_needs_resize) {
-						onResize(g_screen_width);
+						onResize(g_screen_width, g_screen_height);
 					}
 				};
 				img.draggable = 'false';
@@ -232,7 +233,8 @@ function onLoaded(blob) {
 			g_image_index = 0;
 			loadCurrentPage();
 			var width = $(window).width();
-			onResize(width);
+			var height = $(window).height();
+			onResize(width, height);
 		});
 	}, function(e) {
 		onError('Failed to read file!');
@@ -278,9 +280,10 @@ function largestPageNaturalHeight() {
 	return largestNumber(left_height, middle_height, right_height);
 }
 
-function onResize(screen_width) {
+function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
+	g_screen_height = screen_height;
 
 	// Move the top panel to the new top
 	if (g_top_visible < 1.0) {
@@ -319,7 +322,7 @@ function onResize(screen_width) {
 	// Make it as wide as the screen and as tall as the tallest image
 	style = $('#pageOverlay')[0].style;
 	style.width = g_screen_width + 'px';
-	style.height = $(window).height() + 'px';
+	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(' + (1 * g_screen_width) + 'px, 0px, 0px)';
 
@@ -361,14 +364,13 @@ function onResize(screen_width) {
 
 function updateScrollBar() {
 	// Get the heights
-	var window_height = $(window).height();
 	var image_height = $('#' + g_middle.children()[0].id).height();
-	if (window_height < 1 || image_height < 1) {
+	if (g_screen_height < 1 || image_height < 1) {
 		return;
 	}
 
 	// Get the percentage of screen height to image height
-	var height_percentage = window_height / image_height;
+	var height_percentage = g_screen_height / image_height;
 	if (height_percentage > 1.0) {
 		height_percentage = 1.0;
 	}
@@ -380,8 +382,8 @@ function updateScrollBar() {
 	// Update the scroll bar size and position
 	var scroll_bar = $('#scrollBar');
 	style = scroll_bar[0].style;
-	style.height = (height_percentage * window_height) + 'px';
-	style.top = (window_height - (y_percentage * window_height)) + 'px';
+	style.height = (height_percentage * g_screen_height) + 'px';
+	style.top = (g_screen_height - (y_percentage * g_screen_height)) + 'px';
 
 	// Hide the scroll bar if it is at least 98% full size
 	if (height_percentage >= 0.98) {
@@ -451,7 +453,8 @@ $(document).ready(function() {
 	// Resize everything when the browser resizes
 	$(window).resize(function(e) {
 		var width = $(window).width();
-		onResize(width);
+		var height = $(window).height();
+		onResize(width, height);
 	});
 	$(window).trigger('resize');
 
@@ -645,12 +648,11 @@ $(document).ready(function() {
 				showTopPanel(y / g_down_swipe_size, false);
 			// Scroll the page up and down
 			} else {
-				var window_height = $(window).height();
 				var image_height = $('#' + g_moving_panel.children[0].id).height();
 
 				// Only scroll down if the top of the image is above the screen top
 				var new_offset = y_offset + g_scroll_y_start;
-				if (new_offset <= 0 && image_height + new_offset > window_height) {
+				if (new_offset <= 0 && image_height + new_offset > g_screen_height) {
 					g_scroll_y_temp = y_offset;
 
 					var x = (g_moving_panel.panel_index * g_screen_width);
