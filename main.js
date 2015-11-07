@@ -439,6 +439,7 @@ function onMouseMove(e) {
 			var image_height = $('#' + g_moving_panel.children[0].id).height();
 
 			// Only scroll down if the top of the image is above the screen top
+			// Only scroll up if the bottom of the image is below the screen bottom
 			var new_offset = y_offset + g_scroll_y_start;
 			if (new_offset <= 0 && image_height + new_offset > g_screen_height) {
 				g_scroll_y_temp = y_offset;
@@ -492,17 +493,33 @@ function onMouseMove(e) {
 }
 
 function onMouseWheel(e) {
-	var e = window.event || e;
-	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-
-	if (delta === 1) {
-		console.info('!!! scroll down');
-	} else if (delta === -1) {
-		console.info('!!! scroll up');
-	}
-
 	e.preventDefault();
 	e.stopPropagation();
+
+	var y_offset = 0;
+	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+	if (delta === 1) {
+		y_offset = 100;
+	} else if (delta === -1) {
+		y_offset = -100;
+	}
+
+	g_moving_panel = g_middle[0];
+	var image_height = $('#' + g_moving_panel.children[0].id).height();
+
+	// Only scroll down if the top of the image is above the screen top
+	// Only scroll up if the bottom of the image is below the screen bottom
+	var new_offset = y_offset + g_scroll_y_start;
+	if (new_offset <= 0 && image_height + new_offset > g_screen_height) {
+		g_scroll_y_start = new_offset;
+
+		var x = (g_moving_panel.panel_index * g_screen_width);
+		var style = g_moving_panel.style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+
+		updateScrollBar();
+	}
 }
 
 function onResize(screen_width, screen_height) {
