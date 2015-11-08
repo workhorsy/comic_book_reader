@@ -2,7 +2,6 @@ Comic Book Reader
 ===================
 
 # TODO Small:
-* Fix issues with touch on Windows Surface Pro 3 (Chrome, and IE)
 * Remove old pages from the cache, instead of loading all pages into ram eventually
 * Page (x of x) is too hard to read, and in the way
 * Manga (left to right) support
