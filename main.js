@@ -327,6 +327,24 @@ function onTouchMove(e) {
 	onInputMove(x, y);
 }
 
+function onPointerStart(e) {
+	g_moving_panel = g_middle[0];
+	var x = e.clientX | 0;
+	var y = e.clientY | 0;
+	onInputDown(e.target, x, y);
+}
+
+function onPointerEnd(e) {
+	g_moving_panel = null;
+	onInputUp();
+}
+
+function onPointerMove(e) {
+	var x = e.clientX | 0;
+	var y = e.clientY | 0;
+	onInputMove(x, y);
+}
+
 function onPageMouseDown(e) {
 	if (this.panel_index === 1) {
 		g_moving_panel = this;
@@ -804,6 +822,11 @@ $(document).ready(function() {
 	document.body.addEventListener('touchend', onTouchEnd, false);
 	document.body.addEventListener('touchcancel', ignoreEvent, false);
 	document.body.addEventListener('touchmove', onTouchMove, false);
+
+	// MS Pointer Events
+	document.body.addEventListener('MSPointerDown', onPointerStart, false);
+	document.body.addEventListener('MSPointerUp', onPointerEnd, false);
+	document.body.addEventListener('MSPointerMove', onPointerMove, false);
 
 	// Reset everything
 	$('#comicPanel').hide();
