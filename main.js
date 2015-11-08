@@ -301,8 +301,8 @@ function ignoreEvent(e) {
 }
 
 function onTouchStart(e) {
-	e.preventDefault();
-	e.stopPropagation();
+	//e.preventDefault();
+	//e.stopPropagation();
 
 	g_moving_panel = g_middle[0];
 	var x = e.changedTouches[0].clientX | 0;
@@ -311,8 +311,8 @@ function onTouchStart(e) {
 }
 
 function onTouchEnd(e) {
-	e.preventDefault();
-	e.stopPropagation();
+	//e.preventDefault();
+	//e.stopPropagation();
 
 	g_moving_panel = null;
 	onInputUp();
