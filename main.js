@@ -294,6 +294,39 @@ function largestPageNaturalHeight() {
 	return largestNumber(left_height, middle_height, right_height);
 }
 
+function ignoreEvent(e) {
+	//console.info(e.type);
+	e.preventDefault();
+	e.stopPropagation();
+}
+
+function onTouchStart(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	g_moving_panel = g_middle[0];
+	var x = e.changedTouches[0].clientX | 0;
+	var y = e.changedTouches[0].clientY | 0;
+	onInputDown(e.target, x, y);
+}
+
+function onTouchEnd(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	g_moving_panel = null;
+	onInputUp();
+}
+
+function onTouchMove(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	var x = e.changedTouches[0].clientX | 0;
+	var y = e.changedTouches[0].clientY | 0;
+	onInputMove(x, y);
+}
+
 function onPageMouseDown(e) {
 	if (this.panel_index === 1) {
 		g_moving_panel = this;
@@ -303,23 +336,40 @@ function onPageMouseDown(e) {
 }
 
 function onMouseDown(e) {
+	var x = e.clientX;
+	var y = e.clientY;
+	onInputDown(e.target, x, y);
+}
+
+function onMouseUp(e) {
+	onInputUp();
+}
+
+function onMouseMove(e) {
+	var x = e.clientX;
+	var y = e.clientY;
+	onInputMove(x, y);
+}
+
+function onInputDown(target, x, y) {
 	// Skip if clicking on something that is no touchable
-	if (! e.target.hasAttribute('touchable')) {
+	if (! target.hasAttribute('touchable')) {
 		return;
 	}
 
 	// If the top menu is showing, hide it
-	if (e.target.hasAttribute('touchable') && g_top_visible > 0.0) {
+	if (target.hasAttribute('touchable') && g_top_visible > 0.0) {
 		hideTopPanel(false);
 		return;
 	}
 
 	g_is_mouse_down = true;
-	g_mouse_start_x = e.clientX;
-	g_mouse_start_y = e.clientY;
+	g_mouse_start_x = x;
+	g_mouse_start_y = y;
+	//console.info(x + ', ' + y);
 }
 
-function onMouseUp(e) {
+function onInputUp() {
 	if (g_top_visible > 0.0 && g_top_visible < 1.0) {
 		hideTopPanel(false);
 	}
@@ -419,14 +469,14 @@ function onMouseUp(e) {
 	overlayShow(true);
 }
 
-function onMouseMove(e) {
+function onInputMove(x, y) {
 	if (! g_is_mouse_down) {
 		return;
 	}
 
 	// Figure out if we are moving vertically or horizontally
-//		console.info(e.clientX + ', ' + g_mouse_start_x + ', ' + g_moving_panel.panel_index + ', ' + g_moving_panel.id);
-	if (Math.abs(e.clientY - g_mouse_start_y) > Math.abs(e.clientX - g_mouse_start_x)) {
+//		console.info(x + ', ' + g_mouse_start_x + ', ' + g_moving_panel.panel_index + ', ' + g_moving_panel.id);
+	if (Math.abs(y - g_mouse_start_y) > Math.abs(x - g_mouse_start_x)) {
 		g_is_vertical = true;
 	} else {
 		g_is_vertical = false;
@@ -434,9 +484,9 @@ function onMouseMove(e) {
 
 	// Get how far we have moved since pressing down
 //		console.info(g_is_vertical);
-//		console.info(e.clientX + ', ' + e.clientY + ', ' + g_is_vertical);
-	var x_offset = e.clientX - g_mouse_start_x;
-	var y_offset = e.clientY - g_mouse_start_y;
+//		console.info(x + ', ' + y + ', ' + g_is_vertical);
+	var x_offset = x - g_mouse_start_x;
+	var y_offset = y - g_mouse_start_y;
 //		console.info(y_offset);
 
 	//console.info(g_mouse_start_y);
@@ -748,6 +798,12 @@ $(document).ready(function() {
 	// Mouse wheel events
 	document.body.addEventListener('mousewheel', onMouseWheel, false);
 	document.body.addEventListener('DOMMouseScroll', onMouseWheel, false);
+
+	// Touch events
+	document.body.addEventListener('touchstart', onTouchStart, false);
+	document.body.addEventListener('touchend', onTouchEnd, false);
+	document.body.addEventListener('touchcancel', ignoreEvent, false);
+	document.body.addEventListener('touchmove', onTouchMove, false);
 
 	// Reset everything
 	$('#comicPanel').hide();
