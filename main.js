@@ -106,6 +106,9 @@ function replaceIfDifferentImage(parent, image) {
 	if (children.length === 0) {
 		parent.append(image);
 	} else if (children.length && children[0].id !== image.id) {
+		var prev_img = children[0];
+		prev_img.is_loaded = false;
+		prev_img.removeAttribute('src');
 		parent.empty();
 		parent.append(image);
 	}
@@ -194,7 +197,7 @@ function clearComicData() {
 		URL.revokeObjectURL(url);
 	});
 	g_images.forEach(function(img) {
-		img.src = '';
+		img.removeAttribute('src');
 	});
 
 	// Remove all the old images, compressed file entries, and object urls
