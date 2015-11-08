@@ -209,6 +209,18 @@ function clearComicData() {
 	g_scroll_y_start = 0;
 }
 
+function uncompressAllImages(i) {
+	i = i || 0;
+	uncompressImage(i, function(j, url, filename) {
+		setTimeout(function() {
+			j++;
+			if (j < g_entries.length) {
+				uncompressAllImages(j);
+			}
+		}, 100);
+	});
+}
+
 function onLoaded(blob) {
 	var reader = new zip.BlobReader(blob);
 	zip.createReader(reader, function(reader) {
@@ -252,6 +264,7 @@ function onLoaded(blob) {
 			var width = $(window).width();
 			var height = $(window).height();
 			onResize(width, height);
+			uncompressAllImages();
 		});
 	}, function(e) {
 		onError('Failed to read file!');
