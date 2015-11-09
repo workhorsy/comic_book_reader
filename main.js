@@ -3,6 +3,7 @@
 // This software is licensed under GPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
 
+var g_db = null;
 var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
@@ -25,6 +26,7 @@ var g_scroll_y_start = 0;
 var g_needs_resize = false;
 var g_file_name = null;
 var g_down_swipe_size = 100.0;
+
 
 function toFrieldlySize(size) {
 	if (size >= 1024000000) {
@@ -114,62 +116,134 @@ function replaceIfDifferentImage(parent, image) {
 	}
 }
 
-function loadCurrentPage() {
-	// Load the middle page
-	loadImage(g_image_index);
-	replaceIfDifferentImage(g_middle, g_images[g_image_index]);
+function loadCurrentPage(cb) {
+	// Update the page number
 	var page = friendlyPageNumber();
 	$('#pageOverlay')[0].innerHTML = page;
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
+
+	// Load the middle page
+	loadImage(g_image_index, function() {
+		replaceIfDifferentImage(g_middle, g_images[g_image_index]);
+		cb();
+		updateScrollBar();
+	});
 
 	// Load right page
 	if (g_image_index === g_images.length -1) {
 		g_right.empty();
 	} else if (g_image_index < g_images.length -1) {
-		loadImage(g_image_index + 1);
-		replaceIfDifferentImage(g_right, g_images[g_image_index + 1]);
+		loadImage(g_image_index + 1, function() {
+			replaceIfDifferentImage(g_right, g_images[g_image_index + 1]);
+		});
 	}
 
 	// Load left page
 	if (g_image_index === 0) {
 		g_left.empty();
 	} else if (g_image_index > 0) {
-		loadImage(g_image_index - 1);
-		replaceIfDifferentImage(g_left, g_images[g_image_index - 1]);
+		loadImage(g_image_index - 1, function() {
+			replaceIfDifferentImage(g_left, g_images[g_image_index - 1]);
+		});
 	}
-
-	updateScrollBar();
 }
 
-function loadImage(index) {
+function loadImage(index, cb) {
 	var img = g_images[index];
 	if (! img.is_loaded) {
 		uncompressImage(index, function(j, url, filename) {
-			var img = g_images[j];
+			img.onload = function() {
+				img.is_loaded = true;
+//				console.info(img);
+				console.info('!!! Loading image ' + index + ': ' + img.title);
+				cb();
+			};
 			img.src = url;
-			img.is_loaded = true;
-			console.info('!!! Loading image ' + index + ': ' + img.title);
 		});
 	}
+}
+
+function resizeImageBlob(blob, percentage, cb) {
+	var url = URL.createObjectURL(blob);
+	console.info('URL.createObjectURL: ' + url);
+	var img = new Image();
+	img.onload = function() {
+		URL.revokeObjectURL(url);
+		console.info('URL.revokeObjectURL: ' + url);
+
+		var canvas = document.createElement('canvas');
+		canvas.width = img.width * percentage;
+		canvas.height = img.height * percentage;
+
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+		canvas.toBlob(function(smaller_blob) {
+			cb(smaller_blob);
+		});
+	};
+	img.src = url;
 }
 
 function uncompressImage(i, cb) {
 	var entry = g_entries[i];
 
-	// Image is already uncompressed and an Object URL
+	// Image is uncompressed and an Object URL
 //	console.info(g_urls);
 	if (g_urls.hasOwnProperty(i)) {
 		var url = g_urls[i];
 //		console.info('??? Already Uncompressed ' + i + ': ' + entry.filename);
 		cb(entry.index, url, entry.filename);
-	// Image needs to be uncompressed and converted to an Object URL
+
 	} else {
-		entry.getData(new zip.BlobWriter(), function(blob) {
-			var url = URL.createObjectURL(blob);
-			g_urls[i] = url;
-			console.info('!!! Uncompressing image ' + i + ': ' +  entry.filename);
-			cb(entry.index, url, entry.filename);
-		});
+		var store = g_db.transaction('files', 'readwrite').objectStore('files');
+		var req = store.get(entry.filename);
+		req.onerror = function(event) {
+			console.log(event);
+		};
+		req.onsuccess = function(event) {
+//			console.log(event);
+			console.log(event.target.result);
+			var smaller_blob = event.target.result;
+
+			// Image is uncompressed and in file system
+			if (smaller_blob) {
+				console.info('???????? Get worked');
+				console.info(entry.filename);
+				console.info(smaller_blob + ', ' + smaller_blob.size);
+				var smaller_url = URL.createObjectURL(smaller_blob);
+				console.info('URL.createObjectURL: ' + smaller_url);
+				g_urls[i] = smaller_url;
+				cb(entry.index, smaller_url, entry.filename);
+			// Image is compressed
+			} else {
+				console.info('!!! Uncompressing image ' + i + ': ' +  entry.filename);
+				entry.getData(new zip.BlobWriter(), function(blob) {
+
+					console.info('!!! Resizing image ' + i + ': ' +  entry.filename);
+					resizeImageBlob(blob, 0.25, function(smaller_blob) {
+						var store = g_db.transaction('files', 'readwrite').objectStore('files');
+//						console.info(smaller_blob);
+						var req = store.put(smaller_blob, entry.filename);
+						req.onerror = function(event) {
+							console.info(event);
+						};
+						req.onsuccess = function(event) {
+							console.info('????????? Put worked');
+
+							var smaller_url = URL.createObjectURL(smaller_blob);
+							console.info('URL.createObjectURL: ' + smaller_url);
+							g_urls[i] = smaller_url;
+
+			//				console.info(img);
+			//				console.info('!!! Loading image ' + index + ': ' + img.title);
+							//cb();
+							cb(entry.index, smaller_url, entry.filename);
+						};
+					});
+				});
+			}
+		};
 	}
 }
 
@@ -195,6 +269,7 @@ function clearComicData() {
 	Object.keys(g_urls).forEach(function(i) {
 		var url = g_urls[i];
 		URL.revokeObjectURL(url);
+		console.info('URL.revokeObjectURL: ' + url);
 	});
 	g_images.forEach(function(img) {
 		img.removeAttribute('src');
@@ -260,10 +335,11 @@ function onLoaded(blob) {
 			});
 
 			g_image_index = 0;
-			loadCurrentPage();
-			var width = $(window).width();
-			var height = $(window).height();
-			onResize(width, height);
+			loadCurrentPage(function() {
+				var width = $(window).width();
+				var height = $(window).height();
+				onResize(width, height);
+			});
 			uncompressAllImages();
 		});
 	}, function(e) {
@@ -644,6 +720,7 @@ function onResize(screen_width, screen_height) {
 //		console.info('Needs resize ...');
 		return;
 	}
+	console.info('??? Resize called ...');
 
 	// Find the largest natural height from the images
 	var height = largestPageNaturalHeight();
@@ -779,6 +856,27 @@ function overlayShow(is_fading) {
 $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/zip/';
+/*
+	var req = indexedDB.deleteDatabase('ImageCache');
+	req.onsuccess = function () {
+	    console.log("Deleted database successfully");
+	};
+*/
+	var request = indexedDB.open('ImageCache', 1);
+
+	request.onerror = function(event) {
+		alert("Database error: " + event.target.errorCode);
+	};
+	request.onsuccess = function(event) {
+		g_db = event.target.result;
+		console.info(g_db);
+	};
+	request.onupgradeneeded = function(event) {
+		var db = event.target.result;
+		console.info(db);
+
+		var objectStore = db.createObjectStore('files', { autoIncrement : true });
+	};
 
 	g_left = $('#pageLeft');
 	g_middle = $('#pageMiddle');
