@@ -196,21 +196,11 @@ function uncompressImage(i, cb) {
 		cb(entry.index, url, entry.filename);
 
 	} else {
-		var store = g_db.transaction('files', 'readwrite').objectStore('files');
-		var req = store.get(entry.filename);
-		req.onerror = function(event) {
-			console.log(event);
-		};
-		req.onsuccess = function(event) {
-//			console.log(event);
-			console.log(event.target.result);
-			var smaller_blob = event.target.result;
-
+		getCachedFile(entry.filename, function(smaller_blob) {
 			// Image is uncompressed and in file system
 			if (smaller_blob) {
-				console.info('???????? Get worked');
-				console.info(entry.filename);
-				console.info(smaller_blob + ', ' + smaller_blob.size);
+				//console.info(entry.filename);
+				//console.info(smaller_blob + ', ' + smaller_blob.size);
 				var smaller_url = URL.createObjectURL(smaller_blob);
 				console.info('URL.createObjectURL: ' + smaller_url);
 				g_urls[i] = smaller_url;
@@ -222,28 +212,20 @@ function uncompressImage(i, cb) {
 
 					console.info('!!! Resizing image ' + i + ': ' +  entry.filename);
 					resizeImageBlob(blob, 0.25, function(smaller_blob) {
-						var store = g_db.transaction('files', 'readwrite').objectStore('files');
-//						console.info(smaller_blob);
-						var req = store.put(smaller_blob, entry.filename);
-						req.onerror = function(event) {
-							console.info(event);
-						};
-						req.onsuccess = function(event) {
-							console.info('????????? Put worked');
-
+						setCachedFile(entry.filename, smaller_blob, function() {
+	//						console.info(smaller_blob);
 							var smaller_url = URL.createObjectURL(smaller_blob);
 							console.info('URL.createObjectURL: ' + smaller_url);
 							g_urls[i] = smaller_url;
 
-			//				console.info(img);
-			//				console.info('!!! Loading image ' + index + ': ' + img.title);
-							//cb();
+				//			console.info(img);
+				//			console.info('!!! Loading image ' + index + ': ' + img.title);
 							cb(entry.index, smaller_url, entry.filename);
-						};
+						});
 					});
 				});
 			}
-		};
+		});
 	}
 }
 
@@ -853,30 +835,56 @@ function overlayShow(is_fading) {
 	}
 }
 
-$(document).ready(function() {
-	// Tell zip.js where it can find the worker js file
-	zip.workerScriptsPath = 'js/zip/';
+function getCachedFile(file_name, cb) {
+	var store = g_db.transaction('files', 'readwrite').objectStore('files');
+	var request = store.get(file_name);
+	request.onerror = function(event) {
+		console.warn(event);
+	};
+	request.onsuccess = function(event) {
+		console.info('????????? Get worked: ' + file_name);
+		var blob = event.target.result;
+		cb(blob);
+	};
+}
+
+function setCachedFile(file_name, blob, cb) {
+	var store = g_db.transaction('files', 'readwrite').objectStore('files');
+	var request = store.put(blob, file_name);
+	request.onerror = function(event) {
+		console.warn(event);
+	};
+	request.onsuccess = function(event) {
+		console.info('????????? Put worked: ' + file_name);
+		cb();
+	};
+}
+
+function setupCachedFiles() {
 /*
 	var req = indexedDB.deleteDatabase('ImageCache');
 	req.onsuccess = function () {
 	    console.log("Deleted database successfully");
 	};
 */
-	var request = indexedDB.open('ImageCache', 1);
-
+	var request = indexedDB.open('ImageCache', 1);``
 	request.onerror = function(event) {
-		alert("Database error: " + event.target.errorCode);
+		alert('Database error: '  + event.target.errorCode);
 	};
 	request.onsuccess = function(event) {
 		g_db = event.target.result;
-		console.info(g_db);
+		//console.info(g_db);
 	};
 	request.onupgradeneeded = function(event) {
 		var db = event.target.result;
-		console.info(db);
-
+		//console.info(db);
 		var objectStore = db.createObjectStore('files', { autoIncrement : true });
 	};
+}
+
+$(document).ready(function() {
+	// Tell zip.js where it can find the worker js file
+	zip.workerScriptsPath = 'js/zip/';
 
 	g_left = $('#pageLeft');
 	g_middle = $('#pageMiddle');
@@ -947,4 +955,5 @@ $(document).ready(function() {
 	$('#comicPanel').hide();
 	$(window).trigger('resize');
 	clearComicData();
+	setupCachedFiles();
 });
