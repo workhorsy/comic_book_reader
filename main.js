@@ -125,7 +125,9 @@ function loadCurrentPage(cb) {
 	// Load the middle page
 	loadImage(g_image_index, function() {
 		replaceIfDifferentImage(g_middle, g_images[g_image_index]);
-		cb();
+		if (cb) {
+			cb();
+		}
 		updateScrollBar();
 	});
 
