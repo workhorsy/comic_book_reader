@@ -176,7 +176,7 @@ function uncompressImage(i, cb) {
 		cb(entry.index, url, entry.filename);
 
 	} else {
-		getCachedFile(entry.filename, function(smaller_blob) {
+		getCachedFile('big', entry.filename, function(smaller_blob) {
 			// Image is uncompressed and in file system
 			if (smaller_blob) {
 				//console.info(entry.filename);
@@ -192,7 +192,7 @@ function uncompressImage(i, cb) {
 				var index = entry.index;
 				entry.getData(new zip.BlobWriter(), function(blob) {
 					// Save the image in the database
-					setCachedFile(filename, blob, function() {
+					setCachedFile('big', filename, blob, function() {
 						var smaller_url = URL.createObjectURL(blob);
 						console.info('URL.createObjectURL: ' + smaller_url);
 						cb(index, smaller_url, filename);
@@ -823,8 +823,8 @@ function overlayShow(is_fading) {
 	}
 }
 
-function getCachedFile(file_name, cb) {
-	var store = g_db.transaction('files', 'readwrite').objectStore('files');
+function getCachedFile(name, file_name, cb) {
+	var store = g_db.transaction(name, 'readwrite').objectStore(name);
 	var request = store.get(file_name);
 	request.onerror = function(event) {
 		console.warn(event);
@@ -836,8 +836,8 @@ function getCachedFile(file_name, cb) {
 	};
 }
 
-function setCachedFile(file_name, blob, cb) {
-	var store = g_db.transaction('files', 'readwrite').objectStore('files');
+function setCachedFile(name, file_name, blob, cb) {
+	var store = g_db.transaction(name, 'readwrite').objectStore(name);
 	var request = store.put(blob, file_name);
 	request.onerror = function(event) {
 		console.warn(event);
@@ -866,7 +866,8 @@ function setupCachedFiles() {
 	request.onupgradeneeded = function(event) {
 		var db = event.target.result;
 		//console.info(db);
-		var objectStore = db.createObjectStore('files', { autoIncrement : true });
+		var objectStore = db.createObjectStore('big', { autoIncrement : true });
+		var objectStore = db.createObjectStore('small', { autoIncrement : true });
 	};
 }
 
@@ -879,16 +880,30 @@ function startWorker() {
 				var array_buffer = e.data.array_buffer;
 				var filename = e.data.filename;
 				var index = e.data.index;
-				console.info('FIXME: Save the resized image in the DB here ...');
-//				console.info(array_buffer);
-//				console.info(filename);
-//				console.info(index);
-/*
 				var blob = new Blob([array_buffer]);
-				setCachedFile(filename, blob, function() {
-					//
-				});
-*/
+				var url = URL.createObjectURL(blob);
+				console.info('URL.createObjectURL: ' + url);
+				var img = new Image();
+				img.onload = function() {
+					URL.revokeObjectURL(url);
+					console.info('URL.revokeObjectURL: ' + url);
+
+					var ratio = 200.0 / img.width;
+					var width = img.width * ratio;
+					var height = img.height * ratio;
+					var canvas = document.createElement('canvas');
+					canvas.width = width;
+					canvas.height = height;
+					var ctx = canvas.getContext('2d');
+					ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+					canvas.toBlob(function(small_blob) {
+						setCachedFile('small', filename, small_blob, function() {
+							var smaller_url = URL.createObjectURL(small_blob);
+							console.info('URL.createObjectURL: ' + smaller_url);
+						});
+					});
+				};
+				img.src = url;
 				break;
 		}
 	};
