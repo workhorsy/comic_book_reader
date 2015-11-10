@@ -26,6 +26,7 @@ var g_scroll_y_start = 0;
 var g_needs_resize = false;
 var g_file_name = null;
 var g_down_swipe_size = 100.0;
+var g_worker = null;
 
 
 function toFrieldlySize(size) {
@@ -163,28 +164,6 @@ function loadImage(index, cb) {
 	}
 }
 
-function resizeImageBlob(blob, percentage, cb) {
-	var url = URL.createObjectURL(blob);
-	console.info('URL.createObjectURL: ' + url);
-	var img = new Image();
-	img.onload = function() {
-		URL.revokeObjectURL(url);
-		console.info('URL.revokeObjectURL: ' + url);
-
-		var canvas = document.createElement('canvas');
-		canvas.width = img.width * percentage;
-		canvas.height = img.height * percentage;
-
-		var ctx = canvas.getContext('2d');
-		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-		canvas.toBlob(function(smaller_blob) {
-			cb(smaller_blob);
-		});
-	};
-	img.src = url;
-}
-
 function uncompressImage(i, cb) {
 	var entry = g_entries[i];
 
@@ -208,21 +187,29 @@ function uncompressImage(i, cb) {
 			// Image is compressed
 			} else {
 				console.info('!!! Uncompressing image ' + i + ': ' +  entry.filename);
+				var filename = entry.filename;
+				var index = entry.index;
 				entry.getData(new zip.BlobWriter(), function(blob) {
-
-					console.info('!!! Resizing image ' + i + ': ' +  entry.filename);
-					resizeImageBlob(blob, 0.25, function(smaller_blob) {
-						setCachedFile(entry.filename, smaller_blob, function() {
-	//						console.info(smaller_blob);
-							var smaller_url = URL.createObjectURL(smaller_blob);
-							console.info('URL.createObjectURL: ' + smaller_url);
-							g_urls[i] = smaller_url;
-
-				//			console.info(img);
-				//			console.info('!!! Loading image ' + index + ': ' + img.title);
-							cb(entry.index, smaller_url, entry.filename);
-						});
+					// Save the image in the database
+					setCachedFile(filename, blob, function() {
+						var smaller_url = URL.createObjectURL(blob);
+						console.info('URL.createObjectURL: ' + smaller_url);
+						cb(index, smaller_url, filename);
 					});
+
+					// Send the image to the worker to be resized
+					var reader = new FileReader();
+					reader.onload = function(evt) {
+						var array_buffer = reader.result;
+						var message = {
+							action: 'resize_image',
+							filename: filename,
+							index: index,
+							array_buffer: array_buffer
+						};
+						g_worker.postMessage(message, [array_buffer]);
+					};
+					reader.readAsArrayBuffer(blob);
 				});
 			}
 		});
@@ -882,6 +869,43 @@ function setupCachedFiles() {
 	};
 }
 
+function startWorker() {
+	g_worker = new Worker('worker.js');
+
+	g_worker.onmessage = function(e) {
+		switch (e.data.action) {
+			case 'resize_image':
+				var array_buffer = e.data.array_buffer;
+				var filename = e.data.filename;
+				var index = e.data.index;
+				console.info('FIXME: Save the resized image in the DB here ...');
+//				console.info(array_buffer);
+//				console.info(filename);
+//				console.info(index);
+/*
+				var blob = new Blob([array_buffer]);
+				setCachedFile(filename, blob, function() {
+					//
+				});
+*/
+				break;
+		}
+	};
+
+	// Start the worker
+	var array_buffer = new ArrayBuffer(1);
+	var message = {
+		action: 'start',
+		array_buffer: array_buffer
+	};
+	g_worker.postMessage(message, [array_buffer]);
+	if (array_buffer.byteLength !== 0) {
+		g_worker.terminate();
+		g_worker = null;
+		alert('Transferable Object are not supported!');
+	}
+}
+
 $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/zip/';
@@ -956,4 +980,5 @@ $(document).ready(function() {
 	$(window).trigger('resize');
 	clearComicData();
 	setupCachedFiles();
+	startWorker();
 });
