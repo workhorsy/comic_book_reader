@@ -502,7 +502,6 @@ function onInputUp() {
 			style = g_left[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
-			g_scroll_y_start = 0;
 
 			style = $('#pageTurnRight')[0].style;
 			style.transitionDuration = '0.0s';
@@ -720,6 +719,8 @@ function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
 	g_screen_height = screen_height;
+	g_scroll_y_temp = 0;
+	g_scroll_y_start = 0;
 
 	// Move the top panel to the new top
 	if (g_top_visible < 1.0) {

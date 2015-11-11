@@ -8,7 +8,6 @@ Comic Book Reader
 * Touch swiping down from the very top does not work
 * Scroll bars do not reset position on page change
 * Full screen does not make black wall paper show behind everything
-* When resizing screen, if the image is smaller than the screen, the scroll should reset to zero.
 
 # TODO Small:
 * Make it work when 100% offline
