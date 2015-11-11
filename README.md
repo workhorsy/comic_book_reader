@@ -3,7 +3,7 @@ Comic Book Reader
 
 # Bugs:
 * Touch movement is broken in IE11
-* Mouse scrolling does not go all the way up or down
+* Mouse wheel scrolling does not go all the way up or down
 * Touch swiping down from the very top does not work
 * Scroll bars do not reset position on page change
 * Full screen does not make black wall paper show behind everything
