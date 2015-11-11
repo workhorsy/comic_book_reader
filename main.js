@@ -921,22 +921,23 @@ function setupCachedFiles() {
 /*
 	var req = indexedDB.deleteDatabase('ImageCache');
 	req.onsuccess = function () {
-	    console.log("Deleted database successfully");
+		console.info('Deleted "ImageCache" database');
 	};
 */
+
 	var request = indexedDB.open('ImageCache', 1);
 	request.onerror = function(event) {
 		alert('Database error: '  + event.target.errorCode);
 	};
 	request.onsuccess = function(event) {
+		console.info('Opening "ImageCache" database');
 		g_db = event.target.result;
-		//console.info(g_db);
 	};
 	request.onupgradeneeded = function(event) {
+		console.info('Creating/Upgrading "ImageCache" database');
 		var db = event.target.result;
-		//console.info(db);
 		var objectStore = db.createObjectStore('big', { autoIncrement : true });
-		var objectStore = db.createObjectStore('small', { autoIncrement : true });
+		objectStore = db.createObjectStore('small', { autoIncrement : true });
 	};
 }
 
