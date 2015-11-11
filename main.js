@@ -122,7 +122,7 @@ function replaceIfDifferentImage(parent, image) {
 function loadCurrentPage(cb) {
 	// Update the page number
 	var page = friendlyPageNumber();
-	$('#pageOverlay')[0].innerHTML = page;
+	$('#overlayPageNumber')[0].innerHTML = page;
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
 	// Load the middle page
@@ -485,7 +485,7 @@ function onInputUp() {
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
-		style = $('#pageTurnRight')[0].style;
+		style = $('#overlayLeft')[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
@@ -506,7 +506,7 @@ function onInputUp() {
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
-			style = $('#pageTurnRight')[0].style;
+			style = $('#overlayLeft')[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
 			g_scroll_y_start = 0;
@@ -527,7 +527,7 @@ function onInputUp() {
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
-		style = $('#pageTurnLeft')[0].style;
+		style = $('#overlayRight')[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
@@ -549,7 +549,7 @@ function onInputUp() {
 			style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 			g_scroll_y_start = 0;
 
-			style = $('#pageTurnLeft')[0].style;
+			style = $('#overlayRight')[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
 
@@ -572,11 +572,11 @@ function onInputUp() {
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 
-		style = $('#pageTurnRight')[0].style;
+		style = $('#overlayLeft')[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width * 0) + 'px, 0px, 0px)';
 
-		style = $('#pageTurnLeft')[0].style;
+		style = $('#overlayRight')[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 	}
@@ -649,7 +649,7 @@ function onInputMove(x, y) {
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
-			style = $('#pageTurnRight')[0].style;
+			style = $('#overlayLeft')[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
@@ -667,7 +667,7 @@ function onInputMove(x, y) {
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
-			style = $('#pageTurnLeft')[0].style;
+			style = $('#overlayRight')[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
@@ -762,7 +762,7 @@ function onResize(screen_width, screen_height) {
 	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
-	style = $('#pageOverlay')[0].style;
+	style = $('#overlayPageNumber')[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
@@ -802,14 +802,14 @@ function onResize(screen_width, screen_height) {
 	style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	// Move the arrow to be on top of the right page
-	style = $('#pageTurnLeft')[0].style;
+	style = $('#overlayRight')[0].style;
 	style.width =  g_screen_width + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
 
 	// Move the arrow to be on top of the left page
-	style = $('#pageTurnRight')[0].style;
+	style = $('#overlayLeft')[0].style;
 	style.width =  g_screen_width + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
@@ -855,7 +855,7 @@ function overlayHide() {
 //	console.info('hide ...');
 	var scroll_bar = $('#scrollBar');
 	scroll_bar.hide();
-//	var overlay = $('#pageOverlay');
+//	var overlay = $('#overlayPageNumber');
 //	overlay.hide();
 }
 
@@ -878,7 +878,7 @@ function overlayShow(is_fading) {
 		});
 	}
 
-	var overlay = $('#pageOverlay');
+	var overlay = $('#overlayPageNumber');
 	overlay.stop();
 	overlay[0].style.opacity = 0.5;
 	if (is_fading) {

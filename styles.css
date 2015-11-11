@@ -90,7 +90,7 @@ body {
 	/*background-color: blue;*/
 }
 
-#pageOverlay {
+#overlayPageNumber {
 	position: absolute;
 	pointer-events: none;
 	display: flex;
@@ -102,7 +102,7 @@ body {
 	opacity: 0.5;
 }
 
-#pageTurnLeft {
+#overlayRight {
 	position: absolute;
 	z-index: 500;
 	pointer-events: none;
@@ -111,7 +111,7 @@ body {
 	padding: 0px;
 }
 
-#pageTurnRight {
+#overlayLeft {
 	position: absolute;
 	z-index: 500;
 	pointer-events: none;
