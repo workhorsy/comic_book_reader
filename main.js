@@ -1,8 +1,8 @@
-
 // Copyright (c) 2015 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software is licensed under GPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
 
+var g_db = null;
 var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
@@ -25,6 +25,8 @@ var g_scroll_y_start = 0;
 var g_needs_resize = false;
 var g_file_name = null;
 var g_down_swipe_size = 100.0;
+var g_worker = null;
+
 
 function toFrieldlySize(size) {
 	if (size >= 1024000000) {
@@ -114,41 +116,51 @@ function replaceIfDifferentImage(parent, image) {
 	}
 }
 
-function loadCurrentPage() {
-	// Load the middle page
-	loadImage(g_image_index);
-	replaceIfDifferentImage(g_middle, g_images[g_image_index]);
+function loadCurrentPage(cb) {
+	// Update the page number
 	var page = friendlyPageNumber();
 	$('#pageOverlay')[0].innerHTML = page;
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
+
+	// Load the middle page
+	loadImage(g_image_index, function() {
+		replaceIfDifferentImage(g_middle, g_images[g_image_index]);
+		if (cb) {
+			cb();
+		}
+		updateScrollBar();
+	});
 
 	// Load right page
 	if (g_image_index === g_images.length -1) {
 		g_right.empty();
 	} else if (g_image_index < g_images.length -1) {
-		loadImage(g_image_index + 1);
-		replaceIfDifferentImage(g_right, g_images[g_image_index + 1]);
+		loadImage(g_image_index + 1, function() {
+			replaceIfDifferentImage(g_right, g_images[g_image_index + 1]);
+		});
 	}
 
 	// Load left page
 	if (g_image_index === 0) {
 		g_left.empty();
 	} else if (g_image_index > 0) {
-		loadImage(g_image_index - 1);
-		replaceIfDifferentImage(g_left, g_images[g_image_index - 1]);
+		loadImage(g_image_index - 1, function() {
+			replaceIfDifferentImage(g_left, g_images[g_image_index - 1]);
+		});
 	}
-
-	updateScrollBar();
 }
 
-function loadImage(index) {
+function loadImage(index, cb) {
 	var img = g_images[index];
 	if (! img.is_loaded) {
 		uncompressImage(index, function(j, url, filename) {
-			var img = g_images[j];
+			img.onload = function() {
+				img.is_loaded = true;
+//				console.info(img);
+				console.info('!!! Loading image ' + index + ': ' + img.title);
+				cb();
+			};
 			img.src = url;
-			img.is_loaded = true;
-			console.info('!!! Loading image ' + index + ': ' + img.title);
 		});
 	}
 }
@@ -156,19 +168,59 @@ function loadImage(index) {
 function uncompressImage(i, cb) {
 	var entry = g_entries[i];
 
-	// Image is already uncompressed and an Object URL
+	// Image is uncompressed and an Object URL
 //	console.info(g_urls);
 	if (g_urls.hasOwnProperty(i)) {
 		var url = g_urls[i];
 //		console.info('??? Already Uncompressed ' + i + ': ' + entry.filename);
 		cb(entry.index, url, entry.filename);
-	// Image needs to be uncompressed and converted to an Object URL
+
 	} else {
-		entry.getData(new zip.BlobWriter(), function(blob) {
-			var url = URL.createObjectURL(blob);
-			g_urls[i] = url;
-			console.info('!!! Uncompressing image ' + i + ': ' +  entry.filename);
-			cb(entry.index, url, entry.filename);
+		getCachedFile('big', entry.filename, function(smaller_blob) {
+			// Image is uncompressed and in file system
+			if (smaller_blob) {
+				//console.info(entry.filename);
+				//console.info(smaller_blob + ', ' + smaller_blob.size);
+				var smaller_url = URL.createObjectURL(smaller_blob);
+				console.info('URL.createObjectURL: ' + smaller_url);
+				g_urls[i] = smaller_url;
+				cb(entry.index, smaller_url, entry.filename);
+			// Image is compressed
+			} else {
+				console.info('!!! Uncompressing image ' + i + ': ' +  entry.filename);
+				var filename = entry.filename;
+				var index = entry.index;
+				entry.getData(new zip.BlobWriter(), function(blob) {
+					setTimeout(function() {
+						// Save the image in the database
+						setCachedFile('big', filename, blob, function() {
+							setTimeout(function() {
+								var smaller_url = URL.createObjectURL(blob);
+								console.info('URL.createObjectURL: ' + smaller_url);
+								cb(index, smaller_url, filename);
+							}, 200);
+						});
+
+						// Send the image to the worker to be resized
+						setTimeout(function() {
+							var reader = new FileReader();
+							reader.onload = function(evt) {
+								setTimeout(function() {
+									var array_buffer = reader.result;
+									var message = {
+										action: 'resize_image',
+										filename: filename,
+										index: index,
+										array_buffer: array_buffer
+									};
+									g_worker.postMessage(message, [array_buffer]);
+								}, 200);
+							};
+							reader.readAsArrayBuffer(blob);
+						}, 200);
+					}, 200);
+				});
+			}
 		});
 	}
 }
@@ -195,6 +247,7 @@ function clearComicData() {
 	Object.keys(g_urls).forEach(function(i) {
 		var url = g_urls[i];
 		URL.revokeObjectURL(url);
+		console.info('URL.revokeObjectURL: ' + url);
 	});
 	g_images.forEach(function(img) {
 		img.removeAttribute('src');
@@ -260,10 +313,11 @@ function onLoaded(blob) {
 			});
 
 			g_image_index = 0;
-			loadCurrentPage();
-			var width = $(window).width();
-			var height = $(window).height();
-			onResize(width, height);
+			loadCurrentPage(function() {
+				var width = $(window).width();
+				var height = $(window).height();
+				onResize(width, height);
+			});
 			uncompressAllImages();
 		});
 	}, function(e) {
@@ -644,6 +698,7 @@ function onResize(screen_width, screen_height) {
 //		console.info('Needs resize ...');
 		return;
 	}
+	console.info('??? Resize called ...');
 
 	// Find the largest natural height from the images
 	var height = largestPageNaturalHeight();
@@ -776,6 +831,109 @@ function overlayShow(is_fading) {
 	}
 }
 
+function getCachedFile(name, file_name, cb) {
+	var store = g_db.transaction(name, 'readwrite').objectStore(name);
+	var request = store.get(file_name);
+	request.onerror = function(event) {
+		console.warn(event);
+	};
+	request.onsuccess = function(event) {
+		console.info('????????? Get worked: ' + file_name);
+		var blob = event.target.result;
+		cb(blob);
+	};
+}
+
+function setCachedFile(name, file_name, blob, cb) {
+	var store = g_db.transaction(name, 'readwrite').objectStore(name);
+	var request = store.put(blob, file_name);
+	request.onerror = function(event) {
+		console.warn(event);
+	};
+	request.onsuccess = function(event) {
+		console.info('????????? Put worked: ' + file_name);
+		cb();
+	};
+}
+
+function setupCachedFiles() {
+/*
+	var req = indexedDB.deleteDatabase('ImageCache');
+	req.onsuccess = function () {
+	    console.log("Deleted database successfully");
+	};
+*/
+	var request = indexedDB.open('ImageCache', 1);
+	request.onerror = function(event) {
+		alert('Database error: '  + event.target.errorCode);
+	};
+	request.onsuccess = function(event) {
+		g_db = event.target.result;
+		//console.info(g_db);
+	};
+	request.onupgradeneeded = function(event) {
+		var db = event.target.result;
+		//console.info(db);
+		var objectStore = db.createObjectStore('big', { autoIncrement : true });
+		var objectStore = db.createObjectStore('small', { autoIncrement : true });
+	};
+}
+
+function startWorker() {
+	g_worker = new Worker('worker.js');
+
+	g_worker.onmessage = function(e) {
+		switch (e.data.action) {
+			case 'resize_image':
+				var array_buffer = e.data.array_buffer;
+				var filename = e.data.filename;
+				var index = e.data.index;
+				var blob = new Blob([array_buffer]);
+				var url = URL.createObjectURL(blob);
+				console.info('URL.createObjectURL: ' + url);
+				var img = new Image();
+				img.onload = function() {
+					setTimeout(function() {
+						URL.revokeObjectURL(url);
+						console.info('URL.revokeObjectURL: ' + url);
+
+						var ratio = 200.0 / img.width;
+						var width = img.width * ratio;
+						var height = img.height * ratio;
+						var canvas = document.createElement('canvas');
+						canvas.width = width;
+						canvas.height = height;
+						var ctx = canvas.getContext('2d');
+						ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+						canvas.toBlob(function(small_blob) {
+							setTimeout(function() {
+								setCachedFile('small', filename, small_blob, function() {
+									var smaller_url = URL.createObjectURL(small_blob);
+									console.info('URL.createObjectURL: ' + smaller_url);
+								});
+							}, 100);
+						});
+					}, 100);
+				};
+				img.src = url;
+				break;
+		}
+	};
+
+	// Start the worker
+	var array_buffer = new ArrayBuffer(1);
+	var message = {
+		action: 'start',
+		array_buffer: array_buffer
+	};
+	g_worker.postMessage(message, [array_buffer]);
+	if (array_buffer.byteLength !== 0) {
+		g_worker.terminate();
+		g_worker = null;
+		alert('Transferable Object are not supported!');
+	}
+}
+
 $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/zip/';
@@ -849,4 +1007,6 @@ $(document).ready(function() {
 	$('#comicPanel').hide();
 	$(window).trigger('resize');
 	clearComicData();
+	setupCachedFiles();
+	startWorker();
 });
