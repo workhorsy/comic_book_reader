@@ -694,10 +694,17 @@ function onMouseWheel(e) {
 	g_moving_panel = g_middle[0];
 	var image_height = $('#' + g_moving_panel.children[0].id).height();
 
+	// Reset the scroll position if it goes past the screen top or bottom
+	var new_offset = y_offset + g_scroll_y_start;
+	if (new_offset > 0) {
+		new_offset = 0;
+	} else if (image_height + new_offset < g_screen_height) {
+		new_offset = g_screen_height - image_height;
+	}
+
 	// Only scroll down if the top of the image is above the screen top
 	// Only scroll up if the bottom of the image is below the screen bottom
-	var new_offset = y_offset + g_scroll_y_start;
-	if (new_offset <= 0 && image_height + new_offset > g_screen_height) {
+	if (new_offset <= 0 && image_height + new_offset >= g_screen_height) {
 		g_scroll_y_start = new_offset;
 
 		var x = (g_moving_panel.panel_index * g_screen_width);
