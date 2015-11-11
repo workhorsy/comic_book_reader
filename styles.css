@@ -102,6 +102,49 @@ body {
 	opacity: 0.5;
 }
 
+#pageTurnLeft {
+	position: absolute;
+	z-index: 500;
+	pointer-events: none;
+	border-left: 20px solid DeepSkyBlue;
+	opacity: 0.5;
+	padding: 0px;
+}
+
+#pageTurnRight {
+	position: absolute;
+	z-index: 500;
+	pointer-events: none;
+	border-right: 20px solid DeepSkyBlue;
+	opacity: 0.5;
+	margin-left: -20px;
+	padding: 0px;
+}
+
+#arrowRight {
+	padding: 100px;
+	margin: 100px;
+	border-right: 50px solid DeepSkyBlue;
+	border-bottom: 50px solid DeepSkyBlue;
+	width: 100px;
+	height: 100px;
+	transform: rotate(135deg);
+	margin-top: 100px;
+	float: left;
+}
+
+#arrowLeft {
+	padding: 100px;
+	margin: 100px;
+	border-right:50px solid DeepSkyBlue;
+	border-bottom:50px solid DeepSkyBlue;
+	width: 100px;
+	height: 100px;
+	transform: rotate(-45deg);
+	margin-top: 100px;
+	float: right;
+}
+
 #scrollBar {
 	pointer-events: none;
 	position: fixed;

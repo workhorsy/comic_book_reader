@@ -482,6 +482,10 @@ function onInputUp() {
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
+		style = $('#pageTurnRight')[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+
 		// Update the page orderings, after the pages move into position
 		setTimeout(function() {
 			var old_left = g_left;
@@ -500,6 +504,11 @@ function onInputUp() {
 			style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 			g_scroll_y_start = 0;
 
+			style = $('#pageTurnRight')[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
+			g_scroll_y_start = 0;
+
 			if (g_image_index > 0) {
 				g_image_index--;
 				loadCurrentPage();
@@ -513,6 +522,10 @@ function onInputUp() {
 		style.transform = 'translate3d(0px, 0px, 0px)';
 
 		style = g_right[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+
+		style = $('#pageTurnLeft')[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
@@ -534,6 +547,10 @@ function onInputUp() {
 			style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 			g_scroll_y_start = 0;
 
+			style = $('#pageTurnLeft')[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
+
 			if (g_image_index < g_images.length -1) {
 				g_image_index++;
 				loadCurrentPage();
@@ -550,6 +567,14 @@ function onInputUp() {
 		style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, ' + y + 'px, 0px)';
 
 		style = g_right[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
+
+		style = $('#pageTurnRight')[0].style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + (g_screen_width * 0) + 'px, 0px, 0px)';
+
+		style = $('#pageTurnLeft')[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 	}
@@ -614,9 +639,14 @@ function onInputMove(x, y) {
 		style.transitionDuration = '0.0s';
 		style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
 
+		// Swiping right
 		if (x_offset > 0) {
 			var x = (g_left[0].panel_index * g_screen_width) + x_offset;
 			var style = g_left[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+			style = $('#pageTurnRight')[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
@@ -627,9 +657,14 @@ function onInputMove(x, y) {
 				g_is_swiping_right = false;
 				g_is_swiping_left = false;
 			}
+		// Swiping left
 		} else {
 			var x = (g_right[0].panel_index * g_screen_width) + x_offset;
 			var style = g_right[0].style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
+
+			style = $('#pageTurnLeft')[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
@@ -753,6 +788,20 @@ function onResize(screen_width, screen_height) {
 	style.transitionDuration = '0.0s';
 	g_right[0].panel_index = 2;
 	style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+
+	// Move the arrow to be on top of the right page
+	style = $('#pageTurnLeft')[0].style;
+	style.width =  g_screen_width + 'px';
+	style.height = height + 'px';
+	style.transitionDuration = '0.0s';
+	style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
+
+	// Move the arrow to be on top of the left page
+	style = $('#pageTurnRight')[0].style;
+	style.width =  g_screen_width + 'px';
+	style.height = height + 'px';
+	style.transitionDuration = '0.0s';
+	style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
 
 	updateScrollBar();
 }
