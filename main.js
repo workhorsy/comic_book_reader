@@ -191,26 +191,34 @@ function uncompressImage(i, cb) {
 				var filename = entry.filename;
 				var index = entry.index;
 				entry.getData(new zip.BlobWriter(), function(blob) {
-					// Save the image in the database
-					setCachedFile('big', filename, blob, function() {
-						var smaller_url = URL.createObjectURL(blob);
-						console.info('URL.createObjectURL: ' + smaller_url);
-						cb(index, smaller_url, filename);
-					});
+					setTimeout(function() {
+						// Save the image in the database
+						setCachedFile('big', filename, blob, function() {
+							setTimeout(function() {
+								var smaller_url = URL.createObjectURL(blob);
+								console.info('URL.createObjectURL: ' + smaller_url);
+								cb(index, smaller_url, filename);
+							}, 200);
+						});
 
-					// Send the image to the worker to be resized
-					var reader = new FileReader();
-					reader.onload = function(evt) {
-						var array_buffer = reader.result;
-						var message = {
-							action: 'resize_image',
-							filename: filename,
-							index: index,
-							array_buffer: array_buffer
-						};
-						g_worker.postMessage(message, [array_buffer]);
-					};
-					reader.readAsArrayBuffer(blob);
+						// Send the image to the worker to be resized
+						setTimeout(function() {
+							var reader = new FileReader();
+							reader.onload = function(evt) {
+								setTimeout(function() {
+									var array_buffer = reader.result;
+									var message = {
+										action: 'resize_image',
+										filename: filename,
+										index: index,
+										array_buffer: array_buffer
+									};
+									g_worker.postMessage(message, [array_buffer]);
+								}, 200);
+							};
+							reader.readAsArrayBuffer(blob);
+						}, 200);
+					}, 200);
 				});
 			}
 		});
@@ -885,23 +893,27 @@ function startWorker() {
 				console.info('URL.createObjectURL: ' + url);
 				var img = new Image();
 				img.onload = function() {
-					URL.revokeObjectURL(url);
-					console.info('URL.revokeObjectURL: ' + url);
+					setTimeout(function() {
+						URL.revokeObjectURL(url);
+						console.info('URL.revokeObjectURL: ' + url);
 
-					var ratio = 200.0 / img.width;
-					var width = img.width * ratio;
-					var height = img.height * ratio;
-					var canvas = document.createElement('canvas');
-					canvas.width = width;
-					canvas.height = height;
-					var ctx = canvas.getContext('2d');
-					ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
-					canvas.toBlob(function(small_blob) {
-						setCachedFile('small', filename, small_blob, function() {
-							var smaller_url = URL.createObjectURL(small_blob);
-							console.info('URL.createObjectURL: ' + smaller_url);
+						var ratio = 200.0 / img.width;
+						var width = img.width * ratio;
+						var height = img.height * ratio;
+						var canvas = document.createElement('canvas');
+						canvas.width = width;
+						canvas.height = height;
+						var ctx = canvas.getContext('2d');
+						ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+						canvas.toBlob(function(small_blob) {
+							setTimeout(function() {
+								setCachedFile('small', filename, small_blob, function() {
+									var smaller_url = URL.createObjectURL(small_blob);
+									console.info('URL.createObjectURL: ' + smaller_url);
+								});
+							}, 100);
 						});
-					});
+					}, 100);
 				};
 				img.src = url;
 				break;
