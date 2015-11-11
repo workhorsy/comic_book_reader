@@ -26,9 +26,9 @@ var g_is_swiping_left = false;
 var g_top_menu_visible = 1.0;
 
 var g_moving_page = null;
-var g_left = null;
-var g_middle = null;
-var g_right = null;
+var g_page_left = null;
+var g_page_middle = null;
+var g_page_right = null;
 
 
 function toFrieldlySize(size) {
@@ -127,7 +127,7 @@ function loadCurrentPage(cb) {
 
 	// Load the middle page
 	loadImage(g_image_index, function() {
-		replaceIfDifferentImage(g_middle, g_images[g_image_index]);
+		replaceIfDifferentImage(g_page_middle, g_images[g_image_index]);
 		if (cb) {
 			cb();
 		}
@@ -136,19 +136,19 @@ function loadCurrentPage(cb) {
 
 	// Load right page
 	if (g_image_index === g_images.length -1) {
-		g_right.empty();
+		g_page_right.empty();
 	} else if (g_image_index < g_images.length -1) {
 		loadImage(g_image_index + 1, function() {
-			replaceIfDifferentImage(g_right, g_images[g_image_index + 1]);
+			replaceIfDifferentImage(g_page_right, g_images[g_image_index + 1]);
 		});
 	}
 
 	// Load left page
 	if (g_image_index === 0) {
-		g_left.empty();
+		g_page_left.empty();
 	} else if (g_image_index > 0) {
 		loadImage(g_image_index - 1, function() {
-			replaceIfDifferentImage(g_left, g_images[g_image_index - 1]);
+			replaceIfDifferentImage(g_page_left, g_images[g_image_index - 1]);
 		});
 	}
 }
@@ -242,9 +242,9 @@ function clearComicData() {
 	$('#comicData').hide();
 	$('#loadProgress').val(0);
 	setComicData('?', '?', '?');
-	g_middle.empty();
-	g_left.empty();
-	g_right.empty();
+	g_page_middle.empty();
+	g_page_left.empty();
+	g_page_right.empty();
 
 	// Remove all the Object URLs
 	Object.keys(g_urls).forEach(function(i) {
@@ -348,9 +348,9 @@ function largestNumber(a, b, c) {
 }
 
 function largestPageNaturalHeight() {
-	var left_children = g_left.children();
-	var middle_children = g_middle.children();
-	var right_children = g_right.children();
+	var left_children = g_page_left.children();
+	var middle_children = g_page_middle.children();
+	var right_children = g_page_right.children();
 
 	var left_width = left_children.length > 0 ? left_children[0].naturalWidth : 0;
 	var middle_width = middle_children.length > 0 ? middle_children[0].naturalWidth : 0;
@@ -377,7 +377,7 @@ function onTouchStart(e) {
 	//e.preventDefault();
 	//e.stopPropagation();
 
-	g_moving_page = g_middle[0];
+	g_moving_page = g_page_middle[0];
 	var x = e.changedTouches[0].clientX | 0;
 	var y = e.changedTouches[0].clientY | 0;
 	onInputDown(e.target, x, y);
@@ -401,7 +401,7 @@ function onTouchMove(e) {
 }
 
 function onPointerStart(e) {
-	g_moving_page = g_middle[0];
+	g_moving_page = g_page_middle[0];
 	var x = e.clientX | 0;
 	var y = e.clientY | 0;
 	onInputDown(e.target, x, y);
@@ -477,11 +477,11 @@ function onInputUp() {
 	if (g_is_swiping_right) {
 		g_is_swiping_right = false;
 
-		var style = g_middle[0].style;
+		var style = g_page_middle[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 
-		style = g_left[0].style;
+		style = g_page_left[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
@@ -491,20 +491,20 @@ function onInputUp() {
 
 		// Update the page orderings, after the pages move into position
 		setTimeout(function() {
-			var old_left = g_left;
-			var old_middle = g_middle;
-			var old_right = g_right;
-			g_right = old_middle;
-			g_middle = old_left;
-			g_left = old_right;
+			var old_left = g_page_left;
+			var old_middle = g_page_middle;
+			var old_right = g_page_right;
+			g_page_right = old_middle;
+			g_page_middle = old_left;
+			g_page_left = old_right;
 
-			g_left[0].panel_index = 0;
-			g_middle[0].panel_index = 1;
-			g_right[0].panel_index = 2;
+			g_page_left[0].panel_index = 0;
+			g_page_middle[0].panel_index = 1;
+			g_page_right[0].panel_index = 2;
 
-			style = g_left[0].style;
+			style = g_page_left[0].style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+			style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 			style = $('#pageTurnRight')[0].style;
 			style.transitionDuration = '0.0s';
@@ -519,11 +519,11 @@ function onInputUp() {
 	} else if (g_is_swiping_left) {
 		g_is_swiping_left = false;
 
-		var style = g_middle[0].style;
+		var style = g_page_middle[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(0px, 0px, 0px)';
 
-		style = g_right[0].style;
+		style = g_page_right[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
 
@@ -533,20 +533,20 @@ function onInputUp() {
 
 		// Update the page orderings, after the pages move into position
 		setTimeout(function() {
-			var old_left = g_left;
-			var old_middle = g_middle;
-			var old_right = g_right;
-			g_left = old_middle;
-			g_middle = old_right;
-			g_right = old_left;
+			var old_left = g_page_left;
+			var old_middle = g_page_middle;
+			var old_right = g_page_right;
+			g_page_left = old_middle;
+			g_page_middle = old_right;
+			g_page_right = old_left;
 
-			g_left[0].panel_index = 0;
-			g_middle[0].panel_index = 1;
-			g_right[0].panel_index = 2;
+			g_page_left[0].panel_index = 0;
+			g_page_middle[0].panel_index = 1;
+			g_page_right[0].panel_index = 2;
 
-			style = g_right[0].style;
+			style = g_page_right[0].style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+			style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 			g_scroll_y_start = 0;
 
 			style = $('#pageTurnLeft')[0].style;
@@ -559,16 +559,16 @@ function onInputUp() {
 			}
 		}, 300);
 	} else {
-		var style = g_left[0].style;
+		var style = g_page_left[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(0px, 0px, 0px)';
 
 		var y = g_scroll_y_temp + g_scroll_y_start;
-		style = g_middle[0].style;
+		style = g_page_middle[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, ' + y + 'px, 0px)';
 
-		style = g_right[0].style;
+		style = g_page_right[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 
@@ -644,8 +644,8 @@ function onInputMove(x, y) {
 
 		// Swiping right
 		if (x_offset > 0) {
-			var x = (g_left[0].panel_index * g_screen_width) + x_offset;
-			var style = g_left[0].style;
+			var x = (g_page_left[0].panel_index * g_screen_width) + x_offset;
+			var style = g_page_left[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
@@ -662,8 +662,8 @@ function onInputMove(x, y) {
 			}
 		// Swiping left
 		} else {
-			var x = (g_right[0].panel_index * g_screen_width) + x_offset;
-			var style = g_right[0].style;
+			var x = (g_page_right[0].panel_index * g_screen_width) + x_offset;
+			var style = g_page_right[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
@@ -694,7 +694,7 @@ function onMouseWheel(e) {
 		y_offset = -100;
 	}
 
-	g_moving_page = g_middle[0];
+	g_moving_page = g_page_middle[0];
 	var image_height = $('#' + g_moving_page.children[0].id).height();
 
 	// Reset the scroll position if it goes past the screen top or bottom
@@ -735,7 +735,7 @@ function onResize(screen_width, screen_height) {
 
 	// Figure out if the images are loaded yet.
 	// If not, we will manually fire the resize event when they do
-	var children = g_middle.children();
+	var children = g_page_middle.children();
 	if (children.length === 0) {
 		g_needs_resize = true;
 //		console.info('Needs resize ...');
@@ -776,30 +776,30 @@ function onResize(screen_width, screen_height) {
 	style.fontSize = size + 'px';
 
 	// Make it as wide as the screen and as tall as the tallest image
-	style = g_left[0].style;
+	style = g_page_left[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
-	g_left[0].panel_index = 0;
-	style.transform = 'translate3d(' + (g_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+	g_page_left[0].panel_index = 0;
+	style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
-	style = g_middle[0].style;
+	style = g_page_middle[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
-	g_middle[0].panel_index = 1;
-	var x = g_middle[0].panel_index * g_screen_width;
+	g_page_middle[0].panel_index = 1;
+	var x = g_page_middle[0].panel_index * g_screen_width;
 	var y = g_scroll_y_temp + g_scroll_y_start;
 	style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
-	style = g_right[0].style;
+	style = g_page_right[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
-	g_right[0].panel_index = 2;
-	style.transform = 'translate3d(' + (g_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+	g_page_right[0].panel_index = 2;
+	style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	// Move the arrow to be on top of the right page
 	style = $('#pageTurnLeft')[0].style;
@@ -820,7 +820,7 @@ function onResize(screen_width, screen_height) {
 
 function updateScrollBar() {
 	// Get the heights
-	var image_height = $('#' + g_middle.children()[0].id).height();
+	var image_height = $('#' + g_page_middle.children()[0].id).height();
 	if (g_screen_height < 1 || image_height < 1) {
 		return;
 	}
@@ -999,9 +999,9 @@ $(document).ready(function() {
 	// Tell zip.js where it can find the worker js file
 	zip.workerScriptsPath = 'js/zip/';
 
-	g_left = $('#pageLeft');
-	g_middle = $('#pageMiddle');
-	g_right = $('#pageRight');
+	g_page_left = $('#pageLeft');
+	g_page_middle = $('#pageMiddle');
+	g_page_right = $('#pageRight');
 
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
@@ -1039,9 +1039,9 @@ $(document).ready(function() {
 	});
 
 	// Mouse events for the pages
-	g_left.mousedown(onPageMouseDown);
-	g_middle.mousedown(onPageMouseDown);
-	g_right.mousedown(onPageMouseDown);
+	g_page_left.mousedown(onPageMouseDown);
+	g_page_middle.mousedown(onPageMouseDown);
+	g_page_right.mousedown(onPageMouseDown);
 
 	// Mouse events for the body
 	$('body').mousedown(onMouseDown);
