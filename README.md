@@ -2,6 +2,8 @@ Comic Book Reader
 ===================
 
 # Bugs:
+* Sometimes the 3rd page gets removed?
+* pulling the top menu down is jerky in chrome
 * Touch movement is broken in IE11
 * Mouse wheel scrolling does not go all the way up or down
 * Touch swiping down from the very top does not work
