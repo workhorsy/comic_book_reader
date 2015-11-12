@@ -4,6 +4,9 @@
 
 var g_db = null;
 var g_worker = null;
+var g_worker2 = null;
+var g_worker3 = null;
+var g_worker4 = null;
 var g_file_name = null;
 var g_entries = [];
 var g_images = [];
@@ -43,14 +46,6 @@ function toFrieldlySize(size) {
 	}
 
 	return '?';
-}
-
-function isValidImageType(file_name) {
-	file_name = file_name.toLowerCase();
-	return file_name.endsWith('.jpeg') ||
-			file_name.endsWith('.jpg') ||
-			file_name.endsWith('.png') ||
-			file_name.endsWith('.bmp');
 }
 
 function hideTopMenu(is_instant) {
@@ -279,67 +274,24 @@ function uncompressAllImages(i) {
 
 function onLoaded(blob) {
 	$('body').empty();
-	var reader = new FileReader();
-	reader.onload = function() {
-		var unrar = new Unrar(reader.result);
-		var entries = unrar.getEntries();
 
-		// Get only the entries that are valid images
-		g_entries = [];
-		entries.forEach(function(entry) {
-			if (! entry.directory && isValidImageType(entry.name)) {
-				g_entries.push(entry);
-			}
-		});
-
-		// Sort the entries by their file names
-		g_entries.sort(function(a, b){
-			if(a.name < b.name) return -1;
-			if(a.name > b.name) return 1;
-			return 0;
-		});
-
-		var message = {
-			action: 'ass',
-			g_entries: g_entries
-		};
-		g_worker.postMessage(message);
-
-		function ass(i) {
-			console.info(i + ', ' + g_entries.length);
-			if (i >= g_entries.length) {
-				unrar.close();
-				unrar = null;
-				return;
-			}
-
-			var entry = g_entries[i];
-			var data = unrar.decompress(entry.name);
-			var blob = new Blob([data], {type: 'image/jpeg'});
-			data = null;
-			var url = URL.createObjectURL(blob);
-			blob = null;
-			console.info(url);
-
-			var img = document.createElement('img');
-			img.title = entry.name;
-			img.width = 50;
-			img.height = 100;
-			img.style.backgroundColor = 'red';
-			img.onload = function() {
-				URL.revokeObjectURL(url);
+	function shit(worker) {
+		var reader = new FileReader();
+		reader.onload = function(evt) {
+			var array_buffer = reader.result;
+			var message = {
+				action: 'uncompress',
+				array_buffer: array_buffer
 			};
-			img.src = url;
-			document.body.appendChild(img);
+			worker.postMessage(message, [array_buffer]);
+		};
+		reader.readAsArrayBuffer(blob);
+	}
 
-			setTimeout(function() {
-				ass(i + 1);
-			}, 10);
-		}
-
-		ass(0);
-	};
-	reader.readAsArrayBuffer(blob);
+	shit(g_worker);
+	shit(g_worker2);
+	shit(g_worker3);
+	shit(g_worker4);
 /*
 	var reader = new zip.BlobReader(blob);
 	zip.createReader(reader, function(reader) {
@@ -1005,11 +957,24 @@ function setupCachedFiles() {
 	};
 }
 
-function startWorker() {
-	g_worker = new Worker('worker.js');
-
-	g_worker.onmessage = function(e) {
+function startWorker(worker, start, incrementor) {
+	worker.onmessage = function(e) {
 		switch (e.data.action) {
+			case 'uncompressed_image':
+				var blob = new Blob([e.data.array_buffer], {type: 'image/jpeg'});
+				e.data.array_buffer = null;
+				var url = URL.createObjectURL(blob);
+				var img = document.createElement('img');
+				img.title = e.data.filename;
+				img.width = 50;
+				img.height = 100;
+				img.style.backgroundColor = 'red';
+				img.onload = function() {
+					URL.revokeObjectURL(url);
+				};
+				img.src = url;
+				document.body.appendChild(img);
+				break;
 			case 'resize_image':
 				var array_buffer = e.data.array_buffer;
 				var filename = e.data.filename;
@@ -1050,12 +1015,14 @@ function startWorker() {
 	var array_buffer = new ArrayBuffer(1);
 	var message = {
 		action: 'start',
+		start: start,
+		incrementor: incrementor,
 		array_buffer: array_buffer
 	};
-	g_worker.postMessage(message, [array_buffer]);
+	worker.postMessage(message, [array_buffer]);
 	if (array_buffer.byteLength !== 0) {
-		g_worker.terminate();
-		g_worker = null;
+		worker.terminate();
+		worker = null;
 		alert('Transferable Object are not supported!');
 	}
 }
@@ -1134,5 +1101,17 @@ $(document).ready(function() {
 	$(window).trigger('resize');
 	clearComicData();
 	setupCachedFiles();
-	startWorker();
+
+	g_worker = new Worker('worker.js');
+	startWorker(g_worker, 0, 4);
+
+	g_worker2 = new Worker('worker.js');
+	startWorker(g_worker2, 1, 4);
+
+	g_worker3 = new Worker('worker.js');
+	startWorker(g_worker3, 2, 4);
+
+	g_worker4 = new Worker('worker.js');
+	startWorker(g_worker4, 3, 4);
+
 });
