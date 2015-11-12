@@ -278,6 +278,50 @@ function uncompressAllImages(i) {
 }
 
 function onLoaded(blob) {
+	$('body').empty();
+	var reader = new FileReader();
+	reader.onload = function() {
+		var uncompressor = new bitjs.archive.Unrarrer(reader.result);
+/*
+		uncompressor.addEventListener(bitjs.archive.UnarchiveEvent.Type.INFO, function(e) {
+			console.log("info: " + e.msg);
+		});
+		uncompressor.addEventListener(bitjs.archive.UnarchiveEvent.Type.PROGRESS, function(e) {
+			console.log("progress: " + e.msg);
+		});
+*/
+		uncompressor.addEventListener(bitjs.archive.UnarchiveEvent.Type.EXTRACT, function(e) {
+			//var filename = e.unarchivedFile.filename;
+			console.info(e.unarchivedFile.isValid + ', ' + e.unarchivedFile.filename);
+			//console.info(e.unarchivedFile);
+			var blob = new Blob([e.unarchivedFile.fileData]);
+			var url = URL.createObjectURL(blob);
+			console.info(url);
+
+			e.unarchivedFile.fileData = null;
+			blob.data = null;
+			blob = null;
+/*
+			e.unarchivedFile.fileData = null;
+			e.unarchivedFile.filename = null;
+			e.unarchivedFile.header = null;
+			e.unarchivedFile = null;
+*/
+///*
+			var img = document.createElement('img');
+			img.style.width = '50px';
+			img.onload = function() {
+				//URL.revokeObjectURL(url);
+			};
+			img.src = url;
+			document.body.appendChild(img);
+//*/
+//			console.log("extract: " + e.unarchivedFile.filename);
+		});
+		uncompressor.start();
+	};
+	reader.readAsArrayBuffer(blob);
+/*
 	var reader = new zip.BlobReader(blob);
 	zip.createReader(reader, function(reader) {
 		reader.getEntries(function(entries) {
@@ -326,6 +370,7 @@ function onLoaded(blob) {
 	}, function(e) {
 		onError('Failed to read file!');
 	});
+*/
 }
 
 function onError(msg) {
@@ -1003,12 +1048,12 @@ $(document).ready(function() {
 	g_page_left = $('#pageLeft');
 	g_page_middle = $('#pageMiddle');
 	g_page_right = $('#pageRight');
-
+/*
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
 		e.preventDefault();
 	});
-
+*/
 	// Resize everything when the browser resizes
 	$(window).resize(function() {
 		var width = $(window).width();

@@ -9,6 +9,17 @@
 		<script src="js/polyfill/polyfill.js"></script>
 		<script src="js/zip/zip.js"></script>
 		<script src="js/screenfull.js/screenfull.js"></script>
+		<!--
+			FIXME: Bitjs breaks if imported from a sub directory.
+			Fix this and merge the files into the bitjs directory:
+			archive.js
+			io.js
+			unrar.js
+			untar.js
+			unzip.js
+		-->
+		<script src="io.js"></script>
+		<script src="archive.js"></script>
 	</head>
 	<body>
 		<div id="topMenu" class="unselectable">
