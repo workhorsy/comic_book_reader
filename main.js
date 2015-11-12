@@ -281,44 +281,63 @@ function onLoaded(blob) {
 	$('body').empty();
 	var reader = new FileReader();
 	reader.onload = function() {
-		var uncompressor = new bitjs.archive.Unrarrer(reader.result);
-/*
-		uncompressor.addEventListener(bitjs.archive.UnarchiveEvent.Type.INFO, function(e) {
-			console.log("info: " + e.msg);
+		var unrar = new Unrar(reader.result);
+		var entries = unrar.getEntries();
+
+		// Get only the entries that are valid images
+		g_entries = [];
+		entries.forEach(function(entry) {
+			if (! entry.directory && isValidImageType(entry.name)) {
+				g_entries.push(entry);
+			}
 		});
-		uncompressor.addEventListener(bitjs.archive.UnarchiveEvent.Type.PROGRESS, function(e) {
-			console.log("progress: " + e.msg);
+
+		// Sort the entries by their file names
+		g_entries.sort(function(a, b){
+			if(a.name < b.name) return -1;
+			if(a.name > b.name) return 1;
+			return 0;
 		});
-*/
-		uncompressor.addEventListener(bitjs.archive.UnarchiveEvent.Type.EXTRACT, function(e) {
-			//var filename = e.unarchivedFile.filename;
-			console.info(e.unarchivedFile.isValid + ', ' + e.unarchivedFile.filename);
-			//console.info(e.unarchivedFile);
-			var blob = new Blob([e.unarchivedFile.fileData]);
+
+		var message = {
+			action: 'ass',
+			g_entries: g_entries
+		};
+		g_worker.postMessage(message);
+
+		function ass(i) {
+			console.info(i + ', ' + g_entries.length);
+			if (i >= g_entries.length) {
+				unrar.close();
+				unrar = null;
+				return;
+			}
+
+			var entry = g_entries[i];
+			var data = unrar.decompress(entry.name);
+			var blob = new Blob([data], {type: 'image/jpeg'});
+			data = null;
 			var url = URL.createObjectURL(blob);
+			blob = null;
 			console.info(url);
 
-			e.unarchivedFile.fileData = null;
-			blob.data = null;
-			blob = null;
-/*
-			e.unarchivedFile.fileData = null;
-			e.unarchivedFile.filename = null;
-			e.unarchivedFile.header = null;
-			e.unarchivedFile = null;
-*/
-///*
 			var img = document.createElement('img');
-			img.style.width = '50px';
+			img.title = entry.name;
+			img.width = 50;
+			img.height = 100;
+			img.style.backgroundColor = 'red';
 			img.onload = function() {
-				//URL.revokeObjectURL(url);
+				URL.revokeObjectURL(url);
 			};
 			img.src = url;
 			document.body.appendChild(img);
-//*/
-//			console.log("extract: " + e.unarchivedFile.filename);
-		});
-		uncompressor.start();
+
+			setTimeout(function() {
+				ass(i + 1);
+			}, 10);
+		}
+
+		ass(0);
 	};
 	reader.readAsArrayBuffer(blob);
 /*

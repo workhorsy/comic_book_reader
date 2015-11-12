@@ -4,6 +4,8 @@
 
 
 self.addEventListener('message', function(e) {
+	console.info(e);
+
 	switch (e.data.action) {
 		case 'start':
 			console.info('Worker started ...');
