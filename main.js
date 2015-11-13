@@ -273,7 +273,7 @@ function uncompressAllImages(i) {
 function onLoaded(blob) {
 	$('body').empty();
 
-	function startWorker(worker) {
+	function startUncompress(worker) {
 		var reader = new FileReader();
 		reader.onload = function(evt) {
 			var array_buffer = reader.result;
@@ -287,7 +287,7 @@ function onLoaded(blob) {
 	}
 
 	for (var i=0; i<g_workers.length; ++i) {
-		startWorker(g_workers[i]);
+		startUncompress(g_workers[i]);
 	}
 /*
 	var reader = new zip.BlobReader(blob);
@@ -966,14 +966,13 @@ function startWorker(worker, start, incrementor) {
 				worker = null;
 				break;
 			case 'uncompressed_image':
-				var blob = new Blob([e.data.array_buffer], {type: 'image/jpeg'});
-				e.data.array_buffer = null;
-				var url = URL.createObjectURL(blob);
+				var url = e.data.url;
 				var img = document.createElement('img');
 				img.title = e.data.filename;
 				img.width = 50;
 				img.height = 100;
 				img.style.backgroundColor = 'red';
+				img.style.border = '6px solid blue';
 				img.onload = function() {
 					URL.revokeObjectURL(url);
 				};
