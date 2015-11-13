@@ -3,7 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 
 var g_db = null;
-var TOTAL_WORKERS = 4;
+var TOTAL_WORKERS = 1;
 var g_workers = [];
 var g_file_name = null;
 var g_entries = [];

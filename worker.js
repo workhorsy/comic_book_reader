@@ -10,6 +10,19 @@ var g_entries = [];
 var g_start = 0;
 var g_incrementor = 0;
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+if (!String.prototype.endsWith) {
+  String.prototype.endsWith = function(searchString, position) {
+      var subjectString = this.toString();
+      if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+        position = subjectString.length;
+      }
+      position -= searchString.length;
+      var lastIndex = subjectString.indexOf(searchString, position);
+      return lastIndex !== -1 && lastIndex === position;
+  };
+}
+
 function isValidImageType(file_name) {
 	file_name = file_name.toLowerCase();
 	return file_name.endsWith('.jpeg') ||
@@ -18,8 +31,7 @@ function isValidImageType(file_name) {
 			file_name.endsWith('.bmp');
 }
 
-function uncompress(e) {
-	var array_buffer = e.data.array_buffer;
+function uncompress(array_buffer) {
 	g_unrar = new Unrar(array_buffer);
 	var entries = g_unrar.getEntries();
 
@@ -58,19 +70,16 @@ function uncompressEachImage(i) {
 	var entry = g_entries[i];
 	var filename = entry.name;
 	var data = g_unrar.decompress(filename);
-	var blob = new Blob([data], {type: 'image/jpeg'});
-	data = null;
 
-	var reader = new FileReaderSync();
-	var array_buffer = reader.readAsArrayBuffer(blob);
-	blob = null;
 	var message = {
 		action: 'uncompressed_image',
 		filename: filename,
 		//index: index,
-		array_buffer: array_buffer
+		array_buffer: data.buffer
 	};
-	self.postMessage(message, [array_buffer]);
+	self.postMessage(message, [data.buffer]);
+	data.buffer = null;
+	data = null;
 
 	setTimeout(function() {
 		uncompressEachImage(i + g_incrementor);
@@ -82,7 +91,8 @@ self.addEventListener('message', function(e) {
 
 	switch (e.data.action) {
 		case 'uncompress':
-			uncompress(e);
+			var array_buffer = e.data.array_buffer;
+			uncompress(array_buffer);
 			break;
 		case 'start':
 			g_start = e.data.start;
