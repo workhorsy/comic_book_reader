@@ -8,6 +8,7 @@ Comic Book Reader
 * Sometimes the 3rd page gets removed?
 * pulling the top menu down is jerky in chrome
 * Touch movement is broken in IE11
+* Multi touch input twitches the screen
 * Scroll bars do not reset position on page change
 * Full screen does not make black wall paper show behind everything
 
