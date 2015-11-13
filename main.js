@@ -3,10 +3,8 @@
 // http://github.com/workhorsy/comic_book_reader
 
 var g_db = null;
-var g_worker = null;
-var g_worker2 = null;
-var g_worker3 = null;
-var g_worker4 = null;
+var TOTAL_WORKERS = 4;
+var g_workers = [];
 var g_file_name = null;
 var g_entries = [];
 var g_images = [];
@@ -275,7 +273,7 @@ function uncompressAllImages(i) {
 function onLoaded(blob) {
 	$('body').empty();
 
-	function shit(worker) {
+	function startWorker(worker) {
 		var reader = new FileReader();
 		reader.onload = function(evt) {
 			var array_buffer = reader.result;
@@ -288,10 +286,9 @@ function onLoaded(blob) {
 		reader.readAsArrayBuffer(blob);
 	}
 
-	shit(g_worker);
-	shit(g_worker2);
-	shit(g_worker3);
-	shit(g_worker4);
+	for (var i=0; i<g_workers.length; ++i) {
+		startWorker(g_workers[i]);
+	}
 /*
 	var reader = new zip.BlobReader(blob);
 	zip.createReader(reader, function(reader) {
@@ -960,6 +957,14 @@ function setupCachedFiles() {
 function startWorker(worker, start, incrementor) {
 	worker.onmessage = function(e) {
 		switch (e.data.action) {
+			case 'uncompressed_done':
+				var index = g_workers.indexOf(worker);
+				if (index > -1) {
+					g_workers.splice(index, 1);
+				}
+				worker.terminate();
+				worker = null;
+				break;
 			case 'uncompressed_image':
 				var blob = new Blob([e.data.array_buffer], {type: 'image/jpeg'});
 				e.data.array_buffer = null;
@@ -1102,16 +1107,9 @@ $(document).ready(function() {
 	clearComicData();
 	setupCachedFiles();
 
-	g_worker = new Worker('worker.js');
-	startWorker(g_worker, 0, 4);
-
-	g_worker2 = new Worker('worker.js');
-	startWorker(g_worker2, 1, 4);
-
-	g_worker3 = new Worker('worker.js');
-	startWorker(g_worker3, 2, 4);
-
-	g_worker4 = new Worker('worker.js');
-	startWorker(g_worker4, 3, 4);
-
+	for (var i=0; i<TOTAL_WORKERS; ++i) {
+		var worker = new Worker('worker.js');
+		startWorker(worker, i, TOTAL_WORKERS);
+		g_workers.push(worker);
+	}
 });

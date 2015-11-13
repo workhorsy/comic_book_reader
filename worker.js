@@ -46,6 +46,12 @@ function uncompressEachImage(i) {
 	if (i >= g_entries.length) {
 		g_unrar.close();
 		g_unrar = null;
+
+		var message = {
+			action: 'uncompressed_done'
+		};
+		self.postMessage(message);
+
 		return;
 	}
 
