@@ -56,6 +56,12 @@ function uncompress(filename, array_buffer) {
 			//index: index
 		};
 		self.postMessage(message);
+	}, function() {
+		var message = {
+			action: 'uncompressed_done'
+		};
+		self.postMessage(message);
+		selc.close();
 	});
 }
 

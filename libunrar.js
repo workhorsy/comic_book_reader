@@ -212,7 +212,7 @@ var reportProcessFileError = function(code){
 	Use a recursive function to walk this structure, see index.html for example
 */
 
-var readRARContent = function(data, password, callbackFn) {
+var readRARContent = function(data, password, callbackFn, callbackDone) {
 	var data = data;
 	var password = password;
 	var callbackFn = callbackFn;
@@ -332,7 +332,7 @@ var readRARContent = function(data, password, callbackFn) {
 		var filenameBytes = []
 		var i = 0;
 		while(i<2048){
-			var oneByte = header.get_FileNameW(i)
+			var oneByte = header.get_FileNameW(i);
 			if(oneByte === 0) break; //null terminated
 			filenameBytes.push(oneByte);
 			i++;
@@ -383,7 +383,7 @@ var readRARContent = function(data, password, callbackFn) {
 		}
 		res = _RARReadHeaderEx(handle, getPointer(header));
 	}
-	console.log(res)
+
 	if(res !== ERAR_END_ARCHIVE){
 		cleanup()
 		reportReadHeaderError(res)
@@ -426,6 +426,7 @@ var readRARContent = function(data, password, callbackFn) {
 		}
 	}
 	files.forEach(putFile)
+	callbackDone();
 
 	return rootDir
 }
