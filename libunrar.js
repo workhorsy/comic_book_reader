@@ -235,31 +235,60 @@ var getFileName = function(header) {
 
 	// console.log(arcData.get_Flags())
 	// get entry name
-	var filenameBytes = []
+	var filenameBytes = [];
 	var i = 0;
 	while (i < 2048) {
 		var oneByte = header.get_FileNameW(i);
-		if(oneByte === 0) break; //null terminated
+		if (oneByte === 0) break; //null terminated
 		filenameBytes.push(oneByte);
 		i++;
 	}
 	//this part assume filenameBytes are array of 16bit char
-	var filenameStr = String.fromCharCode.apply(null, filenameBytes)
+	var filenameStr = String.fromCharCode.apply(null, filenameBytes);
 //	console.info(filenameStr);
 //	console.info(header);
-	// console.log(filenameStr, filenameStr.length)
-	return filenameStr
-// var filenamestr = intArrayToString(filenameBytes)
+	// console.log(filenameStr, filenameStr.length);
+	return filenameStr;
+// var filenamestr = intArrayToString(filenameBytes);
 }
 
 var cleanup = function(handle, data, cb) {
 	// clean up
-	_RARCloseArchive(handle)
+	_RARCloseArchive(handle);
 
-	for(var i = 0; i < data.length; i++) {
-		FS.unlink(data[i].name)
+	for (var i = 0; i < data.length; ++i) {
+		FS.unlink(data[i].name);
 	}
-	Runtime.removeFunction(cb)
+	Runtime.removeFunction(cb);
+}
+
+
+var openArchive = function(arcData, password, data, cb) {
+	var handle = _RAROpenArchiveEx(getPointer(arcData))
+	var or = arcData.get_OpenResult();
+	if (or !== ERAR_SUCCESS || ! handle) {
+		cleanup(handle, data, cb);
+		reportOpenError(or);
+		return null;
+	}
+
+	//ShowArcInfo(arcData.get_Flags());
+
+	// open success
+	if (password) {
+		_RARSetPassword(handle, ensureString(password));
+	}
+
+	var header = new Module.RARHeaderDataEx();
+	var res = _RARReadHeaderEx(handle, getPointer(header));
+	if (res !== ERAR_SUCCESS) {
+		return null;
+	}
+
+	return {
+		handle: handle,
+		header: header
+	};
 }
 
 var readRARContent = function(data, password, callbackFn, callbackDone) {
@@ -268,61 +297,61 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 	var callbackFn = callbackFn;
 //	console.log("Current working directory: ",FS.cwd())
 
-	var returnVal = []
+	var returnVal = [];
 
-	var currVolumeIndex = 0
-	var currFileName
-	var currFileSize
-	var currFileBuffer
-	var currFileBufferEnd
-	var currFileFlags
+	var currVolumeIndex = 0;
+	var currFileName;
+	var currFileSize;
+	var currFileBuffer;
+	var currFileBufferEnd;
+	var currFileFlags;
 
 	// write the byte arrays to a file first
 	// because the library operates on files
 	// the canOwn flag reduces the memory usage
-	for(var i = 0; i < data.length; i++) {
-		FS.writeFile(data[i].name, data[i].content, {encoding: "binary", canOwn: true, flags: 'w+'})
+	for (var i = 0; i < data.length; ++i) {
+		FS.writeFile(data[i].name, data[i].content, {encoding: "binary", canOwn: true, flags: 'w+'});
 	}
 
 	var arcData = new Module.RAROpenArchiveDataEx();
-	arcData.set_ArcName(data[0].name)
-	arcData.set_OpenMode(RAR_OM_EXTRACT)
+	arcData.set_ArcName(data[0].name);
+	arcData.set_OpenMode(RAR_OM_EXTRACT);
 
-	var cb = Runtime.addFunction(function(msg, UserData, P1, P2){
+	var cb = Runtime.addFunction(function(msg, UserData, P1, P2) {
 		// volume change event
-		if(msg === UCM_CHANGEVOLUMEW) return 0
-		if(msg === UCM_CHANGEVOLUME){
-			if(P2 === RAR_VOL_ASK) {
-				return -1
-			} else if(P2 === RAR_VOL_NOTIFY) {
-				console.log('... volume is :', Pointer_stringify(P1))
-				return 1
+		if (msg === UCM_CHANGEVOLUMEW) return 0;
+		if (msg === UCM_CHANGEVOLUME) {
+			if (P2 === RAR_VOL_ASK) {
+				return -1;
+			} else if (P2 === RAR_VOL_NOTIFY) {
+				console.log('... volume is :', Pointer_stringify(P1));
+				return 1;
 			}
-			throw "Unknown P2 value in volume change event"
+			throw "Unknown P2 value in volume change event";
 		}
 
-		if(msg === UCM_NEEDPASSWORDW) return 0
-		if(msg === UCM_NEEDPASSWORD) {
-			if(password) {
-				writeStringToMemory(password, P1)
-				return 1
+		if (msg === UCM_NEEDPASSWORDW) return 0;
+		if (msg === UCM_NEEDPASSWORD) {
+			if (password) {
+				writeStringToMemory(password, P1);
+				return 1;
 			} else {
-				return -1
+				return -1;
 			}
 		}
 
-		if(msg !== UCM_PROCESSDATA) {
-			return -1 //abort operation
+		if (msg !== UCM_PROCESSDATA) {
+			return -1; //abort operation
 		}
 		//additional callback function
 //		if(callbackFn){callbackFn(currFileName, currFileSize, currFileBufferEnd)}
 
 		// directly access the HEAP
-		var block = HEAPU8.subarray(P1, P1+P2)
-		var view = new Uint8Array(currFileBuffer, currFileBufferEnd, P2)
-		view.set(block)
+		var block = HEAPU8.subarray(P1, P1+P2);
+		var view = new Uint8Array(currFileBuffer, currFileBufferEnd, P2);
+		view.set(block);
 		//console.info(view);
-		currFileBufferEnd += P2
+		currFileBufferEnd += P2;
 		if (currFileSize === currFileBufferEnd) {
 //			console.info(currFileName + ', ' + currFileBufferEnd);
 //			console.info(currFileSize);
@@ -330,32 +359,23 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 		}
 
 		return 1
-	})
+	});
 	arcData.set_Callback(cb);
 
 
-	var handle = _RAROpenArchiveEx(getPointer(arcData))
+	// Open the archive
+	var status = openArchive(arcData, password, data, cb);
+	if (! status)
+		return null;
+	var handle = status.handle;
+	var header = status.header;
 
-	var or = arcData.get_OpenResult()
-	if(or !== ERAR_SUCCESS || !handle) {
-		cleanup(handle, data, cb)
-		reportOpenError(or)
-		return null
-	}
-
-	ShowArcInfo(arcData.get_Flags())
-
-	// open success
-	if(password){
-		_RARSetPassword(handle, ensureString(password))
-	}
-
-	var header = new Module.RARHeaderDataEx();
-	var res = _RARReadHeaderEx(handle, getPointer(header));
-
-	console.info('!!!!!!!!!! start');
-	while(res === ERAR_SUCCESS) {
+	// Get all the file names
+	var filesNames = [];
+	var res = ERAR_SUCCESS;
+	while (res === ERAR_SUCCESS) {
 		currFileName = getFileName(header);
+		filesNames.push(currFileName);
 		console.info('!!!!!!!!!! ' + currFileName);
 		var PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
 		if (PFCode !== ERAR_SUCCESS) {
@@ -365,12 +385,16 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 		}
 		res = _RARReadHeaderEx(handle, getPointer(header));
 	}
-	console.info('!!!!!!!!!! end');
+	_RARCloseArchive(handle);
 
-	var handle = _RAROpenArchiveEx(getPointer(arcData));
-	var header = new Module.RARHeaderDataEx();
-	var res = _RARReadHeaderEx(handle, getPointer(header));
+	// Open the archive again to start at the beginning
+	var status = openArchive(arcData, password, data, cb);
+	if (! status)
+		return null;
+	var handle = status.handle;
+	var header = status.header;
 
+	var res = ERAR_SUCCESS;
 	while(res === ERAR_SUCCESS){
 		currFileName = getFileName(header)
 //		console.info('!!!!!!!!!! ' + currFileName);
