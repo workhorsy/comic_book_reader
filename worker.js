@@ -6,8 +6,6 @@
 importScripts('libunrar.js');
 
 
-var g_start = 0;
-var g_incrementor = 0;
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
 if (!String.prototype.endsWith) {
@@ -66,19 +64,13 @@ function uncompress(filename, array_buffer) {
 }
 
 self.addEventListener('message', function(e) {
-	console.info(e);
+//	console.info(e);
 
 	switch (e.data.action) {
 		case 'uncompress':
 			var array_buffer = e.data.array_buffer;
 			var filename = e.data.filename;
 			uncompress(filename, array_buffer);
-			break;
-		case 'start':
-			g_start = e.data.start;
-			g_incrementor = e.data.incrementor;
-			e.data.array_buffer = null;
-			console.info('Worker started ...' + g_start);
 			break;
 /*
 		case 'resize_image':
