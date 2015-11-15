@@ -214,6 +214,54 @@ var reportProcessFileError = function(code){
 	Use a recursive function to walk this structure, see index.html for example
 */
 
+var ShowArcInfo = function(Flags) {
+	// console.log("\nArchive %s\n",ArcName);
+/*
+	console.log("Volume:\t\t%s",(Flags & 1) ? "yes":"no");
+	console.log("Comment:\t%s",(Flags & 2) ? "yes":"no");
+	console.log("Locked:\t\t%s",(Flags & 4) ? "yes":"no");
+	console.log("Solid:\t\t%s",(Flags & 8) ? "yes":"no");
+	console.log("New naming:\t%s",(Flags & 16) ? "yes":"no");
+	console.log("Recovery:\t%s",(Flags & 64) ? "yes":"no");
+	console.log("Encr.headers:\t%s",(Flags & 128) ? "yes":"no");
+	console.log("First volume:\t%s",(Flags & 256) ? "yes":"no or older than 3.0");
+	console.log("---------------------------\n");
+*/
+}
+
+var getFileName = function(header) {
+	//assume UTF-16, base on the C code
+	//actually not sure because the use of wchar_t depends on the compiler(emscripten) setting
+
+	// console.log(arcData.get_Flags())
+	// get entry name
+	var filenameBytes = []
+	var i = 0;
+	while (i < 2048) {
+		var oneByte = header.get_FileNameW(i);
+		if(oneByte === 0) break; //null terminated
+		filenameBytes.push(oneByte);
+		i++;
+	}
+	//this part assume filenameBytes are array of 16bit char
+	var filenameStr = String.fromCharCode.apply(null, filenameBytes)
+//	console.info(filenameStr);
+//	console.info(header);
+	// console.log(filenameStr, filenameStr.length)
+	return filenameStr
+// var filenamestr = intArrayToString(filenameBytes)
+}
+
+var cleanup = function(handle, data, cb) {
+	// clean up
+	_RARCloseArchive(handle)
+
+	for(var i = 0; i < data.length; i++) {
+		FS.unlink(data[i].name)
+	}
+	Runtime.removeFunction(cb)
+}
+
 var readRARContent = function(data, password, callbackFn, callbackDone) {
 	var data = data;
 	var password = password;
@@ -223,6 +271,11 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 	var returnVal = []
 
 	var currVolumeIndex = 0
+	var currFileName
+	var currFileSize
+	var currFileBuffer
+	var currFileBufferEnd
+	var currFileFlags
 
 	// write the byte arrays to a file first
 	// because the library operates on files
@@ -280,39 +333,14 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 	})
 	arcData.set_Callback(cb);
 
-	var cleanup = function(){
-		// clean up
-		_RARCloseArchive(handle)
-
-		for(var i = 0; i < data.length; i++) {
-			FS.unlink(data[i].name)
-		}
-		Runtime.removeFunction(cb)
-	}
-
 
 	var handle = _RAROpenArchiveEx(getPointer(arcData))
 
 	var or = arcData.get_OpenResult()
 	if(or !== ERAR_SUCCESS || !handle) {
-		cleanup()
+		cleanup(handle, data, cb)
 		reportOpenError(or)
 		return null
-	}
-
-	var ShowArcInfo = function(Flags) {
-		// console.log("\nArchive %s\n",ArcName);
-/*
-		console.log("Volume:\t\t%s",(Flags & 1) ? "yes":"no");
-		console.log("Comment:\t%s",(Flags & 2) ? "yes":"no");
-		console.log("Locked:\t\t%s",(Flags & 4) ? "yes":"no");
-		console.log("Solid:\t\t%s",(Flags & 8) ? "yes":"no");
-		console.log("New naming:\t%s",(Flags & 16) ? "yes":"no");
-		console.log("Recovery:\t%s",(Flags & 64) ? "yes":"no");
-		console.log("Encr.headers:\t%s",(Flags & 128) ? "yes":"no");
-		console.log("First volume:\t%s",(Flags & 256) ? "yes":"no or older than 3.0");
-		console.log("---------------------------\n");
-*/
 	}
 
 	ShowArcInfo(arcData.get_Flags())
@@ -325,35 +353,27 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 	var header = new Module.RARHeaderDataEx();
 	var res = _RARReadHeaderEx(handle, getPointer(header));
 
-	var getFileName = function(){
-		//assume UTF-16, base on the C code
-		//actually not sure because the use of wchar_t depends on the compiler(emscripten) setting
-
-		// console.log(arcData.get_Flags())
-		// get entry name
-		var filenameBytes = []
-		var i = 0;
-		while(i<2048){
-			var oneByte = header.get_FileNameW(i);
-			if(oneByte === 0) break; //null terminated
-			filenameBytes.push(oneByte);
-			i++;
+	console.info('!!!!!!!!!! start');
+	while(res === ERAR_SUCCESS) {
+		currFileName = getFileName(header);
+		console.info('!!!!!!!!!! ' + currFileName);
+		var PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
+		if (PFCode !== ERAR_SUCCESS) {
+			cleanup(handle, data, cb);
+			reportProcessFileError(PFCode);
+			return null;
 		}
-		//this part assume filenameBytes are array of 16bit char
-		var filenameStr = String.fromCharCode.apply(null, filenameBytes)
-		// console.log(filenameStr, filenameStr.length)
-		return filenameStr
-	// var filenamestr = intArrayToString(filenameBytes)
+		res = _RARReadHeaderEx(handle, getPointer(header));
 	}
+	console.info('!!!!!!!!!! end');
 
-	var currFileName
-	var currFileSize
-	var currFileBuffer
-	var currFileBufferEnd
-	var currFileFlags
+	var handle = _RAROpenArchiveEx(getPointer(arcData));
+	var header = new Module.RARHeaderDataEx();
+	var res = _RARReadHeaderEx(handle, getPointer(header));
 
 	while(res === ERAR_SUCCESS){
-		currFileName = getFileName()
+		currFileName = getFileName(header)
+//		console.info('!!!!!!!!!! ' + currFileName);
 //		console.log('filename: ', currFileName);
 		currFileSize = header.get_UnpSize()
 		currFileBuffer = new ArrayBuffer(currFileSize)
@@ -379,20 +399,21 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 				content: new Uint8Array(currFileBuffer)
 			})
 		} else {
-			cleanup()
+			cleanup(handle, data, cb)
 			reportProcessFileError(PFCode)
 			return null
 		}
+
 		res = _RARReadHeaderEx(handle, getPointer(header));
 	}
 
 	if(res !== ERAR_END_ARCHIVE){
-		cleanup()
+		cleanup(handle, data, cb)
 		reportReadHeaderError(res)
 		return null
 	}
 
-	cleanup()
+	cleanup(handle, data, cb)
 
 	//build up a directory tree-like structure
 	var dirs = returnVal.filter(function(en) { return en.type === 'dir' }).sort(function(a, b) { return a.fileNameSplit.length - b.fileNameSplit.length })
