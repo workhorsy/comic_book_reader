@@ -3,10 +3,9 @@
 // http://github.com/workhorsy/comic_book_reader
 
 
-importScripts('unrar.min.js');
+importScripts('libunrar.js');
 
-var g_unrar = null;
-var g_entries = [];
+
 var g_start = 0;
 var g_incrementor = 0;
 
@@ -31,66 +30,33 @@ function isValidImageType(file_name) {
 			file_name.endsWith('.bmp');
 }
 
-function uncompress(array_buffer) {
-	g_unrar = new Unrar(array_buffer);
-	var entries = g_unrar.getEntries();
-
-	// Get only the entries that are valid images
-	g_entries = [];
-	entries.forEach(function(entry) {
-		if (! entry.directory && isValidImageType(entry.name)) {
-			g_entries.push(entry);
+function uncompress(filename, array_buffer) {
+	var file = {};
+	file.name = filename;
+	file.size = array_buffer.byteLength;
+	file.type = '';
+	file.content = new Uint8Array(array_buffer);
+	var files = [file];
+	var password = null;
+	readRARContent(files, password, function(fileName, fileSize, data) {
+		if (! isValidImageType(fileName)) {
+			return;
 		}
-	});
 
-	// Sort the entries by their file names
-	g_entries.sort(function(a, b){
-		if(a.name < b.name) return -1;
-		if(a.name > b.name) return 1;
-		return 0;
-	});
-
-	setTimeout(function() {
-		uncompressEachImage(g_start);
-	}, 100);
-}
-
-function uncompressEachImage(i) {
-	console.info(i + ', ' + g_entries.length);
-
-	// If there are no more entries, stop the worker
-	if (i >= g_entries.length) {
-		g_unrar.close();
-		g_unrar = null;
-		g_entries = null;
-
-		var message = {
-			action: 'uncompressed_done'
-		};
-		self.postMessage(message);
-		self.close();
-
-	// If there are more entries, uncompress the file
-	} else {
-		var filename = g_entries[i].name;
-		var data = g_unrar.decompress(filename).buffer;
-		var blob = new Blob([data], {type: 'image/jpeg'});
-		data = null;
-		var url = URL.createObjectURL(blob);
-		blob = null;
+		var buffer = new Blob([data.buffer], {type: 'image/jpeg'});
+		console.info(fileName + ', ' + fileSize);
+//			console.info(buffer);
+		var url = URL.createObjectURL(buffer);
+		console.info(url);
 
 		var message = {
 			action: 'uncompressed_image',
-			filename: filename,
+			filename: fileName,
 			url: url
 			//index: index
 		};
 		self.postMessage(message);
-
-		setTimeout(function() {
-			uncompressEachImage(i + g_incrementor);
-		}, 100);
-	}
+	});
 }
 
 self.addEventListener('message', function(e) {
@@ -99,7 +65,8 @@ self.addEventListener('message', function(e) {
 	switch (e.data.action) {
 		case 'uncompress':
 			var array_buffer = e.data.array_buffer;
-			uncompress(array_buffer);
+			var filename = e.data.filename;
+			uncompress(filename, array_buffer);
 			break;
 		case 'start':
 			g_start = e.data.start;

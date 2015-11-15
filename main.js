@@ -91,8 +91,7 @@ function loadComic() {
 
 	hideTopMenu(false);
 
-	var blob = file.slice();
-	onLoaded(blob);
+	onLoaded(file);
 }
 
 function friendlyPageNumber() {
@@ -270,15 +269,17 @@ function uncompressAllImages(i) {
 	});
 }
 
-function onLoaded(blob) {
+function onLoaded(file) {
 	$('body').empty();
 
+	var blob = file.slice();
 	function startUncompress(worker) {
 		var reader = new FileReader();
 		reader.onload = function(evt) {
 			var array_buffer = reader.result;
 			var message = {
 				action: 'uncompress',
+				filename: file.name,
 				array_buffer: array_buffer
 			};
 			worker.postMessage(message, [array_buffer]);
