@@ -3,8 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 
 var g_db = null;
-var TOTAL_WORKERS = 1;
-var g_workers = [];
+var g_worker = null;
 var g_file_name = null;
 var g_entries = [];
 var g_images = [];
@@ -287,9 +286,7 @@ function onLoaded(file) {
 		reader.readAsArrayBuffer(blob);
 	}
 
-	for (var i=0; i<g_workers.length; ++i) {
-		startUncompress(g_workers[i]);
-	}
+	startUncompress(g_worker);
 /*
 	var reader = new zip.BlobReader(blob);
 	zip.createReader(reader, function(reader) {
@@ -955,16 +952,14 @@ function setupCachedFiles() {
 	};
 }
 
-function startWorker(worker, start, incrementor) {
-	worker.onmessage = function(e) {
+function startWorker(worker) {
+	g_worker = new Worker('worker.js');
+
+	g_worker.onmessage = function(e) {
 		switch (e.data.action) {
 			case 'uncompressed_done':
-				var index = g_workers.indexOf(worker);
-				if (index > -1) {
-					g_workers.splice(index, 1);
-				}
-				worker.terminate();
-				worker = null;
+				g_worker.terminate();
+				g_worker = null;
 				break;
 			case 'uncompressed_image':
 				var url = e.data.url;
@@ -1020,14 +1015,12 @@ function startWorker(worker, start, incrementor) {
 	var array_buffer = new ArrayBuffer(1);
 	var message = {
 		action: 'start',
-		start: start,
-		incrementor: incrementor,
 		array_buffer: array_buffer
 	};
-	worker.postMessage(message, [array_buffer]);
+	g_worker.postMessage(message, [array_buffer]);
 	if (array_buffer.byteLength !== 0) {
-		worker.terminate();
-		worker = null;
+		g_worker.terminate();
+		g_worker = null;
 		alert('Transferable Object are not supported!');
 	}
 }
@@ -1107,9 +1100,5 @@ $(document).ready(function() {
 	clearComicData();
 	setupCachedFiles();
 
-	for (var i=0; i<TOTAL_WORKERS; ++i) {
-		var worker = new Worker('worker.js');
-		startWorker(worker, i, TOTAL_WORKERS);
-		g_workers.push(worker);
-	}
+	startWorker();
 });

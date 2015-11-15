@@ -64,13 +64,18 @@ function uncompress(filename, array_buffer) {
 }
 
 self.addEventListener('message', function(e) {
-//	console.info(e);
+	console.info(e);
 
 	switch (e.data.action) {
 		case 'uncompress':
 			var array_buffer = e.data.array_buffer;
 			var filename = e.data.filename;
+			console.info('Uncompressing ...');
 			uncompress(filename, array_buffer);
+			break;
+		case 'start':
+			e.data.array_buffer = null;
+			console.info('Worker started ...');
 			break;
 /*
 		case 'resize_image':
