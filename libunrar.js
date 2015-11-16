@@ -297,8 +297,6 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 	var callbackFn = callbackFn;
 //	console.log("Current working directory: ",FS.cwd())
 
-	var returnVal = [];
-
 	var currVolumeIndex = 0;
 	var currFileName;
 	var currFileSize;
@@ -316,6 +314,44 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 	var arcData = new Module.RAROpenArchiveDataEx();
 	arcData.set_ArcName(data[0].name);
 	arcData.set_OpenMode(RAR_OM_EXTRACT);
+
+	// Open the archive
+	var status = openArchive(arcData, password, data, cb);
+	if (! status)
+		return null;
+	var handle = status.handle;
+	var header = status.header;
+
+	// Get all the file names
+	var filesNames = [];
+	var res = ERAR_SUCCESS;
+	while (res === ERAR_SUCCESS) {
+		currFileName = getFileName(header);
+		filesNames.push({
+			name: currFileName,
+			index: i
+		});
+		var PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
+		if (PFCode !== ERAR_SUCCESS) {
+			cleanup(handle, data, cb);
+			reportProcessFileError(PFCode);
+			return null;
+		}
+		res = _RARReadHeaderEx(handle, getPointer(header));
+	}
+	_RARCloseArchive(handle);
+	handle = null;
+
+	// Sort the file names lexically
+	filesNames.sort(function(a, b) {
+		if(a.name < b.name) return -1;
+		if(a.name > b.name) return 1;
+		return 0;
+	});
+
+	for (var i=0; i<filesNames.length; ++i) {
+		console.info('!!!!!!!!!! ' + filesNames[i].name);
+	}
 
 	var cb = Runtime.addFunction(function(msg, UserData, P1, P2) {
 		// volume change event
@@ -362,119 +398,60 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 	});
 	arcData.set_Callback(cb);
 
+	var targetFileName = null;
+	while (filesNames.length > 0) {
+		targetFileName = filesNames.shift();
+//		console.log('    searching for : ' + targetFileName.name);
 
-	// Open the archive
-	var status = openArchive(arcData, password, data, cb);
-	if (! status)
-		return null;
-	var handle = status.handle;
-	var header = status.header;
+		// Open the archive again to start at the beginning
+//		console.log('!!!!!!!!! reopening file!!!!!');
+		if (handle) {
+			_RARCloseArchive(handle);
+			handle = null;
+		}
+		var status = openArchive(arcData, password, data, cb);
+		if (! status)
+			return null;
+		handle = status.handle;
+		header = status.header;
 
-	// Get all the file names
-	var filesNames = [];
-	var res = ERAR_SUCCESS;
-	while (res === ERAR_SUCCESS) {
-		currFileName = getFileName(header);
-		filesNames.push(currFileName);
-		console.info('!!!!!!!!!! ' + currFileName);
-		var PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
-		if (PFCode !== ERAR_SUCCESS) {
+		res = ERAR_SUCCESS;
+		while (res === ERAR_SUCCESS) {
+			currFileName = getFileName(header);
+
+			// Read the file only if it matches the file name
+			var PFCode = null;
+			if (targetFileName.name === currFileName) {
+//				console.log('    !!!!!!!!! match: ' + currFileName);
+				currFileSize = header.get_UnpSize();
+				currFileBuffer = new ArrayBuffer(currFileSize);
+				currFileBufferEnd = 0;
+				currFileFlags = header.get_Flags();
+				PFCode = _RARProcessFileW(handle, RAR_TEST, 0, 0);
+			} else {
+				PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
+			}
+			if (PFCode !== ERAR_SUCCESS) {
+				cleanup(handle, data, cb);
+				reportProcessFileError(PFCode);
+				return null;
+			}
+
+			res = _RARReadHeaderEx(handle, getPointer(header));
+		}
+
+		if (res !== ERAR_END_ARCHIVE) {
+//			console.log('!!!!!!!!! exiting: ' + filesNames.length);
 			cleanup(handle, data, cb);
-			reportProcessFileError(PFCode);
+			reportReadHeaderError(res);
 			return null;
 		}
-		res = _RARReadHeaderEx(handle, getPointer(header));
-	}
-	_RARCloseArchive(handle);
-
-	// Open the archive again to start at the beginning
-	var status = openArchive(arcData, password, data, cb);
-	if (! status)
-		return null;
-	var handle = status.handle;
-	var header = status.header;
-
-	var res = ERAR_SUCCESS;
-	while(res === ERAR_SUCCESS){
-		currFileName = getFileName(header)
-//		console.info('!!!!!!!!!! ' + currFileName);
-//		console.log('filename: ', currFileName);
-		currFileSize = header.get_UnpSize()
-		currFileBuffer = new ArrayBuffer(currFileSize)
-		currFileBufferEnd = 0
-
-		currFileFlags = header.get_Flags()
-//		console.log("File continued from previous volume? ", currFileFlags&RHDF_SPLITBEFORE ?  'yes': 'no')
-//		console.log("File continued on next volume? ", currFileFlags&RHDF_SPLITAFTER ? 'yes': 'no')
-//		console.log("Previous files data is used (solid flag)? ", currFileFlags&RHDF_SOLID ? 'yes': 'no')
-
-		// ***process file***
-		// use RAR_TEST instead of RAR_EXTRACT
-		// because there is some problem reading from
-		// the extracted file in Emscripten file system
-		var PFCode=_RARProcessFileW(handle,RAR_TEST,0,0);
-		if(PFCode === ERAR_SUCCESS){
-//			console.info(currFileBuffer);
-			returnVal.push({
-				type: (currFileFlags & RHDF_DIRECTORY)?'dir':'file',
-				fileName: currFileName,
-				fileNameSplit: currFileName.split('/'),
-				fileSize: currFileSize,
-				content: new Uint8Array(currFileBuffer)
-			})
-		} else {
-			cleanup(handle, data, cb)
-			reportProcessFileError(PFCode)
-			return null
-		}
-
-		res = _RARReadHeaderEx(handle, getPointer(header));
 	}
 
-	if(res !== ERAR_END_ARCHIVE){
-		cleanup(handle, data, cb)
-		reportReadHeaderError(res)
-		return null
-	}
-
-	cleanup(handle, data, cb)
-
-	//build up a directory tree-like structure
-	var dirs = returnVal.filter(function(en) { return en.type === 'dir' }).sort(function(a, b) { return a.fileNameSplit.length - b.fileNameSplit.length })
-
-	var files = returnVal.filter(function(en) { return en.type === 'file' }).sort(function(a, b) { return a.fileNameSplit.length - b.fileNameSplit.length })
-
-	var rootDir = {type: 'dir', ls: {}}
-	var mkdir = function(path) {
-		var dir = rootDir
-		path.forEach(function(p) {
-			if(!(p in dir.ls)) {
-				dir.ls[p] = {
-					type: 'dir',
-					ls: {}
-				}
-			}
-			dir = dir.ls[p]
-		})
-	}
-	dirs.forEach(function(e){ mkdir(e.fileNameSplit) })
-
-	var putFile = function(entry){
-		var fileName = entry.fileNameSplit.pop()
-		var dir = rootDir
-		entry.fileNameSplit.forEach(function(p){
-			dir = dir.ls[p]
-		})
-		dir.ls[fileName] = {
-			type: 'file',
-			fullFileName: entry.fileName,
-			fileSize: entry.fileSize,
-			fileContent: entry.content
-		}
-	}
-	files.forEach(putFile)
+	cleanup(handle, data, cb);
 	callbackDone();
 
+	var rootDir = {type: 'dir', ls: {}}
 	return rootDir
 }
 
