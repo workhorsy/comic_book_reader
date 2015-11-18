@@ -952,7 +952,7 @@ function setupCachedFiles() {
 }
 
 function startWorker() {
-	g_worker = new Worker('worker.js');
+	g_worker = new Worker('js/worker.js');
 	var g_next_page_index = 0;
 
 	g_worker.onmessage = function(e) {
