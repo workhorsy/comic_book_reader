@@ -953,6 +953,7 @@ function setupCachedFiles() {
 
 function startWorker() {
 	g_worker = new Worker('js/worker.js');
+	// FIXME: Instead of having this here, have the worker send a index variable
 	var g_next_page_index = 0;
 
 	g_worker.onmessage = function(e) {
