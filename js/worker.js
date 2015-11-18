@@ -113,7 +113,8 @@ function uncompressZip(filename, array_buffer) {
 		var buffer = zipEntry.asArrayBuffer();
 		var blob = new Blob([buffer], {type: 'image/jpeg'});
 		var url = URL.createObjectURL(blob);
-//		console.info(url);
+		console.info(zipEntry.name);
+		console.info(url);
 
 		var message = {
 			action: 'uncompressed_each',

@@ -1058,9 +1058,6 @@ function startWorker() {
 }
 
 $(document).ready(function() {
-	// Tell zip.js where it can find the worker js file
-	zip.workerScriptsPath = 'js/zip/';
-
 	g_page_left = $('#pageLeft');
 	g_page_middle = $('#pageMiddle');
 	g_page_right = $('#pageRight');
