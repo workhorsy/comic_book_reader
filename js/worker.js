@@ -4,6 +4,7 @@
 
 
 importScripts('libunrar.js');
+importScripts('jszip.js');
 
 
 
@@ -80,6 +81,56 @@ function uncompress(filename, array_buffer) {
 	});
 }
 
+function uncompressZip(filename, array_buffer) {
+	var zip = new JSZip(array_buffer);
+
+	// Get the only the files that are images
+	var files = [];
+	Object.keys(zip.files).forEach(function(i) {
+		var zipEntry = zip.files[i];
+		if (isValidImageType(zipEntry.name)) {
+			files.push(zipEntry);
+		}
+	});
+
+	// Sort the files by their names
+	files.sort(function(a, b) {
+		if(a.name < b.name) return -1;
+		if(a.name > b.name) return 1;
+		return 0;
+	});
+
+	// Tell the client that we are starting to decompress
+	var message = {
+		action: 'uncompressed_start',
+		count: files.length
+	};
+	self.postMessage(message);
+
+	for (var i=0; i<files.length; ++i) {
+		var zipEntry = files[i];
+//		console.info(zipEntry);
+		var buffer = zipEntry.asArrayBuffer();
+		var blob = new Blob([buffer], {type: 'image/jpeg'});
+		var url = URL.createObjectURL(blob);
+//		console.info(url);
+
+		var message = {
+			action: 'uncompressed_each',
+			filename: zipEntry.name,
+			url: url
+			//index: index
+		};
+		self.postMessage(message);
+	}
+
+	// Tell the client that we are done
+	var message = {
+		action: 'uncompressed_done'
+	};
+	self.postMessage(message);
+}
+
 self.addEventListener('message', function(e) {
 	console.info(e);
 
@@ -88,7 +139,8 @@ self.addEventListener('message', function(e) {
 			var array_buffer = e.data.array_buffer;
 			var filename = e.data.filename;
 			console.info('Uncompressing ...');
-			uncompress(filename, array_buffer);
+//			uncompress(filename, array_buffer);
+			uncompressZip(filename, array_buffer);
 			break;
 		case 'start':
 			e.data.array_buffer = null;
