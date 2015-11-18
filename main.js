@@ -958,6 +958,7 @@ function startWorker() {
 	g_worker.onmessage = function(e) {
 		switch (e.data.action) {
 			case 'uncompressed_start':
+				g_next_page_index = 0;
 				var count =  e.data.count;
 
 				for (var i=0; i<count; ++i) {
