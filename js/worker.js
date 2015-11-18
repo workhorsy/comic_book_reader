@@ -29,7 +29,7 @@ function isValidImageType(file_name) {
 			file_name.endsWith('.bmp');
 }
 
-function uncompress(filename, array_buffer) {
+function uncompressRar(filename, array_buffer) {
 	var file = {};
 	file.name = filename;
 	file.size = array_buffer.byteLength;
@@ -138,10 +138,17 @@ self.addEventListener('message', function(e) {
 	switch (e.data.action) {
 		case 'uncompress':
 			var array_buffer = e.data.array_buffer;
-			var filename = e.data.filename;
-			console.info('Uncompressing ...');
-//			uncompress(filename, array_buffer);
-			uncompressZip(filename, array_buffer);
+			var filename = e.data.filename.toLowerCase();
+
+			// Open the file as rar
+			if (filename.endsWith('.cbr') || filename.endsWith('.rar')) {
+				console.info('Uncompressing RAR ...');
+				uncompressRar(filename, array_buffer);
+			// Open the file as zip
+			} else if(filename.endsWith('.cbz') || filename.endsWith('.zip')) {
+				console.info('Uncompressing Zip ...');
+				uncompressZip(filename, array_buffer);
+			}
 			break;
 		case 'start':
 			e.data.array_buffer = null;
