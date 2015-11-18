@@ -36,7 +36,21 @@ function uncompress(filename, array_buffer) {
 	file.content = new Uint8Array(array_buffer);
 	var files = [file];
 	var password = null;
-	readRARContent(files, password, function(fileName, fileSize, data) {
+	readRARContent(files, password, function(fileNames) {
+		var count = 0;
+		for (var i=0; i<fileNames.length; ++i) {
+			if (isValidImageType(fileNames[i].name)) {
+				count++;
+			}
+		}
+
+		var message = {
+			action: 'uncompressed_start',
+			count: count
+		};
+		self.postMessage(message);
+	},
+	function(fileName, fileSize, data) {
 		if (! isValidImageType(fileName)) {
 			return;
 		}
@@ -49,13 +63,14 @@ function uncompress(filename, array_buffer) {
 		console.info(url);
 
 		var message = {
-			action: 'uncompressed_image',
+			action: 'uncompressed_each',
 			filename: fileName,
 			url: url
 			//index: index
 		};
 		self.postMessage(message);
-	}, function() {
+	},
+	function() {
 		var message = {
 			action: 'uncompressed_done'
 		};

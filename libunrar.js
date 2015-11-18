@@ -163,56 +163,6 @@ var reportProcessFileError = function(code){
  * Actual extraction code
  *-------------------------*/
 
-/**
-	Get the content of file(s) inside a RAR archive or archives(for multi-part RAR)
-
-	@param data: Array of {name:filename in string, content: typed array of file}
-	In case of single RAR archive, data = [
-		{name: 'test.rar', content: typed array for content of test.rar}
-	]
-	In case of multi-part RAR, it would be like this:
-	[
-		{name: 'test.part1.rar', content: typed array for content of test.part1.rar},
-		...
-		{name: 'test.partN.rar', content: typed array for content of test.partN.rar}
-	]
-	@param password: string
-	@param callbackFn: function(currFileName, currFileSize, currProcessed)
-	It is used to show progress(of a single file only, whole archive progress not implemented)
-
-	@return a JS Object representing the directory structure of the RAR archive content
-	- Each directory is a map between the directory name and an object {type: 'dir', ls: {(file|directory map)}
-	- Each file is a map between the file name and an object
-	{type: 'file',
-	fullFileName: full file name including the directory path,
-	fileSize: file size,
-	fileContent: typed array (UInt8) of file content}
-
-	There is always an outtermost rootDirectory object
-	Example:
-	return value = {
-		ls: {
-			'fileA' : { type: 'file', fullFileName: ..., fileSize: ..., fileContent: ...},
-			'subDirA' : { type: 'dir'
-				ls: {
-					'fileB' : {type: 'file' ....},
-					'subsubdirC' : {type: 'dir',
-							ls: { 'fileD' : {type: 'file' ... } }
-					}
-				}
-			}
-		}
-	}
-	for RAR file like this:
-	/
-	/fileA
-	/subDirA/
-	/subDirA/fileB
-	/subDirA/subsubdirC/
-	/subDirA/subsubdirC/fileD
-
-	Use a recursive function to walk this structure, see index.html for example
-*/
 
 var ShowArcInfo = function(Flags) {
 	// console.log("\nArchive %s\n",ArcName);
@@ -291,10 +241,7 @@ var openArchive = function(arcData, password, data, cb) {
 	};
 }
 
-var readRARContent = function(data, password, callbackFn, callbackDone) {
-	var data = data;
-	var password = password;
-	var callbackFn = callbackFn;
+var readRARContent = function(data, password, callbackStart, callbackEach, callbackDone) {
 //	console.log("Current working directory: ",FS.cwd())
 
 	var currVolumeIndex = 0;
@@ -352,6 +299,7 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 	for (var i=0; i<filesNames.length; ++i) {
 		console.info('!!!!!!!!!! ' + filesNames[i].name);
 	}
+	callbackStart(filesNames);
 
 	var cb = Runtime.addFunction(function(msg, UserData, P1, P2) {
 		// volume change event
@@ -380,7 +328,7 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 			return -1; //abort operation
 		}
 		//additional callback function
-//		if(callbackFn){callbackFn(currFileName, currFileSize, currFileBufferEnd)}
+//		if(callbackEach){callbackEach(currFileName, currFileSize, currFileBufferEnd)}
 
 		// directly access the HEAP
 		var block = HEAPU8.subarray(P1, P1+P2);
@@ -391,7 +339,7 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 		if (currFileSize === currFileBufferEnd) {
 			console.info(currFileName + ', ' + currFileBufferEnd);
 //			console.info(currFileSize);
-			callbackFn(currFileName, currFileSize, view);
+			callbackEach(currFileName, currFileSize, view);
 		}
 
 		return 1

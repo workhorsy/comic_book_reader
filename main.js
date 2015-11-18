@@ -9,6 +9,7 @@ var g_file_name = null;
 var g_images = [];
 var g_image_index = 0;
 var g_urls = {};
+var g_titles = {};
 
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
@@ -147,9 +148,11 @@ function loadCurrentPage(cb) {
 function loadImage(index, cb) {
 	var img = g_images[index];
 	var url = g_urls[index];
-	if (! img.is_loaded) {
+	var title = g_titles[index];
+	if (! img.is_loaded && url && title) {
 		img.onload = function() {
 			img.is_loaded = true;
+			img.title = title;
 //				console.info(img);
 			console.info('!!! Loading image ' + index + ': ' + img.title);
 			cb();
@@ -252,6 +255,7 @@ function clearComicData() {
 	g_images = [];
 //	g_entries = [];
 	g_urls = {};
+	g_titles = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 }
@@ -953,6 +957,25 @@ function startWorker() {
 
 	g_worker.onmessage = function(e) {
 		switch (e.data.action) {
+			case 'uncompressed_start':
+				var count =  e.data.count;
+
+				for (var i=0; i<count; ++i) {
+					var img = document.createElement('img');
+					img.id = 'page_' + i;
+					img.title = 'No image loaded';
+					img.className = 'comicImage';
+					img.is_loaded = false;
+					img.ondragstart = function() { return false; }
+					img.onload = function() {
+						if (g_needs_resize) {
+							onResize(g_screen_width, g_screen_height);
+						}
+					};
+					img.draggable = 'false';
+					g_images.push(img);
+				}
+				break;
 			case 'uncompressed_done':
 				// FIXME: In Chrome, if the worker is terminated, all object URLs die
 //				g_worker.terminate();
@@ -965,23 +988,20 @@ function startWorker() {
 					onResize(width, height);
 				});
 				break;
-			case 'uncompressed_image':
+			case 'uncompressed_each':
 				var url = e.data.url;
 				var filename = e.data.filename;
 				g_urls[g_next_page_index] = url;
+				g_titles[g_next_page_index] = filename;
 
-				var img = document.createElement('img');
-				img.id = 'page_' + g_next_page_index;
-				img.title = filename;
-				img.className = 'comicImage';
-				img.ondragstart = function() { return false; }
-				img.onload = function() {
-					if (g_needs_resize) {
-						onResize(g_screen_width, g_screen_height);
-					}
-				};
-				img.draggable = 'false';
-				g_images.push(img);
+				if (g_next_page_index === 0) {
+					loadCurrentPage(function() {
+						var width = $(window).width();
+						var height = $(window).height();
+						onResize(width, height);
+					});
+				}
+
 				g_next_page_index++;
 				break;
 /*
