@@ -42,7 +42,8 @@ function uncompress(filename, array_buffer) {
 		}
 
 		var buffer = new Blob([data.buffer], {type: 'image/jpeg'});
-		console.info(fileName + ', ' + fileSize);
+//		console.info(buffer);
+//		console.info(fileName + ', ' + fileSize);
 //			console.info(buffer);
 		var url = URL.createObjectURL(buffer);
 		console.info(url);
@@ -59,7 +60,8 @@ function uncompress(filename, array_buffer) {
 			action: 'uncompressed_done'
 		};
 		self.postMessage(message);
-		selc.close();
+		// FIXME: In Chrome, if the worker is terminated, all object URLs die
+//		self.close();
 	});
 }
 

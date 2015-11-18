@@ -5,7 +5,7 @@
 var g_db = null;
 var g_worker = null;
 var g_file_name = null;
-var g_entries = [];
+//var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
 var g_urls = {};
@@ -146,19 +146,19 @@ function loadCurrentPage(cb) {
 
 function loadImage(index, cb) {
 	var img = g_images[index];
+	var url = g_urls[index];
 	if (! img.is_loaded) {
-		uncompressImage(index, function(j, url, filename) {
-			img.onload = function() {
-				img.is_loaded = true;
+		img.onload = function() {
+			img.is_loaded = true;
 //				console.info(img);
-				console.info('!!! Loading image ' + index + ': ' + img.title);
-				cb();
-			};
-			img.src = url;
-		});
+			console.info('!!! Loading image ' + index + ': ' + img.title);
+			cb();
+		};
+		img.src = url;
 	}
 }
 
+/*
 function uncompressImage(i, cb) {
 	var entry = g_entries[i];
 
@@ -218,7 +218,7 @@ function uncompressImage(i, cb) {
 		});
 	}
 }
-
+*/
 function setComicData(name, size, type) {
 	g_file_name = name;
 	$('#comicData').show();
@@ -250,12 +250,12 @@ function clearComicData() {
 	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
 	g_images = [];
-	g_entries = [];
+//	g_entries = [];
 	g_urls = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 }
-
+/*
 function uncompressAllImages(i) {
 	i = i || 0;
 	uncompressImage(i, function(j, url, filename) {
@@ -267,26 +267,21 @@ function uncompressAllImages(i) {
 		}, 100);
 	});
 }
-
+*/
 function onLoaded(file) {
-	$('body').empty();
-
 	var blob = file.slice();
-	function startUncompress(worker) {
-		var reader = new FileReader();
-		reader.onload = function(evt) {
-			var array_buffer = reader.result;
-			var message = {
-				action: 'uncompress',
-				filename: file.name,
-				array_buffer: array_buffer
-			};
-			worker.postMessage(message, [array_buffer]);
-		};
-		reader.readAsArrayBuffer(blob);
-	}
 
-	startUncompress(g_worker);
+	var reader = new FileReader();
+	reader.onload = function(evt) {
+		var array_buffer = reader.result;
+		var message = {
+			action: 'uncompress',
+			filename: file.name,
+			array_buffer: array_buffer
+		};
+		g_worker.postMessage(message, [array_buffer]);
+	};
+	reader.readAsArrayBuffer(blob);
 /*
 	var reader = new zip.BlobReader(blob);
 	zip.createReader(reader, function(reader) {
@@ -952,29 +947,44 @@ function setupCachedFiles() {
 	};
 }
 
-function startWorker(worker) {
+function startWorker() {
 	g_worker = new Worker('worker.js');
+	var g_next_page_index = 0;
 
 	g_worker.onmessage = function(e) {
 		switch (e.data.action) {
 			case 'uncompressed_done':
-				g_worker.terminate();
-				g_worker = null;
+				// FIXME: In Chrome, if the worker is terminated, all object URLs die
+//				g_worker.terminate();
+//				g_worker = null;
+
+				g_image_index = 0;
+				loadCurrentPage(function() {
+					var width = $(window).width();
+					var height = $(window).height();
+					onResize(width, height);
+				});
 				break;
 			case 'uncompressed_image':
 				var url = e.data.url;
+				var filename = e.data.filename;
+				g_urls[g_next_page_index] = url;
+
 				var img = document.createElement('img');
-				img.title = e.data.filename;
-				img.width = 50;
-				img.height = 100;
-				img.style.backgroundColor = 'red';
-				img.style.border = '6px solid blue';
+				img.id = 'page_' + g_next_page_index;
+				img.title = filename;
+				img.className = 'comicImage';
+				img.ondragstart = function() { return false; }
 				img.onload = function() {
-					URL.revokeObjectURL(url);
+					if (g_needs_resize) {
+						onResize(g_screen_width, g_screen_height);
+					}
 				};
-				img.src = url;
-				document.body.appendChild(img);
+				img.draggable = 'false';
+				g_images.push(img);
+				g_next_page_index++;
 				break;
+/*
 			case 'resize_image':
 				var array_buffer = e.data.array_buffer;
 				var filename = e.data.filename;
@@ -1008,6 +1018,7 @@ function startWorker(worker) {
 				};
 				img.src = url;
 				break;
+*/
 		}
 	};
 

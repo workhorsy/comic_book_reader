@@ -389,7 +389,7 @@ var readRARContent = function(data, password, callbackFn, callbackDone) {
 		//console.info(view);
 		currFileBufferEnd += P2;
 		if (currFileSize === currFileBufferEnd) {
-//			console.info(currFileName + ', ' + currFileBufferEnd);
+			console.info(currFileName + ', ' + currFileBufferEnd);
 //			console.info(currFileSize);
 			callbackFn(currFileName, currFileSize, view);
 		}
