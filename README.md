@@ -5,6 +5,7 @@ Comic Book Reader
 * There is no way to do swiping from screen edges yet in browsers
 
 # Bugs:
+* Turn image caching back on
 * Sometimes the 3rd page gets removed?
 * pulling the top menu down is jerky in chrome
 * Touch movement is broken in IE11
@@ -24,6 +25,5 @@ Comic Book Reader
 * Kinetic scrolling
 * Add a swipe up menu for page selection, with thumbnails
 * Having the pages 100% width is good for a tablet, but not a desktop
-* rar support
 * Loading files from Drop Box, Google Drive, et cetera
 * Automatically identify comics using "perceptual image hashing"
