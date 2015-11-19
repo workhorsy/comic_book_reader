@@ -14,7 +14,6 @@ Comic Book Reader
 * We cant restart web workers in Chrome without corrupting its object urls.
 
 # TODO Small:
-* Move the page number to the top left corner, and make it smaller
 * Turn image caching back on
 * Make it work when 100% offline
 * Manga (left to right) support

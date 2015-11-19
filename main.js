@@ -114,7 +114,7 @@ function replaceIfDifferentImage(parent, image) {
 function loadCurrentPage(cb) {
 	// Update the page number
 	var page = friendlyPageNumber();
-	$('#overlayPageNumber')[0].innerHTML = page;
+	$('#overlayPageNumber')[0].innerHTML = '&nbsp;' + page;
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
 	// Load the middle page
@@ -825,10 +825,10 @@ function onResize(screen_width, screen_height) {
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(' + (1 * g_screen_width) + 'px, 0px, 0px)';
 
-	// Make the overlay font 10% the screen width
-	var size = g_screen_width / 10;
-	if (size < 50) {
-		size = 50;
+	// Make the overlay font 1/20th the screen width
+	var size = g_screen_width / 20;
+	if (size < 25) {
+		size = 25;
 	}
 	style.fontSize = size + 'px';
 
