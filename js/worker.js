@@ -145,8 +145,8 @@ function uncompressZip(filename, array_buffer) {
 
 function isRarFile(array_buffer) {
 	// The two styles of RAR headers
-	var rar_header1 = [0x52, 0x45, 0x7E, 0x5E].toString();
-	var rar_header2 = [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x00].toString();
+	var rar_header1 = [0x52, 0x45, 0x7E, 0x5E].join(', ');
+	var rar_header2 = [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x00].join(', ');
 
 	// Just return false if the file is smaller than the header
 	if (array_buffer.byteLength < 7) {
@@ -154,14 +154,14 @@ function isRarFile(array_buffer) {
 	}
 
 	// Return true if the header matches one of the RAR headers
-	var header1 = new Uint8Array(array_buffer).slice(0, 4).toString();
-	var header2 = new Uint8Array(array_buffer).slice(0, 7).toString();
+	var header1 = new Uint8Array(array_buffer).slice(0, 4).join(', ');
+	var header2 = new Uint8Array(array_buffer).slice(0, 7).join(', ');
 	return (header1 === rar_header1 || header2 === rar_header2);
 }
 
 function isZipFile(array_buffer) {
 	// The ZIP header
-	var zip_header = [0x50, 0x4b, 0x03, 0x04].toString();
+	var zip_header = [0x50, 0x4b, 0x03, 0x04].join(', ');
 
 	// Just return false if the file is smaller than the header
 	if (array_buffer.byteLength < 4) {
@@ -169,7 +169,7 @@ function isZipFile(array_buffer) {
 	}
 
 	// Return true if the header matches the ZIP header
-	var header = new Uint8Array(array_buffer).slice(0, 4).toString();
+	var header = new Uint8Array(array_buffer).slice(0, 4).join(', ');
 	return (header === zip_header);
 }
 
