@@ -30,14 +30,8 @@ function isValidImageType(file_name) {
 }
 
 function uncompressRar(filename, array_buffer) {
-	var file = {};
-	file.name = filename;
-	file.size = array_buffer.byteLength;
-	file.type = '';
-	file.content = new Uint8Array(array_buffer);
-	var files = [file];
-	var password = null;
-	readRARContent(files, password, function(fileNames) {
+	// Tell the client that we are starting to uncompress
+	var onStart = function(fileNames) {
 		var count = 0;
 		for (var i=0; i<fileNames.length; ++i) {
 			if (isValidImageType(fileNames[i].name)) {
@@ -50,8 +44,10 @@ function uncompressRar(filename, array_buffer) {
 			count: count
 		};
 		self.postMessage(message);
-	},
-	function(fileName, fileSize, data) {
+	};
+
+	// Uncompress each file and send it to the client
+	var onEach = function(fileName, fileSize, data) {
 		if (! isValidImageType(fileName)) {
 			return;
 		}
@@ -70,21 +66,35 @@ function uncompressRar(filename, array_buffer) {
 			//index: index
 		};
 		self.postMessage(message);
-	},
-	function() {
+	};
+
+	// Tell the client that we are done uncompressing
+	var onEnd = function() {
 		var message = {
 			action: 'uncompressed_done'
 		};
 		self.postMessage(message);
 		// FIXME: In Chrome, if the worker is terminated, all object URLs die
 //		self.close();
-	});
+	};
+
+	// Create an array of rar files
+	var files = [{
+		name: filename,
+		size: array_buffer.byteLength,
+		type: '',
+		content: new Uint8Array(array_buffer)
+	}];
+	var password = null;
+
+	// Decompress all the files
+	readRARContent(files, password, onStart, onEach, onEnd);
 }
 
 function uncompressZip(filename, array_buffer) {
 	var zip = new JSZip(array_buffer);
 
-	// Get the only the files that are images
+	// Get only the files that are images
 	var files = [];
 	Object.keys(zip.files).forEach(function(i) {
 		var zipEntry = zip.files[i];
@@ -93,20 +103,21 @@ function uncompressZip(filename, array_buffer) {
 		}
 	});
 
-	// Sort the files by their names
+	// Sort the files by name
 	files.sort(function(a, b) {
 		if(a.name < b.name) return -1;
 		if(a.name > b.name) return 1;
 		return 0;
 	});
 
-	// Tell the client that we are starting to decompress
+	// Tell the client that we are starting to uncompress
 	var message = {
 		action: 'uncompressed_start',
 		count: files.length
 	};
 	self.postMessage(message);
 
+	// Uncompress each file and send it to the client
 	for (var i=0; i<files.length; ++i) {
 		var zipEntry = files[i];
 //		console.info(zipEntry);
@@ -125,7 +136,7 @@ function uncompressZip(filename, array_buffer) {
 		self.postMessage(message);
 	}
 
-	// Tell the client that we are done
+	// Tell the client that we are done uncompressing
 	var message = {
 		action: 'uncompressed_done'
 	};
