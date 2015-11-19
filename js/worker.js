@@ -3,33 +3,10 @@
 // http://github.com/workhorsy/comic_book_reader
 
 
+importScripts('polyfill/polyfill.js');
 importScripts('libunrar.js');
 importScripts('jszip.js');
 
-
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
-if (!String.prototype.endsWith) {
-  String.prototype.endsWith = function(searchString, position) {
-      var subjectString = this.toString();
-      if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
-        position = subjectString.length;
-      }
-      position -= searchString.length;
-      var lastIndex = subjectString.indexOf(searchString, position);
-      return lastIndex !== -1 && lastIndex === position;
-  };
-}
-
-if (! Uint8Array.prototype.slice) {
-	Uint8Array.prototype.slice = function(start, length) {
-		var retval = new Array();
-		for (var i=start; i<start+length; ++i) {
-			retval[i] = this[i];
-		}
-		return retval;
-	}
-}
 
 function isValidImageType(file_name) {
 	file_name = file_name.toLowerCase();

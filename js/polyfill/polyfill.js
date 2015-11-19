@@ -13,6 +13,7 @@ if (!String.prototype.endsWith) {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
+if (typeof HTMLCanvasElement !== 'undefined') {
 if (!HTMLCanvasElement.prototype.toBlob) {
  Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
   value: function (callback, type, quality) {
@@ -28,6 +29,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
     callback( new Blob( [arr], {type: type || 'image/png'} ) );
   }
  });
+}
 }
 
 if (! Uint8Array.prototype.slice) {
