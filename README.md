@@ -12,8 +12,10 @@ Comic Book Reader
 * Full screen does not make black wall paper show behind everything
 * Touch movement is broken in IE11
 * We cant restart web workers in Chrome without corrupting its object urls.
+* Opening rar files is super slow in IE11
 
 # TODO Small:
+* Add loading progress
 * Turn image caching back on
 * Make it work when 100% offline
 * Manga (left to right) support
