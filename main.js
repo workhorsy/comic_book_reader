@@ -729,6 +729,53 @@ function onMouseWheel(e) {
 	}
 }
 
+function onKeyPress(e) {
+	// Just return if not an arrow key
+	if (e.keyCode < 37 || e.keyCode > 40) {
+		return;
+	}
+
+	e.preventDefault();
+
+	var y_offset = 0;
+	switch (e.keyCode) {
+		case 40: // Arrow down
+			y_offset = -100;
+			break;
+		case 38: // Arrow up
+			y_offset = 100;
+			break;
+		case 37: // Arrow left
+			return;
+		case 39: // Arrow right
+			return;
+	}
+
+	g_moving_page = g_page_middle[0];
+	var image_height = $('#' + g_moving_page.children[0].id).height();
+
+	// Reset the scroll position if it goes past the screen top or bottom
+	var new_offset = y_offset + g_scroll_y_start;
+	if (new_offset > 0) {
+		new_offset = 0;
+	} else if (image_height + new_offset < g_screen_height) {
+		new_offset = g_screen_height - image_height;
+	}
+
+	// Only scroll down if the top of the image is above the screen top
+	// Only scroll up if the bottom of the image is below the screen bottom
+	if (new_offset <= 0 && image_height + new_offset >= g_screen_height) {
+		g_scroll_y_start = new_offset;
+
+		var x = (g_moving_page.panel_index * g_screen_width);
+		var style = g_moving_page.style;
+		style.transitionDuration = '0.3s';
+		style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+
+		updateScrollBar();
+	}
+}
+
 function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
@@ -1100,6 +1147,9 @@ $(document).ready(function() {
 	$('#fileInput').change(function() {
 		loadComic();
 	});
+
+	// Key press events
+	$(document).keydown(onKeyPress);
 
 	// Mouse events for the pages
 	g_page_left.mousedown(onPageMouseDown);

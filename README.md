@@ -14,7 +14,6 @@ Comic Book Reader
 
 # TODO Small:
 * Move the page number to the top left corner, and make it smaller
-* F11 for full screen toggle
 * Turn image caching back on
 * Make it work when 100% offline
 * Manga (left to right) support
