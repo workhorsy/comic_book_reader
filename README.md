@@ -14,8 +14,6 @@ Comic Book Reader
 * Full screen does not make black wall paper show behind everything
 
 # TODO Small:
-* Instead of looking at file names for decompression, look at the
-	mime type via the first few bytes.
 * F11 for full screen toggle
 * Make it work when 100% offline
 * Make thumb nailer faster by running in the web worker, and not using DOM

@@ -143,6 +143,36 @@ function uncompressZip(filename, array_buffer) {
 	self.postMessage(message);
 }
 
+function isRarFile(array_buffer) {
+	// The two styles of RAR headers
+	var rar_header1 = [0x52, 0x45, 0x7E, 0x5E].toString();
+	var rar_header2 = [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x00].toString();
+
+	// Just return false if the file is smaller than the header
+	if (array_buffer.byteLength < 7) {
+		return false;
+	}
+
+	// Return true if the header matches one of the RAR headers
+	var header1 = new Uint8Array(array_buffer).slice(0, 4).toString();
+	var header2 = new Uint8Array(array_buffer).slice(0, 7).toString();
+	return (header1 === rar_header1 || header2 === rar_header2);
+}
+
+function isZipFile(array_buffer) {
+	// The ZIP header
+	var zip_header = [0x50, 0x4b, 0x03, 0x04].toString();
+
+	// Just return false if the file is smaller than the header
+	if (array_buffer.byteLength < 4) {
+		return false;
+	}
+
+	// Return true if the header matches the ZIP header
+	var header = new Uint8Array(array_buffer).slice(0, 4).toString();
+	return (header === zip_header);
+}
+
 self.addEventListener('message', function(e) {
 	console.info(e);
 
@@ -152,11 +182,11 @@ self.addEventListener('message', function(e) {
 			var filename = e.data.filename.toLowerCase();
 
 			// Open the file as rar
-			if (filename.endsWith('.cbr') || filename.endsWith('.rar')) {
+			if (isRarFile(array_buffer)) {
 				console.info('Uncompressing RAR ...');
 				uncompressRar(filename, array_buffer);
 			// Open the file as zip
-			} else if(filename.endsWith('.cbz') || filename.endsWith('.zip')) {
+			} else if(isZipFile(array_buffer)) {
 				console.info('Uncompressing Zip ...');
 				uncompressZip(filename, array_buffer);
 			}
