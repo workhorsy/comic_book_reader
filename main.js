@@ -1065,12 +1065,12 @@ $(document).ready(function() {
 	g_page_left = $('#pageLeft');
 	g_page_middle = $('#pageMiddle');
 	g_page_right = $('#pageRight');
-/*
+
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
 		e.preventDefault();
 	});
-*/
+
 	// Resize everything when the browser resizes
 	$(window).resize(function() {
 		var width = $(window).width();
