@@ -189,6 +189,15 @@ self.addEventListener('message', function(e) {
 			} else if(isZipFile(array_buffer)) {
 				console.info('Uncompressing Zip ...');
 				uncompressZip(filename, array_buffer);
+			// Otherwise show an error
+			} else {
+				var error = 'Invalid comic file: "' + filename + '"';
+				console.info(error);
+				var message = {
+					action: 'invalid_file',
+					error: error
+				};
+				self.postMessage(message);
 			}
 			break;
 		case 'start':

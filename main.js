@@ -1006,6 +1006,9 @@ function startWorker() {
 
 				g_next_page_index++;
 				break;
+			case 'invalid_file':
+				onError(e.data.error);
+				break;
 /*
 			case 'resize_image':
 				var array_buffer = e.data.array_buffer;
