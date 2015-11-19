@@ -21,6 +21,16 @@ if (!String.prototype.endsWith) {
   };
 }
 
+if (! Uint8Array.prototype.slice) {
+	Uint8Array.prototype.slice = function(start, length) {
+		var retval = new Array();
+		for (var i=start; i<start+length; ++i) {
+			retval[i] = this[i];
+		}
+		return retval;
+	}
+}
+
 function isValidImageType(file_name) {
 	file_name = file_name.toLowerCase();
 	return file_name.endsWith('.jpeg') ||
