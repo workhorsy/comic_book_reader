@@ -125,6 +125,8 @@ function showBottomMenu(y_offset, is_instant) {
 				// Make the image twice as wide if it is in landscape mode
 				if (this.naturalWidth > this.naturalHeight) {
 					this.width = 200;
+					this.style.marginLeft = '20px';
+					this.style.marginRight = '20px';
 				}
 				loadNextThumbNail(i + 1);
 			};
