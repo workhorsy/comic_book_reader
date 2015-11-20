@@ -110,14 +110,12 @@ function showBottomMenu(y_offset, is_instant) {
 				return;
 			}
 
-			console.log('Loading thumbnail #' + i);
+			console.info('Loading thumbnail #' + (i + 1));
 			var url = g_urls[i];
 			var img = document.createElement('img');
 			img.width = 100;
 			img.title = g_titles[i];
 			img.src = g_urls[i];
-			img.style.border = '1px solid black';
-			img.style.margin = '10px';
 			img.onclick = function(e) {
 				g_image_index = i;
 				loadCurrentPage();
