@@ -25,7 +25,6 @@ Comic Book Reader
 * Remember previous page number when reloading files
 
 # TODO Big:
-* Add a swipe up menu for page selection, with thumbnails
 * Make thumb nailer faster by running in the web worker, and not using DOM
 * Kinetic scrolling
 * Add Tar support (cbt file)
