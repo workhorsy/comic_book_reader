@@ -119,6 +119,7 @@ function showBottomMenu(y_offset, is_instant) {
 				g_image_index = i;
 				loadCurrentPage();
 				hideAllMenus(false);
+				$(window).trigger('resize');
 			};
 			img.onload = function() {
 				// Make the image twice as wide if it is in landscape mode
