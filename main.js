@@ -5,7 +5,6 @@
 var g_db = null;
 var g_worker = null;
 var g_file_name = null;
-//var g_entries = [];
 var g_images = [];
 var g_image_index = 0;
 var g_urls = {};
@@ -240,67 +239,6 @@ function loadImage(index, cb) {
 	}
 }
 
-/*
-function uncompressImage(i, cb) {
-	var entry = g_entries[i];
-
-	// Image is uncompressed and an Object URL
-//	console.info(g_urls);
-	if (g_urls.hasOwnProperty(i)) {
-		var url = g_urls[i];
-//		console.info('??? Already Uncompressed ' + i + ': ' + entry.filename);
-		cb(entry.index, url, entry.filename);
-
-	} else {
-		getCachedFile('big', entry.filename, function(smaller_blob) {
-			// Image is uncompressed and in file system
-			if (smaller_blob) {
-				//console.info(entry.filename);
-				//console.info(smaller_blob + ', ' + smaller_blob.size);
-				var smaller_url = URL.createObjectURL(smaller_blob);
-				console.info('URL.createObjectURL: ' + smaller_url);
-				g_urls[i] = smaller_url;
-				cb(entry.index, smaller_url, entry.filename);
-			// Image is compressed
-			} else {
-				console.info('!!! Uncompressing image ' + i + ': ' +  entry.filename);
-				var filename = entry.filename;
-				var index = entry.index;
-				entry.getData(new zip.BlobWriter(), function(blob) {
-					setTimeout(function() {
-						// Save the image in the database
-						setCachedFile('big', filename, blob, function() {
-							setTimeout(function() {
-								var smaller_url = URL.createObjectURL(blob);
-								console.info('URL.createObjectURL: ' + smaller_url);
-								cb(index, smaller_url, filename);
-							}, 200);
-						});
-
-						// Send the image to the worker to be resized
-						setTimeout(function() {
-							var reader = new FileReader();
-							reader.onload = function(evt) {
-								setTimeout(function() {
-									var array_buffer = reader.result;
-									var message = {
-										action: 'resize_image',
-										filename: filename,
-										index: index,
-										array_buffer: array_buffer
-									};
-									g_worker.postMessage(message, [array_buffer]);
-								}, 200);
-							};
-							reader.readAsArrayBuffer(blob);
-						}, 200);
-					}, 200);
-				});
-			}
-		});
-	}
-}
-*/
 function setComicData(name, size, type) {
 	g_file_name = name;
 	$('#comicData').show();
@@ -340,7 +278,6 @@ function clearComicData() {
 	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
 	g_images = [];
-//	g_entries = [];
 	g_urls = {};
 	g_small_urls = {};
 	g_titles = {};
@@ -348,19 +285,7 @@ function clearComicData() {
 	g_scroll_y_start = 0;
 	g_are_thumbnails_loading = false;
 }
-/*
-function uncompressAllImages(i) {
-	i = i || 0;
-	uncompressImage(i, function(j, url, filename) {
-		setTimeout(function() {
-			j++;
-			if (j < g_entries.length) {
-				uncompressAllImages(j);
-			}
-		}, 100);
-	});
-}
-*/
+
 function onLoaded(file) {
 	var blob = file.slice();
 
@@ -375,56 +300,6 @@ function onLoaded(file) {
 		g_worker.postMessage(message, [array_buffer]);
 	};
 	reader.readAsArrayBuffer(blob);
-/*
-	var reader = new zip.BlobReader(blob);
-	zip.createReader(reader, function(reader) {
-		reader.getEntries(function(entries) {
-			// Get only the entries that are valid images
-			g_entries = [];
-			entries.forEach(function(entry) {
-				if (! entry.directory && isValidImageType(entry.filename)) {
-					g_entries.push(entry);
-				}
-			});
-
-			// Sort the entries by their file names
-			g_entries.sort(function(a, b){
-				if(a.filename < b.filename) return -1;
-				if(a.filename > b.filename) return 1;
-				return 0;
-			});
-
-			// Create empty images for each page
-			var i = 0;
-			g_entries.forEach(function(entry) {
-				var img = document.createElement('img');
-				img.id = 'page_' + i;
-				img.title = entry.filename;
-				img.className = 'comicImage';
-				img.ondragstart = function() { return false; }
-				img.onload = function() {
-					if (g_needs_resize) {
-						onResize(g_screen_width, g_screen_height);
-					}
-				};
-				img.draggable = 'false';
-				g_images.push(img);
-				entry.index = i;
-				i++;
-			});
-
-			g_image_index = 0;
-			loadCurrentPage(function() {
-				var width = $(window).width();
-				var height = $(window).height();
-				onResize(width, height);
-			});
-			uncompressAllImages();
-		});
-	}, function(e) {
-		onError('Failed to read file!');
-	});
-*/
 }
 
 function onError(msg) {
