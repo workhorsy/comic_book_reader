@@ -9,6 +9,7 @@ var g_file_name = null;
 var g_images = [];
 var g_image_index = 0;
 var g_urls = {};
+var g_small_urls = {};
 var g_titles = {};
 var g_are_thumbnails_loading = false;
 
@@ -104,18 +105,18 @@ function showBottomMenu(y_offset, is_instant) {
 		menu.empty();
 
 		var curr_image_index = g_image_index;
-		var length = Object.keys(g_urls).length;
+		var length = Object.keys(g_small_urls).length;
 		function loadNextThumbNail(i) {
 			if (i >= length) {
 				return;
 			}
 
 			console.info('Loading thumbnail #' + (i + 1));
-			var url = g_urls[i];
+			var url = g_small_urls[i];
 			var img = document.createElement('img');
 			img.width = 100;
 			img.title = g_titles[i];
-			img.src = g_urls[i];
+			img.src = g_small_urls[i];
 			img.onclick = function(e) {
 				g_image_index = i;
 				loadCurrentPage();
@@ -329,11 +330,19 @@ function clearComicData() {
 		img.removeAttribute('src');
 	});
 
+	// Remove all the Object thumbnail URLs
+	Object.keys(g_small_urls).forEach(function(i) {
+		var url = g_small_urls[i];
+		URL.revokeObjectURL(url);
+		console.info('URL.revokeObjectURL: ' + url);
+	});
+
 	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
 	g_images = [];
 //	g_entries = [];
 	g_urls = {};
+	g_small_urls = {};
 	g_titles = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
@@ -1125,6 +1134,7 @@ function startWorker() {
 				var filename = e.data.filename;
 				g_urls[g_next_page_index] = url;
 				g_titles[g_next_page_index] = filename;
+				makeThumbNail(g_next_page_index, url);
 
 				if (g_next_page_index === 0) {
 					loadCurrentPage(function() {
@@ -1138,41 +1148,6 @@ function startWorker() {
 			case 'invalid_file':
 				onError(e.data.error);
 				break;
-/*
-			case 'resize_image':
-				var array_buffer = e.data.array_buffer;
-				var filename = e.data.filename;
-				var index = e.data.index;
-				var blob = new Blob([array_buffer]);
-				var url = URL.createObjectURL(blob);
-				console.info('URL.createObjectURL: ' + url);
-				var img = new Image();
-				img.onload = function() {
-					setTimeout(function() {
-						URL.revokeObjectURL(url);
-						console.info('URL.revokeObjectURL: ' + url);
-
-						var ratio = 200.0 / img.width;
-						var width = img.width * ratio;
-						var height = img.height * ratio;
-						var canvas = document.createElement('canvas');
-						canvas.width = width;
-						canvas.height = height;
-						var ctx = canvas.getContext('2d');
-						ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
-						canvas.toBlob(function(small_blob) {
-							setTimeout(function() {
-								setCachedFile('small', filename, small_blob, function() {
-									var smaller_url = URL.createObjectURL(small_blob);
-									console.info('URL.createObjectURL: ' + smaller_url);
-								});
-							}, 100);
-						});
-					}, 100);
-				};
-				img.src = url;
-				break;
-*/
 		}
 	};
 
@@ -1188,6 +1163,28 @@ function startWorker() {
 		g_worker = null;
 		alert('Transferable Object are not supported!');
 	}
+}
+
+function makeThumbNail(index, url) {
+	var img = new Image();
+	img.onload = function() {
+		var ratio = 200.0 / img.width;
+		var width = img.width * ratio;
+		var height = img.height * ratio;
+		var canvas = document.createElement('canvas');
+		canvas.width = width;
+		canvas.height = height;
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+		canvas.toBlob(function(small_blob) {
+//			setCachedFile('small', filename, small_blob, function() {
+				var smaller_url = URL.createObjectURL(small_blob);
+				console.info(smaller_url);
+				g_small_urls[index] = smaller_url;
+//			});
+		});
+	};
+	img.src = url;
 }
 
 $(document).ready(function() {
