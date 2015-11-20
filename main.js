@@ -33,8 +33,7 @@ var g_page_left = null;
 var g_page_middle = null;
 var g_page_right = null;
 
-// FIXME: Spelling
-function toFrieldlySize(size) {
+function toFriendlySize(size) {
 	if (size >= 1024000000) {
 		return (size / 1024000000).toFixed(2) + ' GB';
 	} else if (size >= 1024000) {
@@ -243,7 +242,7 @@ function setComicData(name, size, type) {
 	g_file_name = name;
 	$('#comicData').show();
 	$('#nameValue').text(name);
-	$('#sizeValue').text(toFrieldlySize(size));
+	$('#sizeValue').text(toFriendlySize(size));
 	//$('#typeValue').text(type);
 }
 
