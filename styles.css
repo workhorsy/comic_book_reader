@@ -23,6 +23,21 @@ body {
 	-webkit-user-drag: none;
 }
 
+.thumbNail {
+	overflow: hidden;
+	float: left;
+	min-height: 230px;
+}
+
+.thumbNail img {
+	border: 1px solid black;
+	margin: 10px;
+}
+
+.selectedThumbNail {
+	background-color: DeepSkyBlue;
+}
+
 #wallPaper {
 	background-color: silver;
 	position: absolute;
@@ -43,6 +58,25 @@ body {
 	margin-top: 0px;
 	padding: 20px;
 	padding-top: 0px;
+	box-shadow: 10px 10px 5px black;
+	background: silver;
+	text-align: center;
+}
+
+#bottomMenu {
+	overflow-y: scroll;
+	opacity: 0.9;
+	position: fixed;
+	height: 80%;
+	min-height: 300px;
+	bottom: 0px;
+	z-index: 1000;
+	border: 1px solid DeepSkyBlue;
+	border-bottom: 0px;
+	margin: 20px;
+	margin-bottom: 0px;
+	padding: 20px;
+	padding-bottom: 0px;
 	box-shadow: 10px 10px 5px black;
 	background: silver;
 	text-align: center;

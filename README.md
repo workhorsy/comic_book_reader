@@ -5,6 +5,9 @@ Comic Book Reader
 * There is no way to do swiping from screen edges yet in browsers
 
 # Bugs:
+* The scroll needs to be reset when going to a page from thumb nails
+* Going to the next page from a thumbnail does not always work
+* mouse wheel scrolling does not work on the bottom panel
 * Sometimes the 3rd page gets removed?
 * pulling the top menu down is jerky in chrome
 * Multi touch input twitches the screen

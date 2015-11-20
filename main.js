@@ -9,7 +9,9 @@ var g_file_name = null;
 var g_images = [];
 var g_image_index = 0;
 var g_urls = {};
+var g_small_urls = {};
 var g_titles = {};
+var g_are_thumbnails_loading = false;
 
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
@@ -25,13 +27,14 @@ var g_down_swipe_size = 100.0;
 var g_is_swiping_right = false;
 var g_is_swiping_left = false;
 var g_top_menu_visible = 1.0;
+var g_bottom_menu_visible = 0.0;
 
 var g_moving_page = null;
 var g_page_left = null;
 var g_page_middle = null;
 var g_page_right = null;
 
-
+// FIXME: Spelling
 function toFrieldlySize(size) {
 	if (size >= 1024000000) {
 		return (size / 1024000000).toFixed(2) + ' GB';
@@ -46,15 +49,29 @@ function toFrieldlySize(size) {
 	return '?';
 }
 
-function hideTopMenu(is_instant) {
+function hideAllMenus(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
+
+	// Hide the top menu
 	var top_menu = $('#topMenu');
 	var style = top_menu[0].style;
 	style.width = (g_screen_width - 80) + 'px';
 	var height = top_menu.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
+
+	// Hide the bottom menu
+	var bottom_menu = $('#bottomMenu');
+	bottom_menu.empty();
+	var style = bottom_menu[0].style;
+	style.width = (g_screen_width - 80) + 'px';
+	var height = bottom_menu.outerHeight() + 10;
+	style.transitionDuration = speed;
+	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
+
+	g_are_thumbnails_loading = false;
 	g_top_menu_visible = 0.0;
+	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
 }
 
@@ -68,6 +85,68 @@ function showTopMenu(y_offset, is_instant) {
 	style.width = (g_screen_width - 80) + 'px';
 	g_top_menu_visible = y_offset;
 	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * g_top_menu_visible);
+}
+
+function showBottomMenu(y_offset, is_instant) {
+	var speed = is_instant ? '0.0s' : '0.1s';
+	var height = $('#bottomMenu').outerHeight();
+	var offset = height + ((-height) * y_offset);
+	var style = $('#bottomMenu')[0].style;
+	style.transitionDuration = speed;
+	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
+	style.width = (g_screen_width - 80) + 'px';
+	g_bottom_menu_visible = y_offset;
+	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * g_bottom_menu_visible);
+
+	if (! g_are_thumbnails_loading && g_bottom_menu_visible === 1.0) {
+		console.info('Loading thumbnails .....................');
+		g_are_thumbnails_loading = true;
+		var menu = $('#bottomMenu');
+		menu.empty();
+
+		var curr_image_index = g_image_index;
+		var length = Object.keys(g_small_urls).length;
+		function loadNextThumbNail(i) {
+			if (i >= length) {
+				return;
+			}
+
+			console.info('Loading thumbnail #' + (i + 1));
+			var url = g_small_urls[i];
+			var img = document.createElement('img');
+			img.width = 100;
+			img.title = g_titles[i];
+			img.src = g_small_urls[i];
+			img.onclick = function(e) {
+				g_image_index = i;
+				loadCurrentPage();
+				hideAllMenus(false);
+			};
+			img.onload = function() {
+				// Make the image twice as wide if it is in landscape mode
+				if (this.naturalWidth > this.naturalHeight) {
+					this.width = 200;
+					this.style.marginLeft = '20px';
+					this.style.marginRight = '20px';
+				}
+				loadNextThumbNail(i + 1);
+			};
+			var container = document.createElement('div');
+			if (i === curr_image_index) {
+				container.className = 'thumbNail selectedThumbNail';
+			} else {
+				container.className = 'thumbNail';
+			}
+			var caption = document.createElement('span');
+			caption.innerHTML = i + 1;
+			container.appendChild(img);
+			container.appendChild(document.createElement('br'));
+			container.appendChild(caption);
+			menu.append(container);
+		}
+
+		loadNextThumbNail(0);
+	}
 }
 
 function loadComic() {
@@ -89,7 +168,7 @@ function loadComic() {
 	$('#loadProgress').hide();
 	$('#comicPanel').show();
 
-	hideTopMenu(false);
+	hideAllMenus(false);
 
 	onLoaded(file);
 }
@@ -239,6 +318,7 @@ function clearComicData() {
 	g_page_middle.empty();
 	g_page_left.empty();
 	g_page_right.empty();
+	$('#bottomMenu').empty();
 
 	// Remove all the Object URLs
 	Object.keys(g_urls).forEach(function(i) {
@@ -250,14 +330,23 @@ function clearComicData() {
 		img.removeAttribute('src');
 	});
 
+	// Remove all the Object thumbnail URLs
+	Object.keys(g_small_urls).forEach(function(i) {
+		var url = g_small_urls[i];
+		URL.revokeObjectURL(url);
+		console.info('URL.revokeObjectURL: ' + url);
+	});
+
 	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
 	g_images = [];
 //	g_entries = [];
 	g_urls = {};
+	g_small_urls = {};
 	g_titles = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
+	g_are_thumbnails_loading = false;
 }
 /*
 function uncompressAllImages(i) {
@@ -458,9 +547,9 @@ function onInputDown(target, x, y) {
 		return;
 	}
 
-	// If the top menu is showing, hide it
-	if (target.hasAttribute('touchable') && g_top_menu_visible > 0.0) {
-		hideTopMenu(false);
+	// If any menus are showing, hide them
+	if (target.hasAttribute('touchable') && g_top_menu_visible > 0.0 || g_bottom_menu_visible > 0.0) {
+		hideAllMenus(false);
 		return;
 	}
 
@@ -471,8 +560,9 @@ function onInputDown(target, x, y) {
 }
 
 function onInputUp() {
-	if (g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) {
-		hideTopMenu(false);
+	if ((g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) ||
+		(g_bottom_menu_visible > 0.0 && g_bottom_menu_visible < 1.0)) {
+		hideAllMenus(false);
 	}
 
 	if (! g_is_mouse_down) {
@@ -609,21 +699,18 @@ function onInputMove(x, y) {
 	}
 
 	// Get how far we have moved since pressing down
-//		console.info(is_vertical);
-//		console.info(x + ', ' + y + ', ' + is_vertical);
 	var x_offset = x - g_mouse_start_x;
 	var y_offset = y - g_mouse_start_y;
-//		console.info(y_offset);
 
-	//console.info(g_mouse_start_y);
-//		console.info(is_vertical + ', ' + x_offset + ', ' + y_offset);
 	if (is_vertical && g_moving_page) {
-//			console.info('vertical ...');
 		// Show the top panel if we are swiping down from the top
 		if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
 			var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
-//			console.info(y / g_down_swipe_size);
 			showTopMenu(y / g_down_swipe_size, false);
+		// Show the bottom panel if we are swiping up from the bottom
+		} else if ((g_screen_height - g_mouse_start_y) < g_down_swipe_size && y_offset < 0) {
+			var y = (-y_offset) > g_down_swipe_size ? g_down_swipe_size : (-y_offset);
+			showBottomMenu(y / g_down_swipe_size, false);
 		// Scroll the page up and down
 		} else {
 			var image_height = $('#' + g_moving_page.children[0].id).height();
@@ -783,11 +870,16 @@ function onResize(screen_width, screen_height) {
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 
-	// Move the top menu to the new top
-	if (g_top_menu_visible < 1.0) {
-		hideTopMenu(true);
-	} else {
+	// Close the menus if they are partially open
+	if ((g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) ||
+		(g_bottom_menu_visible > 0.0 && g_bottom_menu_visible < 1.0)) {
+		hideAllMenus(true);
+	}
+	if (g_top_menu_visible >= 0.0) {
 		showTopMenu(g_top_menu_visible, true);
+	}
+	if (g_bottom_menu_visible >= 0.0) {
+		showBottomMenu(g_bottom_menu_visible, true);
 	}
 
 	// Figure out if the images are loaded yet.
@@ -1042,6 +1134,7 @@ function startWorker() {
 				var filename = e.data.filename;
 				g_urls[g_next_page_index] = url;
 				g_titles[g_next_page_index] = filename;
+				makeThumbNail(g_next_page_index, url);
 
 				if (g_next_page_index === 0) {
 					loadCurrentPage(function() {
@@ -1050,47 +1143,11 @@ function startWorker() {
 						onResize(width, height);
 					});
 				}
-
 				g_next_page_index++;
 				break;
 			case 'invalid_file':
 				onError(e.data.error);
 				break;
-/*
-			case 'resize_image':
-				var array_buffer = e.data.array_buffer;
-				var filename = e.data.filename;
-				var index = e.data.index;
-				var blob = new Blob([array_buffer]);
-				var url = URL.createObjectURL(blob);
-				console.info('URL.createObjectURL: ' + url);
-				var img = new Image();
-				img.onload = function() {
-					setTimeout(function() {
-						URL.revokeObjectURL(url);
-						console.info('URL.revokeObjectURL: ' + url);
-
-						var ratio = 200.0 / img.width;
-						var width = img.width * ratio;
-						var height = img.height * ratio;
-						var canvas = document.createElement('canvas');
-						canvas.width = width;
-						canvas.height = height;
-						var ctx = canvas.getContext('2d');
-						ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
-						canvas.toBlob(function(small_blob) {
-							setTimeout(function() {
-								setCachedFile('small', filename, small_blob, function() {
-									var smaller_url = URL.createObjectURL(small_blob);
-									console.info('URL.createObjectURL: ' + smaller_url);
-								});
-							}, 100);
-						});
-					}, 100);
-				};
-				img.src = url;
-				break;
-*/
 		}
 	};
 
@@ -1106,6 +1163,28 @@ function startWorker() {
 		g_worker = null;
 		alert('Transferable Object are not supported!');
 	}
+}
+
+function makeThumbNail(index, url) {
+	var img = new Image();
+	img.onload = function() {
+		var ratio = 200.0 / img.width;
+		var width = img.width * ratio;
+		var height = img.height * ratio;
+		var canvas = document.createElement('canvas');
+		canvas.width = width;
+		canvas.height = height;
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+		canvas.toBlob(function(small_blob) {
+//			setCachedFile('small', filename, small_blob, function() {
+				var smaller_url = URL.createObjectURL(small_blob);
+				console.info(smaller_url);
+				g_small_urls[index] = smaller_url;
+//			});
+		});
+	};
+	img.src = url;
 }
 
 $(document).ready(function() {
