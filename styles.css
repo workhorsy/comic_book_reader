@@ -48,6 +48,22 @@ body {
 	text-align: center;
 }
 
+#bottomMenu {
+	opacity: 0.9;
+	position: fixed;
+	bottom: 0px;
+	z-index: 1000;
+	border: 1px solid DeepSkyBlue;
+	border-bottom: 0px;
+	margin: 20px;
+	margin-bottom: 0px;
+	padding: 20px;
+	padding-bottom: 0px;
+	box-shadow: 10px 10px 5px black;
+	background: silver;
+	text-align: center;
+}
+
 #loadProgress {
 	width: 100%;
 	display: none;

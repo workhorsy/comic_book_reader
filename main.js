@@ -25,13 +25,14 @@ var g_down_swipe_size = 100.0;
 var g_is_swiping_right = false;
 var g_is_swiping_left = false;
 var g_top_menu_visible = 1.0;
+var g_bottom_menu_visible = 1.0;
 
 var g_moving_page = null;
 var g_page_left = null;
 var g_page_middle = null;
 var g_page_right = null;
 
-
+// FIXME: Spelling
 function toFrieldlySize(size) {
 	if (size >= 1024000000) {
 		return (size / 1024000000).toFixed(2) + ' GB';
@@ -46,15 +47,27 @@ function toFrieldlySize(size) {
 	return '?';
 }
 
-function hideTopMenu(is_instant) {
+function hideAllMenus(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
+
+	// Hide the top menu
 	var top_menu = $('#topMenu');
 	var style = top_menu[0].style;
 	style.width = (g_screen_width - 80) + 'px';
 	var height = top_menu.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
+
+	// Hide the bottom menu
+	var bottom_menu = $('#bottomMenu');
+	var style = bottom_menu[0].style;
+	style.width = (g_screen_width - 80) + 'px';
+	var height = bottom_menu.outerHeight() + 10;
+	style.transitionDuration = speed;
+	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
+
 	g_top_menu_visible = 0.0;
+	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
 }
 
@@ -68,6 +81,18 @@ function showTopMenu(y_offset, is_instant) {
 	style.width = (g_screen_width - 80) + 'px';
 	g_top_menu_visible = y_offset;
 	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * g_top_menu_visible);
+}
+
+function showBottomMenu(y_offset, is_instant) {
+	var speed = is_instant ? '0.0s' : '0.1s';
+	var height = $('#bottomMenu').outerHeight();
+	var offset = height + ((-height) * y_offset);
+	var style = $('#bottomMenu')[0].style;
+	style.transitionDuration = speed;
+	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
+	style.width = (g_screen_width - 80) + 'px';
+	g_bottom_menu_visible = y_offset;
+	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * g_bottom_menu_visible);
 }
 
 function loadComic() {
@@ -89,7 +114,7 @@ function loadComic() {
 	$('#loadProgress').hide();
 	$('#comicPanel').show();
 
-	hideTopMenu(false);
+	hideAllMenus(false);
 
 	onLoaded(file);
 }
@@ -458,9 +483,9 @@ function onInputDown(target, x, y) {
 		return;
 	}
 
-	// If the top menu is showing, hide it
-	if (target.hasAttribute('touchable') && g_top_menu_visible > 0.0) {
-		hideTopMenu(false);
+	// If any menus are showing, hide them
+	if (target.hasAttribute('touchable') && g_top_menu_visible > 0.0 || g_bottom_menu_visible > 0.0) {
+		hideAllMenus(false);
 		return;
 	}
 
@@ -471,8 +496,9 @@ function onInputDown(target, x, y) {
 }
 
 function onInputUp() {
-	if (g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) {
-		hideTopMenu(false);
+	if ((g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) ||
+		(g_bottom_menu_visible > 0.0 && g_bottom_menu_visible < 1.0)) {
+		hideAllMenus(false);
 	}
 
 	if (! g_is_mouse_down) {
@@ -609,21 +635,18 @@ function onInputMove(x, y) {
 	}
 
 	// Get how far we have moved since pressing down
-//		console.info(is_vertical);
-//		console.info(x + ', ' + y + ', ' + is_vertical);
 	var x_offset = x - g_mouse_start_x;
 	var y_offset = y - g_mouse_start_y;
-//		console.info(y_offset);
 
-	//console.info(g_mouse_start_y);
-//		console.info(is_vertical + ', ' + x_offset + ', ' + y_offset);
 	if (is_vertical && g_moving_page) {
-//			console.info('vertical ...');
 		// Show the top panel if we are swiping down from the top
 		if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
 			var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
-//			console.info(y / g_down_swipe_size);
 			showTopMenu(y / g_down_swipe_size, false);
+		// Show the bottom panel if we are swiping up from the bottom
+		} else if ((g_screen_height - g_mouse_start_y) < g_down_swipe_size && y_offset < 0) {
+			var y = (-y_offset) > g_down_swipe_size ? g_down_swipe_size : (-y_offset);
+			showBottomMenu(y / g_down_swipe_size, false);
 		// Scroll the page up and down
 		} else {
 			var image_height = $('#' + g_moving_page.children[0].id).height();
@@ -783,11 +806,15 @@ function onResize(screen_width, screen_height) {
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 
-	// Move the top menu to the new top
-	if (g_top_menu_visible < 1.0) {
-		hideTopMenu(true);
-	} else {
+	// Move the menus to the new top and bottom
+	if (g_top_menu_visible < 1.0 || g_bottom_menu_visible < 1.0) {
+		hideAllMenus(true);
+	}
+	if (g_top_menu_visible >= 0.0) {
 		showTopMenu(g_top_menu_visible, true);
+	}
+	if (g_bottom_menu_visible >= 0.0) {
+		showBottomMenu(g_bottom_menu_visible, true);
 	}
 
 	// Figure out if the images are loaded yet.
