@@ -18,6 +18,7 @@ Comic Book Reader
 * Opening rar files is super slow in IE11
 
 # TODO Small:
+* Add a warning if certain browser features are not present
 * Add loading progress
 * Turn image caching back on
 * Make it work when 100% offline
