@@ -23,6 +23,16 @@ body {
 	-webkit-user-drag: none;
 }
 
+.thumbNail {
+	overflow: hidden;
+	float: left;
+	min-height: 230px;
+}
+
+.selectedThumbNail {
+	background-color: DeepSkyBlue;
+}
+
 #wallPaper {
 	background-color: silver;
 	position: absolute;

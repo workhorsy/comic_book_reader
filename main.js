@@ -103,23 +103,44 @@ function showBottomMenu(y_offset, is_instant) {
 		var menu = $('#bottomMenu');
 		menu.empty();
 
-		Object.keys(g_urls).forEach(function(i) {
-			// FIXME: For some reason the key is a string
-			// even though it should be a number.
-			i = parseInt(i);
+		var curr_image_index = g_image_index;
+		var length = Object.keys(g_urls).length;
+		function loadNextThumbNail(i) {
+			if (i >= length) {
+				return;
+			}
+
+			console.log('Loading thumbnail #' + i);
 			var url = g_urls[i];
 			var img = document.createElement('img');
 			img.width = 100;
 			img.title = g_titles[i];
 			img.src = g_urls[i];
 			img.style.border = '1px solid black';
+			img.style.margin = '10px';
 			img.onclick = function(e) {
 				g_image_index = i;
 				loadCurrentPage();
 				hideAllMenus(false);
 			};
-			menu.append(img);
-		});
+			img.onload = function() {
+				loadNextThumbNail(i + 1);
+			};
+			var container = document.createElement('div');
+			if (i === curr_image_index) {
+				container.className = 'thumbNail selectedThumbNail';
+			} else {
+				container.className = 'thumbNail';
+			}
+			var caption = document.createElement('span');
+			caption.innerHTML = i + 1;
+			container.appendChild(img);
+			container.appendChild(document.createElement('br'));
+			container.appendChild(caption);
+			menu.append(container);
+		}
+
+		loadNextThumbNail(0);
 	}
 }
 

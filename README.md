@@ -5,6 +5,8 @@ Comic Book Reader
 * There is no way to do swiping from screen edges yet in browsers
 
 # Bugs:
+* Thumbnails use the full size image. Which uses a lot or ram.
+* mouse wheel scrolling does not work on the bottom panel
 * Sometimes the 3rd page gets removed?
 * pulling the top menu down is jerky in chrome
 * Multi touch input twitches the screen
