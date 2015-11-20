@@ -10,6 +10,7 @@ var g_images = [];
 var g_image_index = 0;
 var g_urls = {};
 var g_titles = {};
+var g_are_thumbnails_loading = false;
 
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
@@ -60,12 +61,14 @@ function hideAllMenus(is_instant) {
 
 	// Hide the bottom menu
 	var bottom_menu = $('#bottomMenu');
+	bottom_menu.empty();
 	var style = bottom_menu[0].style;
 	style.width = (g_screen_width - 80) + 'px';
 	var height = bottom_menu.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
 
+	g_are_thumbnails_loading = false;
 	g_top_menu_visible = 0.0;
 	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
@@ -93,6 +96,31 @@ function showBottomMenu(y_offset, is_instant) {
 	style.width = (g_screen_width - 80) + 'px';
 	g_bottom_menu_visible = y_offset;
 	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * g_bottom_menu_visible);
+
+	if (! g_are_thumbnails_loading && g_bottom_menu_visible === 1.0) {
+		console.info('Loading thumbnails .....................');
+		g_are_thumbnails_loading = true;
+		var menu = $('#bottomMenu');
+		menu.empty();
+
+		Object.keys(g_urls).forEach(function(i) {
+			// FIXME: For some reason the key is a string
+			// even though it should be a number.
+			i = parseInt(i);
+			var url = g_urls[i];
+			var img = document.createElement('img');
+			img.width = 100;
+			img.title = g_titles[i];
+			img.src = g_urls[i];
+			img.style.border = '1px solid black';
+			img.onclick = function(e) {
+				g_image_index = i;
+				loadCurrentPage();
+				hideAllMenus(false);
+			};
+			menu.append(img);
+		});
+	}
 }
 
 function loadComic() {
@@ -264,6 +292,7 @@ function clearComicData() {
 	g_page_middle.empty();
 	g_page_left.empty();
 	g_page_right.empty();
+	$('#bottomMenu').empty();
 
 	// Remove all the Object URLs
 	Object.keys(g_urls).forEach(function(i) {
@@ -283,6 +312,7 @@ function clearComicData() {
 	g_titles = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
+	g_are_thumbnails_loading = false;
 }
 /*
 function uncompressAllImages(i) {
@@ -1078,7 +1108,6 @@ function startWorker() {
 						onResize(width, height);
 					});
 				}
-
 				g_next_page_index++;
 				break;
 			case 'invalid_file':

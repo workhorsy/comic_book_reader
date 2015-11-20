@@ -49,8 +49,11 @@ body {
 }
 
 #bottomMenu {
+	overflow-y: scroll;
 	opacity: 0.9;
 	position: fixed;
+	height: 80%;
+	min-height: 300px;
 	bottom: 0px;
 	z-index: 1000;
 	border: 1px solid DeepSkyBlue;
