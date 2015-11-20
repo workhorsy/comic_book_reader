@@ -34,6 +34,7 @@ function uncompressRar(filename, array_buffer) {
 	};
 
 	// Uncompress each file and send it to the client
+	var index = 0;
 	var onEach = function(fileName, fileSize, data) {
 		if (! isValidImageType(fileName)) {
 			return;
@@ -49,10 +50,12 @@ function uncompressRar(filename, array_buffer) {
 		var message = {
 			action: 'uncompressed_each',
 			filename: fileName,
-			url: url
+			url: url,
+			index: index
 			//index: index
 		};
 		self.postMessage(message);
+		index++;
 	};
 
 	// Tell the client that we are done uncompressing
@@ -117,7 +120,8 @@ function uncompressZip(filename, array_buffer) {
 		var message = {
 			action: 'uncompressed_each',
 			filename: zipEntry.name,
-			url: url
+			url: url,
+			index: i
 			//index: index
 		};
 		self.postMessage(message);

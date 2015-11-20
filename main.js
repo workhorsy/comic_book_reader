@@ -966,13 +966,10 @@ function setupCachedFiles() {
 
 function startWorker() {
 	g_worker = new Worker('js/worker.js');
-	// FIXME: Instead of having this here, have the worker send a index variable
-	var g_next_page_index = 0;
 
 	g_worker.onmessage = function(e) {
 		switch (e.data.action) {
 			case 'uncompressed_start':
-				g_next_page_index = 0;
 				var count =  e.data.count;
 
 				for (var i=0; i<count; ++i) {
@@ -1006,18 +1003,18 @@ function startWorker() {
 			case 'uncompressed_each':
 				var url = e.data.url;
 				var filename = e.data.filename;
-				g_urls[g_next_page_index] = url;
-				g_titles[g_next_page_index] = filename;
-				makeThumbNail(g_next_page_index, url);
+				var index = e.data.index;
+				g_urls[index] = url;
+				g_titles[index] = filename;
+				makeThumbNail(index, url);
 
-				if (g_next_page_index === 0) {
+				if (index === 0) {
 					loadCurrentPage(function() {
 						var width = $(window).width();
 						var height = $(window).height();
 						onResize(width, height);
 					});
 				}
-				g_next_page_index++;
 				break;
 			case 'invalid_file':
 				onError(e.data.error);
