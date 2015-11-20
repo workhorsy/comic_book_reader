@@ -25,7 +25,7 @@ var g_down_swipe_size = 100.0;
 var g_is_swiping_right = false;
 var g_is_swiping_left = false;
 var g_top_menu_visible = 1.0;
-var g_bottom_menu_visible = 1.0;
+var g_bottom_menu_visible = 0.0;
 
 var g_moving_page = null;
 var g_page_left = null;
@@ -806,8 +806,9 @@ function onResize(screen_width, screen_height) {
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 
-	// Move the menus to the new top and bottom
-	if (g_top_menu_visible < 1.0 || g_bottom_menu_visible < 1.0) {
+	// Close the menus if they are partially open
+	if ((g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) ||
+		(g_bottom_menu_visible > 0.0 && g_bottom_menu_visible < 1.0)) {
 		hideAllMenus(true);
 	}
 	if (g_top_menu_visible >= 0.0) {
