@@ -122,6 +122,10 @@ function showBottomMenu(y_offset, is_instant) {
 				hideAllMenus(false);
 			};
 			img.onload = function() {
+				// Make the image twice as wide if it is in landscape mode
+				if (this.naturalWidth > this.naturalHeight) {
+					this.width = 200;
+				}
 				loadNextThumbNail(i + 1);
 			};
 			var container = document.createElement('div');
