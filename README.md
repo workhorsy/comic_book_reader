@@ -1,9 +1,10 @@
 Comic Book Reader
 ===================
 * Can read CBR and CBZ files
+* Runs right in the browser as a web page
 * Works well on a touch device or desktop
 * Is pure JavaScript and HTML
-* Runs in Firefox, Chrome, and Internet Explorer
+* Regularily tested in Firefox, Chrome, and Internet Explorer
 
 # Limitations
 * There is no way to do swiping from screen edges yet in browsers
