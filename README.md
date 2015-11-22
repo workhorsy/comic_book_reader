@@ -5,6 +5,8 @@ Comic Book Reader
 * There is no way to do swiping from screen edges yet in browsers
 
 # Bugs:
+* touch scrolling all the way to the bottom does not work (firefox win 8)
+* when toggling full screen, the dark overlay dissapears
 * Going to the next page from a thumbnail does not always work
 * mouse wheel scrolling does not work on the bottom panel
 * Sometimes the 3rd page gets removed?
