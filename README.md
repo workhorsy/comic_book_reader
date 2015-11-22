@@ -24,6 +24,8 @@ Comic Book Reader
 * Opening rar files is super slow in IE11
 
 # TODO Small:
+* Add an effect when the up or down swipe is going to pull the menu instead of the page
+* Have the right and left keys work like swiping right and left to turn pages
 * Add a warning if certain browser features are not present
 * Add loading progress
 * Turn image caching back on
