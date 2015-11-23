@@ -10,6 +10,7 @@ Comic Book Reader
 * There is no way to do swiping from screen edges yet in browsers
 
 # Bugs:
+* can't bring up the bottom menu when viewing landscape page that has its bottom above window bottom (chrome full screen)
 * touch scrolling all the way to the bottom does not work (firefox win 8)
 * when toggling full screen, the dark overlay disappears
 * mouse wheel scrolling does not work on the bottom panel
