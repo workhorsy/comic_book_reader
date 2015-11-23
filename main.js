@@ -115,13 +115,14 @@ function showBottomMenu(y_offset, is_instant) {
 			var img = document.createElement('img');
 			img.width = 100;
 			img.title = g_titles[i];
-			img.src = g_small_urls[i];
 			img.onclick = function(e) {
 				g_image_index = i;
 				loadCurrentPage();
 				hideAllMenus(false);
 				$(window).trigger('resize');
 			};
+
+			// The image loads successfully
 			img.onload = function() {
 				// Make the image twice as wide if it is in landscape mode
 				if (this.naturalWidth > this.naturalHeight) {
@@ -131,9 +132,13 @@ function showBottomMenu(y_offset, is_instant) {
 				}
 				loadNextThumbNail(i + 1);
 			};
+			// The image fails to load
 			img.onerror = function() {
 				loadNextThumbNail(i + 1);
 			};
+
+			img.src = url;
+
 			var container = document.createElement('div');
 			if (i === curr_image_index) {
 				container.className = 'thumbNail selectedThumbNail';
@@ -1050,6 +1055,9 @@ function makeThumbNail(index, url) {
 				g_small_urls[index] = smaller_url;
 //			});
 		});
+	};
+	img.onerror = function() {
+		g_small_urls[index] = null;
 	};
 	img.src = url;
 }
