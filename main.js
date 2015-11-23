@@ -5,8 +5,8 @@
 var g_db = null;
 var g_worker = null;
 var g_file_name = null;
-var g_images = [];
 var g_image_index = 0;
+var g_image_count = 0;
 var g_urls = {};
 var g_small_urls = {};
 var g_titles = {};
@@ -32,6 +32,7 @@ var g_moving_page = null;
 var g_page_left = null;
 var g_page_middle = null;
 var g_page_right = null;
+
 
 function toFriendlySize(size) {
 	if (size >= 1024000000) {
@@ -130,6 +131,9 @@ function showBottomMenu(y_offset, is_instant) {
 				}
 				loadNextThumbNail(i + 1);
 			};
+			img.onerror = function() {
+				loadNextThumbNail(i + 1);
+			};
 			var container = document.createElement('div');
 			if (i === curr_image_index) {
 				container.className = 'thumbNail selectedThumbNail';
@@ -173,20 +177,7 @@ function loadComic() {
 }
 
 function friendlyPageNumber() {
-	return '(' + (g_image_index + 1) + ' of ' + g_images.length + ')';
-}
-
-function replaceIfDifferentImage(parent, image) {
-	var children = parent.children();
-	if (children.length === 0) {
-		parent.append(image);
-	} else if (children.length && children[0].id !== image.id) {
-		var prev_img = children[0];
-		prev_img.is_loaded = false;
-		prev_img.removeAttribute('src');
-		parent.empty();
-		parent.append(image);
-	}
+	return '(' + (g_image_index + 1) + ' of ' + g_image_count + ')';
 }
 
 function loadCurrentPage(cb) {
@@ -196,8 +187,7 @@ function loadCurrentPage(cb) {
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
 	// Load the middle page
-	loadImage(g_image_index, function() {
-		replaceIfDifferentImage(g_page_middle, g_images[g_image_index]);
+	loadImage(g_page_middle, g_image_index, function() {
 		if (cb) {
 			cb();
 		}
@@ -205,38 +195,62 @@ function loadCurrentPage(cb) {
 	});
 
 	// Load right page
-	if (g_image_index === g_images.length -1) {
+	if (g_image_index === g_image_count -1) {
 		g_page_right.empty();
-	} else if (g_image_index < g_images.length -1) {
-		loadImage(g_image_index + 1, function() {
-			replaceIfDifferentImage(g_page_right, g_images[g_image_index + 1]);
-		});
+	} else if (g_image_index < g_image_count -1) {
+		loadImage(g_page_right, g_image_index + 1);
 	}
 
 	// Load left page
 	if (g_image_index === 0) {
 		g_page_left.empty();
 	} else if (g_image_index > 0) {
-		loadImage(g_image_index - 1, function() {
-			replaceIfDifferentImage(g_page_left, g_images[g_image_index - 1]);
-		});
+		loadImage(g_page_left, g_image_index - 1);
 	}
 }
 
-function loadImage(index, cb) {
-	var img = g_images[index];
+function loadImage(page, index, cb) {
 	var url = g_urls[index];
 	var title = g_titles[index];
-	if (! img.is_loaded && url && title) {
-		img.onload = function() {
-			img.is_loaded = true;
-			img.title = title;
-//				console.info(img);
-			console.info('!!! Loading image ' + index + ': ' + img.title);
-			cb();
-		};
-		img.src = url;
+
+	// Just return if there is no index
+	if (! url || ! title) {
+		console.info('!!!!!!!!!!!!!!! Missing url for index:' + index);
+		return;
 	}
+
+	// Just return if the new and old images are the same
+	var children = page.children();
+	if (children && children.length > 0 && children[0].src === url) {
+		return;
+	}
+
+	page.empty();
+
+	// Create a new image
+	var img = document.createElement('img');
+	img.id = 'page_' + index;
+	img.title = title;
+	img.className = 'comicImage';
+	img.ondragstart = function() { return false; }
+	img.onload = function() {
+		console.info('!!! Loading image ' + index + ': ' + img.title);
+		if (g_needs_resize) {
+			onResize(g_screen_width, g_screen_height);
+		}
+		if (cb)
+			cb();
+	};
+	img.onerror = function() {
+		img.title = '';
+		img.alt = 'Failed to load image';
+		if (cb)
+			cb();
+	};
+	img.draggable = 'false';
+	img.src = url;
+
+	page.append(img);
 }
 
 function setComicData(name, size, type) {
@@ -264,9 +278,6 @@ function clearComicData() {
 		URL.revokeObjectURL(url);
 		console.info('URL.revokeObjectURL: ' + url);
 	});
-	g_images.forEach(function(img) {
-		img.removeAttribute('src');
-	});
 
 	// Remove all the Object thumbnail URLs
 	Object.keys(g_small_urls).forEach(function(i) {
@@ -277,7 +288,7 @@ function clearComicData() {
 
 	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
-	g_images = [];
+	g_image_count = 0;
 	g_urls = {};
 	g_small_urls = {};
 	g_titles = {};
@@ -528,7 +539,7 @@ function onInputUp() {
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
 
-			if (g_image_index < g_images.length -1) {
+			if (g_image_index < g_image_count -1) {
 				g_image_index++;
 				loadCurrentPage();
 			}
@@ -643,7 +654,7 @@ function onInputMove(x, y) {
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
-			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_images.length -1) {
+			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_image_count -1) {
 //				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
 				g_is_swiping_left = true;
 			} else {
@@ -971,23 +982,7 @@ function startWorker() {
 	g_worker.onmessage = function(e) {
 		switch (e.data.action) {
 			case 'uncompressed_start':
-				var count =  e.data.count;
-
-				for (var i=0; i<count; ++i) {
-					var img = document.createElement('img');
-					img.id = 'page_' + i;
-					img.title = 'No image loaded';
-					img.className = 'comicImage';
-					img.is_loaded = false;
-					img.ondragstart = function() { return false; }
-					img.onload = function() {
-						if (g_needs_resize) {
-							onResize(g_screen_width, g_screen_height);
-						}
-					};
-					img.draggable = 'false';
-					g_images.push(img);
-				}
+				g_image_count =  e.data.count;
 				break;
 			case 'uncompressed_done':
 				// FIXME: In Chrome, if the worker is terminated, all object URLs die
