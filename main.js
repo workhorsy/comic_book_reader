@@ -74,6 +74,16 @@ function hideAllMenus(is_instant) {
 	$('#wallPaper')[0].style.opacity = 1.0;
 }
 
+function setWallPaperOpacity() {
+	var visible = 0;
+	if (g_top_menu_visible > g_bottom_menu_visible) {
+		visible = g_top_menu_visible;
+	} else {
+		visible = g_bottom_menu_visible;
+	}
+	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * visible);
+}
+
 function showTopMenu(y_offset, is_instant) {
 	var speed = is_instant ? '0.0s' : '0.1s';
 	var height = $('#topMenu').outerHeight();
@@ -83,7 +93,7 @@ function showTopMenu(y_offset, is_instant) {
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	style.width = (g_screen_width - 80) + 'px';
 	g_top_menu_visible = y_offset;
-	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * g_top_menu_visible);
+	setWallPaperOpacity();
 }
 
 function showBottomMenu(y_offset, is_instant) {
@@ -95,7 +105,7 @@ function showBottomMenu(y_offset, is_instant) {
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	style.width = (g_screen_width - 80) + 'px';
 	g_bottom_menu_visible = y_offset;
-	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * g_bottom_menu_visible);
+	setWallPaperOpacity();
 
 	if (! g_are_thumbnails_loading && g_bottom_menu_visible === 1.0) {
 		console.info('Loading thumbnails .....................');
