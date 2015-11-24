@@ -1086,9 +1086,7 @@ $(document).ready(function() {
 
 	// Toggle full screen
 	$('#btnFullScreen').click(function () {
-		if (screenfull.enabled) {
-			screenfull.toggle();
-		}
+		toggleFullScreen();
 	});
 
 	// Open github in a new tab
