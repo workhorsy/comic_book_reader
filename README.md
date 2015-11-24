@@ -13,7 +13,6 @@ Comic Book Reader
 * can't bring up the bottom menu when viewing landscape page that has its bottom above window bottom (chrome full screen)
 * touch scrolling all the way to the bottom does not work (firefox win 8)
 * when toggling full screen, the dark overlay disappears
-* mouse wheel scrolling does not work on the bottom panel
 * pulling the top menu down is jerky in chrome
 * Multi touch input twitches the screen
 * Scroll bars do not reset position on page change

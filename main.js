@@ -671,6 +671,11 @@ function onInputMove(x, y) {
 }
 
 function onMouseWheel(e) {
+	// Just do default mouse wheel things if not on the middle page
+	if (e.target !== g_page_middle[0]) {
+		return;
+	}
+
 	e.preventDefault();
 	e.stopPropagation();
 
