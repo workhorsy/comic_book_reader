@@ -1151,4 +1151,5 @@ $(document).ready(function() {
 	setupCachedFiles();
 
 	startWorker();
+	$('#lastChangeDate').text('Last Change: ' + getLastChangeDate());
 });
