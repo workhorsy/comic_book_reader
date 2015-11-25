@@ -86,7 +86,7 @@ function setWallPaperOpacity() {
 
 function showTopMenu(y_offset, is_instant) {
 	var speed = is_instant ? '0.0s' : '0.1s';
-	var height = $('#topMenu').outerHeight();
+	var height = $('#topMenu').outerHeight() * 1.0;
 	var offset = -height + (height * y_offset);
 	var style = $('#topMenu')[0].style;
 	style.transitionDuration = speed;
@@ -98,7 +98,7 @@ function showTopMenu(y_offset, is_instant) {
 
 function showBottomMenu(y_offset, is_instant) {
 	var speed = is_instant ? '0.0s' : '0.1s';
-	var height = $('#bottomMenu').outerHeight();
+	var height = $('#bottomMenu').outerHeight() * 1.0;
 	var offset = height + ((-height) * y_offset);
 	var style = $('#bottomMenu')[0].style;
 	style.transitionDuration = speed;
@@ -607,11 +607,11 @@ function onInputMove(x, y) {
 		// Show the top panel if we are swiping down from the top
 		if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
 			var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
-			showTopMenu(y / g_down_swipe_size, false);
+			showTopMenu(y / g_down_swipe_size, true);
 		// Show the bottom panel if we are swiping up from the bottom
 		} else if ((g_screen_height - g_mouse_start_y) < g_down_swipe_size && y_offset < 0) {
 			var y = (-y_offset) > g_down_swipe_size ? g_down_swipe_size : (-y_offset);
-			showBottomMenu(y / g_down_swipe_size, false);
+			showBottomMenu(y / g_down_swipe_size, true);
 		// Scroll the page up and down
 		} else {
 			var image_height = $('#' + g_moving_page.children[0].id).height();

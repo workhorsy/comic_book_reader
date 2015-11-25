@@ -12,7 +12,6 @@ Comic Book Reader
 # Bugs:
 * can't bring up the bottom menu when viewing landscape page that has its bottom above window bottom (chrome full screen)
 * touch scrolling all the way to the bottom does not work (firefox win 8)
-* pulling the top menu down is jerky in chrome
 * Multi touch input twitches the screen
 * Scroll bars do not reset position on page change
 * Full screen does not make black wall paper show behind everything
