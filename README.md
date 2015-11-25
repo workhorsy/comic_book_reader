@@ -6,11 +6,15 @@ Comic Book Reader
 * Is pure JavaScript and HTML
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
-# Limitations
-* There is no way to do swiping from screen edges yet in browsers
+# Limitations:
+* There is no way to do swiping from screen edges yet in tablet browsers
+* Different browsers use different combinations of mouse, touch, and
+	pen events for input. So there is no way to tell what is really
+	being used for input.
 
 # Bugs:
-* can't bring up the bottom menu when viewing landscape page that has its bottom above window bottom (chrome full screen)
+* can't bring up the bottom menu when viewing landscape page that has its
+	bottom above window bottom (chrome full screen)
 * touch scrolling all the way to the bottom does not work (firefox win 8)
 * Multi touch input twitches the screen
 * Scroll bars do not reset position on page change
