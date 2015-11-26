@@ -32,6 +32,7 @@ Comic Book Reader
 * Turn image caching back on
 * Manga (left to right) support
 * Remember previous page number when reloading files
+* Change from App Cache to Service Workers (when they work in all browsers).
 
 # TODO Big:
 * Make thumb nailer faster by running in the web worker, and not using DOM
