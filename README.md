@@ -30,7 +30,6 @@ Comic Book Reader
 * Have the right and left keys work like swiping right and left to turn pages
 * Add a warning if certain browser features are not present
 * Turn image caching back on
-* Make it work when 100% offline
 * Manga (left to right) support
 * Remember previous page number when reloading files
 

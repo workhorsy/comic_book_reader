@@ -2,3 +2,19 @@
 
 printf "function getLastChangeDate() { return \"`date`\"; }\r\n" > last_change_date.js
 git add last_change_date.js
+
+printf \
+"CACHE MANIFEST\r\n\
+# v1 `date`\r\n\
+index.html\r\n\
+styles.css\r\n\
+main.js\r\n\
+last_change_date.js\r\n\
+js/polyfill/polyfill.js\r\n\
+js/screenfull.js/screenfull.js\r\n\
+js/jquery-1.11.3.min.js\r\n\
+js/jszip.js\r\n\
+js/libunrar.js\r\n\
+js/libunrar.js.mem\r\n\
+js/worker.js\r\n" > main.appcache
+git add main.appcache
