@@ -13,8 +13,8 @@ Comic Book Reader
 	being used for input.
 
 # Bugs:
-* can't bring up the bottom menu when viewing landscape page that has its
-	bottom above window bottom (chrome full screen)
+* we don't need to load the first page again after all pages load.
+* cant touch scroll the page selector (chrome)
 * touch scrolling all the way to the bottom does not work (firefox win 8)
 * Multi touch input twitches the screen
 * Scroll bars do not reset position on page change
