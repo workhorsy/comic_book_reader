@@ -23,11 +23,12 @@ Comic Book Reader
 * Opening rar files is super slow in IE11
 
 # TODO Small:
+* Add loading progress
+* Add a place holder in the page selector, for images that have not loaded
 * Make esc un full screen and bring down the top menu
 * Add an effect when the up or down swipe is going to pull the menu instead of the page
 * Have the right and left keys work like swiping right and left to turn pages
 * Add a warning if certain browser features are not present
-* Add loading progress
 * Turn image caching back on
 * Make it work when 100% offline
 * Manga (left to right) support
