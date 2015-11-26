@@ -1,4 +1,4 @@
 #!/bin/sh
 
-echo "function getLastChangeDate() { return \"`date`\"; }" > last_change_date.js
+printf "function getLastChangeDate() { return \"`date`\"; }\r\n" > last_change_date.js
 git add last_change_date.js
