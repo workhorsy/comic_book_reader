@@ -1008,11 +1008,6 @@ function startWorker() {
 				// FIXME: In Chrome, if the worker is terminated, all object URLs die
 //				g_worker.terminate();
 //				g_worker = null;
-
-				g_image_index = 0;
-				loadCurrentPage(function() {
-					$(window).trigger('resize');
-				});
 				break;
 			case 'uncompressed_each':
 				var url = e.data.url;

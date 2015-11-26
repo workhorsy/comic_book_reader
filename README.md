@@ -14,7 +14,6 @@ Comic Book Reader
 
 # Bugs:
 * If the first page is short, all the following pages get their bottom chopped off.
-* we don't need to load the first page again after all pages load.
 * cant touch scroll the page selector (chrome)
 * touch scrolling all the way to the bottom does not work (firefox win 8)
 * Multi touch input twitches the screen
