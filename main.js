@@ -1011,9 +1011,7 @@ function startWorker() {
 
 				g_image_index = 0;
 				loadCurrentPage(function() {
-					var width = $(window).width();
-					var height = $(window).height();
-					onResize(width, height);
+					$(window).trigger('resize');
 				});
 				break;
 			case 'uncompressed_each':
@@ -1026,9 +1024,7 @@ function startWorker() {
 
 				if (index === 0) {
 					loadCurrentPage(function() {
-						var width = $(window).width();
-						var height = $(window).height();
-						onResize(width, height);
+						$(window).trigger('resize');
 					});
 				}
 				break;
