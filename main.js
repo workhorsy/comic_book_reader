@@ -36,6 +36,15 @@ var g_page_right = null;
 
 function requireBrowserFeatures() {
 	var errors = [];
+	if ( !('transform' in document.body.style)) {
+		errors.push('CSS transform is not supported!');
+	}
+	if (typeof Blob === 'undefined') {
+		errors.push('Blob is not supported!');
+	}
+	if (! document.createElement('canvas').getContext) {
+		errors.push('Canvas is not supported!');
+	}
 	if (typeof Uint8Array === 'undefined') {
 		errors.push('Uint8Array is not supported!');
 	}
