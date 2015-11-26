@@ -18,12 +18,13 @@ Comic Book Reader
 * touch scrolling all the way to the bottom does not work (firefox win 8)
 * Multi touch input twitches the screen
 * Scroll bars do not reset position on page change
-* Full screen does not make black wall paper show behind everything
+* Full screen does not make black wall paper show behind everything (chrome only)
 * Touch movement is broken in IE11
 * We cant restart web workers in Chrome without corrupting its object urls.
 * Opening rar files is super slow in IE11
 
 # TODO Small:
+* Make esc un full screen and bring down the top menu
 * Add an effect when the up or down swipe is going to pull the menu instead of the page
 * Have the right and left keys work like swiping right and left to turn pages
 * Add a warning if certain browser features are not present
