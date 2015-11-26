@@ -1,4 +1,5 @@
 
+
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
 if (!String.prototype.endsWith) {
   String.prototype.endsWith = function(searchString, position) {
@@ -32,6 +33,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 }
 }
 
+if (typeof Uint8Array !== 'undefined') {
 if (! Uint8Array.prototype.slice) {
 	Uint8Array.prototype.slice = function(start, length) {
 		var retval = new Array();
@@ -40,4 +42,5 @@ if (! Uint8Array.prototype.slice) {
 		}
 		return retval;
 	}
+}
 }

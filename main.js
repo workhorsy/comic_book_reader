@@ -34,6 +34,27 @@ var g_page_middle = null;
 var g_page_right = null;
 
 
+function requireBrowserFeatures() {
+	var errors = [];
+	if (typeof Uint8Array === 'undefined') {
+		errors.push('Uint8Array is not supported!');
+	}
+	if (typeof indexedDB === 'undefined') {
+		errors.push('indexedDB is not supported!');
+	}
+	if (typeof Worker === 'undefined') {
+		errors.push('Worker is not supported!');
+	}
+
+	if (errors.length > 0) {
+		var message = 'Your browser is missing features required to run this program:<br/>' + errors.join('<br/>');
+		document.body.innerHTML = message;
+		return false;
+	}
+
+	return true;
+}
+
 function toFriendlySize(size) {
 	if (size >= 1024000000) {
 		return (size / 1024000000).toFixed(2) + ' GB';
@@ -1073,6 +1094,11 @@ function makeThumbNail(index, url) {
 }
 
 $(document).ready(function() {
+	// Show an error message if any required browser features are missing
+	if (! requireBrowserFeatures()) {
+		return;
+	}
+
 	g_page_left = $('#pageLeft');
 	g_page_middle = $('#pageMiddle');
 	g_page_right = $('#pageRight');
