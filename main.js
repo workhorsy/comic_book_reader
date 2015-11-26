@@ -213,14 +213,18 @@ function loadCurrentPage(cb) {
 	if (g_image_index === g_image_count -1) {
 		g_page_right.empty();
 	} else if (g_image_index < g_image_count -1) {
-		loadImage(g_page_right, g_image_index + 1);
+		loadImage(g_page_right, g_image_index + 1, function() {
+			updateScrollBar();
+		});
 	}
 
 	// Load left page
 	if (g_image_index === 0) {
 		g_page_left.empty();
 	} else if (g_image_index > 0) {
-		loadImage(g_page_left, g_image_index - 1);
+		loadImage(g_page_left, g_image_index - 1, function() {
+			updateScrollBar();
+		});
 	}
 }
 
