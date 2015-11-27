@@ -24,7 +24,6 @@ Comic Book Reader
 
 # TODO Small:
 * Add loading progress
-* Add place holder images for page selector images that have not loaded yet
 * Add a place holder in the page selector, for images that have not loaded
 * Make esc un full screen and bring down the top menu
 * Add an effect when the up or down swipe is going to pull the menu instead of the page
