@@ -1,7 +1,7 @@
 #!/bin/sh
 
-printf "function getLastChangeDate() { return \"`date`\"; }\r\n" > last_change_date.js
-git add last_change_date.js
+printf "function getLastChangeDate() { return \"`date`\"; }\r\n" > js/last_change_date.js
+git add js/last_change_date.js
 
 printf \
 "CACHE MANIFEST\r\n\
