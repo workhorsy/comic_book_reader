@@ -1049,7 +1049,7 @@ function startWorker() {
 		switch (e.data.action) {
 			case 'uncompressed_start':
 				g_image_count =  e.data.count;
-				var loadingProgress = $('#loadingProgress')[0]
+				var loadingProgress = $('#loadingProgress')[0];
 				loadingProgress.innerHTML = 'Loading 0.0% ...';
 				var size = g_screen_width / 20;
 				if (size < 25) {
