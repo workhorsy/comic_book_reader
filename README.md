@@ -13,7 +13,6 @@ Comic Book Reader
 	being used for input.
 
 # Bugs:
-* The second page needs to be loaded, right after it is uncompressed.
 * If the first page is short, all the following pages get their bottom chopped off.
 * cant touch scroll the page selector (chrome)
 * touch scrolling all the way to the bottom does not work (firefox win 8)

@@ -1059,6 +1059,8 @@ function startWorker() {
 					loadCurrentPage(function() {
 						$(window).trigger('resize');
 					});
+				} else if (index === 1) {
+					loadCurrentPage();
 				}
 				break;
 			case 'invalid_file':
