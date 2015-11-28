@@ -12,10 +12,15 @@
 	</head>
 	<body>
 		<div id="topMenu" class="unselectable">
-			<input id="fileInput" type="file" required="required" />
-			<button id="btnFileLoad">Open comic file</button>
-			<button id="btnOpenGithub">Github</button>
-			<button id="btnFullScreen">Full Screen</button>
+			<div style="overflow: hidden; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+				<input id="fileInput" type="file" required="required" />
+				<button id="btnFileLoad">Open comic file</button>
+				<button id="btnFullScreen">Full Screen</button>
+				<div style="overflow: hidden; display: flex; flex-direction: column;">
+					<button id="btnHomepage">Homepage</button>
+					<button id="btnSettings">Settings</button>
+				</div>
+			</div>
 
 			<progress id="loadProgress" max="1" value="0"></progress>
 			<p><span id="loadError"></span></p>
@@ -25,6 +30,10 @@
 				<!--<b>Type:</b> <span id="typeValue"></span><br>-->
 			</div>
 			<span id="lastChangeDate"></span>
+
+			<div id="settingsMenu" style="display: none; overflow: hidden; clear: both; border: 1px solid black;">
+				<input id="btnDisableRightClick" type="checkbox" /> Allow right click
+			</div>
 		</div>
 
 		<div id="bottomMenu" class="unselectable">

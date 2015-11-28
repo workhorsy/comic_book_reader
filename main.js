@@ -11,6 +11,7 @@ var g_urls = {};
 var g_small_urls = {};
 var g_titles = {};
 var g_are_thumbnails_loading = false;
+var g_right_click_enabled = false;
 
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
@@ -1114,7 +1115,9 @@ $(document).ready(function() {
 
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
-		e.preventDefault();
+		if (! g_right_click_enabled) {
+			e.preventDefault();
+		}
 	});
 
 	// Resize everything when the browser resizes
@@ -1130,9 +1133,24 @@ $(document).ready(function() {
 	});
 
 	// Open github in a new tab
-	$('#btnOpenGithub').click(function () {
+	$('#btnHomepage').click(function () {
 		var url = "https://github.com/workhorsy/comic_book_reader";
 		window.open(url, '_blank');
+	});
+
+	// Show the settings menu
+	$('#btnSettings').click(function () {
+		var is_visible = $('#settingsMenu').is(":visible");
+		if (is_visible) {
+			$('#settingsMenu').hide();
+		} else {
+			$('#settingsMenu').show();
+		}
+	});
+
+	// Right click toggle
+	$('#btnDisableRightClick').click(function() {
+		g_right_click_enabled = ! g_right_click_enabled;
 	});
 
 	// Open the file selection box

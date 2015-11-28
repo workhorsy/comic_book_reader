@@ -93,8 +93,12 @@ body {
 	display: none;
 }
 
-#btnFullScreen, #btnOpenGithub, #btnFileLoad {
+#btnFullScreen, #btnFileLoad {
 	font: 30px/100px Helvetica, Arial, sans-serif;
+}
+
+#btnHomepage, #btnSettings {
+	font: 30px/50px Helvetica, Arial, sans-serif;
 }
 
 #fileInput {
