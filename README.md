@@ -34,6 +34,7 @@ Comic Book Reader
 * Change from App Cache to Service Workers (when they work in all browsers).
 
 # TODO Big:
+* Pinch to zoom
 * Make thumb nailer faster by running in the web worker, and not using DOM
 * Kinetic scrolling
 * Add Tar support (cbt file)
