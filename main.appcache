@@ -1,9 +1,9 @@
 CACHE MANIFEST
-# v1 Thu, Nov 26, 2015 12:39:44 PM
+# v1 Sat, Nov 28, 2015 12:27:04 AM
 index.html
 styles.css
 main.js
-last_change_date.js
+js/last_change_date.js
 js/polyfill/polyfill.js
 js/screenfull.js/screenfull.js
 js/jquery-1.11.3.min.js
