@@ -1,6 +1,6 @@
 #!/bin/sh
 
-printf "function getLastChangeDate() { return \"`date`\"; }\r\n" > js/last_change_date.js
+printf "function getLastChangeDate() { return \"`date +"%B %d, %Y - %T"`\"; }\r\n" > js/last_change_date.js
 git add js/last_change_date.js
 
 printf \
