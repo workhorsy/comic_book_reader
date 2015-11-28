@@ -909,6 +909,14 @@ function onResize(screen_width, screen_height) {
 	style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
 
 	updateScrollBar();
+
+	// Make the loading font as wide as the screen width
+	var loadingProgress = $('#loadingProgress')[0];
+	var size = g_screen_width / 20;
+	if (size < 25) {
+		size = 25;
+	}
+	loadingProgress.style.fontSize = size + 'px';
 }
 
 function updateScrollBar() {
@@ -1041,11 +1049,21 @@ function startWorker() {
 		switch (e.data.action) {
 			case 'uncompressed_start':
 				g_image_count =  e.data.count;
+				var loadingProgress = $('#loadingProgress')[0]
+				loadingProgress.innerHTML = 'Loading 0.0% ...';
+				var size = g_screen_width / 20;
+				if (size < 25) {
+					size = 25;
+				}
+				loadingProgress.style.fontSize = size + 'px';
+				$('#loadingProgress').show();
 				break;
 			case 'uncompressed_done':
 				// FIXME: In Chrome, if the worker is terminated, all object URLs die
 //				g_worker.terminate();
 //				g_worker = null;
+				$('#loadingProgress').hide();
+				$('#loadingProgress')[0].innerHTML = '';
 				break;
 			case 'uncompressed_each':
 				var url = e.data.url;
@@ -1054,6 +1072,9 @@ function startWorker() {
 				g_urls[index] = url;
 				g_titles[index] = filename;
 				makeThumbNail(index, url);
+
+				var loadingProgress = $('#loadingProgress')[0];
+				loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
 
 				if (index === 0) {
 					loadCurrentPage(function() {

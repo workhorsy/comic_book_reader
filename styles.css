@@ -146,6 +146,19 @@ body {
 	opacity: 0.5;
 }
 
+#loadingProgress {
+	pointer-events: none;
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	z-index: 500;
+	font: 100px Helvetica, Arial, sans-serif;
+	color: DeepSkyBlue;
+	text-shadow: 4px 4px 20px black;
+	opacity: 0.5;
+	display: none;
+}
+
 #overlayRight {
 	position: absolute;
 	z-index: 500;
