@@ -55,6 +55,9 @@ function requireBrowserFeatures() {
 	if (typeof Worker === 'undefined') {
 		errors.push('Worker is not supported!');
 	}
+	if (typeof applicationCache === 'undefined') {
+		errors.push('Application Cache is not supported!');
+	}
 
 	if (errors.length > 0) {
 		var message = 'Your browser is missing features required to run this program:<br/>' + errors.join('<br/>');
