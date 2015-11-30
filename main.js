@@ -52,6 +52,9 @@ function requireBrowserFeatures() {
 	if (typeof indexedDB === 'undefined') {
 		errors.push('indexedDB is not supported!');
 	}
+	if (typeof localStorage === 'undefined') {
+		errors.push('localStorage is not supported!');
+	}
 	if (typeof Worker === 'undefined') {
 		errors.push('Worker is not supported!');
 	}
@@ -66,6 +69,20 @@ function requireBrowserFeatures() {
 	}
 
 	return true;
+}
+
+function dbGetAllComicNames() {
+	var db_names = localStorage.getItem('db_names');
+	if (db_names) {
+		db_names = JSON.parse(db_names);
+	} else {
+		db_names = [];
+	}
+	return db_names;
+}
+
+function dbSetAllComicNames(db_names) {
+	localStorage.setItem('db_names', JSON.stringify(db_names));
 }
 
 function toFriendlySize(size) {
@@ -353,17 +370,19 @@ function clearComicData() {
 function onLoaded(file) {
 	var blob = file.slice();
 
-	var reader = new FileReader();
-	reader.onload = function(evt) {
-		var array_buffer = reader.result;
-		var message = {
-			action: 'uncompress',
-			filename: file.name,
-			array_buffer: array_buffer
+	initCachedFileStorage(file.name, function() {
+		var reader = new FileReader();
+		reader.onload = function(evt) {
+			var array_buffer = reader.result;
+			var message = {
+				action: 'uncompress',
+				filename: file.name,
+				array_buffer: array_buffer
+			};
+			g_worker.postMessage(message, [array_buffer]);
 		};
-		g_worker.postMessage(message, [array_buffer]);
-	};
-	reader.readAsArrayBuffer(blob);
+		reader.readAsArrayBuffer(blob);
+	});
 }
 
 function onError(msg) {
@@ -1018,24 +1037,25 @@ function setCachedFile(name, file_name, blob, cb) {
 	};
 }
 
-function setupCachedFiles() {
-/*
-	var req = indexedDB.deleteDatabase('ImageCache');
-	req.onsuccess = function () {
-		console.info('Deleted "ImageCache" database');
-	};
-*/
+function initCachedFileStorage(db_name, cb) {
+	// Save the db name in local storage
+	var db_names = dbGetAllComicNames();
+	if (! db_names.includes(db_name)) {
+		db_names.push(db_name);
+	}
+	dbSetAllComicNames(db_names);
 
-	var request = indexedDB.open('ImageCache', 1);
+	var request = indexedDB.open(db_name, 1);
 	request.onerror = function(event) {
-		alert('Database error: '  + event.target.errorCode);
+		alert('Failed to create database for "'  + db_name + '", :' + event.target.errorCode);
 	};
 	request.onsuccess = function(event) {
-		console.info('Opening "ImageCache" database');
+		console.info('Opening "'  + db_name + '" database');
 		g_db = event.target.result;
+		cb();
 	};
 	request.onupgradeneeded = function(event) {
-		console.info('Creating/Upgrading "ImageCache" database');
+		console.info('Creating/Upgrading "'  + db_name + '" database');
 		var db = event.target.result;
 		var objectStore = db.createObjectStore('big', { autoIncrement : true });
 		objectStore = db.createObjectStore('small', { autoIncrement : true });
@@ -1179,6 +1199,29 @@ $(document).ready(function() {
 		g_right_click_enabled = ! g_right_click_enabled;
 	});
 
+	// Delete indexedDB and localStorage data
+	$('#btnDeleteComicData').click(function() {
+		var db_names = dbGetAllComicNames();
+		function deleteNextDB() {
+			if (db_names.length > 0) {
+				var db_name = db_names.pop();
+				var req = indexedDB.deleteDatabase(db_name);
+				req.onsuccess = function() {
+					console.info('Deleted "' + db_name + '" database');
+					deleteNextDB();
+				};
+				req.onerror = function() {
+					console.info('Failed to deleted "' + db_name + '" database');
+					deleteNextDB();
+				};
+			} else {
+				dbSetAllComicNames(db_names);
+				alert('Done deleting comic data');
+			}
+		}
+		deleteNextDB();
+	});
+
 	// Open the file selection box
 	$('#btnFileLoad').click(function() {
 		$('#fileInput').click();
@@ -1222,7 +1265,6 @@ $(document).ready(function() {
 	$('#comicPanel').hide();
 	$(window).trigger('resize');
 	clearComicData();
-	setupCachedFiles();
 
 	startWorker();
 	$('#lastChangeDate').text('Last Update: ' + getLastChangeDate());
