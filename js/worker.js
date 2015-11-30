@@ -6,6 +6,7 @@
 importScripts('polyfill/polyfill.js');
 importScripts('libunrar.js');
 importScripts('jszip.js');
+importScripts('db.js');
 
 
 function isValidImageType(file_name) {
@@ -125,7 +126,14 @@ function uncompressZip(filename, array_buffer) {
 			//index: index
 		};
 		self.postMessage(message);
+
+//		setCachedFile('big', zipEntry.name, blob, function() {
+
+//		});
 	}
+
+	// Close the connection to indexedDB
+	dbClose();
 
 	// Tell the client that we are done uncompressing
 	var message = {
@@ -170,26 +178,28 @@ self.addEventListener('message', function(e) {
 	switch (e.data.action) {
 		case 'uncompress':
 			var array_buffer = e.data.array_buffer;
-			var filename = e.data.filename.toLowerCase();
+			var filename = e.data.filename;
 
-			// Open the file as rar
-			if (isRarFile(array_buffer)) {
-				console.info('Uncompressing RAR ...');
-				uncompressRar(filename, array_buffer);
-			// Open the file as zip
-			} else if(isZipFile(array_buffer)) {
-				console.info('Uncompressing Zip ...');
-				uncompressZip(filename, array_buffer);
-			// Otherwise show an error
-			} else {
-				var error = 'Invalid comic file: "' + filename + '"';
-				console.info(error);
-				var message = {
-					action: 'invalid_file',
-					error: error
-				};
-				self.postMessage(message);
-			}
+			initCachedFileStorage(filename, function() {
+				// Open the file as rar
+				if (isRarFile(array_buffer)) {
+					console.info('Uncompressing RAR ...');
+					uncompressRar(filename, array_buffer);
+				// Open the file as zip
+				} else if(isZipFile(array_buffer)) {
+					console.info('Uncompressing Zip ...');
+					uncompressZip(filename, array_buffer);
+				// Otherwise show an error
+				} else {
+					var error = 'Invalid comic file: "' + filename + '"';
+					console.info(error);
+					var message = {
+						action: 'invalid_file',
+						error: error
+					};
+					self.postMessage(message);
+				}
+			});
 			break;
 		case 'start':
 			e.data.array_buffer = null;

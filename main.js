@@ -2,7 +2,6 @@
 // This software is licensed under GPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
 
-var g_db = null;
 var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
@@ -357,10 +356,7 @@ function clearComicData() {
 	});
 
 	// Close the connection to indexedDB
-	if (g_db) {
-		g_db.close();
-		g_db = null;
-	}
+	dbClose();
 
 	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
@@ -375,14 +371,22 @@ function clearComicData() {
 
 function onLoaded(file) {
 	var blob = file.slice();
+	var filename = file.name.toLowerCase();
 
-	initCachedFileStorage(file.name, function() {
+	// Save the db name in local storage
+	var db_names = dbGetAllComicNames();
+	if (! db_names.includes(filename)) {
+		db_names.push(filename);
+	}
+	dbSetAllComicNames(db_names);
+
+	initCachedFileStorage(filename, function() {
 		var reader = new FileReader();
 		reader.onload = function(evt) {
 			var array_buffer = reader.result;
 			var message = {
 				action: 'uncompress',
-				filename: file.name,
+				filename: filename,
 				array_buffer: array_buffer
 			};
 			g_worker.postMessage(message, [array_buffer]);
@@ -1018,56 +1022,6 @@ function overlayShow(is_fading) {
 	}
 }
 
-function getCachedFile(name, file_name, cb) {
-	var store = g_db.transaction(name, 'readwrite').objectStore(name);
-	var request = store.get(file_name);
-	request.onerror = function(event) {
-		console.warn(event);
-	};
-	request.onsuccess = function(event) {
-		console.info('????????? Get worked: ' + file_name);
-		var blob = event.target.result;
-		cb(blob);
-	};
-}
-
-function setCachedFile(name, file_name, blob, cb) {
-	var store = g_db.transaction(name, 'readwrite').objectStore(name);
-	var request = store.put(blob, file_name);
-	request.onerror = function(event) {
-		console.warn(event);
-	};
-	request.onsuccess = function(event) {
-		console.info('????????? Put worked: ' + file_name);
-		cb();
-	};
-}
-
-function initCachedFileStorage(db_name, cb) {
-	// Save the db name in local storage
-	var db_names = dbGetAllComicNames();
-	if (! db_names.includes(db_name)) {
-		db_names.push(db_name);
-	}
-	dbSetAllComicNames(db_names);
-
-	var request = indexedDB.open(db_name, 1);
-	request.onerror = function(event) {
-		alert('Failed to create database for "'  + db_name + '", :' + event.target.errorCode);
-	};
-	request.onsuccess = function(event) {
-		console.info('Opening "'  + db_name + '" database');
-		g_db = event.target.result;
-		cb();
-	};
-	request.onupgradeneeded = function(event) {
-		console.info('Creating/Upgrading "'  + db_name + '" database');
-		var db = event.target.result;
-		var objectStore = db.createObjectStore('big', { autoIncrement : true });
-		objectStore = db.createObjectStore('small', { autoIncrement : true });
-	};
-}
-
 function startWorker() {
 	g_worker = new Worker('js/worker.js');
 
@@ -1097,7 +1051,8 @@ function startWorker() {
 				var index = e.data.index;
 				g_urls[index] = url;
 				g_titles[index] = filename;
-				makeThumbNail(index, url);
+				// FIXME: Make this a callback
+				makeThumbNail(index, url, filename);
 
 				var loadingProgress = $('#loadingProgress')[0];
 				loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
@@ -1130,7 +1085,7 @@ function startWorker() {
 	}
 }
 
-function makeThumbNail(index, url) {
+function makeThumbNail(index, url, filename) {
 	var img = new Image();
 	img.onload = function() {
 		var ratio = 200.0 / img.width;
