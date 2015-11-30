@@ -1097,11 +1097,11 @@ function makeThumbNail(index, url, filename) {
 		var ctx = canvas.getContext('2d');
 		ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
 		canvas.toBlob(function(small_blob) {
-//			setCachedFile('small', filename, small_blob, function() {
+			setCachedFile('small', filename, small_blob, function() {
 				var smaller_url = URL.createObjectURL(small_blob);
 				console.info(smaller_url);
 				g_small_urls[index] = smaller_url;
-//			});
+			});
 		});
 	};
 	img.onerror = function() {

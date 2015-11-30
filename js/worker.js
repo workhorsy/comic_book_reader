@@ -101,45 +101,52 @@ function uncompressZip(filename, array_buffer) {
 		return 0;
 	});
 
-	// Tell the client that we are starting to uncompress
-	var message = {
-		action: 'uncompressed_start',
-		count: files.length
-	};
-	self.postMessage(message);
+	var onEach = function(files, i) {
+		// First file
+		if (i === 0) {
+			// Tell the client that we are starting to uncompress
+			var message = {
+				action: 'uncompressed_start',
+				count: files.length
+			};
+			self.postMessage(message);
+		// Last file
+		} else if (i >= files.length) {
+			// Close the connection to indexedDB
+			dbClose();
 
-	// Uncompress each file and send it to the client
-	for (var i=0; i<files.length; ++i) {
+			// Tell the client that we are done uncompressing
+			var message = {
+				action: 'uncompressed_done'
+			};
+			self.postMessage(message);
+			return;
+		}
+
 		var zipEntry = files[i];
-//		console.info(zipEntry);
+		var filename = zipEntry.name;
+		//console.info(zipEntry);
 		var buffer = zipEntry.asArrayBuffer();
 		var blob = new Blob([buffer], {type: 'image/jpeg'});
 		var url = URL.createObjectURL(blob);
-		console.info(zipEntry.name);
+		console.info(filename);
 		console.info(url);
 
-		var message = {
-			action: 'uncompressed_each',
-			filename: zipEntry.name,
-			url: url,
-			index: i
-			//index: index
-		};
-		self.postMessage(message);
+		setCachedFile('big', filename, blob, function() {
+			var message = {
+				action: 'uncompressed_each',
+				filename: filename,
+				url: url,
+				index: i
+			};
+			self.postMessage(message);
 
-//		setCachedFile('big', zipEntry.name, blob, function() {
-
-//		});
-	}
-
-	// Close the connection to indexedDB
-	dbClose();
-
-	// Tell the client that we are done uncompressing
-	var message = {
-		action: 'uncompressed_done'
+			onEach(files, i + 1);
+		});
 	};
-	self.postMessage(message);
+
+	// Uncompress each file and send it to the client
+	onEach(files, 0);
 }
 
 function isRarFile(array_buffer) {
