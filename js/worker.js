@@ -254,23 +254,5 @@ self.addEventListener('message', function(e) {
 			e.data.array_buffer = null;
 			console.info('Worker started ...');
 			break;
-/*
-		case 'resize_image':
-			var index = e.data.index;
-			var filename = e.data.filename;
-			var array_buffer = e.data.array_buffer;
-
-			// FIXME: Resize the buffer here, and return it
-			//var uInt8Array = new Uint8Array(array_buffer);
-
-			var message = {
-				action: 'resize_image',
-				filename: filename,
-				index: index,
-				array_buffer: array_buffer
-			};
-			self.postMessage(message, [array_buffer]);
-			break;
-*/
 	}
 }, false);
