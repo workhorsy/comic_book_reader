@@ -41,21 +41,25 @@ function uncompressRar(filename, array_buffer) {
 			return;
 		}
 
-		var buffer = new Blob([data.buffer], {type: 'image/jpeg'});
-//		console.info(buffer);
+		var blob = new Blob([data.buffer], {type: 'image/jpeg'});
+//		console.info(blob);
 //		console.info(fileName + ', ' + fileSize);
-//			console.info(buffer);
-		var url = URL.createObjectURL(buffer);
+//			console.info(blob);
+		var url = URL.createObjectURL(blob);
 		console.info(url);
 
 		var message = {
 			action: 'uncompressed_each',
 			filename: fileName,
 			url: url,
-			index: index
-			//index: index
+			index: index,
+			is_cached: false
 		};
 		self.postMessage(message);
+
+		setCachedFile('big', fileName, blob, function() {
+
+		});
 		index++;
 	};
 
@@ -137,7 +141,8 @@ function uncompressZip(filename, array_buffer) {
 				action: 'uncompressed_each',
 				filename: filename,
 				url: url,
-				index: i
+				index: i,
+				is_cached: false
 			};
 			self.postMessage(message);
 
@@ -207,6 +212,42 @@ self.addEventListener('message', function(e) {
 					self.postMessage(message);
 				}
 			});
+			break;
+		case 'load_from_cache':
+			var filename = e.data.filename;
+			var onStart = function(count) {
+				var message = {
+					action: 'uncompressed_start',
+					count: count
+				};
+				self.postMessage(message);
+			};
+
+			var onEnd = function() {
+				var message = {
+					action: 'uncompressed_done'
+				};
+				self.postMessage(message);
+			};
+
+			var i = 0;
+			var onEach = function(name, blob) {
+				var url = URL.createObjectURL(blob);
+				console.info(name);
+				console.info(url);
+
+				var message = {
+					action: 'uncompressed_each',
+					filename: name,
+					url: url,
+					index: i,
+					is_cached: true
+				};
+				self.postMessage(message);
+				i++;
+			};
+
+			getAllCachedPages(filename, onStart, onEach, onEnd);
 			break;
 		case 'start':
 			e.data.array_buffer = null;

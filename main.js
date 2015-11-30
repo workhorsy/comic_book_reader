@@ -373,26 +373,39 @@ function onLoaded(file) {
 	var blob = file.slice();
 	var filename = file.name.toLowerCase();
 
-	// Save the db name in local storage
+	// Get the names of all the cached comics
 	var db_names = dbGetAllComicNames();
-	if (! db_names.includes(filename)) {
+	var has_file = db_names.includes(filename);
+
+	initCachedFileStorage(filename, function() {
+		// If the file is cached, load it from the cache
+		if (has_file) {
+			var message = {
+				action: 'load_from_cache',
+				filename: filename
+			};
+			g_worker.postMessage(message);
+		// If the file is not cached, uncompress it from the file
+		} else {
+			var reader = new FileReader();
+			reader.onload = function(evt) {
+				var array_buffer = reader.result;
+				var message = {
+					action: 'uncompress',
+					filename: filename,
+					array_buffer: array_buffer
+				};
+				g_worker.postMessage(message, [array_buffer]);
+			};
+			reader.readAsArrayBuffer(blob);
+		}
+	});
+
+	// Save the name of the comic to the cache
+	if (! has_file) {
 		db_names.push(filename);
 	}
 	dbSetAllComicNames(db_names);
-
-	initCachedFileStorage(filename, function() {
-		var reader = new FileReader();
-		reader.onload = function(evt) {
-			var array_buffer = reader.result;
-			var message = {
-				action: 'uncompress',
-				filename: filename,
-				array_buffer: array_buffer
-			};
-			g_worker.postMessage(message, [array_buffer]);
-		};
-		reader.readAsArrayBuffer(blob);
-	});
 }
 
 function onError(msg) {
@@ -1049,10 +1062,11 @@ function startWorker() {
 				var url = e.data.url;
 				var filename = e.data.filename;
 				var index = e.data.index;
+				var is_cached = e.data.is_cached;
 				g_urls[index] = url;
 				g_titles[index] = filename;
 				// FIXME: Make this a callback
-				makeThumbNail(index, url, filename);
+				makeThumbNail(index, url, filename, is_cached);
 
 				var loadingProgress = $('#loadingProgress')[0];
 				loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
@@ -1085,29 +1099,37 @@ function startWorker() {
 	}
 }
 
-function makeThumbNail(index, url, filename) {
-	var img = new Image();
-	img.onload = function() {
-		var ratio = 200.0 / img.width;
-		var width = img.width * ratio;
-		var height = img.height * ratio;
-		var canvas = document.createElement('canvas');
-		canvas.width = width;
-		canvas.height = height;
-		var ctx = canvas.getContext('2d');
-		ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
-		canvas.toBlob(function(small_blob) {
-			setCachedFile('small', filename, small_blob, function() {
-				var smaller_url = URL.createObjectURL(small_blob);
-				console.info(smaller_url);
-				g_small_urls[index] = smaller_url;
-			});
+function makeThumbNail(index, url, filename, is_cached) {
+	if (is_cached) {
+		getCachedFile('small', filename, function(small_blob) {
+			var smaller_url = URL.createObjectURL(small_blob);
+			console.info(smaller_url);
+			g_small_urls[index] = smaller_url;
 		});
-	};
-	img.onerror = function() {
-		g_small_urls[index] = null;
-	};
-	img.src = url;
+	} else {
+		var img = new Image();
+		img.onload = function() {
+			var ratio = 200.0 / img.width;
+			var width = img.width * ratio;
+			var height = img.height * ratio;
+			var canvas = document.createElement('canvas');
+			canvas.width = width;
+			canvas.height = height;
+			var ctx = canvas.getContext('2d');
+			ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+			canvas.toBlob(function(small_blob) {
+				setCachedFile('small', filename, small_blob, function() {
+					var smaller_url = URL.createObjectURL(small_blob);
+					console.info(smaller_url);
+					g_small_urls[index] = smaller_url;
+				});
+			});
+		};
+		img.onerror = function() {
+			g_small_urls[index] = null;
+		};
+		img.src = url;
+	}
 }
 
 $(document).ready(function() {
