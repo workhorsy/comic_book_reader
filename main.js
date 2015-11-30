@@ -356,6 +356,12 @@ function clearComicData() {
 		console.info('URL.revokeObjectURL: ' + url);
 	});
 
+	// Close the connection to indexedDB
+	if (g_db) {
+		g_db.close();
+		g_db = null;
+	}
+
 	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
 	g_image_count = 0;
@@ -1201,6 +1207,8 @@ $(document).ready(function() {
 
 	// Delete indexedDB and localStorage data
 	$('#btnDeleteComicData').click(function() {
+		clearComicData();
+
 		var db_names = dbGetAllComicNames();
 		function deleteNextDB() {
 			if (db_names.length > 0) {
