@@ -5,6 +5,53 @@
 
 var g_db = null;
 
+// FIXME: All the functions in this file are named inconsistently
+function getAllCachedFirstPages(onStart, onEach, onEnd) {
+	var db_names = dbGetAllComicNames();
+	for (var i=0; i<db_names.length; ++i) {
+		var filename = db_names[i];
+		var request = indexedDB.open(filename, 1);
+		request.onerror = function(event) {
+			console.error('Failed to open database for "'  + filename + '", :' + event.target.errorCode);
+		};
+		request.onsuccess = function(event) {
+			console.info('Opening "'  + filename + '" database');
+			m_db = event.target.result;
+
+			var trans = m_db.transaction('small', IDBTransaction.READ_ONLY);
+			var store = trans.objectStore('small');
+
+			var countRequest = store.count();
+			countRequest.onsuccess = function() {
+				var count = countRequest.result;
+				onStart(count);
+
+				trans.oncomplete = function(evt) {
+					onEnd();
+					m_db.close();
+				};
+
+				var cursorRequest = store.openCursor();
+
+				cursorRequest.onerror = function(error) {
+					console.error(error);
+					m_db.close();
+				};
+
+				cursorRequest.onsuccess = function(evt) {
+					var cursor = evt.target.result;
+					if (cursor) {
+		//				console.info(cursor.key);
+		//				console.info(cursor.value);
+						onEach(filename, cursor.key, cursor.value);
+						trans.abort();
+					}
+				};
+			};
+		};
+	}
+}
+
 function getAllCachedPages(filename, onStart, onEach, onEnd) {
 	var request = indexedDB.open(filename, 1);
 	request.onerror = function(event) {

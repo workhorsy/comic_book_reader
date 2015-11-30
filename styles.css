@@ -93,7 +93,7 @@ body {
 	display: none;
 }
 
-#btnFullScreen, #btnFileLoad {
+#btnFullScreen, #btnFileLoad, #btnLibrary {
 	font: 30px/100px Helvetica, Arial, sans-serif;
 }
 

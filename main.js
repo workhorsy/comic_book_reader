@@ -1207,6 +1207,25 @@ $(document).ready(function() {
 		deleteNextDB();
 	});
 
+	$('#btnLibrary').click(function() {
+		var topMenu = $('#topMenu');
+		var onStart = function(count) {
+
+		};
+		var onEach = function(filename, pagename, blob) {
+			var url = URL.createObjectURL(blob);
+			console.info(pagename);
+			var img = new Image();
+			img.title = filename;
+			img.src = url;
+			topMenu.append(img);
+		};
+		var onEnd = function() {
+
+		};
+		getAllCachedFirstPages(onStart, onEach, onEnd);
+	});
+
 	// Open the file selection box
 	$('#btnFileLoad').click(function() {
 		$('#fileInput').click();
