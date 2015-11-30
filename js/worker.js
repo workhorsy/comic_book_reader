@@ -14,7 +14,8 @@ function isValidImageType(file_name) {
 	return file_name.endsWith('.jpeg') ||
 			file_name.endsWith('.jpg') ||
 			file_name.endsWith('.png') ||
-			file_name.endsWith('.bmp');
+			file_name.endsWith('.bmp') ||
+			file_name.endsWith('.gif');
 }
 
 function uncompressRar(filename, array_buffer) {
