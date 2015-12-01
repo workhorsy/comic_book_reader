@@ -6,6 +6,7 @@ git add js/last_change_date.js
 printf \
 "CACHE MANIFEST\r\n\
 # v1 `date`\r\n\
+favicon.ico\r\n\
 index.html\r\n\
 styles.css\r\n\
 main.js\r\n\
