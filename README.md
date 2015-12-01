@@ -28,7 +28,6 @@ Comic Book Reader
 * Make esc un full screen and bring down the top menu
 * Add an effect when the up or down swipe is going to pull the menu instead of the page
 * Have the right and left keys work like swiping right and left to turn pages
-* Turn image caching back on
 * Manga (left to right) support
 * Remember previous page number when reloading files
 * Change from App Cache to Service Workers (when they work in all browsers).
