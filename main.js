@@ -1266,4 +1266,11 @@ $(document).ready(function() {
 
 	startWorker();
 	$('#lastChangeDate').text('Last Update: ' + getLastChangeDate());
+
+	// Warn if app cache is running on localhost
+	var is_localhost = ['localhost', '127.0.0.1'].includes(document.location.hostname);
+	var is_appcached = window.applicationCache.status !== window.applicationCache.UNCACHED;
+	if (is_appcached && is_localhost) {
+		alert('Warning! Running on localhost with app cache enabled!');
+	}
 });
