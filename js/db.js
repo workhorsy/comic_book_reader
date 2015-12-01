@@ -6,13 +6,24 @@
 var g_db = null;
 
 // FIXME: All the functions in this file are named inconsistently
-function getAllCachedFirstPages(onStart, onEach, onEnd) {
+function getAllCachedFirstPages(onEach) {
 	var db_names = dbGetAllComicNames();
-	for (var i=0; i<db_names.length; ++i) {
-		var filename = db_names[i];
+
+	var nextElement = function() {
+		if (db_names.length <= 0) {
+			return;
+		}
+
+		var filename = db_names.shift();
+		console.info('!!!!!!!' + filename);
 		var request = indexedDB.open(filename, 1);
 		request.onerror = function(event) {
 			console.error('Failed to open database for "'  + filename + '", :' + event.target.errorCode);
+		};
+		request.onupgradeneeded = function(event) {
+			console.error('Database does not exist for "'  + filename + '".');
+			event.target.transaction.abort();
+			nextElement();
 		};
 		request.onsuccess = function(event) {
 			console.info('Opening "'  + filename + '" database');
@@ -24,10 +35,8 @@ function getAllCachedFirstPages(onStart, onEach, onEnd) {
 			var countRequest = store.count();
 			countRequest.onsuccess = function() {
 				var count = countRequest.result;
-				onStart(count);
 
 				trans.oncomplete = function(evt) {
-					onEnd();
 					m_db.close();
 				};
 
@@ -45,11 +54,13 @@ function getAllCachedFirstPages(onStart, onEach, onEnd) {
 		//				console.info(cursor.value);
 						onEach(filename, cursor.key, cursor.value);
 						trans.abort();
+						nextElement();
 					}
 				};
 			};
 		};
-	}
+	};
+	nextElement();
 }
 
 function getAllCachedPages(filename, onStart, onEach, onEnd) {

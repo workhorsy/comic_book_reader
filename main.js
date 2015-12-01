@@ -1209,9 +1209,6 @@ $(document).ready(function() {
 
 	$('#btnLibrary').click(function() {
 		var topMenu = $('#topMenu');
-		var onStart = function(count) {
-
-		};
 		var onEach = function(filename, pagename, blob) {
 			var url = URL.createObjectURL(blob);
 			console.info(pagename);
@@ -1220,10 +1217,7 @@ $(document).ready(function() {
 			img.src = url;
 			topMenu.append(img);
 		};
-		var onEnd = function() {
-
-		};
-		getAllCachedFirstPages(onStart, onEach, onEnd);
+		getAllCachedFirstPages(onEach);
 	});
 
 	// Open the file selection box
