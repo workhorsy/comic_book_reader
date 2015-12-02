@@ -74,6 +74,22 @@ body {
 	text-align: center;
 }
 
+#settingsMenu {
+	display: none;
+	overflow: hidden;
+	clear: both;
+	border: 1px solid black;
+}
+
+#libraryMenu {
+	display: none;
+	height: 400px;
+	overflow: hidden;
+	overflow-y: scroll;
+	clear: both;
+	border: 1px solid black;
+}
+
 #bottomMenu {
 	overflow-y: scroll;
 	opacity: 0.9;
