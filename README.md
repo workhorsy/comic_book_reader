@@ -3,6 +3,7 @@ Comic Book Reader
 * Can read CBR and CBZ files
 * Runs right in the browser as a web page
 * Works well on a touch device or desktop
+* Stores comics in a library
 * Is pure JavaScript and HTML
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
