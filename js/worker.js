@@ -18,6 +18,22 @@ function isValidImageType(file_name) {
 			file_name.endsWith('.gif');
 }
 
+function getFileMimeType(file_name) {
+	file_name = file_name.toLowerCase();
+	if (file_name.endsWith('.jpeg') || file_name.endsWith('.jpg')) {
+		return 'image/jpeg';
+	} else if (file_name.endsWith('.png')) {
+		return 'image/png';
+	} else if (file_name.endsWith('.bmp')) {
+		return 'image/bmp';
+	} else if (file_name.endsWith('.gif')) {
+		return 'image/gif';
+	} else {
+		// Uses jpeg as default mime type
+		return 'image/jpeg';
+	}
+}
+
 function uncompressRar(filename, array_buffer) {
 	// Tell the client that we are starting to uncompress
 	var onStart = function(fileNames) {
@@ -42,7 +58,7 @@ function uncompressRar(filename, array_buffer) {
 			return;
 		}
 
-		var blob = new Blob([data.buffer], {type: 'image/jpeg'});
+		var blob = new Blob([data.buffer], {type: getFileMimeType(fileName)});
 //		console.info(blob);
 //		console.info(fileName + ', ' + fileSize);
 //			console.info(blob);
@@ -132,7 +148,7 @@ function uncompressZip(filename, array_buffer) {
 		var filename = zipEntry.name;
 		//console.info(zipEntry);
 		var buffer = zipEntry.asArrayBuffer();
-		var blob = new Blob([buffer], {type: 'image/jpeg'});
+		var blob = new Blob([buffer], {type: getFileMimeType(filename)});
 		var url = URL.createObjectURL(blob);
 		console.info(filename);
 		console.info(url);
