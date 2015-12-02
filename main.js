@@ -263,8 +263,6 @@ function showLibrary() {
 }
 
 function loadComic() {
-	$('body')[0].style.backgroundColor = 'black';
-
 	// Just return if there is no file selected
 	var file_input = $('#fileInput');
 	if (file_input[0].files.length === 0) {
@@ -410,6 +408,8 @@ function clearComicData() {
 }
 
 function onLoaded(blob, filename, filesize, filetype) {
+	$('body')[0].style.backgroundColor = 'black';
+
 	// Clear everything
 	hideAllMenus(false);
 	clearComicData();
