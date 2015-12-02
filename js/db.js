@@ -6,8 +6,9 @@
 var g_db = null;
 
 // FIXME: All the functions in this file are named inconsistently
-function getAllCachedFirstPages(onEach) {
+function getAllCachedFirstPages(onStart, onEach) {
 	var db_names = dbGetAllComicNames();
+	onStart(db_names.length);
 
 	var nextElement = function() {
 		if (db_names.length <= 0) {
@@ -23,6 +24,7 @@ function getAllCachedFirstPages(onEach) {
 		request.onupgradeneeded = function(event) {
 			console.error('Database does not exist for "'  + filename + '".');
 			event.target.transaction.abort();
+			m_db.close();
 			nextElement();
 		};
 		request.onsuccess = function(event) {
@@ -54,6 +56,7 @@ function getAllCachedFirstPages(onEach) {
 		//				console.info(cursor.value);
 						onEach(filename, cursor.key, cursor.value);
 						trans.abort();
+						m_db.close();
 						nextElement();
 					}
 				};

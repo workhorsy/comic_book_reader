@@ -34,6 +34,11 @@ body {
 	margin: 10px;
 }
 
+.comicCover {
+	border: 1px solid black;
+	margin: 10px;
+}
+
 .selectedThumbNail {
 	background-color: DeepSkyBlue;
 }

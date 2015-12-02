@@ -101,6 +101,11 @@ function toFriendlySize(size) {
 function hideAllMenus(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
 
+	// Hide the top menus
+	$('#settingsMenu').hide();
+	$('#libraryMenu').hide();
+	$('#libraryMenu').empty();
+
 	// Hide the top menu
 	var top_menu = $('#topMenu');
 	var style = top_menu[0].style;
@@ -217,6 +222,46 @@ function showBottomMenu(y_offset, is_instant) {
 	}
 }
 
+function showLibrary() {
+	$('#settingsMenu').hide();
+
+	var libraryMenu = $('#libraryMenu');
+	libraryMenu.empty();
+	var is_visible = libraryMenu.is(":visible");
+	if (is_visible) {
+		libraryMenu.hide();
+		return;
+	} else {
+		libraryMenu.show();
+	}
+
+	var filesize = 0; // FIXME: Get the zip file size
+	var filetype = ''; // FIXME: Get the zip file type
+
+	var onStart = function(count) {
+		if (count === 0) {
+			libraryMenu.html('Library is empty');
+		}
+	};
+	var onEach = function(filename, pagename, blob) {
+		var url = URL.createObjectURL(blob);
+		console.info(pagename);
+		var img = new Image();
+		img.width = 100;
+		img.title = filename;
+		img.className = 'comicCover';
+		img.onclick = function(e) {
+			libraryMenu.hide();
+			libraryMenu.empty();
+
+			onLoaded(blob, filename, filesize, filetype);
+		};
+		img.src = url;
+		libraryMenu.append(img);
+	};
+	getAllCachedFirstPages(onStart, onEach);
+}
+
 function loadComic() {
 	$('body')[0].style.backgroundColor = 'black';
 
@@ -226,19 +271,14 @@ function loadComic() {
 		return;
 	}
 
-	// Load the file's info
-	clearComicData();
+	// Get the file's info
 	var file = file_input[0].files[0];
-	setComicData(file.name, file.size, file.type);
+	var blob = file.slice();
+	var filename = file.name.toLowerCase();
+	var filesize = file.size;
+	var filetype = file.type;
 
-	// Read the file
-	onProgress(1, 1);
-	$('#loadProgress').hide();
-	$('#comicPanel').show();
-
-	hideAllMenus(false);
-
-	onLoaded(file);
+	onLoaded(blob, filename, filesize, filetype);
 }
 
 function friendlyPageNumber() {
@@ -369,9 +409,17 @@ function clearComicData() {
 	g_are_thumbnails_loading = false;
 }
 
-function onLoaded(file) {
-	var blob = file.slice();
-	var filename = file.name.toLowerCase();
+function onLoaded(blob, filename, filesize, filetype) {
+	// Clear everything
+	hideAllMenus(false);
+	clearComicData();
+	setComicData(filename, filesize, filetype);
+
+	// Read the file
+	// FIXME: Remove the progress bad, because it is not used
+	onProgress(1, 1);
+	$('#loadProgress').hide();
+	$('#comicPanel').show();
 
 	// Get the names of all the cached comics
 	var db_names = dbGetAllComicNames();
@@ -1169,6 +1217,8 @@ $(document).ready(function() {
 
 	// Show the settings menu
 	$('#btnSettings').click(function () {
+		$('#libraryMenu').hide();
+
 		var is_visible = $('#settingsMenu').is(":visible");
 		if (is_visible) {
 			$('#settingsMenu').hide();
@@ -1208,16 +1258,7 @@ $(document).ready(function() {
 	});
 
 	$('#btnLibrary').click(function() {
-		var topMenu = $('#topMenu');
-		var onEach = function(filename, pagename, blob) {
-			var url = URL.createObjectURL(blob);
-			console.info(pagename);
-			var img = new Image();
-			img.title = filename;
-			img.src = url;
-			topMenu.append(img);
-		};
-		getAllCachedFirstPages(onEach);
+		showLibrary();
 	});
 
 	// Open the file selection box
