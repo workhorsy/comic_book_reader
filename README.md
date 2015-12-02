@@ -15,6 +15,7 @@ Comic Book Reader
 * Touch movement is broken in IE11
 
 # TODO Small:
+* Add file "accept" to limit to cbr/cbz/rar/zip files
 * Make sure broken page images work
 * Make sure broken archives work.
 * Stop browser navigation when loading
