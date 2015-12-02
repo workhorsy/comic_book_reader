@@ -10,7 +10,6 @@ var g_urls = {};
 var g_small_urls = {};
 var g_titles = {};
 var g_are_thumbnails_loading = false;
-var g_right_click_enabled = false;
 
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
@@ -68,20 +67,6 @@ function requireBrowserFeatures() {
 	}
 
 	return true;
-}
-
-function dbGetAllComicNames() {
-	var db_names = localStorage.getItem('db_names');
-	if (db_names) {
-		db_names = JSON.parse(db_names);
-	} else {
-		db_names = [];
-	}
-	return db_names;
-}
-
-function dbSetAllComicNames(db_names) {
-	localStorage.setItem('db_names', JSON.stringify(db_names));
 }
 
 function toFriendlySize(size) {
@@ -422,7 +407,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 	$('#comicPanel').show();
 
 	// Get the names of all the cached comics
-	var db_names = dbGetAllComicNames();
+	var db_names = settings_get_db_names();
 	var has_file = db_names.includes(filename);
 
 	initCachedFileStorage(filename, function() {
@@ -453,7 +438,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 	if (! has_file) {
 		db_names.push(filename);
 	}
-	dbSetAllComicNames(db_names);
+	settings_set_db_names(db_names);
 }
 
 function onError(msg) {
@@ -1192,7 +1177,7 @@ $(document).ready(function() {
 
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
-		if (! g_right_click_enabled) {
+		if (! settings_get_right_click_enabled()) {
 			e.preventDefault();
 		}
 	});
@@ -1228,15 +1213,18 @@ $(document).ready(function() {
 	});
 
 	// Right click toggle
+	$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
 	$('#btnDisableRightClick').click(function() {
-		g_right_click_enabled = ! g_right_click_enabled;
+		var value = settings_get_right_click_enabled();
+		settings_set_right_click_enabled(! value);
 	});
 
 	// Delete indexedDB and localStorage data
 	$('#btnDeleteComicData').click(function() {
+		var db_names = settings_get_db_names();
+
 		clearComicData();
 
-		var db_names = dbGetAllComicNames();
 		function deleteNextDB() {
 			if (db_names.length > 0) {
 				var db_name = db_names.pop();
@@ -1250,7 +1238,8 @@ $(document).ready(function() {
 					deleteNextDB();
 				};
 			} else {
-				dbSetAllComicNames(db_names);
+				settings_delete_all();
+				$('#btnDisableRightClick').prop('checked', false);
 				alert('Done deleting comic data');
 			}
 		}

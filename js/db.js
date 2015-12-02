@@ -7,7 +7,7 @@ var g_db = null;
 
 // FIXME: All the functions in this file are named inconsistently
 function getAllCachedFirstPages(onStart, onEach) {
-	var db_names = dbGetAllComicNames();
+	var db_names = settings_get_db_names();
 	onStart(db_names.length);
 
 	var nextElement = function() {

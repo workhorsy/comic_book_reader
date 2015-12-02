@@ -1,9 +1,10 @@
 CACHE MANIFEST
-# v1 Wed, Dec  2, 2015  7:59:38 AM
+# v1 Wed, Dec  2, 2015 10:10:08 AM
 favicon.ico
 index.html
 styles.css
 main.js
+js/settings.js
 js/db.js
 js/last_change_date.js
 js/polyfill/polyfill.js

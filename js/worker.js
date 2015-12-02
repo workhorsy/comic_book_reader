@@ -6,6 +6,7 @@
 importScripts('polyfill/polyfill.js');
 importScripts('libunrar.js');
 importScripts('jszip.js');
+importScripts('settings.js');
 importScripts('db.js');
 
 

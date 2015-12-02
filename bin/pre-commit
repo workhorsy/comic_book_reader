@@ -10,6 +10,7 @@ favicon.ico\r\n\
 index.html\r\n\
 styles.css\r\n\
 main.js\r\n\
+js/settings.js\r\n\
 js/db.js\r\n\
 js/last_change_date.js\r\n\
 js/polyfill/polyfill.js\r\n\
