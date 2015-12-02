@@ -28,6 +28,7 @@ Comic Book Reader
 * Remember previous page number when reloading files
 
 # TODO Big:
+* Save dates all comics are opened on
 * Pinch to zoom
 * Add Tar support (cbt file)
 * Add 7zip support (cb7 file)
