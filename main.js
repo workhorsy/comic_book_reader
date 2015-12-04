@@ -231,6 +231,7 @@ function showLibrary() {
 	};
 	var onEach = function(filename, pagename, blob) {
 		var url = URL.createObjectURL(blob);
+		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 		console.info(pagename);
 		var img = new Image();
 		img.width = 100;
@@ -241,6 +242,10 @@ function showLibrary() {
 			libraryMenu.empty();
 
 			onLoaded(blob, filename, filesize, filetype);
+		};
+		img.onload = function() {
+			URL.revokeObjectURL(this.src);
+			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
 		};
 		img.src = url;
 		libraryMenu.append(img);
@@ -369,14 +374,14 @@ function clearComicData() {
 	Object.keys(g_urls).forEach(function(i) {
 		var url = g_urls[i];
 		URL.revokeObjectURL(url);
-		console.info('URL.revokeObjectURL: ' + url);
+		console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 	});
 
 	// Remove all the Object thumbnail URLs
 	Object.keys(g_small_urls).forEach(function(i) {
 		var url = g_small_urls[i];
 		URL.revokeObjectURL(url);
-		console.info('URL.revokeObjectURL: ' + url);
+		console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 	});
 
 	// Close the connection to indexedDB
@@ -1151,6 +1156,7 @@ function makeThumbNail(index, url, filename, is_cached) {
 	if (is_cached) {
 		getCachedFile('small', filename, function(small_blob) {
 			var smaller_url = URL.createObjectURL(small_blob);
+			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + smaller_url);
 			console.info(smaller_url);
 			g_small_urls[index] = smaller_url;
 		});
@@ -1168,6 +1174,7 @@ function makeThumbNail(index, url, filename, is_cached) {
 			canvas.toBlob(function(small_blob) {
 				setCachedFile('small', filename, small_blob, function() {
 					var smaller_url = URL.createObjectURL(small_blob);
+					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + smaller_url);
 					console.info(smaller_url);
 					g_small_urls[index] = smaller_url;
 				});

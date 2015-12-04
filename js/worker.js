@@ -64,7 +64,7 @@ function uncompressRar(filename, array_buffer) {
 //		console.info(fileName + ', ' + fileSize);
 //			console.info(blob);
 		var url = URL.createObjectURL(blob);
-		console.info(url);
+		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 
 		var message = {
 			action: 'uncompressed_each',
@@ -151,6 +151,7 @@ function uncompressZip(filename, array_buffer) {
 		var buffer = zipEntry.asArrayBuffer();
 		var blob = new Blob([buffer], {type: getFileMimeType(filename)});
 		var url = URL.createObjectURL(blob);
+		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 		console.info(filename);
 		console.info(url);
 
@@ -251,6 +252,7 @@ self.addEventListener('message', function(e) {
 			var i = 0;
 			var onEach = function(name, blob) {
 				var url = URL.createObjectURL(blob);
+				console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 				console.info(name);
 				console.info(url);
 
