@@ -2,6 +2,7 @@
 // This software is licensed under GPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
 
+
 var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
@@ -1068,6 +1069,20 @@ function overlayShow(is_fading) {
 	}
 }
 
+function updateTotalUsersOnline() {
+	console.info("Getting total users online ...");
+	var update_timeout = 1000 * 60 * 5; // 5 minutes
+	var user_id = settings_get_user_id();
+	var url = "http://workhorsy.org/comic_book_reader_counter/count.php?id=" + user_id;
+
+	$.get(url, function(data, status) {
+		if (status === 'success') {
+			$('#totalUsersOnline').text("Total users online: " + parseInt(data));
+		}
+	});
+	setTimeout(updateTotalUsersOnline, update_timeout);
+}
+
 function startWorker() {
 	g_worker = new Worker('js/worker.js');
 
@@ -1296,6 +1311,7 @@ $(document).ready(function() {
 
 	startWorker();
 	$('#lastChangeDate').text('Last Update: ' + getLastChangeDate());
+	updateTotalUsersOnline();
 
 	// Warn if app cache is running on localhost
 	var is_localhost = ['localhost', '127.0.0.1'].includes(document.location.hostname);

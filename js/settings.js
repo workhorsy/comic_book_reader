@@ -3,6 +3,21 @@
 // http://github.com/workhorsy/comic_book_reader
 
 
+function generate_random_user_id() {
+	// Get a 20 character user id
+	var code_table = "0123456789";
+	var user_id = "";
+	for (var i = 0; i < 20; ++i) {
+		// Get a random number between 0 and 10
+		var num = Math.floor((Math.random() * code_table.length));
+
+		// Get the character that corresponds to the number
+		user_id += code_table[num];
+	}
+
+	return user_id;
+}
+
 function settings_delete_all() {
 	localStorage.removeItem('right_click_enabled');
 	localStorage.removeItem('db_names');
@@ -21,6 +36,15 @@ function settings_get(name, default_value) {
 	}
 }
 
+function settings_has(name) {
+	var value = localStorage.getItem(name);
+	if (value) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 function settings_get_right_click_enabled() {
 	return settings_get('right_click_enabled', false);
 }
@@ -35,4 +59,18 @@ function settings_get_db_names() {
 
 function settings_set_db_names(value) {
 	settings_set('db_names', value);
+}
+
+function settings_get_user_id() {
+	return settings_get('user_id', []);
+}
+
+function settings_get_user_id() {
+	if (! settings_has('user_id')) {
+		var user_id = generate_random_user_id();
+		settings_set('user_id', user_id);
+	}
+
+	return settings_get('user_id');
+
 }

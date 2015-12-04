@@ -43,6 +43,11 @@ body {
 	background-color: DeepSkyBlue;
 }
 
+#totalUsersOnline {
+	float: left;
+	color: grey;
+}
+
 #lastChangeDate {
 	float: right;
 	color: grey;

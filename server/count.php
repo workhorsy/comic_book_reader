@@ -1,5 +1,7 @@
 <?php
 
+header("Access-Control-Allow-Origin: *");
+
 // Make sure it is a HTTP Get request
 if ($_SERVER['REQUEST_METHOD'] !== "GET") {
     header("HTTP/1.1 405 Method Not Allowed");
@@ -58,9 +60,5 @@ $fd = fopen($file_name, "w");
 fwrite($fd, $string_db);
 fclose($fd);
 
-if ($id !== null) {
-    echo("ok");
-} else {
-    echo(count($db));
-}
+echo(count($db));
 ?>
