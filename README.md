@@ -47,3 +47,12 @@ Comic Book Reader
 * We will have to manually add Kinetic scrolling
 * We have to run the thumb nailer in the main thread, which makes the UI
 	unresponsive.
+* The indexedDB standard does not yet have a way to list all databases. Webkit 
+	does have indexedDB.webkitGetDatabaseNames though. So we work around this by
+	storing their names in localStorage.
+
+
+
+
+
+
