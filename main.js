@@ -407,7 +407,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 	setComicData(filename, filesize, filetype);
 
 	// Read the file
-	// FIXME: Remove the progress bad, because it is not used
+	// FIXME: Remove the progress bar, because it is not used
 	onProgress(1, 1);
 	$('#loadProgress').hide();
 	$('#comicPanel').show();
@@ -1225,6 +1225,7 @@ $(document).ready(function() {
 	// Show the settings menu
 	$('#btnSettings').click(function () {
 		$('#libraryMenu').hide();
+		$('#libraryMenu').empty();
 
 		var is_visible = $('#settingsMenu').is(":visible");
 		if (is_visible) {
