@@ -1001,8 +1001,13 @@ function onResize(screen_width, screen_height) {
 }
 
 function updateScrollBar() {
+	var children = g_page_middle.children();
+	if (children.length <= 0) {
+		return;
+	}
+
 	// Get the heights
-	var image_height = $('#' + g_page_middle.children()[0].id).height();
+	var image_height = $('#' + children[0].id).height();
 	if (g_screen_height < 1 || image_height < 1) {
 		return;
 	}

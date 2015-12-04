@@ -53,8 +53,7 @@ function uncompressRar(filename, array_buffer) {
 	};
 
 	// Uncompress each file and send it to the client
-	var index = 0;
-	var onEach = function(fileName, fileSize, data) {
+	var onEach = function(index, fileName, fileSize, data) {
 		if (! isValidImageType(fileName)) {
 			return;
 		}
@@ -78,7 +77,6 @@ function uncompressRar(filename, array_buffer) {
 		setCachedFile('big', fileName, blob, function() {
 
 		});
-		index++;
 	};
 
 	// Tell the client that we are done uncompressing

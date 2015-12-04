@@ -301,6 +301,7 @@ var readRARContent = function(data, password, callbackStart, callbackEach, callb
 	}
 	callbackStart(filesNames);
 
+	var currFileIndex = 0;
 	var cb = Runtime.addFunction(function(msg, UserData, P1, P2) {
 		// volume change event
 		if (msg === UCM_CHANGEVOLUMEW) return 0;
@@ -337,9 +338,10 @@ var readRARContent = function(data, password, callbackStart, callbackEach, callb
 		//console.info(view);
 		currFileBufferEnd += P2;
 		if (currFileSize === currFileBufferEnd) {
-			console.info(currFileName + ', ' + currFileBufferEnd);
+			console.info(currFileIndex + ', ' + currFileName);
 //			console.info(currFileSize);
-			callbackEach(currFileName, currFileSize, view);
+			callbackEach(currFileIndex, currFileName, currFileSize, view);
+			currFileIndex++;
 		}
 
 		return 1
