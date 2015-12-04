@@ -15,7 +15,6 @@ Comic Book Reader
 * Touch movement is broken in IE11
 
 # TODO Small:
-* Add example cbr file (use winrar in vm)
 * Add file "accept" to limit to cbr/cbz/rar/zip files
 * Make sure broken page images work
 * Make sure broken archives work.
@@ -47,12 +46,6 @@ Comic Book Reader
 * We will have to manually add Kinetic scrolling
 * We have to run the thumb nailer in the main thread, which makes the UI
 	unresponsive.
-* The indexedDB standard does not yet have a way to list all databases. Webkit 
+* The indexedDB standard does not yet have a way to list all databases. Webkit
 	does have indexedDB.webkitGetDatabaseNames though. So we work around this by
 	storing their names in localStorage.
-
-
-
-
-
-
