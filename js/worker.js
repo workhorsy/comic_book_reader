@@ -74,7 +74,7 @@ function uncompressRar(filename, array_buffer) {
 		};
 		self.postMessage(message);
 
-		setCachedFile('big', fileName, blob, function() {
+		setCachedFile('big', fileName, blob, function(is_success) {
 
 		});
 	};
@@ -153,7 +153,7 @@ function uncompressZip(filename, array_buffer) {
 		console.info(filename);
 		console.info(url);
 
-		setCachedFile('big', filename, blob, function() {
+		setCachedFile('big', filename, blob, function(is_success) {
 			var message = {
 				action: 'uncompressed_each',
 				filename: filename,

@@ -148,12 +148,21 @@ function getCachedFile(name, file_name, cb) {
 
 function setCachedFile(name, file_name, blob, cb) {
 	var store = g_db.transaction(name, 'readwrite').objectStore(name);
-	var request = store.put(blob, file_name);
+
+	try {
+		var request = store.put(blob, file_name);
+	} catch (e) {
+		if (e.name === 'QUOTA_EXCEEDED_ERR') {
+			cb(false);
+		}
+	}
+
 	request.onerror = function(event) {
 		console.warn(event);
+		cb(false);
 	};
 	request.onsuccess = function(event) {
 		console.info('????????? Put worked: ' + file_name);
-		cb();
+		cb(true);
 	};
 }
