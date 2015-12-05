@@ -1173,6 +1173,7 @@ function startWorker() {
 	};
 
 	// Start the worker
+	// FIXME: Move the transferable object test to requireBrowserFeatures
 	var array_buffer = new ArrayBuffer(1);
 	var message = {
 		action: 'start',
@@ -1360,6 +1361,8 @@ $(document).ready(function() {
 		localStorage.removeItem('storage_is_full');
 		alert('Storage is full! Remove data from indexedDB, or free up disk space.');
 	}
+
+	// FIXME: Check if indexedDB is full
 
 	startWorker();
 	$('#lastChangeDate').text('Last Update: ' + getLastChangeDate());
