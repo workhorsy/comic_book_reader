@@ -60,5 +60,6 @@ $fd = fopen($file_name, "w");
 fwrite($fd, $string_db);
 fclose($fd);
 
+header('Content-Type: application/json');
 echo(count($db));
 ?>

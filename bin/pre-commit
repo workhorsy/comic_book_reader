@@ -6,6 +6,8 @@ git add js/last_change_date.js
 printf \
 "CACHE MANIFEST\r\n\
 # v1 `date`\r\n\
+\r\n\
+CACHE:\r\n\
 favicon.ico\r\n\
 index.html\r\n\
 styles.css\r\n\
@@ -19,5 +21,8 @@ js/jquery-1.11.3.min.js\r\n\
 js/jszip.js\r\n\
 js/libunrar.js\r\n\
 js/libunrar.js.mem\r\n\
-js/worker.js\r\n" > main.appcache
+js/worker.js\r\n\
+\r\n\
+NETWORK:\r\n\
+*\r\n" > main.appcache
 git add main.appcache
