@@ -3,6 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 
 
+var g_is_terminated = false;
 var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
@@ -1093,11 +1094,39 @@ function updateTotalUsersOnline() {
 	setTimeout(updateTotalUsersOnline, update_timeout);
 }
 
+function onStorageFull(filename) {
+	if (g_is_terminated) {
+		return;
+	}
+
+	// Terminate the worker
+	g_is_terminated = true;
+	if (g_worker) {
+		g_worker.terminate();
+		g_worker = null;
+	}
+
+	// Close the connection to the database
+	dbClose();
+
+	// Reload the page with a "storage is full" message
+	localStorage.setItem('storage_is_full', JSON.stringify(true));
+	window.location.reload();
+}
+
 function startWorker() {
 	g_worker = new Worker('js/worker.js');
 
 	g_worker.onmessage = function(e) {
+		if (g_is_terminated) {
+			return;
+		}
+
 		switch (e.data.action) {
+			case 'storage_full':
+				var filename = e.data.filename;
+				onStorageFull(filename);
+				break;
 			case 'uncompressed_start':
 				g_image_count =  e.data.count;
 				var loadingProgress = $('#loadingProgress')[0];
@@ -1179,7 +1208,7 @@ function makeThumbNail(index, url, filename, is_cached) {
 			canvas.toBlob(function(small_blob) {
 				setCachedFile('small', filename, small_blob, function(is_success) {
 					if (! is_success) {
-						alert('Failed to write to indexedDB!');
+						onStorageFull(filename);
 					}
 					var smaller_url = URL.createObjectURL(small_blob);
 					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + smaller_url);
@@ -1324,6 +1353,13 @@ $(document).ready(function() {
 	$('#comicPanel').hide();
 	$(window).trigger('resize');
 	clearComicData();
+
+	// Warn the user if indexedDB is full
+	var storage_is_full = localStorage.getItem('storage_is_full');
+	if (storage_is_full && JSON.parse(storage_is_full)) {
+		localStorage.removeItem('storage_is_full');
+		alert('Storage is full! Remove data from indexedDB, or free up disk space.');
+	}
 
 	startWorker();
 	$('#lastChangeDate').text('Last Update: ' + getLastChangeDate());

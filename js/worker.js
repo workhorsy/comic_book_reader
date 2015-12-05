@@ -74,8 +74,16 @@ function uncompressRar(filename, array_buffer) {
 		};
 		self.postMessage(message);
 
+		// FIXME: Update this to happen before the message is posted
 		setCachedFile('big', fileName, blob, function(is_success) {
-
+			if (! is_success) {
+				dbClose();
+				var message = {
+					action: 'storage_full',
+					filename: fileName
+				};
+				self.postMessage(message);
+			}
 		});
 	};
 
@@ -154,16 +162,25 @@ function uncompressZip(filename, array_buffer) {
 		console.info(url);
 
 		setCachedFile('big', filename, blob, function(is_success) {
-			var message = {
-				action: 'uncompressed_each',
-				filename: filename,
-				url: url,
-				index: i,
-				is_cached: false
-			};
-			self.postMessage(message);
+			if (is_success) {
+				var message = {
+					action: 'uncompressed_each',
+					filename: filename,
+					url: url,
+					index: i,
+					is_cached: false
+				};
+				self.postMessage(message);
 
-			onEach(files, i + 1);
+				onEach(files, i + 1);
+			} else {
+				dbClose();
+				var message = {
+					action: 'storage_full',
+					filename: fileName
+				};
+				self.postMessage(message);
+			}
 		});
 	};
 

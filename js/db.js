@@ -108,6 +108,7 @@ function getAllCachedPages(filename, onStart, onEach, onEnd) {
 	};
 }
 
+// FIXME: What do we do when this fails to write from lack of space?
 function initCachedFileStorage(db_name, cb) {
 	var request = indexedDB.open(db_name, 1);
 	request.onerror = function(event) {
@@ -149,16 +150,19 @@ function getCachedFile(name, file_name, cb) {
 function setCachedFile(name, file_name, blob, cb) {
 	var store = g_db.transaction(name, 'readwrite').objectStore(name);
 
+	var request = null;
 	try {
-		var request = store.put(blob, file_name);
+		request = store.put(blob, file_name);
 	} catch (e) {
+		dbClose();
+//		console.error(e);
 		if (e.name === 'QUOTA_EXCEEDED_ERR') {
 			cb(false);
 		}
 	}
 
 	request.onerror = function(event) {
-		console.warn(event);
+//		console.error(event);
 		cb(false);
 	};
 	request.onsuccess = function(event) {
