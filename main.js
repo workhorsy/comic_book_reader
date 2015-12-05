@@ -1089,12 +1089,16 @@ function updateTotalUsersOnline() {
 	var url = "http://workhorsy.org/comic_book_reader_counter/count.php?id=" + user_id;
 	console.info(url);
 
-	$.get(url, function(data, status) {
+	$.get(url).success(function(data, status) {
 		console.info(data);
 		console.info(status);
 		if (status === 'success') {
 			$('#totalUsersOnline').text("Total users online: " + parseInt(data));
 		}
+	}).error(function(jqXHR, textStatus, errorThrown) {
+		console.info(jqXHR);
+		console.info(textStatus);
+		console.info(errorThrown);
 	});
 	setTimeout(updateTotalUsersOnline, update_timeout);
 }
