@@ -66,6 +66,65 @@ function getAllCachedFirstPages(onStart, onEach) {
 	nextElement();
 }
 
+function getTotalSize(onEnd) {
+	var db_names = settings_get_db_names();
+	var total_comics = db_names.length;
+	var total_size = 0;
+
+	var nextElement = function() {
+		if (db_names.length <= 0) {
+			onEnd(total_size);
+			return;
+		}
+
+		var filename = db_names.shift();
+		var request = indexedDB.open(filename, 1);
+		request.onerror = function(event) {
+			console.error('Failed to open database for "'  + filename + '", :' + event.target.errorCode);
+		};
+		request.onupgradeneeded = function(event) {
+			console.error('Database does not exist for "'  + filename + '".');
+			event.target.transaction.abort();
+			m_db.close();
+			nextElement();
+		};
+		request.onsuccess = function(event) {
+			m_db = event.target.result;
+			total_size += filename.length;
+
+			var trans = m_db.transaction('big', IDBTransaction.READ_ONLY);
+			var store = trans.objectStore('big');
+
+			var countRequest = store.count();
+			countRequest.onsuccess = function() {
+				var count = countRequest.result;
+
+				trans.oncomplete = function(evt) {
+					m_db.close();
+					nextElement();
+				};
+
+				var cursorRequest = store.openCursor();
+
+				cursorRequest.onerror = function(error) {
+					console.error(error);
+					m_db.close();
+				};
+
+				cursorRequest.onsuccess = function(evt) {
+					var cursor = evt.target.result;
+					if (cursor) {
+						total_size += cursor.key.length;
+						total_size += cursor.value.size;
+						cursor.continue();
+					}
+				};
+			};
+		};
+	};
+	nextElement();
+}
+
 function getAllCachedPages(filename, onStart, onEach, onEnd) {
 	var request = indexedDB.open(filename, 1);
 	request.onerror = function(event) {

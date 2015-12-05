@@ -80,6 +80,8 @@ function toFriendlySize(size) {
 		return (size / 1024).toFixed(2) + ' KB';
 	} else if (size >= 1) {
 		return (size / 1).toFixed(2) + ' B';
+	} else if (size === 0) {
+		return '0 B';
 	}
 
 	return '?';
@@ -1270,6 +1272,9 @@ $(document).ready(function() {
 			$('#settingsMenu').hide();
 		} else {
 			$('#settingsMenu').show();
+			getTotalSize(function(length) {
+				$('#totalDBSize').text(toFriendlySize(length));
+			});
 		}
 	});
 
@@ -1301,7 +1306,11 @@ $(document).ready(function() {
 			} else {
 				settings_delete_all();
 				$('#btnDisableRightClick').prop('checked', false);
-				alert('Done deleting comic data');
+
+				getTotalSize(function(length) {
+					$('#totalDBSize').text(toFriendlySize(length));
+					alert('Done deleting comic data');
+				});
 			}
 		}
 		deleteNextDB();
