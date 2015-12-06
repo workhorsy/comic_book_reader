@@ -26,6 +26,7 @@ Comic Book Reader
 * Remember previous page number when reloading files
 
 # TODO Big:
+* Move image resizing into workers
 * Save dates all comics are opened on
 * Pinch to zoom
 * Add Tar support (cbt file)
