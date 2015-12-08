@@ -43,8 +43,9 @@ function requireBrowserFeatures() {
 	if (typeof Blob === 'undefined') {
 		errors.push('Blob is not supported!');
 	}
-	if (! document.createElement('canvas').getContext) {
-		errors.push('Canvas is not supported!');
+	if (typeof window.HTMLCanvasElement === 'undefined' ||
+		typeof window.HTMLCanvasElement.prototype.getContext === 'undefined') {
+		errors.push('Canvas Context is not supported!');
 	}
 	if (typeof Uint8Array === 'undefined') {
 		errors.push('Uint8Array is not supported!');
@@ -60,6 +61,27 @@ function requireBrowserFeatures() {
 	}
 	if (typeof applicationCache === 'undefined') {
 		errors.push('Application Cache is not supported!');
+	}
+	if (typeof URL === 'undefined' || typeof URL.createObjectURL === 'undefined') {
+		errors.push('Create Object URL is not supported!');
+	}
+	if (typeof URL === 'undefined' || typeof URL.revokeObjectURL === 'undefined') {
+		errors.push('Revoke Object URL is not supported!');
+	}
+	if (typeof JSON === 'undefined' || typeof JSON.stringify === 'undefined') {
+		errors.push('JSON Stringify is not supported!');
+	}
+	if (typeof JSON === 'undefined' || typeof JSON.parse === 'undefined') {
+		errors.push('JSON Parse is not supported!');
+	}
+	if (typeof FileReader === 'undefined') {
+		errors.push('FileReader is not supported!');
+	}
+	if (typeof document.documentElement.requestFullscreen === 'undefined' &&
+		typeof document.documentElement.msRequestFullscreen === 'undefined' &&
+		typeof document.documentElement.mozRequestFullScreen === 'undefined' &&
+		typeof document.documentElement.webkitRequestFullscreen === 'undefined') {
+		errors.push('Request Full Screen is not supported!');
 	}
 
 	if (errors.length > 0) {
