@@ -38,54 +38,57 @@ var g_page_right = null;
 function requireBrowserFeatures() {
 	var errors = [];
 	if ( !('transform' in document.body.style)) {
-		errors.push('CSS transform is not supported!');
+		errors.push('CSS transform');
 	}
 	if (typeof Blob === 'undefined') {
-		errors.push('Blob is not supported!');
+		errors.push('Blob');
 	}
 	if (typeof window.HTMLCanvasElement === 'undefined' ||
 		typeof window.HTMLCanvasElement.prototype.getContext === 'undefined') {
-		errors.push('Canvas Context is not supported!');
+		errors.push('Canvas Context');
 	}
 	if (typeof Uint8Array === 'undefined') {
-		errors.push('Uint8Array is not supported!');
+		errors.push('Uint8Array');
 	}
 	if (typeof indexedDB === 'undefined') {
-		errors.push('indexedDB is not supported!');
+		errors.push('Indexed DB');
 	}
 	if (typeof localStorage === 'undefined') {
-		errors.push('localStorage is not supported!');
+		errors.push('Local Storage');
 	}
 	if (typeof Worker === 'undefined') {
-		errors.push('Worker is not supported!');
+		errors.push('Web Worker');
 	}
 	if (typeof applicationCache === 'undefined') {
-		errors.push('Application Cache is not supported!');
+		errors.push('Application Cache');
 	}
 	if (typeof URL === 'undefined' || typeof URL.createObjectURL === 'undefined') {
-		errors.push('Create Object URL is not supported!');
+		errors.push('Create Object URL');
 	}
 	if (typeof URL === 'undefined' || typeof URL.revokeObjectURL === 'undefined') {
-		errors.push('Revoke Object URL is not supported!');
+		errors.push('Revoke Object URL');
 	}
 	if (typeof JSON === 'undefined' || typeof JSON.stringify === 'undefined') {
-		errors.push('JSON Stringify is not supported!');
+		errors.push('JSON Stringify');
 	}
 	if (typeof JSON === 'undefined' || typeof JSON.parse === 'undefined') {
-		errors.push('JSON Parse is not supported!');
+		errors.push('JSON Parse');
 	}
 	if (typeof FileReader === 'undefined') {
-		errors.push('FileReader is not supported!');
+		errors.push('File Reader');
 	}
 	if (typeof document.documentElement.requestFullscreen === 'undefined' &&
 		typeof document.documentElement.msRequestFullscreen === 'undefined' &&
 		typeof document.documentElement.mozRequestFullScreen === 'undefined' &&
 		typeof document.documentElement.webkitRequestFullscreen === 'undefined') {
-		errors.push('Request Full Screen is not supported!');
+		errors.push('Request Full Screen');
 	}
 
 	if (errors.length > 0) {
-		var message = 'Your browser is missing features required to run this program:<br/>' + errors.join('<br/>');
+		var message = '<h1>Your browser is missing features required to run this program:</h1>';
+		for (var i=0; i<errors.length; ++i) {
+			message += (errors[i] + ' is not supported!<br/>');
+		}
 		document.body.innerHTML = message;
 		return false;
 	}
