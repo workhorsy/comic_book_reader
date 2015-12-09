@@ -50,8 +50,8 @@ function uncompressRar(filename, array_buffer) {
 	var fileNames = [];
 	Object.keys(rawFileNames).forEach(function(i) {
 		var rawFileName = rawFileNames[i];
-		if (isValidImageType(rawFileName.name)) {
-			fileNames.push(rawFileName.name);
+		if (isValidImageType(rawFileName)) {
+			fileNames.push(rawFileName);
 		}
 	});
 
@@ -84,7 +84,7 @@ function uncompressRar(filename, array_buffer) {
 		}
 
 		var fileName = fileNames[i];
-		readRARContent(rarFiles, password, fileName, function(fileName, fileSize, data) {
+		readRARContent(rarFiles, password, fileName, function(data) {
 			console.info(i + ', ' + fileName);
 			var blob = new Blob([data.buffer], {type: getFileMimeType(fileName)});
 			var url = URL.createObjectURL(blob);

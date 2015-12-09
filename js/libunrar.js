@@ -244,13 +244,6 @@ var openArchive = function(arcData, password, data, cb) {
 var readRARFileNames = function(data, password) {
 //	console.log("Current working directory: ",FS.cwd())
 
-	var currVolumeIndex = 0;
-	var currFileName;
-	var currFileSize;
-	var currFileBuffer;
-	var currFileBufferEnd;
-	var currFileFlags;
-
 	// write the byte arrays to a file first
 	// because the library operates on files
 	// the canOwn flag reduces the memory usage
@@ -273,14 +266,10 @@ var readRARFileNames = function(data, password) {
 	var header = status.header;
 
 	// Get all the file names
-	var filesNames = [];
+	var fileNames = [];
 	var res = ERAR_SUCCESS;
 	while (res === ERAR_SUCCESS) {
-		currFileName = getFileName(header);
-		filesNames.push({
-			name: currFileName,
-			index: i
-		});
+		fileNames.push(getFileName(header));
 		var PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
 		if (PFCode !== ERAR_SUCCESS) {
 			cleanup(handle, data, cb);
@@ -293,23 +282,18 @@ var readRARFileNames = function(data, password) {
 	handle = null;
 
 	// Sort the file names lexically
-	filesNames.sort(function(a, b) {
-		if(a.name < b.name) return -1;
-		if(a.name > b.name) return 1;
-		return 0;
-	});
+	fileNames.sort();
 
-	for (var i=0; i<filesNames.length; ++i) {
-		console.info('!!!!!!!!!! ' + filesNames[i].name);
+	for (var i=0; i<fileNames.length; ++i) {
+		console.info('!!!!!!!!!! ' + fileNames[i]);
 	}
-	return filesNames;
+	return fileNames;
 }
 
 
-var readRARContent = function(data, password, fuckName, callbackEach) {
+var readRARContent = function(data, password, fileName, callbackEach) {
 //	console.log("Current working directory: ",FS.cwd())
 
-	var currVolumeIndex = 0;
 	var currFileName;
 	var currFileSize;
 	var currFileBuffer;
@@ -323,48 +307,6 @@ var readRARContent = function(data, password, fuckName, callbackEach) {
 		FS.writeFile(data[i].name, data[i].content, {encoding: "binary", canOwn: true, flags: 'w+'});
 	}
 
-	var arcData = new Module.RAROpenArchiveDataEx();
-	arcData.set_ArcName(data[0].name);
-	arcData.set_OpenMode(RAR_OM_EXTRACT);
-
-	// Open the archive
-	var status = openArchive(arcData, password, data, cb);
-	if (! status)
-		return null;
-	var handle = status.handle;
-	var header = status.header;
-
-	// Get all the file names
-	var filesNames = [];
-	var res = ERAR_SUCCESS;
-	while (res === ERAR_SUCCESS) {
-		currFileName = getFileName(header);
-		filesNames.push({
-			name: currFileName,
-			index: i
-		});
-		var PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
-		if (PFCode !== ERAR_SUCCESS) {
-			cleanup(handle, data, cb);
-			reportProcessFileError(PFCode);
-			return null;
-		}
-		res = _RARReadHeaderEx(handle, getPointer(header));
-	}
-	_RARCloseArchive(handle);
-	handle = null;
-
-	// Sort the file names lexically
-	filesNames.sort(function(a, b) {
-		if(a.name < b.name) return -1;
-		if(a.name > b.name) return 1;
-		return 0;
-	});
-/*
-	for (var i=0; i<filesNames.length; ++i) {
-		console.info('!!!!!!!!!! ' + filesNames[i].name);
-	}
-*/
 	var cb = Runtime.addFunction(function(msg, UserData, P1, P2) {
 		// volume change event
 		if (msg === UCM_CHANGEVOLUMEW) return 0;
@@ -401,63 +343,57 @@ var readRARContent = function(data, password, fuckName, callbackEach) {
 		//console.info(view);
 		currFileBufferEnd += P2;
 		if (currFileSize === currFileBufferEnd) {
-			callbackEach(currFileName, currFileSize, view);
+			callbackEach(view);
 		}
 
 		return 1
 	});
+
+	var arcData = new Module.RAROpenArchiveDataEx();
+	arcData.set_ArcName(data[0].name);
+	arcData.set_OpenMode(RAR_OM_EXTRACT);
 	arcData.set_Callback(cb);
 
-	var targetFileName = null;
+	var handle = null;
+	var header = null;
 	var is_done = false;
-	while (filesNames.length > 0) {
-		targetFileName = filesNames.shift();
-//		console.log('    searching for : ' + targetFileName.name);
+	var status = openArchive(arcData, password, data, cb);
+	if (! status)
+		return null;
+	handle = status.handle;
+	header = status.header;
 
-		// Open the archive again to start at the beginning
-//		console.log('!!!!!!!!! reopening file!!!!!');
-		if (handle) {
-			_RARCloseArchive(handle);
-			handle = null;
-		}
-		var status = openArchive(arcData, password, data, cb);
-		if (! status)
-			return null;
-		handle = status.handle;
-		header = status.header;
+	var res = ERAR_SUCCESS;
+	while (res === ERAR_SUCCESS) {
+		currFileName = getFileName(header);
 
-		res = ERAR_SUCCESS;
-		while (res === ERAR_SUCCESS) {
-			currFileName = getFileName(header);
-
-			// Read the file only if it matches the file name
-			var PFCode = null;
-			if (! is_done && fuckName === targetFileName.name && targetFileName.name === currFileName) {
-				is_done = true;
+		// Read the file only if it matches the file name
+		var PFCode = null;
+		if (! is_done && fileName === currFileName) {
+			is_done = true;
 //				console.log('    !!!!!!!!! match: ' + currFileName);
-				currFileSize = header.get_UnpSize();
-				currFileBuffer = new ArrayBuffer(currFileSize);
-				currFileBufferEnd = 0;
-				currFileFlags = header.get_Flags();
-				PFCode = _RARProcessFileW(handle, RAR_TEST, 0, 0);
-			} else {
-				PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
-			}
-			if (PFCode !== ERAR_SUCCESS) {
-				cleanup(handle, data, cb);
-				reportProcessFileError(PFCode);
-				return null;
-			}
-
-			res = _RARReadHeaderEx(handle, getPointer(header));
+			currFileSize = header.get_UnpSize();
+			currFileBuffer = new ArrayBuffer(currFileSize);
+			currFileBufferEnd = 0;
+			currFileFlags = header.get_Flags();
+			PFCode = _RARProcessFileW(handle, RAR_TEST, 0, 0);
+		} else {
+			PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
 		}
-
-		if (res !== ERAR_END_ARCHIVE) {
-//			console.log('!!!!!!!!! exiting: ' + filesNames.length);
+		if (PFCode !== ERAR_SUCCESS) {
 			cleanup(handle, data, cb);
-			reportReadHeaderError(res);
+			reportProcessFileError(PFCode);
 			return null;
 		}
+
+		res = _RARReadHeaderEx(handle, getPointer(header));
+	}
+
+	if (res !== ERAR_END_ARCHIVE) {
+//			console.log('!!!!!!!!! exiting: ' + tempFileNames.length);
+		cleanup(handle, data, cb);
+		reportReadHeaderError(res);
+		return null;
 	}
 
 	cleanup(handle, data, cb);
