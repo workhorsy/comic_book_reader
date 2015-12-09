@@ -241,7 +241,72 @@ var openArchive = function(arcData, password, data, cb) {
 	};
 }
 
-var readRARContent = function(data, password, callbackStart, callbackEach, callbackDone) {
+var readRARFileNames = function(data, password) {
+//	console.log("Current working directory: ",FS.cwd())
+
+	var currVolumeIndex = 0;
+	var currFileName;
+	var currFileSize;
+	var currFileBuffer;
+	var currFileBufferEnd;
+	var currFileFlags;
+
+	// write the byte arrays to a file first
+	// because the library operates on files
+	// the canOwn flag reduces the memory usage
+	for (var i = 0; i < data.length; ++i) {
+		FS.writeFile(data[i].name, data[i].content, {encoding: "binary", canOwn: true, flags: 'w+'});
+	}
+
+	var arcData = new Module.RAROpenArchiveDataEx();
+	arcData.set_ArcName(data[0].name);
+	arcData.set_OpenMode(RAR_OM_EXTRACT);
+
+	// Open the archive
+	var cb = function() {
+
+	};
+	var status = openArchive(arcData, password, data, cb);
+	if (! status)
+		return null;
+	var handle = status.handle;
+	var header = status.header;
+
+	// Get all the file names
+	var filesNames = [];
+	var res = ERAR_SUCCESS;
+	while (res === ERAR_SUCCESS) {
+		currFileName = getFileName(header);
+		filesNames.push({
+			name: currFileName,
+			index: i
+		});
+		var PFCode = _RARProcessFileW(handle, RAR_SKIP, 0, 0);
+		if (PFCode !== ERAR_SUCCESS) {
+			cleanup(handle, data, cb);
+			reportProcessFileError(PFCode);
+			return null;
+		}
+		res = _RARReadHeaderEx(handle, getPointer(header));
+	}
+	_RARCloseArchive(handle);
+	handle = null;
+
+	// Sort the file names lexically
+	filesNames.sort(function(a, b) {
+		if(a.name < b.name) return -1;
+		if(a.name > b.name) return 1;
+		return 0;
+	});
+
+	for (var i=0; i<filesNames.length; ++i) {
+		console.info('!!!!!!!!!! ' + filesNames[i].name);
+	}
+	return filesNames;
+}
+
+
+var readRARContent = function(data, password, fuckName, callbackEach) {
 //	console.log("Current working directory: ",FS.cwd())
 
 	var currVolumeIndex = 0;
@@ -295,13 +360,11 @@ var readRARContent = function(data, password, callbackStart, callbackEach, callb
 		if(a.name > b.name) return 1;
 		return 0;
 	});
-
+/*
 	for (var i=0; i<filesNames.length; ++i) {
 		console.info('!!!!!!!!!! ' + filesNames[i].name);
 	}
-	callbackStart(filesNames);
-
-	var currFileIndex = 0;
+*/
 	var cb = Runtime.addFunction(function(msg, UserData, P1, P2) {
 		// volume change event
 		if (msg === UCM_CHANGEVOLUMEW) return 0;
@@ -338,10 +401,7 @@ var readRARContent = function(data, password, callbackStart, callbackEach, callb
 		//console.info(view);
 		currFileBufferEnd += P2;
 		if (currFileSize === currFileBufferEnd) {
-			console.info(currFileIndex + ', ' + currFileName);
-//			console.info(currFileSize);
-			callbackEach(currFileIndex, currFileName, currFileSize, view);
-			currFileIndex++;
+			callbackEach(currFileName, currFileSize, view);
 		}
 
 		return 1
@@ -349,6 +409,7 @@ var readRARContent = function(data, password, callbackStart, callbackEach, callb
 	arcData.set_Callback(cb);
 
 	var targetFileName = null;
+	var is_done = false;
 	while (filesNames.length > 0) {
 		targetFileName = filesNames.shift();
 //		console.log('    searching for : ' + targetFileName.name);
@@ -371,7 +432,8 @@ var readRARContent = function(data, password, callbackStart, callbackEach, callb
 
 			// Read the file only if it matches the file name
 			var PFCode = null;
-			if (targetFileName.name === currFileName) {
+			if (! is_done && fuckName === targetFileName.name && targetFileName.name === currFileName) {
+				is_done = true;
 //				console.log('    !!!!!!!!! match: ' + currFileName);
 				currFileSize = header.get_UnpSize();
 				currFileBuffer = new ArrayBuffer(currFileSize);
@@ -399,7 +461,6 @@ var readRARContent = function(data, password, callbackStart, callbackEach, callb
 	}
 
 	cleanup(handle, data, cb);
-	callbackDone();
 
 	var rootDir = {type: 'dir', ls: {}}
 	return rootDir

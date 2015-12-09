@@ -26,8 +26,6 @@ Comic Book Reader
 * Remember previous page number when reloading files
 
 # TODO Big:
-* When uncompressing rars, storing images in indexedDB happens after all
-	images are uncompressed
 * Move image resizing into workers
 * Save dates all comics are opened on
 * Pinch to zoom

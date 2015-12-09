@@ -36,55 +36,32 @@ function getFileMimeType(file_name) {
 }
 
 function uncompressRar(filename, array_buffer) {
+	// Create an array of rar files
+	var rarFiles = [{
+		name: filename,
+		size: array_buffer.byteLength,
+		type: '',
+		content: new Uint8Array(array_buffer)
+	}];
+	var password = null;
+
+	// Get the file names
+	var rawFileNames = readRARFileNames(rarFiles, password);
+	var fileNames = [];
+	Object.keys(rawFileNames).forEach(function(i) {
+		var rawFileName = rawFileNames[i];
+		if (isValidImageType(rawFileName.name)) {
+			fileNames.push(rawFileName.name);
+		}
+	});
+
 	// Tell the client that we are starting to uncompress
 	var onStart = function(fileNames) {
-		var count = 0;
-		for (var i=0; i<fileNames.length; ++i) {
-			if (isValidImageType(fileNames[i].name)) {
-				count++;
-			}
-		}
-
 		var message = {
 			action: 'uncompressed_start',
-			count: count
+			count: fileNames.length
 		};
 		self.postMessage(message);
-	};
-
-	// Uncompress each file and send it to the client
-	var onEach = function(index, fileName, fileSize, data) {
-		if (! isValidImageType(fileName)) {
-			return;
-		}
-
-		var blob = new Blob([data.buffer], {type: getFileMimeType(fileName)});
-//		console.info(blob);
-//		console.info(fileName + ', ' + fileSize);
-//			console.info(blob);
-		var url = URL.createObjectURL(blob);
-		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
-
-		var message = {
-			action: 'uncompressed_each',
-			filename: fileName,
-			url: url,
-			index: index,
-			is_cached: false
-		};
-		self.postMessage(message);
-
-		// FIXME: Update this to happen before the message is posted
-		setCachedFile('big', fileName, blob, function(is_success) {
-			if (! is_success) {
-				dbClose();
-				var message = {
-					action: 'storage_full',
-					filename: fileName
-				};
-				self.postMessage(message);
-			}
-		});
 	};
 
 	// Tell the client that we are done uncompressing
@@ -97,17 +74,46 @@ function uncompressRar(filename, array_buffer) {
 //		self.close();
 	};
 
-	// Create an array of rar files
-	var files = [{
-		name: filename,
-		size: array_buffer.byteLength,
-		type: '',
-		content: new Uint8Array(array_buffer)
-	}];
-	var password = null;
+	// Uncompress each file and send it to the client
+	var onEach = function(fileNames, i) {
+		if (i === 0) {
+			onStart(fileNames);
+		} else if (i >= fileNames.length) {
+			onEnd();
+			return;
+		}
 
-	// Decompress all the files
-	readRARContent(files, password, onStart, onEach, onEnd);
+		var fileName = fileNames[i];
+		readRARContent(rarFiles, password, fileName, function(fileName, fileSize, data) {
+			console.info(i + ', ' + fileName);
+			var blob = new Blob([data.buffer], {type: getFileMimeType(fileName)});
+			var url = URL.createObjectURL(blob);
+			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+
+			// FIXME: Update this to happen before the message is posted
+			setCachedFile('big', fileName, blob, function(is_success) {
+				if (! is_success) {
+					dbClose();
+					var message = {
+						action: 'storage_full',
+						filename: fileName
+					};
+					self.postMessage(message);
+				} else {
+					var message = {
+						action: 'uncompressed_each',
+						filename: fileName,
+						url: url,
+						index: i,
+						is_cached: false
+					};
+					self.postMessage(message);
+					onEach(fileNames, i + 1);
+				}
+			});
+		});
+	};
+	onEach(fileNames, 0);
 }
 
 function uncompressZip(filename, array_buffer) {
