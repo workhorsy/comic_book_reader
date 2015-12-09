@@ -70,8 +70,6 @@ function uncompressRar(filename, array_buffer) {
 			action: 'uncompressed_done'
 		};
 		self.postMessage(message);
-		// FIXME: In Chrome, if the worker is terminated, all object URLs die
-//		self.close();
 	};
 
 	// Uncompress each file and send it to the client
@@ -90,7 +88,6 @@ function uncompressRar(filename, array_buffer) {
 			var url = URL.createObjectURL(blob);
 			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 
-			// FIXME: Update this to happen before the message is posted
 			setCachedFile('big', fileName, blob, function(is_success) {
 				if (! is_success) {
 					dbClose();

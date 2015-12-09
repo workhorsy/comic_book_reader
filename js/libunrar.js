@@ -356,7 +356,6 @@ var readRARContent = function(data, password, fileName, callbackEach) {
 
 	var handle = null;
 	var header = null;
-	var is_done = false;
 	var status = openArchive(arcData, password, data, cb);
 	if (! status)
 		return null;
@@ -364,6 +363,7 @@ var readRARContent = function(data, password, fileName, callbackEach) {
 	header = status.header;
 
 	var res = ERAR_SUCCESS;
+	var is_done = false;
 	while (res === ERAR_SUCCESS) {
 		currFileName = getFileName(header);
 
