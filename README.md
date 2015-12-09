@@ -35,6 +35,7 @@ Comic Book Reader
 * Automatically identify comics using "perceptual image hashing"
 
 # Browser limitations:
+* Browsers have giant, ugly, non customizable full screen indicators.
 * Firefox and Chrome are 32bit, so they crash if they use more than 4
 	gigs of ram.
 * Restarting a web worker will corrupt all created Object URLs (chrome)
