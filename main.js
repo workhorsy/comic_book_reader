@@ -35,7 +35,7 @@ var g_page_middle = null;
 var g_page_right = null;
 
 
-function requireBrowserFeatures() {
+function requireBrowserFeatures(cb) {
 	var errors = [];
 	if ( !('transform' in document.body.style)) {
 		errors.push('CSS transform');
@@ -84,16 +84,46 @@ function requireBrowserFeatures() {
 		errors.push('Request Full Screen');
 	}
 
-	if (errors.length > 0) {
-		var message = '<h1>Your browser is missing features required to run this program:</h1>';
-		for (var i=0; i<errors.length; ++i) {
-			message += (errors[i] + ' is not supported!<br/>');
+	function hasErrors(errors) {
+		if (errors.length > 0) {
+			var message = '<h1>Your browser is missing features required to run this program:</h1>';
+			for (var i=0; i<errors.length; ++i) {
+				message += (errors[i] + ' is not supported!<br/>');
+			}
+			document.body.innerHTML = message;
+			return true;
 		}
-		document.body.innerHTML = message;
+
 		return false;
 	}
 
-	return true;
+	if (! hasErrors(errors)) {
+		var worker = new Worker('js/test_requirements_worker.js');
+
+		worker.onmessage = function(e) {
+			switch (e.data.action) {
+				case 'test_requirements':
+					var errors = e.data.errors;
+					hasErrors(errors);
+					break;
+			}
+		};
+
+		var message = {
+			action: 'test_requirements'
+		};
+		worker.postMessage(message);
+	}
+
+	cb();
+/*
+	var array_buffer = new ArrayBuffer(1);
+	var message = {
+		action: 'test_requirements',
+		array_buffer: array_buffer
+	};
+	worker.postMessage(message, [array_buffer]);
+*/
 }
 
 function toFriendlySize(size) {
@@ -1256,12 +1286,7 @@ function makeThumbNail(index, url, filename, is_cached) {
 	}
 }
 
-$(document).ready(function() {
-	// Show an error message if any required browser features are missing
-	if (! requireBrowserFeatures()) {
-		return;
-	}
-
+function main() {
 	g_page_left = $('#pageLeft');
 	g_page_middle = $('#pageMiddle');
 	g_page_right = $('#pageRight');
@@ -1412,4 +1437,11 @@ $(document).ready(function() {
 	if (is_appcached && is_localhost) {
 		alert('Warning! Running on localhost with app cache enabled!');
 	}
+}
+
+$(document).ready(function() {
+	// Show an error message if any required browser features are missing
+	requireBrowserFeatures(function() {
+		main();
+	});
 });

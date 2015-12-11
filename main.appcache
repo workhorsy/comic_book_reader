@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v1 Wed, Dec  9, 2015 12:08:38 PM
+# v1 Fri, Dec 11, 2015  2:30:01 PM
 
 CACHE:
 favicon.ico
@@ -16,6 +16,7 @@ js/jszip.js
 js/libunrar.js
 js/libunrar.js.mem
 js/worker.js
+js/test_requirements_worker.js
 
 NETWORK:
 *
