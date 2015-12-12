@@ -1,7 +1,7 @@
 // Copyright (c) 2015 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software is licensed under GPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
-
+"use strict";
 
 var g_db = null;
 
@@ -15,6 +15,7 @@ function getAllCachedFirstPages(onStart, onEach) {
 			return;
 		}
 
+		var m_db = null;
 		var filename = db_names.shift();
 		console.info('!!!!!!!' + filename);
 		var request = indexedDB.open(filename, 1);
@@ -24,7 +25,10 @@ function getAllCachedFirstPages(onStart, onEach) {
 		request.onupgradeneeded = function(event) {
 			console.error('Database does not exist for "'  + filename + '".');
 			event.target.transaction.abort();
-			m_db.close();
+			if (m_db) {
+				m_db.close();
+				m_db = null;
+			}
 			nextElement();
 		};
 		request.onsuccess = function(event) {
@@ -70,6 +74,7 @@ function getTotalSize(onEnd) {
 	var db_names = settings_get_db_names();
 	var total_comics = db_names.length;
 	var total_size = 0;
+	var m_db = null;
 
 	var nextElement = function() {
 		if (db_names.length <= 0) {
@@ -85,7 +90,10 @@ function getTotalSize(onEnd) {
 		request.onupgradeneeded = function(event) {
 			console.error('Database does not exist for "'  + filename + '".');
 			event.target.transaction.abort();
-			m_db.close();
+			if (m_db) {
+				m_db.close();
+				m_db = null;
+			}
 			nextElement();
 		};
 		request.onsuccess = function(event) {
@@ -126,6 +134,7 @@ function getTotalSize(onEnd) {
 }
 
 function getAllCachedPages(filename, onStart, onEach, onEnd) {
+	var m_db = null;
 	var request = indexedDB.open(filename, 1);
 	request.onerror = function(event) {
 		console.error('Failed to open database for "'  + filename + '", :' + event.target.errorCode);

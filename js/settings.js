@@ -1,7 +1,7 @@
 // Copyright (c) 2015 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software is licensed under GPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
-
+"use strict";
 
 function generate_random_user_id() {
 	// Get a 20 character user id

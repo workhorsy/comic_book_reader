@@ -1,7 +1,7 @@
 // Copyright (c) 2015 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software is licensed under GPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
-
+"use strict";
 
 var g_is_terminated = false;
 var g_worker = null;
@@ -222,7 +222,7 @@ function showBottomMenu(y_offset, is_instant) {
 
 		var curr_image_index = g_image_index;
 		var length = Object.keys(g_small_urls).length;
-		function loadNextThumbNail(i) {
+		var loadNextThumbNail = function(i) {
 			if (i >= length) {
 				return;
 			}
@@ -1090,7 +1090,7 @@ function updateScrollBar() {
 
 	// Update the scroll bar size and position
 	var scroll_bar = $('#scrollBar');
-	style = scroll_bar[0].style;
+	var style = scroll_bar[0].style;
 	style.height = (height_percentage * g_screen_height) + 'px';
 	style.top = (g_screen_height - (y_percentage * g_screen_height)) + 'px';
 
