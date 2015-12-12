@@ -43,6 +43,12 @@ function requireBrowserFeatures(cb) {
 	if (typeof Blob === 'undefined') {
 		errors.push('Blob');
 	}
+	if (typeof Object === 'undefined' || typeof Object.defineProperty === 'undefined') {
+		errors.push('Object defineProperty');
+	}
+	if (typeof Object === 'undefined' || typeof Object.hasOwnProperty === 'undefined') {
+		errors.push('Object hasOwnProperty');
+	}
 	if (typeof window.HTMLCanvasElement === 'undefined' ||
 		typeof window.HTMLCanvasElement.prototype.getContext === 'undefined') {
 		errors.push('Canvas Context');
@@ -98,14 +104,24 @@ function requireBrowserFeatures(cb) {
 	}
 
 	if (! hasErrors(errors)) {
+		// Test the Web Workers requirements
 		var worker = new Worker('js/test_requirements_worker.js');
-
 		worker.onmessage = function(e) {
-			switch (e.data.action) {
-				case 'test_requirements':
-					var errors = e.data.errors;
-					hasErrors(errors);
-					break;
+			if (e.data.action === 'test_requirements') {
+				var errors = e.data.errors;
+				if (! hasErrors(errors)) {
+					// Test Web Workers for transferable objects
+					var array_buffer = new ArrayBuffer(1);
+					var message = {
+						action: 'test_transferable_objects',
+						array_buffer: array_buffer
+					};
+					worker.postMessage(message, [array_buffer]);
+					if (array_buffer.byteLength !== 0) {
+						errors = ['Transferable Object'];
+						hasErrors(errors);
+					}
+				}
 			}
 		};
 
@@ -116,14 +132,6 @@ function requireBrowserFeatures(cb) {
 	}
 
 	cb();
-/*
-	var array_buffer = new ArrayBuffer(1);
-	var message = {
-		action: 'test_requirements',
-		array_buffer: array_buffer
-	};
-	worker.postMessage(message, [array_buffer]);
-*/
 }
 
 function toFriendlySize(size) {
@@ -1234,18 +1242,11 @@ function startWorker() {
 	};
 
 	// Start the worker
-	// FIXME: Move the transferable object test to requireBrowserFeatures
-	var array_buffer = new ArrayBuffer(1);
 	var message = {
-		action: 'start',
-		array_buffer: array_buffer
+		action: 'start'
 	};
-	g_worker.postMessage(message, [array_buffer]);
-	if (array_buffer.byteLength !== 0) {
-		g_worker.terminate();
-		g_worker = null;
-		alert('Transferable Object are not supported!');
-	}
+	g_worker.postMessage(message);
+
 }
 
 function makeThumbNail(index, url, filename, is_cached) {

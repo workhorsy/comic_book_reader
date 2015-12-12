@@ -11,6 +11,12 @@ function test_requirments() {
 	if (typeof Blob === 'undefined') {
 		errors.push('Web Worker Blob');
 	}
+	if (typeof Object === 'undefined' || typeof Object.defineProperty === 'undefined') {
+		errors.push('Object defineProperty');
+	}
+	if (typeof Object === 'undefined' || typeof Object.hasOwnProperty === 'undefined') {
+		errors.push('Object hasOwnProperty');
+	}
 	if (typeof Uint8Array === 'undefined') {
 		errors.push('Web Worker Uint8Array');
 	}
@@ -33,19 +39,16 @@ function test_requirments() {
 		errors.push('Web Worker File Reader Sync');
 	}
 
-	if (errors.length > 0) {
-		var message = {
-			action: 'test_requirements',
-			errors: errors
-		};
-		self.postMessage(message);
-	}
+	var message = {
+		action: 'test_requirements',
+		errors: errors
+	};
+	self.postMessage(message);
 }
 
 self.addEventListener('message', function(e) {
 	switch (e.data.action) {
 		case 'test_requirements':
-			//e.data.array_buffer = null;
 			test_requirments();
 			break;
 	}
