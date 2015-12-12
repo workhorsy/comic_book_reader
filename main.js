@@ -1163,6 +1163,31 @@ function updateTotalUsersOnline() {
 	setTimeout(updateTotalUsersOnline, update_timeout);
 }
 
+function updateApplicationCache() {
+	// When an app cache update is available, prompt the user to reload the page
+	window.applicationCache.addEventListener('updateready', function(e) {
+		if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
+			if (confirm('Comic Book Reader has an update. Reload it?')) {
+				window.location.reload();
+			}
+		}
+	}, false);
+
+	// Run the actual check
+	var checkForUpdate = function() {
+		var update_timeout = 1000 * 60 * 30; // 30 minutes
+		//console.info('window.applicationCache.status: ' + window.applicationCache.status);
+		var is_idle = window.applicationCache.status === window.applicationCache.IDLE;
+		if (is_idle) {
+			window.applicationCache.update();
+		}
+
+		setTimeout(checkForUpdate, update_timeout);
+	};
+
+	setTimeout(checkForUpdate, 10000); // 10 seconds
+}
+
 function onStorageFull(filename) {
 	if (g_is_terminated) {
 		return;
@@ -1431,13 +1456,7 @@ function main() {
 	startWorker();
 	$('#lastChangeDate').text('Last Update: ' + getLastChangeDate());
 	updateTotalUsersOnline();
-
-	// Warn if app cache is running on localhost
-	var is_localhost = ['localhost', '127.0.0.1'].includes(document.location.hostname);
-	var is_appcached = window.applicationCache.status !== window.applicationCache.UNCACHED;
-	if (is_appcached && is_localhost) {
-		alert('Warning! Running on localhost with app cache enabled!');
-	}
+	updateApplicationCache();
 }
 
 $(document).ready(function() {
