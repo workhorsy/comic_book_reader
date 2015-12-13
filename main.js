@@ -162,7 +162,7 @@ function hideAllMenus(is_instant) {
 	var top_menu = $('#topMenu');
 	var style = top_menu[0].style;
 	style.width = (g_screen_width - 80) + 'px';
-	var height = top_menu.outerHeight() + 10;
+	var height = top_menu.outerHeight() + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 
@@ -194,7 +194,7 @@ function setWallPaperOpacity() {
 function showTopMenu(y_offset, is_instant) {
 	var speed = is_instant ? '0.0s' : '0.1s';
 	var height = $('#topMenu').outerHeight() * 1.0;
-	var offset = -height + (height * y_offset);
+	var offset = (-height + (height * y_offset)) - 15;
 	var style = $('#topMenu')[0].style;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
