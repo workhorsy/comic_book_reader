@@ -19,6 +19,7 @@ function generate_random_user_id() {
 }
 
 function settings_delete_all() {
+	localStorage.removeItem('install_updates_enabled');
 	localStorage.removeItem('right_click_enabled');
 	localStorage.removeItem('db_names');
 }
@@ -43,6 +44,14 @@ function settings_has(name) {
 	} else {
 		return false;
 	}
+}
+
+function settings_get_install_updates_enabled() {
+	return settings_get('install_updates_enabled', true);
+}
+
+function settings_set_install_updates_enabled(value) {
+	settings_set('install_updates_enabled', value);
 }
 
 function settings_get_right_click_enabled() {

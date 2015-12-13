@@ -1166,8 +1166,9 @@ function updateTotalUsersOnline() {
 function updateApplicationCache() {
 	// When an app cache update is available, prompt the user to reload the page
 	window.applicationCache.addEventListener('updateready', function(e) {
-		if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-			if (confirm('Comic Book Reader has an update. Reload it?')) {
+		var is_updatable = settings_get_install_updates_enabled();
+		if (is_updatable && window.applicationCache.status === window.applicationCache.UPDATEREADY) {
+			if (confirm('Comic Book Reader has an update. Reload now?')) {
 				window.location.reload();
 			}
 		}
@@ -1176,10 +1177,13 @@ function updateApplicationCache() {
 	// Run the actual check
 	var checkForUpdate = function() {
 		var update_timeout = 1000 * 60 * 30; // 30 minutes
-		//console.info('window.applicationCache.status: ' + window.applicationCache.status);
-		var is_idle = window.applicationCache.status === window.applicationCache.IDLE;
-		if (is_idle) {
-			window.applicationCache.update();
+		var is_updatable = settings_get_install_updates_enabled();
+		if (is_updatable) {
+			//console.info('window.applicationCache.status: ' + window.applicationCache.status);
+			var is_idle = window.applicationCache.status === window.applicationCache.IDLE;
+			if (is_idle) {
+				window.applicationCache.update();
+			}
 		}
 
 		setTimeout(checkForUpdate, update_timeout);
@@ -1365,6 +1369,12 @@ function main() {
 		settings_set_right_click_enabled(! value);
 	});
 
+	$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
+	$('#btnEnableInstallUpdates').click(function() {
+		var value = settings_get_install_updates_enabled();
+		settings_set_install_updates_enabled(! value);
+	});
+
 	// Delete indexedDB and localStorage data
 	$('#btnDeleteComicData').click(function() {
 		var db_names = settings_get_db_names();
@@ -1385,7 +1395,8 @@ function main() {
 				};
 			} else {
 				settings_delete_all();
-				$('#btnDisableRightClick').prop('checked', false);
+				$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
+				$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
 
 				getTotalSize(function(length) {
 					$('#totalDBSize').text(toFriendlySize(length));
