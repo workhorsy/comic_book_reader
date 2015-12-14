@@ -482,35 +482,27 @@ function onLoaded(blob, filename, filesize, filetype) {
 	var db_names = settings_get_db_names();
 	var has_file = db_names.includes(filename);
 
-	initCachedFileStorage(filename, function() {
-		// If the file is cached, load it from the cache
-		if (has_file) {
+	// If the file is cached, load it from the cache
+	if (has_file) {
+		var message = {
+			action: 'load_from_cache',
+			filename: filename
+		};
+		g_worker.postMessage(message);
+	// If the file is not cached, uncompress it from the file
+	} else {
+		var reader = new FileReader();
+		reader.onload = function(evt) {
+			var array_buffer = reader.result;
 			var message = {
-				action: 'load_from_cache',
-				filename: filename
+				action: 'uncompress',
+				filename: filename,
+				array_buffer: array_buffer
 			};
-			g_worker.postMessage(message);
-		// If the file is not cached, uncompress it from the file
-		} else {
-			var reader = new FileReader();
-			reader.onload = function(evt) {
-				var array_buffer = reader.result;
-				var message = {
-					action: 'uncompress',
-					filename: filename,
-					array_buffer: array_buffer
-				};
-				g_worker.postMessage(message, [array_buffer]);
-			};
-			reader.readAsArrayBuffer(blob);
-		}
-	});
-
-	// Save the name of the comic to the cache
-	if (! has_file) {
-		db_names.push(filename);
+			g_worker.postMessage(message, [array_buffer]);
+		};
+		reader.readAsArrayBuffer(blob);
 	}
-	settings_set_db_names(db_names);
 }
 
 function onError(msg) {
@@ -1226,6 +1218,16 @@ function startWorker() {
 				onStorageFull(filename);
 				break;
 			case 'uncompressed_start':
+				// Save the name of the comic to the cache
+				initCachedFileStorage(g_file_name, function() {
+					var db_names = settings_get_db_names();
+					if (! db_names.includes(g_file_name)) {
+						db_names.push(g_file_name);
+						settings_set_db_names(db_names);
+					}
+				});
+
+				// Update the progress
 				g_image_count =  e.data.count;
 				var loadingProgress = $('#loadingProgress')[0];
 				loadingProgress.innerHTML = 'Loading 0.0% ...';

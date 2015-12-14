@@ -229,26 +229,28 @@ self.addEventListener('message', function(e) {
 			var array_buffer = e.data.array_buffer;
 			var filename = e.data.filename;
 
-			initCachedFileStorage(filename, function() {
-				// Open the file as rar
-				if (isRarFile(array_buffer)) {
+			// Open the file as rar
+			if (isRarFile(array_buffer)) {
+				initCachedFileStorage(filename, function() {
 					console.info('Uncompressing RAR ...');
 					uncompressRar(filename, array_buffer);
-				// Open the file as zip
-				} else if(isZipFile(array_buffer)) {
+				});
+			// Open the file as zip
+			} else if(isZipFile(array_buffer)) {
+				initCachedFileStorage(filename, function() {
 					console.info('Uncompressing Zip ...');
 					uncompressZip(filename, array_buffer);
-				// Otherwise show an error
-				} else {
-					var error = 'Invalid comic file: "' + filename + '"';
-					console.info(error);
-					var message = {
-						action: 'invalid_file',
-						error: error
-					};
-					self.postMessage(message);
-				}
-			});
+				});
+			// Otherwise show an error
+			} else {
+				var error = 'Invalid comic file: "' + filename + '"';
+				console.info(error);
+				var message = {
+					action: 'invalid_file',
+					error: error
+				};
+				self.postMessage(message);
+			}
 			break;
 		case 'load_from_cache':
 			var filename = e.data.filename;
