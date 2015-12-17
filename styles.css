@@ -209,6 +209,7 @@ body {
 	margin: 100px;
 	border-right: 50px solid DeepSkyBlue;
 	border-bottom: 50px solid DeepSkyBlue;
+	box-shadow: 10px 10px 20px -10px black;
 	width: 100px;
 	height: 100px;
 	transform: rotate(135deg);
@@ -221,6 +222,7 @@ body {
 	margin: 100px;
 	border-right:50px solid DeepSkyBlue;
 	border-bottom:50px solid DeepSkyBlue;
+	box-shadow: 10px 10px 20px -10px black;
 	width: 100px;
 	height: 100px;
 	transform: rotate(-45deg);
@@ -237,6 +239,7 @@ body {
 	margin-top: 0px;
 	margin-bottom: 0px;
 	background-color: DeepSkyBlue;
+	box-shadow: 4px 4px 20px black;
 	width: 5px;
 	height: 50px;
 	opacity: 0.5;
