@@ -635,6 +635,16 @@ function onInputDown(target, x, y) {
 	g_mouse_start_x = x;
 	g_mouse_start_y = y;
 	//console.info(x + ', ' + y);
+
+	// Add a glow around the top menu if it is the thing that is selected
+	if (g_mouse_start_y < g_down_swipe_size) {
+		$('#topMenu')[0].style.boxShadow = '0px 0px 200px DeepSkyBlue';
+	}
+
+	// Add a glow around the bottom menu if it is the thing that is selected
+	if ((g_screen_height - g_mouse_start_y) < g_down_swipe_size) {
+		$('#bottomMenu')[0].style.boxShadow = '0px 0px 200px DeepSkyBlue';
+	}
 }
 
 function onInputUp() {
@@ -650,6 +660,10 @@ function onInputUp() {
 	g_moving_page = null;
 	g_scroll_y_start += g_scroll_y_temp;
 	g_scroll_y_temp = 0;
+
+	// Remove glow from top and bottom menu
+	$('#topMenu')[0].style.boxShadow = '10px 10px 5px black';
+	$('#bottomMenu')[0].style.boxShadow = '10px 10px 5px black';
 
 
 	if (g_is_swiping_right) {

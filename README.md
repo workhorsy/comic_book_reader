@@ -21,7 +21,6 @@ Comic Book Reader
 * Stop browser navigation when loading
 * Add a place holder in the page selector, for images that have not loaded
 * Make esc un full screen and bring down the top menu
-* Add an effect when the up or down swipe is going to pull the menu instead of the page
 * Have the right and left keys work like swiping right and left to turn pages
 * Manga (left to right) support
 * Remember previous page number when reloading files
