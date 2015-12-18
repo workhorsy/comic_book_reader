@@ -551,6 +551,7 @@ function ignoreEvent(e) {
 }
 
 function onTouchStart(e) {
+	console.log('@@@@@@ onTouchStart');
 	//e.preventDefault();
 	//e.stopPropagation();
 
@@ -561,6 +562,7 @@ function onTouchStart(e) {
 }
 
 function onTouchEnd(e) {
+	console.log('@@@@@@ onTouchEnd');
 	//e.preventDefault();
 	//e.stopPropagation();
 
@@ -569,6 +571,7 @@ function onTouchEnd(e) {
 }
 
 function onTouchMove(e) {
+	console.log('@@@@@@ onTouchMove');
 	e.preventDefault();
 	e.stopPropagation();
 
@@ -578,6 +581,7 @@ function onTouchMove(e) {
 }
 
 function onPointerStart(e) {
+	console.log('@@@@@@ onPointerStart');
 	g_moving_page = g_page_middle[0];
 	var x = e.clientX | 0;
 	var y = e.clientY | 0;
@@ -585,11 +589,13 @@ function onPointerStart(e) {
 }
 
 function onPointerEnd(e) {
+	console.log('@@@@@@ onPointerEnd');
 	g_moving_page = null;
 	onInputUp();
 }
 
 function onPointerMove(e) {
+	console.log('@@@@@@ onPointerMove');
 	var x = e.clientX | 0;
 	var y = e.clientY | 0;
 	onInputMove(x, y);
@@ -604,16 +610,19 @@ function onPageMouseDown(e) {
 }
 
 function onMouseDown(e) {
+	console.log('@@@@@@ onMouseDown');
 	var x = e.clientX;
 	var y = e.clientY;
 	onInputDown(e.target, x, y);
 }
 
 function onMouseUp(e) {
+	console.log('@@@@@@ onMouseUp');
 	onInputUp();
 }
 
 function onMouseMove(e) {
+	console.log('@@@@@@ onMouseMove');
 	var x = e.clientX;
 	var y = e.clientY;
 	onInputMove(x, y);
