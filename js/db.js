@@ -178,6 +178,12 @@ function getAllCachedPages(filename, onStart, onEach, onEnd) {
 
 // FIXME: What do we do when this fails to write from lack of space?
 function initCachedFileStorage(db_name, cb) {
+	// Just return if already connected
+	if (g_db) {
+		cb();
+		return;
+	}
+
 	var request = indexedDB.open(db_name, 1);
 	request.onerror = function(event) {
 		console.error('Failed to create database for "'  + db_name + '", :' + event.target.errorCode);

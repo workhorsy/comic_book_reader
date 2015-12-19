@@ -484,11 +484,13 @@ function onLoaded(blob, filename, filesize, filetype) {
 
 	// If the file is cached, load it from the cache
 	if (has_file) {
-		var message = {
-			action: 'load_from_cache',
-			filename: filename
-		};
-		g_worker.postMessage(message);
+		initCachedFileStorage(filename, function() {
+			var message = {
+				action: 'load_from_cache',
+				filename: filename
+			};
+			g_worker.postMessage(message);
+		});
 	// If the file is not cached, uncompress it from the file
 	} else {
 		var reader = new FileReader();
