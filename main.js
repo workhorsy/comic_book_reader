@@ -181,8 +181,8 @@ function hideAllMenus(is_instant) {
 	$('#wallPaper')[0].style.opacity = 1.0;
 
 	// Remove glow from top and bottom menu
-	$('#topMenu')[0].className = '';
-	$('#bottomMenu')[0].className = '';
+	$('#topMenu').removeClass('menuWithGlow');
+	$('#bottomMenu').removeClass('menuWithGlow');
 }
 
 function setWallPaperOpacity() {
@@ -660,12 +660,12 @@ function onInputDown(target, x, y) {
 
 	// Add a glow around the top menu if it is the thing that is selected
 	if (g_mouse_start_y < g_down_swipe_size) {
-		$('#topMenu')[0].className = 'menuWithGlow';
+		$('#topMenu').addClass('menuWithGlow');
 	}
 
 	// Add a glow around the bottom menu if it is the thing that is selected
 	if ((g_screen_height - g_mouse_start_y) < g_down_swipe_size) {
-		$('#bottomMenu')[0].className = 'menuWithGlow';
+		$('#bottomMenu').addClass('menuWithGlow');
 	}
 }
 
