@@ -1,5 +1,9 @@
 <?php
 
+// Copyright (c) 2015 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
+// This software is licensed under AGPL v3 or later
+// http://github.com/workhorsy/comic_book_reader
+
 header("Access-Control-Allow-Origin: *");
 
 // Make sure it is a HTTP Get request
