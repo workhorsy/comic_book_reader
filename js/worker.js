@@ -226,6 +226,7 @@ self.addEventListener('message', function(e) {
 
 	switch (e.data.action) {
 		case 'uncompress':
+			dbClose();
 			var array_buffer = e.data.array_buffer;
 			var filename = e.data.filename;
 
@@ -253,6 +254,7 @@ self.addEventListener('message', function(e) {
 			}
 			break;
 		case 'load_from_cache':
+			dbClose();
 			var filename = e.data.filename;
 			var onStart = function(count) {
 				var message = {
