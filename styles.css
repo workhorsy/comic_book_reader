@@ -43,6 +43,10 @@ body {
 	background-color: DeepSkyBlue;
 }
 
+.menuWithGlow {
+	box-shadow: 0px 0px 200px DeepSkyBlue;
+}
+
 #totalUsersOnline {
 	float: left;
 	color: grey;
