@@ -16,6 +16,7 @@ Comic Book Reader
 * Touch movement is broken in IE11
 
 # TODO Small:
+* Add an option to disable user counter
 * Make sure broken page images work
 * Make sure broken archives work.
 * Stop browser navigation when loading
