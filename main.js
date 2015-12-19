@@ -179,6 +179,10 @@ function hideAllMenus(is_instant) {
 	g_top_menu_visible = 0.0;
 	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
+
+	// Remove glow from top and bottom menu
+	$('#topMenu')[0].style.boxShadow = '';
+	$('#bottomMenu')[0].style.boxShadow = '';
 }
 
 function setWallPaperOpacity() {
@@ -671,11 +675,6 @@ function onInputUp() {
 	g_moving_page = null;
 	g_scroll_y_start += g_scroll_y_temp;
 	g_scroll_y_temp = 0;
-
-	// Remove glow from top and bottom menu
-	$('#topMenu')[0].style.boxShadow = '10px 10px 5px black';
-	$('#bottomMenu')[0].style.boxShadow = '10px 10px 5px black';
-
 
 	if (g_is_swiping_right) {
 		g_is_swiping_right = false;
