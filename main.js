@@ -472,6 +472,9 @@ function onLoaded(blob, filename, filesize, filetype) {
 	$('body')[0].style.backgroundColor = 'black';
 
 	// Clear everything
+	$('#btnFileLoad').prop('disabled', true);
+	$('#btnLibrary').prop('disabled', true);
+	$('#btnSettings').prop('disabled', true);
 	hideAllMenus(false);
 	clearComicData();
 	setComicData(filename, filesize, filetype);
@@ -517,6 +520,10 @@ function onError(msg) {
 	$('#loadError').text('Error: ' + msg);
 	$('#loadError').show();
 	showTopMenu(1.0, true);
+
+	$('#btnFileLoad').prop('disabled', false);
+	$('#btnLibrary').prop('disabled', false);
+	$('#btnSettings').prop('disabled', false);
 }
 
 function onProgress(loaded, total) {
@@ -1268,6 +1275,9 @@ function startWorker() {
 //				g_worker = null;
 				$('#loadingProgress').hide();
 				$('#loadingProgress')[0].innerHTML = '';
+				$('#btnFileLoad').prop('disabled', false);
+				$('#btnLibrary').prop('disabled', false);
+				$('#btnSettings').prop('disabled', false);
 				break;
 			case 'uncompressed_each':
 				var url = e.data.url;
