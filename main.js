@@ -1186,6 +1186,25 @@ function updateTotalUsersOnline() {
 	setTimeout(updateTotalUsersOnline, update_timeout);
 }
 
+function getApplicationCacheStatusText(status) {
+	switch (status) {
+		case window.applicationCache.UNCACHED:
+			return 'UNCACHED';
+		case window.applicationCache.IDLE:
+			return 'IDLE';
+		case window.applicationCache.CHECKING:
+			return 'CHECKING';
+		case window.applicationCache.DOWNLOADING:
+			return 'DOWNLOADING';
+		case window.applicationCache.UPDATEREADY:
+			return 'UPDATE READY';
+		case window.applicationCache.OBSOLETE:
+			return 'OBSOLETE';
+		default:
+			return 'UNKNOWN';
+	}
+}
+
 function updateApplicationCache() {
 	// When an app cache update is available, prompt the user to reload the page
 	window.applicationCache.addEventListener('updateready', function(e) {
@@ -1202,8 +1221,9 @@ function updateApplicationCache() {
 		var update_timeout = 1000 * 60 * 30; // 30 minutes
 		var is_updatable = settings_get_install_updates_enabled();
 		if (is_updatable) {
-			//console.info('window.applicationCache.status: ' + window.applicationCache.status);
-			var is_idle = window.applicationCache.status === window.applicationCache.IDLE;
+			var status = window.applicationCache.status;
+			console.info('Checking for Application Cache update. Current status: ' + getApplicationCacheStatusText(status) + ' (' + status + ')');
+			var is_idle = status === window.applicationCache.IDLE;
 			if (is_idle) {
 				window.applicationCache.update();
 			}
