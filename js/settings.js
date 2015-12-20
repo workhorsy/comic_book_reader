@@ -67,6 +67,7 @@ function settings_get_db_names() {
 }
 
 function settings_set_db_names(value) {
+	value.sort();
 	settings_set('db_names', value);
 }
 
