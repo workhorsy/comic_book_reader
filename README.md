@@ -11,7 +11,6 @@ Comic Book Reader
 * Thumb nails are too small on a high dpi screen
 * If the first page is short, all the following pages get their bottom chopped off.
 * cant touch scroll the page selector (chrome)
-* touch scrolling all the way to the bottom does not work (firefox win 8)
 * Multi touch input twitches the screen
 * Touch movement is broken in IE11
 

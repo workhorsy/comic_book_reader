@@ -808,8 +808,8 @@ function onInputMove(x, y) {
 	}
 
 	// Get how far we have moved since pressing down
-	var x_offset = x - g_mouse_start_x;
-	var y_offset = y - g_mouse_start_y;
+	var x_offset = (x - g_mouse_start_x) / 20.0;
+	var y_offset = (y - g_mouse_start_y) / 20.0;
 
 	if (is_vertical && g_moving_page) {
 		// Show the top panel if we are swiping down from the top
@@ -824,19 +824,24 @@ function onInputMove(x, y) {
 		} else {
 			var image_height = $('#' + g_moving_page.children[0].id).height();
 
+			// Reset the scroll position if it goes past the screen top or bottom
+			var new_offset = y_offset + g_scroll_y_start;
+			if (new_offset > 0) {
+				new_offset = 0;
+			} else if (image_height + new_offset < g_screen_height) {
+				new_offset = g_screen_height - image_height;
+			}
+
 			// Only scroll down if the top of the image is above the screen top
 			// Only scroll up if the bottom of the image is below the screen bottom
-			var new_offset = y_offset + g_scroll_y_start;
-			if (new_offset <= 0 && image_height + new_offset > g_screen_height) {
-				g_scroll_y_temp = y_offset;
+			g_scroll_y_start = new_offset;
 
-				var x = (g_moving_page.panel_index * g_screen_width);
-				var style = g_moving_page.style;
-				style.transitionDuration = '0.0s';
-				style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+			var x = (g_moving_page.panel_index * g_screen_width);
+			var style = g_moving_page.style;
+			style.transitionDuration = '0.0s';
+			style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
 
-				updateScrollBar();
-			}
+			updateScrollBar();
 		}
 	}
 
