@@ -350,7 +350,7 @@ function loadCurrentPage(cb) {
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
 	// Load the middle page
-	loadImage(g_page_middle, g_image_index, function() {
+	loadImage(g_page_middle, g_image_index, true, function() {
 		if (cb) {
 			cb();
 		}
@@ -361,7 +361,7 @@ function loadCurrentPage(cb) {
 	if (g_image_index === g_image_count -1) {
 		g_page_right.empty();
 	} else if (g_image_index < g_image_count -1) {
-		loadImage(g_page_right, g_image_index + 1, function() {
+		loadImage(g_page_right, g_image_index + 1, false, function() {
 			updateScrollBar();
 		});
 	}
@@ -370,13 +370,13 @@ function loadCurrentPage(cb) {
 	if (g_image_index === 0) {
 		g_page_left.empty();
 	} else if (g_image_index > 0) {
-		loadImage(g_page_left, g_image_index - 1, function() {
+		loadImage(g_page_left, g_image_index - 1, false, function() {
 			updateScrollBar();
 		});
 	}
 }
 
-function loadImage(page, index, cb) {
+function loadImage(page, index, is_position_reset, cb) {
 	var url = g_urls[index];
 	var title = g_titles[index];
 
@@ -392,7 +392,13 @@ function loadImage(page, index, cb) {
 		return;
 	}
 
+	// Remove the image and reset the page position if needed
 	page.empty();
+	if (is_position_reset) {
+		var style = page[0].style;
+		style.transitionDuration = '0.0s';
+		style.transform = 'translate3d(0px, 0px, 0px)';
+	}
 
 	// Create a new image
 	var img = document.createElement('img');
