@@ -26,6 +26,7 @@ Comic Book Reader
 * Remember previous page number when reloading files
 
 # TODO Big:
+* Before decompressing, check indexedDB to see if we have enough free space
 * Move image resizing into workers
 * Save dates all comics are opened on
 * Pinch to zoom
