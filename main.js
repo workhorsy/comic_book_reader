@@ -808,8 +808,8 @@ function onInputMove(x, y) {
 	}
 
 	// Get how far we have moved since pressing down
-	var x_offset = (x - g_mouse_start_x) / 20.0;
-	var y_offset = (y - g_mouse_start_y) / 20.0;
+	var x_offset = x - g_mouse_start_x;
+	var y_offset = y - g_mouse_start_y;
 
 	if (is_vertical && g_moving_page) {
 		// Show the top panel if we are swiping down from the top
@@ -823,6 +823,8 @@ function onInputMove(x, y) {
 		// Scroll the page up and down
 		} else {
 			var image_height = $('#' + g_moving_page.children[0].id).height();
+			x_offset = x_offset / 20.0;
+			y_offset = y_offset / 20.0;
 
 			// Reset the scroll position if it goes past the screen top or bottom
 			var new_offset = y_offset + g_scroll_y_start;
