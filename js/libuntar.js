@@ -3,7 +3,8 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
-
+// Based on the information from:
+// https://en.wikipedia.org/wiki/Tar_(computing)
 
 function tarGetEntries(filename, array_buffer) {
 	var view = new Uint8Array(array_buffer);
