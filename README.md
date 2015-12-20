@@ -8,7 +8,7 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # Bugs:
-* Checking for App Cache updates does not (firefox only)
+* Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
 * The glow around menus show up when resizing sometimes
 * Thumb nails are too small on a high dpi screen
