@@ -3,13 +3,16 @@ Comic Book Reader
 * Can read CBR and CBZ files
 * Runs right in the browser as a web page
 * Works well on a touch device or desktop
-* Stores comics in a library
+* Stores opened comics in the browser
 * Is pure JavaScript and HTML
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # Bugs:
+* Checking for App Cache updates does not (firefox only)
+* Object URLS are silently corrupted after many pages are created (chrome only)
+* The glow around menus show up when resizing sometimes
 * Thumb nails are too small on a high dpi screen
-* If the first page is short, all the following pages get their bottom chopped off.
+* If the first page is short, all the following pages get their bottom chopped off
 * cant touch scroll the page selector (chrome)
 * Multi touch input twitches the screen
 * Touch movement is broken in IE11
@@ -17,7 +20,7 @@ Comic Book Reader
 # TODO Small:
 * Add an option to disable user counter
 * Make sure broken page images work
-* Make sure broken archives work.
+* Make sure broken archives work
 * Stop browser navigation when loading
 * Add a place holder in the page selector, for images that have not loaded
 * Make esc un full screen and bring down the top menu
