@@ -304,7 +304,6 @@ function showLibrary() {
 		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 		console.info(pagename);
 		var img = new Image();
-		img.width = 100;
 		img.title = filename;
 		img.className = 'comicCover';
 		img.onclick = function(e) {
