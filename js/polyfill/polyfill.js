@@ -74,3 +74,11 @@ if (! Uint8Array.prototype.slice) {
 	}
 }
 }
+
+function workingMap(array, cb) {
+	var retval = new Array(array.length);
+	for (var i=0; i<retval.length; ++i) {
+		retval[i] = cb(array[i]);
+	}
+	return retval;
+}

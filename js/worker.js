@@ -191,6 +191,39 @@ function uncompressZip(filename, array_buffer) {
 	onEach(files, 0);
 }
 
+function uncompressTar(filename, array_buffer) {
+	var view = new Uint8Array(array_buffer);
+	var offset = 0;
+
+	while (offset + 512 < view.byteLength) {
+		// Get entry name
+		var entry_name = workingMap(view.slice(offset + 0, offset + 0 + 100), String.fromCharCode);
+		entry_name = entry_name.join('').replace(/\0/g, '');
+
+		// No entry name, so probably the last block
+		if (entry_name.length === 0) {
+			break;
+		}
+
+		// Get entry size and data
+		var entry_size = parseInt(workingMap(view.slice(offset + 124, offset + 124 + 12), String.fromCharCode).join(''), 8);
+		var entry_data = view.slice(offset + 512, offset + 512 + entry_size);
+		console.info('entry_name:' + entry_name);
+		console.info('entry_size:' + entry_size);
+
+		var blob = new Blob([entry_data.buffer], {type: getFileMimeType(entry_name)});
+		var url = URL.createObjectURL(blob);
+		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+
+		// Round the offset up to be divisible by 512
+		offset += (entry_size + 512);
+		if (offset % 512 > 0) {
+			var even = (offset / 512) | 0; // number of times it goes evenly into 512
+			offset = (even + 1) * 512;
+		}
+	}
+}
+
 function isRarFile(array_buffer) {
 	// The two styles of RAR headers
 	var rar_header1 = [0x52, 0x45, 0x7E, 0x5E].join(', ');
@@ -221,6 +254,20 @@ function isZipFile(array_buffer) {
 	return (header === zip_header);
 }
 
+function isTarFile(array_buffer) {
+	// The TAR header
+	var tar_header = ['u', 's', 't', 'a', 'r'].join(', ');
+
+	// Just return false if the file is smaller than the header size
+	if (array_buffer.byteLength < 512) {
+		return false;
+	}
+
+	// Return true if the header matches the TAR header
+	var header = workingMap(new Uint8Array(array_buffer).slice(257, 257 + 5), String.fromCharCode).join(', ');
+	return (header === tar_header);
+}
+
 self.addEventListener('message', function(e) {
 	console.info(e);
 
@@ -241,6 +288,12 @@ self.addEventListener('message', function(e) {
 				initCachedFileStorage(filename, function() {
 					console.info('Uncompressing Zip ...');
 					uncompressZip(filename, array_buffer);
+				});
+			// Open the file as tar
+			} else if(isTarFile(array_buffer)) {
+				initCachedFileStorage(filename, function() {
+					console.info('Uncompressing Tar ...');
+					uncompressTar(filename, array_buffer);
 				});
 			// Otherwise show an error
 			} else {
