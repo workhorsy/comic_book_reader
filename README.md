@@ -1,6 +1,6 @@
 Comic Book Reader
 ===================
-* Can read CBR and CBZ files
+* Can read CBR, CBZ, and CBT files
 * Runs in the browser as a JavaScript and HTML web page
 * Works well on a touch device or desktop
 * Saves opened comics in the browser
@@ -18,6 +18,7 @@ Comic Book Reader
 * Touch movement is broken in IE11
 
 # TODO Small:
+* Remove duplication in uncompressing zip, rar, and tar files.
 * Add an option to disable user counter
 * Make sure broken page images work
 * Make sure broken archives work
@@ -33,7 +34,6 @@ Comic Book Reader
 * Move image resizing into workers
 * Save dates all comics are opened on
 * Pinch to zoom
-* Add Tar support (cbt file)
 * Add 7zip support (cb7 file)
 * Loading files from Drop Box, Google Drive, et cetera
 * Automatically identify comics using "perceptual image hashing"

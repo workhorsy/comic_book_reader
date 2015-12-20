@@ -6,6 +6,7 @@
 importScripts('polyfill/polyfill.js');
 importScripts('libunrar.js');
 importScripts('jszip.js');
+importScripts('libuntar.js');
 importScripts('settings.js');
 importScripts('db.js');
 
@@ -192,36 +193,80 @@ function uncompressZip(filename, array_buffer) {
 }
 
 function uncompressTar(filename, array_buffer) {
-	var view = new Uint8Array(array_buffer);
-	var offset = 0;
+	var unsorted_entries = tarGetEntries(filename, array_buffer);
 
-	while (offset + 512 < view.byteLength) {
-		// Get entry name
-		var entry_name = workingMap(view.slice(offset + 0, offset + 0 + 100), String.fromCharCode);
-		entry_name = entry_name.join('').replace(/\0/g, '');
+	// Get only the files that are images
+	var entries = [];
+	unsorted_entries.forEach(function(entry) {
+		if (isValidImageType(entry.name)) {
+			entries.push(entry);
+		}
+	});
 
-		// No entry name, so probably the last block
-		if (entry_name.length === 0) {
-			break;
+	// Sort the files by name
+	entries.sort(function(a, b) {
+		if(a.name < b.name) return -1;
+		if(a.name > b.name) return 1;
+		return 0;
+	});
+
+	var onEach = function(files, i) {
+		// First file
+		if (i === 0) {
+			// Tell the client that we are starting to uncompress
+			var message = {
+				action: 'uncompressed_start',
+				count: files.length
+			};
+			self.postMessage(message);
+		// Last file
+		} else if (i >= files.length) {
+			// Close the connection to indexedDB
+			dbClose();
+
+			// Tell the client that we are done uncompressing
+			var message = {
+				action: 'uncompressed_done'
+			};
+			self.postMessage(message);
+			return;
 		}
 
-		// Get entry size and data
-		var entry_size = parseInt(workingMap(view.slice(offset + 124, offset + 124 + 12), String.fromCharCode).join(''), 8);
-		var entry_data = view.slice(offset + 512, offset + 512 + entry_size);
-		console.info('entry_name:' + entry_name);
-		console.info('entry_size:' + entry_size);
-
-		var blob = new Blob([entry_data.buffer], {type: getFileMimeType(entry_name)});
+		var tarEntry = files[i];
+		var filename = tarEntry.name;
+		//console.info(tarEntry);
+		var buffer = tarGetEntryData(tarEntry, filename, array_buffer);
+		var blob = new Blob([buffer], {type: getFileMimeType(filename)});
 		var url = URL.createObjectURL(blob);
 		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+		console.info(filename);
+		console.info(url);
 
-		// Round the offset up to be divisible by 512
-		offset += (entry_size + 512);
-		if (offset % 512 > 0) {
-			var even = (offset / 512) | 0; // number of times it goes evenly into 512
-			offset = (even + 1) * 512;
-		}
-	}
+		setCachedFile('big', filename, blob, function(is_success) {
+			if (is_success) {
+				var message = {
+					action: 'uncompressed_each',
+					filename: filename,
+					url: url,
+					index: i,
+					is_cached: false
+				};
+				self.postMessage(message);
+
+				onEach(files, i + 1);
+			} else {
+				dbClose();
+				var message = {
+					action: 'storage_full',
+					filename: fileName
+				};
+				self.postMessage(message);
+			}
+		});
+	};
+
+	// Uncompress each file and send it to the client
+	onEach(entries, 0);
 }
 
 function isRarFile(array_buffer) {
