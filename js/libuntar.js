@@ -43,7 +43,7 @@ function tarGetEntries(filename, array_buffer) {
 	return entries;
 }
 
-function tarGetEntryData(entry, filename, array_buffer) {
+function tarGetEntryData(entry, array_buffer) {
 	var view = new Uint8Array(array_buffer);
 	var offset = entry.offset;
 	var length = entry.length;

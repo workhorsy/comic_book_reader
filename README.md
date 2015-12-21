@@ -19,7 +19,6 @@ Comic Book Reader
 * Touch movement is broken in IE11
 
 # TODO Small:
-* Remove duplication in uncompressing zip, rar, and tar files.
 * Add an option to disable user counter
 * Make sure broken page images work
 * Make sure broken archives work
