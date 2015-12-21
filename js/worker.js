@@ -42,10 +42,9 @@ function onUncompress(archive) {
 			entries.push(entry);
 		}
 	});
-	archive.entries = entries;
 
 	// Sort the entries by name
-	archive.entries.sort(function(a, b) {
+	entries.sort(function(a, b) {
 		if(a.name < b.name) return -1;
 		if(a.name > b.name) return 1;
 		return 0;
@@ -69,7 +68,7 @@ function onUncompress(archive) {
 	};
 
 	// Uncompress each entry and send it to the client
-	var onEach = function(entries, i) {
+	var onEach = function(i) {
 		if (i === 0) {
 			onStart(entries);
 		} else if (i >= entries.length) {
@@ -100,12 +99,12 @@ function onUncompress(archive) {
 						is_cached: false
 					};
 					self.postMessage(message);
-					onEach(entries, i + 1);
+					onEach(i + 1);
 				}
 			});
 		});
 	};
-	onEach(archive.entries, 0);
+	onEach(0);
 }
 
 self.addEventListener('message', function(e) {
