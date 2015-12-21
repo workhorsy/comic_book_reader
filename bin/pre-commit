@@ -18,6 +18,7 @@ js/last_change_date.js\r\n\
 js/polyfill/polyfill.js\r\n\
 js/screenfull.js/screenfull.js\r\n\
 js/jquery-1.11.3.min.js\r\n\
+js/uncompress.js\r\n\
 js/jszip.js\r\n\
 js/libuntar.js\r\n\
 js/libunrar.js\r\n\

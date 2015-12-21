@@ -4,9 +4,7 @@
 "use strict";
 
 importScripts('polyfill/polyfill.js');
-importScripts('libunrar.js');
-importScripts('jszip.js');
-importScripts('libuntar.js');
+importScripts('uncompress.js');
 importScripts('settings.js');
 importScripts('db.js');
 
@@ -36,31 +34,28 @@ function getFileMimeType(file_name) {
 	}
 }
 
-function uncompressRar(filename, array_buffer) {
-	// Create an array of rar files
-	var rarFiles = [{
-		name: filename,
-		size: array_buffer.byteLength,
-		type: '',
-		content: new Uint8Array(array_buffer)
-	}];
-	var password = null;
-
-	// Get the file names
-	var rawFileNames = readRARFileNames(rarFiles, password);
-	var fileNames = [];
-	Object.keys(rawFileNames).forEach(function(i) {
-		var rawFileName = rawFileNames[i];
-		if (isValidImageType(rawFileName)) {
-			fileNames.push(rawFileName);
+function fuck(archive) {
+	// Get only the entries that are images
+	var entries = [];
+	archive.entries.forEach(function(entry) {
+		if (isValidImageType(entry.name)) {
+			entries.push(entry);
 		}
+	});
+	archive.entries = entries;
+
+	// Sort the entries by name
+	archive.entries.sort(function(a, b) {
+		if(a.name < b.name) return -1;
+		if(a.name > b.name) return 1;
+		return 0;
 	});
 
 	// Tell the client that we are starting to uncompress
-	var onStart = function(fileNames) {
+	var onStart = function(entries) {
 		var message = {
 			action: 'uncompressed_start',
-			count: fileNames.length
+			count: entries.length
 		};
 		self.postMessage(message);
 	};
@@ -73,246 +68,52 @@ function uncompressRar(filename, array_buffer) {
 		self.postMessage(message);
 	};
 
-	// Uncompress each file and send it to the client
-	var onEach = function(fileNames, i) {
+	// Uncompress each entry and send it to the client
+	var onEach = function(entries, i) {
+		console.info('@@@@@@@@@@@@@@@@@: ' + i);
 		if (i === 0) {
-			onStart(fileNames);
-		} else if (i >= fileNames.length) {
+			onStart(entries);
+		} else if (i >= entries.length) {
 			onEnd();
 			return;
 		}
 
-		var fileName = fileNames[i];
-		readRARContent(rarFiles, password, fileName, function(data) {
-			console.info(i + ', ' + fileName);
-			var blob = new Blob([data.buffer], {type: getFileMimeType(fileName)});
+		var entry = entries[i];
+		console.info('@@@@@@@@@@@@@@@@@: ' + entries[i].name);
+		entry.readData(function(data) {
+			console.info('!!!!!!!!!!!!!!!!! ' + i + ', ' + entry.name);
+			var blob = new Blob([data.buffer], {type: getFileMimeType(entry.name)});
 			var url = URL.createObjectURL(blob);
 			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 
-			setCachedFile('big', fileName, blob, function(is_success) {
+			setCachedFile('big', entry.name, blob, function(is_success) {
 				if (! is_success) {
 					dbClose();
 					var message = {
 						action: 'storage_full',
-						filename: fileName
+						filename: entry.name
 					};
 					self.postMessage(message);
 				} else {
 					var message = {
 						action: 'uncompressed_each',
-						filename: fileName,
+						filename: entry.name,
 						url: url,
 						index: i,
 						is_cached: false
 					};
 					self.postMessage(message);
-					onEach(fileNames, i + 1);
+					onEach(entries, i + 1);
 				}
 			});
 		});
 	};
-	onEach(fileNames, 0);
-}
-
-function uncompressZip(filename, array_buffer) {
-	var zip = new JSZip(array_buffer);
-
-	// Get only the files that are images
-	var files = [];
-	Object.keys(zip.files).forEach(function(i) {
-		var zipEntry = zip.files[i];
-		if (isValidImageType(zipEntry.name)) {
-			files.push(zipEntry);
-		}
+	onEach(archive.entries, 0);
+/*
+	archive.entries.forEach(function(entry) {
+		console.info(entry.name);
 	});
-
-	// Sort the files by name
-	files.sort(function(a, b) {
-		if(a.name < b.name) return -1;
-		if(a.name > b.name) return 1;
-		return 0;
-	});
-
-	var onEach = function(files, i) {
-		// First file
-		if (i === 0) {
-			// Tell the client that we are starting to uncompress
-			var message = {
-				action: 'uncompressed_start',
-				count: files.length
-			};
-			self.postMessage(message);
-		// Last file
-		} else if (i >= files.length) {
-			// Close the connection to indexedDB
-			dbClose();
-
-			// Tell the client that we are done uncompressing
-			var message = {
-				action: 'uncompressed_done'
-			};
-			self.postMessage(message);
-			return;
-		}
-
-		var zipEntry = files[i];
-		var filename = zipEntry.name;
-		//console.info(zipEntry);
-		var buffer = zipEntry.asArrayBuffer();
-		var blob = new Blob([buffer], {type: getFileMimeType(filename)});
-		var url = URL.createObjectURL(blob);
-		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
-		console.info(filename);
-		console.info(url);
-
-		setCachedFile('big', filename, blob, function(is_success) {
-			if (is_success) {
-				var message = {
-					action: 'uncompressed_each',
-					filename: filename,
-					url: url,
-					index: i,
-					is_cached: false
-				};
-				self.postMessage(message);
-
-				onEach(files, i + 1);
-			} else {
-				dbClose();
-				var message = {
-					action: 'storage_full',
-					filename: fileName
-				};
-				self.postMessage(message);
-			}
-		});
-	};
-
-	// Uncompress each file and send it to the client
-	onEach(files, 0);
-}
-
-function uncompressTar(filename, array_buffer) {
-	var unsorted_entries = tarGetEntries(filename, array_buffer);
-
-	// Get only the files that are images
-	var entries = [];
-	unsorted_entries.forEach(function(entry) {
-		if (isValidImageType(entry.name)) {
-			entries.push(entry);
-		}
-	});
-
-	// Sort the files by name
-	entries.sort(function(a, b) {
-		if(a.name < b.name) return -1;
-		if(a.name > b.name) return 1;
-		return 0;
-	});
-
-	var onEach = function(files, i) {
-		// First file
-		if (i === 0) {
-			// Tell the client that we are starting to uncompress
-			var message = {
-				action: 'uncompressed_start',
-				count: files.length
-			};
-			self.postMessage(message);
-		// Last file
-		} else if (i >= files.length) {
-			// Close the connection to indexedDB
-			dbClose();
-
-			// Tell the client that we are done uncompressing
-			var message = {
-				action: 'uncompressed_done'
-			};
-			self.postMessage(message);
-			return;
-		}
-
-		var tarEntry = files[i];
-		var filename = tarEntry.name;
-		//console.info(tarEntry);
-		var buffer = tarGetEntryData(tarEntry, filename, array_buffer);
-		var blob = new Blob([buffer], {type: getFileMimeType(filename)});
-		var url = URL.createObjectURL(blob);
-		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
-		console.info(filename);
-		console.info(url);
-
-		setCachedFile('big', filename, blob, function(is_success) {
-			if (is_success) {
-				var message = {
-					action: 'uncompressed_each',
-					filename: filename,
-					url: url,
-					index: i,
-					is_cached: false
-				};
-				self.postMessage(message);
-
-				onEach(files, i + 1);
-			} else {
-				dbClose();
-				var message = {
-					action: 'storage_full',
-					filename: fileName
-				};
-				self.postMessage(message);
-			}
-		});
-	};
-
-	// Uncompress each file and send it to the client
-	onEach(entries, 0);
-}
-
-function isRarFile(array_buffer) {
-	// The three styles of RAR headers
-	var rar_header1 = [0x52, 0x45, 0x7E, 0x5E].join(', '); // old
-	var rar_header2 = [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x00].join(', '); // 1.5 to 4.0
-	var rar_header3 = [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x01, 0x00].join(', '); // 5.0
-
-	// Just return false if the file is smaller than the header
-	if (array_buffer.byteLength < 8) {
-		return false;
-	}
-
-	// Return true if the header matches one of the RAR headers
-	var header1 = new Uint8Array(array_buffer).slice(0, 4).join(', ');
-	var header2 = new Uint8Array(array_buffer).slice(0, 7).join(', ');
-	var header3 = new Uint8Array(array_buffer).slice(0, 8).join(', ');
-	return (header1 === rar_header1 || header2 === rar_header2 || header3 === rar_header3);
-}
-
-function isZipFile(array_buffer) {
-	// The ZIP header
-	var zip_header = [0x50, 0x4b, 0x03, 0x04].join(', ');
-
-	// Just return false if the file is smaller than the header
-	if (array_buffer.byteLength < 4) {
-		return false;
-	}
-
-	// Return true if the header matches the ZIP header
-	var header = new Uint8Array(array_buffer).slice(0, 4).join(', ');
-	return (header === zip_header);
-}
-
-function isTarFile(array_buffer) {
-	// The TAR header
-	var tar_header = ['u', 's', 't', 'a', 'r'].join(', ');
-
-	// Just return false if the file is smaller than the header size
-	if (array_buffer.byteLength < 512) {
-		return false;
-	}
-
-	// Return true if the header matches the TAR header
-	var header = workingMap(new Uint8Array(array_buffer).slice(257, 257 + 5), String.fromCharCode).join(', ');
-	return (header === tar_header);
+*/
 }
 
 self.addEventListener('message', function(e) {
@@ -324,23 +125,12 @@ self.addEventListener('message', function(e) {
 			var array_buffer = e.data.array_buffer;
 			var filename = e.data.filename;
 
-			// Open the file as rar
-			if (isRarFile(array_buffer)) {
+			// Open the file as an archive
+			var archive = archiveOpen(filename, array_buffer);
+			if (archive) {
 				initCachedFileStorage(filename, function() {
-					console.info('Uncompressing RAR ...');
-					uncompressRar(filename, array_buffer);
-				});
-			// Open the file as zip
-			} else if(isZipFile(array_buffer)) {
-				initCachedFileStorage(filename, function() {
-					console.info('Uncompressing Zip ...');
-					uncompressZip(filename, array_buffer);
-				});
-			// Open the file as tar
-			} else if(isTarFile(array_buffer)) {
-				initCachedFileStorage(filename, function() {
-					console.info('Uncompressing Tar ...');
-					uncompressTar(filename, array_buffer);
+					console.info('Uncompressing ' + archive.archive_type + ' ...');
+					fuck(archive);
 				});
 			// Otherwise show an error
 			} else {
