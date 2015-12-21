@@ -105,8 +105,7 @@ function _rarGetEntries(rar_handle) {
 		entries.push({
 			name: file_names[i],
 			readData: function(cb) {
-				console.info('@@@@@@@@@@@: readData');
-				readRARContent(rar_handle.rar_files, rar_handle.password, rar_handle.file_name, cb);
+				readRARContent(rar_handle.rar_files, rar_handle.password, file_names[i], cb);
 			}
 		});
 	});
@@ -124,10 +123,7 @@ function _zipGetEntries(zip_handle) {
 		entries.push({
 			name: zip_entry.name,
 			readData: function(cb) {
-				console.info('@@@@@@@@@@@: readData');
-				console.info(zip_entry);
 				var data = zip_entry.asArrayBuffer();
-				console.info(data);
 				cb(data);
 			}
 		});
@@ -145,9 +141,8 @@ function _tarGetEntries(tar_handle) {
 		entries.push({
 			name: entry.name,
 			readData: function(cb) {
-				console.info('@@@@@@@@@@@: readData');
-				var data = tarGetEntryData(entry, tar_handle.file_name, tar_handle.array_buffer);
-				cb(data);
+				var data = tarGetEntryData(entry, tar_handle.array_buffer);
+				cb(data.buffer);
 			}
 		});
 	});

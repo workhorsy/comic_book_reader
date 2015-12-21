@@ -34,7 +34,7 @@ function getFileMimeType(file_name) {
 	}
 }
 
-function fuck(archive) {
+function onUncompress(archive) {
 	// Get only the entries that are images
 	var entries = [];
 	archive.entries.forEach(function(entry) {
@@ -70,7 +70,6 @@ function fuck(archive) {
 
 	// Uncompress each entry and send it to the client
 	var onEach = function(entries, i) {
-		console.info('@@@@@@@@@@@@@@@@@: ' + i);
 		if (i === 0) {
 			onStart(entries);
 		} else if (i >= entries.length) {
@@ -79,10 +78,8 @@ function fuck(archive) {
 		}
 
 		var entry = entries[i];
-		console.info('@@@@@@@@@@@@@@@@@: ' + entries[i].name);
 		entry.readData(function(data) {
-			console.info('!!!!!!!!!!!!!!!!! ' + i + ', ' + entry.name);
-			var blob = new Blob([data.buffer], {type: getFileMimeType(entry.name)});
+			var blob = new Blob([data], {type: getFileMimeType(entry.name)});
 			var url = URL.createObjectURL(blob);
 			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 
@@ -109,11 +106,6 @@ function fuck(archive) {
 		});
 	};
 	onEach(archive.entries, 0);
-/*
-	archive.entries.forEach(function(entry) {
-		console.info(entry.name);
-	});
-*/
 }
 
 self.addEventListener('message', function(e) {
@@ -130,7 +122,7 @@ self.addEventListener('message', function(e) {
 			if (archive) {
 				initCachedFileStorage(filename, function() {
 					console.info('Uncompressing ' + archive.archive_type + ' ...');
-					fuck(archive);
+					onUncompress(archive);
 				});
 			// Otherwise show an error
 			} else {

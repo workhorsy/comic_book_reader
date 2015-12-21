@@ -43,12 +43,14 @@ function tarGetEntries(filename, array_buffer) {
 	return entries;
 }
 
-function tarGetEntryData(entry, filename, array_buffer) {
+function tarGetEntryData(entry, array_buffer) {
 	var view = new Uint8Array(array_buffer);
 	var offset = entry.offset;
 	var length = entry.length;
 
 	// Get entry data
+	//console.info(offset + 512);
+	//console.info(offset + 512 + length);
 	var entry_data = view.slice(offset + 512, offset + 512 + length);
 	return entry_data;
 }
