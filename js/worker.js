@@ -270,19 +270,21 @@ function uncompressTar(filename, array_buffer) {
 }
 
 function isRarFile(array_buffer) {
-	// The two styles of RAR headers
-	var rar_header1 = [0x52, 0x45, 0x7E, 0x5E].join(', ');
-	var rar_header2 = [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x00].join(', ');
+	// The three styles of RAR headers
+	var rar_header1 = [0x52, 0x45, 0x7E, 0x5E].join(', '); // old
+	var rar_header2 = [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x00].join(', '); // 1.5 to 4.0
+	var rar_header3 = [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x01, 0x00].join(', '); // 5.0
 
 	// Just return false if the file is smaller than the header
-	if (array_buffer.byteLength < 7) {
+	if (array_buffer.byteLength < 8) {
 		return false;
 	}
 
 	// Return true if the header matches one of the RAR headers
 	var header1 = new Uint8Array(array_buffer).slice(0, 4).join(', ');
 	var header2 = new Uint8Array(array_buffer).slice(0, 7).join(', ');
-	return (header1 === rar_header1 || header2 === rar_header2);
+	var header3 = new Uint8Array(array_buffer).slice(0, 8).join(', ');
+	return (header1 === rar_header1 || header2 === rar_header2 || header3 === rar_header3);
 }
 
 function isZipFile(array_buffer) {
@@ -325,7 +327,7 @@ self.addEventListener('message', function(e) {
 			// Open the file as rar
 			if (isRarFile(array_buffer)) {
 				initCachedFileStorage(filename, function() {
-					console.info('Uncompressing RAR ...');
+					console.info('Uncompressing RAR 5 ...');
 					uncompressRar(filename, array_buffer);
 				});
 			// Open the file as zip
