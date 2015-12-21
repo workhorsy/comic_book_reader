@@ -327,7 +327,7 @@ self.addEventListener('message', function(e) {
 			// Open the file as rar
 			if (isRarFile(array_buffer)) {
 				initCachedFileStorage(filename, function() {
-					console.info('Uncompressing RAR 5 ...');
+					console.info('Uncompressing RAR ...');
 					uncompressRar(filename, array_buffer);
 				});
 			// Open the file as zip
