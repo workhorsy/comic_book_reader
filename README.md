@@ -19,6 +19,7 @@ Comic Book Reader
 * Touch movement is broken in IE11
 
 # TODO Small:
+* When the status menu opens, remove the old data size while we wait for the new value to load
 * Add an option to disable user counter
 * Make sure broken page images work
 * Make sure broken archives work
