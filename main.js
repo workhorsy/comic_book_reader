@@ -426,12 +426,15 @@ function loadImage(page, index, is_position_reset, cb) {
 	page.append(img);
 }
 
-function setComicData(name, size, type) {
+function setComicData(name) {
 	g_file_name = name;
-	$('#comicData').show();
 	$('#nameValue').text(name);
-	$('#sizeValue').text(toFriendlySize(size));
-	//$('#typeValue').text(type);
+
+	if (name) {
+		$('#comicData').show();
+	} else {
+		$('#comicData').hide();
+	}
 }
 
 function clearComicData() {
@@ -439,7 +442,7 @@ function clearComicData() {
 	$('#loadError').hide();
 	$('#comicData').hide();
 	$('#loadProgress').val(0);
-	setComicData('?', '?', '?');
+	setComicData(null);
 	g_page_middle.empty();
 	g_page_left.empty();
 	g_page_right.empty();
@@ -482,7 +485,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 	$('#btnSettings').prop('disabled', true);
 	hideAllMenus(false);
 	clearComicData();
-	setComicData(filename, filesize, filetype);
+	setComicData(filename);
 
 	// Read the file
 	// FIXME: Remove the progress bar, because it is not used
