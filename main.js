@@ -1423,6 +1423,7 @@ function main() {
 		if (is_visible) {
 			$('#settingsMenu').hide();
 		} else {
+			$('#totalDBSize').text('. . .');
 			$('#settingsMenu').show();
 			getTotalSize(function(length) {
 				$('#totalDBSize').text(toFriendlySize(length));
@@ -1465,6 +1466,7 @@ function main() {
 				settings_delete_all();
 				$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
 				$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
+				$('#totalDBSize').text('. . .');
 
 				getTotalSize(function(length) {
 					$('#totalDBSize').text(toFriendlySize(length));
