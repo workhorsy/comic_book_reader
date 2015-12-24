@@ -429,20 +429,13 @@ function loadImage(page, index, is_position_reset, cb) {
 function setComicData(name) {
 	g_file_name = name;
 	$('#nameValue').text(name);
-
-	if (name) {
-		$('#comicData').show();
-	} else {
-		$('#comicData').hide();
-	}
 }
 
 function clearComicData() {
 	// Reset the UI
 	$('#loadError').hide();
-	$('#comicData').hide();
 	$('#loadProgress').val(0);
-	setComicData(null);
+	setComicData('');
 	g_page_middle.empty();
 	g_page_left.empty();
 	g_page_right.empty();
@@ -524,7 +517,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 
 function onError(msg) {
 	$('#comicPanel').hide();
-	$('#comicData').hide();
+	setComicData('');
 	$('#loadError').text('Error: ' + msg);
 	$('#loadError').show();
 	showTopMenu(1.0, true);
