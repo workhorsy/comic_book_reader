@@ -1527,6 +1527,9 @@ function main() {
 	$('#comicPanel').hide();
 	$(window).trigger('resize');
 	clearComicData();
+	$('#btnFileLoad').prop('disabled', false);
+	$('#btnLibrary').prop('disabled', false);
+	$('#btnSettings').prop('disabled', false);
 
 	// Warn the user if indexedDB is full
 	var storage_is_full = localStorage.getItem('storage_is_full');
