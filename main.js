@@ -1301,32 +1301,52 @@ function startWorker() {
 				// FIXME: In Chrome, if the worker is terminated, all object URLs die
 //				g_worker.terminate();
 //				g_worker = null;
-				$('#loadingProgress').hide();
-				$('#loadingProgress')[0].innerHTML = '';
-				$('#btnFileLoad').prop('disabled', false);
-				$('#btnLibrary').prop('disabled', false);
-				$('#btnSettings').prop('disabled', false);
+
 				break;
 			case 'uncompressed_each':
-				var url = e.data.url;
 				var filename = e.data.filename;
 				var index = e.data.index;
 				var is_cached = e.data.is_cached;
-				g_urls[index] = url;
-				g_titles[index] = filename;
-				// FIXME: Make this a callback
-				makeThumbNail(index, url, filename, is_cached);
+				var is_last = e.data.is_last;
 
-				var loadingProgress = $('#loadingProgress')[0];
-				loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
+				getCachedFile('big', filename, function(blob) {
+					var url = URL.createObjectURL(blob);
+					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
 
-				if (index === 0) {
-					loadCurrentPage(function() {
-						$(window).trigger('resize');
-					});
-				} else if (index === 1) {
-					loadCurrentPage();
-				}
+					g_urls[index] = url;
+					g_titles[index] = filename;
+
+					// FIXME: Make this a callback
+					makeThumbNail(index, url, filename, is_cached);
+
+					var loadingProgress = $('#loadingProgress')[0];
+					loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
+
+					if (index === 0) {
+						loadCurrentPage(function() {
+							$(window).trigger('resize');
+						});
+					} else if (index === 1) {
+						loadCurrentPage();
+					}
+
+					if (is_last) {
+						// Stop the worker
+						var message = {
+							action: 'stop'
+						};
+						g_worker.postMessage(message);
+						g_worker = null;
+
+						$('#loadingProgress').hide();
+						$('#loadingProgress')[0].innerHTML = '';
+						$('#btnFileLoad').prop('disabled', false);
+						$('#btnLibrary').prop('disabled', false);
+						$('#btnSettings').prop('disabled', false);
+
+						startWorker();
+					}
+				});
 				break;
 			case 'invalid_file':
 				onError(e.data.error);

@@ -7,6 +7,15 @@ Comic Book Reader
 * Works when offline
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
+# Memory Reduction Surgery
+* X Make workers recycle, so they can free all the memory used for the archive and entries
+* X Make the workers write into indexedDB instead of creating Object URLs
+* X Fix issue with Object URLs getting corrupted
+* Instead of storing all pages in Object URLs when they are not showing, store them in indexedDB.
+	Only use Object URLs for the loaded images.
+* After images are created for thumb nails (a big and small for each nail), send them to a
+	worker (negative zone) using transferable objects. Then kill the worker to free the memory.
+
 # Bugs:
 * Archives with no images will crash when loading
 * Checking for App Cache updates does not work (firefox only)

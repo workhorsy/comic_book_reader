@@ -75,8 +75,6 @@ function onUncompress(archive) {
 		var entry = entries[i];
 		entry.readData(function(data) {
 			var blob = new Blob([data], {type: getFileMimeType(entry.name)});
-			var url = URL.createObjectURL(blob);
-			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 
 			setCachedFile('big', entry.name, blob, function(is_success) {
 				if (! is_success) {
@@ -90,9 +88,9 @@ function onUncompress(archive) {
 					var message = {
 						action: 'uncompressed_each',
 						filename: entry.name,
-						url: url,
 						index: i,
-						is_cached: false
+						is_cached: false,
+						is_last: i === entries.length - 1
 					};
 					self.postMessage(message);
 					onEach(i + 1);
@@ -130,10 +128,13 @@ self.addEventListener('message', function(e) {
 				self.postMessage(message);
 			}
 			break;
+		// FIXME: Move this into a function called onLoadFromCache
 		case 'load_from_cache':
 			dbClose();
 			var filename = e.data.filename;
+			var length = 0;
 			var onStart = function(count) {
+				length = count;
 				var message = {
 					action: 'uncompressed_start',
 					count: count
@@ -150,17 +151,14 @@ self.addEventListener('message', function(e) {
 
 			var i = 0;
 			var onEach = function(name, blob) {
-				var url = URL.createObjectURL(blob);
-				console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 				console.info(name);
-				console.info(url);
 
 				var message = {
 					action: 'uncompressed_each',
 					filename: name,
-					url: url,
 					index: i,
-					is_cached: true
+					is_cached: true,
+					is_last: i === length - 1
 				};
 				self.postMessage(message);
 				i++;
@@ -169,8 +167,11 @@ self.addEventListener('message', function(e) {
 			getAllCachedPages(filename, onStart, onEach, onEnd);
 			break;
 		case 'start':
-			e.data.array_buffer = null;
 			console.info('Worker started ...');
+			break;
+		case 'stop':
+			console.info('Worker stopped ...');
+			self.close();
 			break;
 	}
 }, false);
