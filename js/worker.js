@@ -4,6 +4,9 @@
 "use strict";
 
 importScripts('polyfill/polyfill.js');
+importScripts("libunrar.js");
+importScripts("jszip.js");
+importScripts("libuntar.js");
 importScripts('uncompress.js');
 importScripts('settings.js');
 importScripts('db.js');
@@ -41,13 +44,6 @@ function onUncompress(archive) {
 		if (isValidImageType(entry.name)) {
 			entries.push(entry);
 		}
-	});
-
-	// Sort the entries by name
-	entries.sort(function(a, b) {
-		if(a.name < b.name) return -1;
-		if(a.name > b.name) return 1;
-		return 0;
 	});
 
 	// Tell the client that we are starting to uncompress

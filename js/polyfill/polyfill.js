@@ -62,23 +62,3 @@ if (!HTMLCanvasElement.prototype.toBlob) {
  });
 }
 }
-
-if (typeof Uint8Array !== 'undefined') {
-if (! Uint8Array.prototype.slice) {
-	Uint8Array.prototype.slice = function(start, length) {
-		var retval = new Array();
-		for (var i=start; i<start+length; ++i) {
-			retval[i] = this[i];
-		}
-		return retval;
-	}
-}
-}
-
-function workingMap(array, cb) {
-	var retval = new Array(array.length);
-	for (var i=0; i<retval.length; ++i) {
-		retval[i] = cb(array[i]);
-	}
-	return retval;
-}
