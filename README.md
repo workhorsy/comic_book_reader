@@ -39,6 +39,8 @@ Comic Book Reader
 * Automatically identify comics using "perceptual image hashing"
 
 # Browser limitations:
+* There is no way to detect out of memory errors. It just prints them to console.
+* Firefox does not actually load an image, until it is on screen. This makes the right page apear to load lazily.
 * Browsers have giant, ugly, non customizable full screen indicators.
 * Firefox and Chrome are 32bit, so they crash if they use more than 4
 	gigs of ram.
