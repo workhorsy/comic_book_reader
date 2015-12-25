@@ -104,11 +104,20 @@ function onUncompress(archive) {
 self.addEventListener('message', function(e) {
 	console.info(e);
 
+	// If the data posted is a file, monkey patch the action to be uncompress
+	if (e.data instanceof File) {
+		e.data.action = 'uncompress';
+	}
+
 	switch (e.data.action) {
 		case 'uncompress':
 			dbClose();
-			var array_buffer = e.data.array_buffer;
-			var filename = e.data.filename;
+
+			// Convert the file data into an array buffer
+			var reader = new FileReaderSync();
+			var filename = e.data.name;
+			var array_buffer = reader.readAsArrayBuffer(e.data);
+			delete e.data;
 
 			// Open the file as an archive
 			var archive = archiveOpen(filename, array_buffer);
@@ -127,6 +136,7 @@ self.addEventListener('message', function(e) {
 				};
 				self.postMessage(message);
 			}
+
 			break;
 		// FIXME: Move this into a function called onLoadFromCache
 		case 'load_from_cache':

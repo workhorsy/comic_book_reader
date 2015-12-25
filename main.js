@@ -331,12 +331,11 @@ function loadComic() {
 
 	// Get the file's info
 	var file = file_input[0].files[0];
-	var blob = file.slice();
-	var filename = file.name.toLowerCase();
+	var filename = file.name;
 	var filesize = file.size;
 	var filetype = file.type;
 
-	onLoaded(blob, filename, filesize, filetype);
+	onLoaded(file, filename, filesize, filetype);
 }
 
 function friendlyPageNumber() {
@@ -469,6 +468,7 @@ function clearComicData() {
 	g_are_thumbnails_loading = false;
 }
 
+// FIXME: Remove the size and type parameters, as they are not used
 function onLoaded(blob, filename, filesize, filetype) {
 	$('body')[0].style.backgroundColor = 'black';
 
@@ -501,17 +501,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 		});
 	// If the file is not cached, uncompress it from the file
 	} else {
-		var reader = new FileReader();
-		reader.onload = function(evt) {
-			var array_buffer = reader.result;
-			var message = {
-				action: 'uncompress',
-				filename: filename,
-				array_buffer: array_buffer
-			};
-			g_worker.postMessage(message, [array_buffer]);
-		};
-		reader.readAsArrayBuffer(blob);
+		g_worker.postMessage(blob);
 	}
 }
 

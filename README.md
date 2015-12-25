@@ -13,8 +13,7 @@ Comic Book Reader
 * X Fix issue with Object URLs getting corrupted
 * Instead of storing all pages in Object URLs when they are not showing, store them in indexedDB.
 	Only use Object URLs for the loaded images.
-* After images are created for thumb nails (a big and small for each nail), send them to a
-	worker (negative zone) using transferable objects. Then kill the worker to free the memory.
+* X Move any File to Array Buffer conversions into the workers if possible.
 
 # Bugs:
 * Archives with no images will crash when loading
