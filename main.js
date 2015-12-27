@@ -1368,6 +1368,7 @@ function makeThumbNail(filename, is_cached, cb) {
 				var ctx = canvas.getContext('2d');
 				ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
 				canvas.toBlob(function(small_blob) {
+					img.src = '';
 					setCachedFile('small', filename, small_blob, function(is_success) {
 						if (! is_success) {
 							onStorageFull(filename);
