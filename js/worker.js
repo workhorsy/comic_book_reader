@@ -4,13 +4,11 @@
 "use strict";
 
 importScripts('polyfill/polyfill.js');
-importScripts("libunrar.js");
-importScripts("jszip.js");
-importScripts("libuntar.js");
 importScripts('uncompress.js');
 importScripts('settings.js');
 importScripts('db.js');
 
+loadArchiveFormats(['rar', 'zip', 'tar']);
 
 function isValidImageType(file_name) {
 	file_name = file_name.toLowerCase();
@@ -120,19 +118,18 @@ self.addEventListener('message', function(e) {
 			delete e.data;
 
 			// Open the file as an archive
-			var archive = archiveOpen(filename, array_buffer);
-			if (archive) {
+			try {
+				var archive = archiveOpenArrayBuffer(filename, array_buffer);
 				initCachedFileStorage(filename, function() {
 					console.info('Uncompressing ' + archive.archive_type + ' ...');
 					onUncompress(archive);
 				});
 			// Otherwise show an error
-			} else {
-				var error = 'Invalid comic file: "' + filename + '"';
-				console.info(error);
+			} catch (e) {
+				console.info(e);
 				var message = {
 					action: 'invalid_file',
-					error: error,
+					error: e.message,
 					filename: filename
 				};
 				self.postMessage(message);
