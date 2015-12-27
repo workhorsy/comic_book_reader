@@ -132,7 +132,8 @@ self.addEventListener('message', function(e) {
 				console.info(error);
 				var message = {
 					action: 'invalid_file',
-					error: error
+					error: error,
+					filename: filename
 				};
 				self.postMessage(message);
 			}

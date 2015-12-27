@@ -502,9 +502,17 @@ function onLoaded(blob, filename, filesize, filetype) {
 			};
 			g_worker.postMessage(message);
 		});
-	// If the file is not cached, uncompress it from the file
+	// If the file is not cached, send it to the worker to be decompressed
 	} else {
-		g_worker.postMessage(blob);
+		// Save the name of the comic to the cache
+		initCachedFileStorage(filename, function() {
+			var db_names = settings_get_db_names();
+			if (! db_names.includes(filename)) {
+				db_names.push(filename);
+				settings_set_db_names(db_names);
+			}
+			g_worker.postMessage(blob);
+		});
 	}
 }
 
@@ -1270,15 +1278,6 @@ function startWorker() {
 				onStorageFull(filename);
 				break;
 			case 'uncompressed_start':
-				// Save the name of the comic to the cache
-				initCachedFileStorage(g_file_name, function() {
-					var db_names = settings_get_db_names();
-					if (! db_names.includes(g_file_name)) {
-						db_names.push(g_file_name);
-						settings_set_db_names(db_names);
-					}
-				});
-
 				// Update the progress
 				g_image_count =  e.data.count;
 				var loadingProgress = $('#loadingProgress')[0];
@@ -1326,6 +1325,23 @@ function startWorker() {
 				});
 				break;
 			case 'invalid_file':
+				var filename = e.data.filename;
+
+				dbClose();
+
+				// Remove the file db
+				deleteCachedFileStorage(filename, function() {
+
+				});
+
+				// Remove the file name from list of dbs
+				var db_names = settings_get_db_names();
+				var index = db_names.indexOf(filename);
+				if (index !== -1) {
+					db_names.splice(index, 1);
+					settings_set_db_names(db_names);
+				}
+
 				onError(e.data.error);
 				break;
 		}
@@ -1457,15 +1473,9 @@ function main() {
 		function deleteNextDB() {
 			if (db_names.length > 0) {
 				var db_name = db_names.pop();
-				var req = indexedDB.deleteDatabase(db_name);
-				req.onsuccess = function() {
-					console.info('Deleted "' + db_name + '" database');
+				deleteCachedFileStorage(db_name, function() {
 					deleteNextDB();
-				};
-				req.onerror = function() {
-					console.info('Failed to deleted "' + db_name + '" database');
-					deleteNextDB();
-				};
+				});
 			} else {
 				settings_delete_all();
 				$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());

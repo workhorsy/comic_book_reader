@@ -201,6 +201,18 @@ function initCachedFileStorage(db_name, cb) {
 	};
 }
 
+function deleteCachedFileStorage(db_name, cb) {
+	var req = indexedDB.deleteDatabase(db_name);
+	req.onsuccess = function() {
+		console.info('Deleted "' + db_name + '" database');
+		cb();
+	};
+	req.onerror = function() {
+		console.info('Failed to deleted "' + db_name + '" database');
+		cb();
+	};
+}
+
 function dbClose() {
 	if (g_db) {
 		g_db.close();
