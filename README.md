@@ -11,7 +11,7 @@ Comic Book Reader
 * X Make workers recycle, so they can free all the memory used for the archive and entries
 * X Make the workers write into indexedDB instead of creating Object URLs
 * X Fix issue with Object URLs getting corrupted
-* Instead of storing all pages in Object URLs when they are not showing, store them in indexedDB.
+* X Instead of storing all pages in Object URLs when they are not showing, store them in indexedDB.
 	Only use Object URLs for the loaded images.
 * X Move any File to Array Buffer conversions into the workers if possible.
 

@@ -1291,10 +1291,6 @@ function startWorker() {
 				$('#loadingProgress').show();
 				break;
 			case 'uncompressed_done':
-				// FIXME: In Chrome, if the worker is terminated, all object URLs die
-//				g_worker.terminate();
-//				g_worker = null;
-
 				break;
 			case 'uncompressed_each':
 				var filename = e.data.filename;
@@ -1304,10 +1300,10 @@ function startWorker() {
 
 				g_titles[index] = filename;
 
-				makeThumbNail(filename, is_cached, function() {
-					var loadingProgress = $('#loadingProgress')[0];
-					loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
+				var loadingProgress = $('#loadingProgress')[0];
+				loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
 
+				makeThumbNail(filename, is_cached, function() {
 					if (index === 0) {
 						loadCurrentPage(function() {
 							$(window).trigger('resize');
@@ -1317,12 +1313,7 @@ function startWorker() {
 					}
 
 					if (is_last) {
-						// Stop the worker
-						var message = {
-							action: 'stop'
-						};
-						g_worker.postMessage(message);
-						g_worker = null;
+						stopWorker();
 
 						$('#loadingProgress').hide();
 						$('#loadingProgress')[0].innerHTML = '';
@@ -1346,6 +1337,14 @@ function startWorker() {
 	};
 	g_worker.postMessage(message);
 
+}
+
+function stopWorker() {
+	var message = {
+		action: 'stop'
+	};
+	g_worker.postMessage(message);
+	g_worker = null;
 }
 
 function makeThumbNail(filename, is_cached, cb) {
