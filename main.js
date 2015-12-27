@@ -8,8 +8,6 @@ var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
 var g_image_count = 0;
-var g_urls = {};
-var g_small_urls = {};
 var g_titles = {};
 var g_are_thumbnails_loading = false;
 
@@ -225,54 +223,65 @@ function showBottomMenu(y_offset, is_instant) {
 		menu.empty();
 
 		var curr_image_index = g_image_index;
-		var length = Object.keys(g_small_urls).length;
+		var length = Object.keys(g_titles).length;
 		var loadNextThumbNail = function(i) {
 			if (i >= length) {
 				return;
 			}
 
-			console.info('Loading thumbnail #' + (i + 1));
-			var url = g_small_urls[i];
-			var img = document.createElement('img');
-			img.width = 100;
-			img.title = g_titles[i];
-			img.onclick = function(e) {
-				g_image_index = i;
-				loadCurrentPage();
-				hideAllMenus(false);
-				$(window).trigger('resize');
-			};
+			var file_name = g_titles[i];
+			getCachedFile('small', file_name, function(blob) {
+				console.info('Loading thumbnail #' + (i + 1));
+				var url = URL.createObjectURL(blob);
+				console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 
-			// The image loads successfully
-			img.onload = function() {
-				// Make the image twice as wide if it is in landscape mode
-				if (this.naturalWidth > this.naturalHeight) {
-					this.width = 200;
-					this.style.marginLeft = '20px';
-					this.style.marginRight = '20px';
+				var img = document.createElement('img');
+				img.width = 100;
+				img.title = g_titles[i];
+				img.onclick = function(e) {
+					g_image_index = i;
+					loadCurrentPage();
+					hideAllMenus(false);
+					$(window).trigger('resize');
+				};
+
+				// The image loads successfully
+				img.onload = function() {
+					URL.revokeObjectURL(url);
+					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+
+					// Make the image twice as wide if it is in landscape mode
+					if (this.naturalWidth > this.naturalHeight) {
+						this.width = 200;
+						this.style.marginLeft = '20px';
+						this.style.marginRight = '20px';
+					}
+					loadNextThumbNail(i + 1);
+				};
+				// The image fails to load
+				img.onerror = function() {
+					URL.revokeObjectURL(url);
+					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+
+					loadNextThumbNail(i + 1);
+				};
+
+				img.src = url;
+
+				var container = document.createElement('div');
+				if (i === curr_image_index) {
+					container.className = 'thumbNail selectedThumbNail';
+				} else {
+					container.className = 'thumbNail';
 				}
-				loadNextThumbNail(i + 1);
-			};
-			// The image fails to load
-			img.onerror = function() {
-				loadNextThumbNail(i + 1);
-			};
-
-			img.src = url;
-
-			var container = document.createElement('div');
-			if (i === curr_image_index) {
-				container.className = 'thumbNail selectedThumbNail';
-			} else {
-				container.className = 'thumbNail';
-			}
-			var caption = document.createElement('span');
-			caption.innerHTML = i + 1;
-			container.appendChild(img);
-			container.appendChild(document.createElement('br'));
-			container.appendChild(caption);
-			menu.append(container);
-		}
+				var caption = document.createElement('span');
+				caption.innerHTML = i + 1;
+				container.appendChild(img);
+				container.appendChild(document.createElement('br'));
+				container.appendChild(caption);
+				menu.append(container);
+			});
+		};
 
 		loadNextThumbNail(0);
 	}
@@ -331,12 +340,11 @@ function loadComic() {
 
 	// Get the file's info
 	var file = file_input[0].files[0];
-	var blob = file.slice();
-	var filename = file.name.toLowerCase();
+	var filename = file.name;
 	var filesize = file.size;
 	var filetype = file.type;
 
-	onLoaded(blob, filename, filesize, filetype);
+	onLoaded(file, filename, filesize, filetype);
 }
 
 function friendlyPageNumber() {
@@ -377,18 +385,17 @@ function loadCurrentPage(cb) {
 }
 
 function loadImage(page, index, is_position_reset, cb) {
-	var url = g_urls[index];
-	var title = g_titles[index];
+	var filename = g_titles[index];
 
 	// Just return if there is no index
-	if (! url || ! title) {
+	if (! filename) {
 		console.info('!!!!!!!!!!!!!!! Missing url for index:' + index);
 		return;
 	}
 
 	// Just return if the new and old images are the same
 	var children = page.children();
-	if (children && children.length > 0 && children[0].src === url) {
+	if (children && children.length > 0 && children[0].title && children[0].title === filename) {
 		return;
 	}
 
@@ -400,30 +407,41 @@ function loadImage(page, index, is_position_reset, cb) {
 		style.transform = 'translate3d(0px, 0px, 0px)';
 	}
 
-	// Create a new image
-	var img = document.createElement('img');
-	img.id = 'page_' + index;
-	img.title = title;
-	img.className = 'comicImage';
-	img.ondragstart = function() { return false; }
-	img.onload = function() {
-		console.info('!!! Loading image ' + index + ': ' + img.title);
-		if (g_needs_resize) {
-			onResize(g_screen_width, g_screen_height);
-		}
-		if (cb)
-			cb();
-	};
-	img.onerror = function() {
-		img.title = '';
-		img.alt = 'Failed to load image';
-		if (cb)
-			cb();
-	};
-	img.draggable = 'false';
-	img.src = url;
+	getCachedFile('big', filename, function(blob) {
+		var url = URL.createObjectURL(blob);
+		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
 
-	page.append(img);
+		// Create a new image
+		var img = document.createElement('img');
+		img.id = 'page_' + index;
+		img.title = filename;
+		img.className = 'comicImage';
+		img.ondragstart = function() { return false; }
+		img.onload = function() {
+			URL.revokeObjectURL(url);
+			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+
+			console.info('!!! Loading image ' + index + ': ' + img.title);
+			if (g_needs_resize) {
+				onResize(g_screen_width, g_screen_height);
+			}
+			if (cb)
+				cb();
+		};
+		img.onerror = function() {
+			URL.revokeObjectURL(url);
+			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+
+			img.title = '';
+			img.alt = 'Failed to load image';
+			if (cb)
+				cb();
+		};
+		img.draggable = 'false';
+		img.src = url;
+
+		page.append(img);
+	});
 }
 
 function setComicData(name) {
@@ -441,34 +459,19 @@ function clearComicData() {
 	g_page_right.empty();
 	$('#bottomMenu').empty();
 
-	// Remove all the Object URLs
-	Object.keys(g_urls).forEach(function(i) {
-		var url = g_urls[i];
-		URL.revokeObjectURL(url);
-		console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
-	});
-
-	// Remove all the Object thumbnail URLs
-	Object.keys(g_small_urls).forEach(function(i) {
-		var url = g_small_urls[i];
-		URL.revokeObjectURL(url);
-		console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
-	});
-
 	// Close the connection to indexedDB
 	dbClose();
 
 	// Remove all the old images, compressed file entries, and object urls
 	g_image_index = 0;
 	g_image_count = 0;
-	g_urls = {};
-	g_small_urls = {};
 	g_titles = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 	g_are_thumbnails_loading = false;
 }
 
+// FIXME: Remove the size and type parameters, as they are not used
 function onLoaded(blob, filename, filesize, filetype) {
 	$('body')[0].style.backgroundColor = 'black';
 
@@ -501,17 +504,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 		});
 	// If the file is not cached, uncompress it from the file
 	} else {
-		var reader = new FileReader();
-		reader.onload = function(evt) {
-			var array_buffer = reader.result;
-			var message = {
-				action: 'uncompress',
-				filename: filename,
-				array_buffer: array_buffer
-			};
-			g_worker.postMessage(message, [array_buffer]);
-		};
-		reader.readAsArrayBuffer(blob);
+		g_worker.postMessage(blob);
 	}
 }
 
@@ -1298,35 +1291,39 @@ function startWorker() {
 				$('#loadingProgress').show();
 				break;
 			case 'uncompressed_done':
-				// FIXME: In Chrome, if the worker is terminated, all object URLs die
-//				g_worker.terminate();
-//				g_worker = null;
-				$('#loadingProgress').hide();
-				$('#loadingProgress')[0].innerHTML = '';
-				$('#btnFileLoad').prop('disabled', false);
-				$('#btnLibrary').prop('disabled', false);
-				$('#btnSettings').prop('disabled', false);
 				break;
 			case 'uncompressed_each':
-				var url = e.data.url;
 				var filename = e.data.filename;
 				var index = e.data.index;
 				var is_cached = e.data.is_cached;
-				g_urls[index] = url;
+				var is_last = e.data.is_last;
+
 				g_titles[index] = filename;
-				// FIXME: Make this a callback
-				makeThumbNail(index, url, filename, is_cached);
 
 				var loadingProgress = $('#loadingProgress')[0];
 				loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
 
-				if (index === 0) {
-					loadCurrentPage(function() {
-						$(window).trigger('resize');
-					});
-				} else if (index === 1) {
-					loadCurrentPage();
-				}
+				makeThumbNail(filename, is_cached, function() {
+					if (index === 0) {
+						loadCurrentPage(function() {
+							$(window).trigger('resize');
+						});
+					} else if (index === 1) {
+						loadCurrentPage();
+					}
+
+					if (is_last) {
+						stopWorker();
+
+						$('#loadingProgress').hide();
+						$('#loadingProgress')[0].innerHTML = '';
+						$('#btnFileLoad').prop('disabled', false);
+						$('#btnLibrary').prop('disabled', false);
+						$('#btnSettings').prop('disabled', false);
+
+						startWorker();
+					}
+				});
 				break;
 			case 'invalid_file':
 				onError(e.data.error);
@@ -1342,41 +1339,52 @@ function startWorker() {
 
 }
 
-function makeThumbNail(index, url, filename, is_cached) {
-	if (is_cached) {
-		getCachedFile('small', filename, function(small_blob) {
-			var smaller_url = URL.createObjectURL(small_blob);
-			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + smaller_url);
-			console.info(smaller_url);
-			g_small_urls[index] = smaller_url;
+function stopWorker() {
+	var message = {
+		action: 'stop'
+	};
+	g_worker.postMessage(message);
+	g_worker = null;
+}
+
+function makeThumbNail(filename, is_cached, cb) {
+	if (! is_cached) {
+		getCachedFile('big', filename, function(blob) {
+			var url = URL.createObjectURL(blob);
+			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
+
+			var img = new Image();
+			img.onload = function() {
+				URL.revokeObjectURL(url);
+				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+
+				var ratio = 200.0 / img.width;
+				var width = img.width * ratio;
+				var height = img.height * ratio;
+				var canvas = document.createElement('canvas');
+				canvas.width = width;
+				canvas.height = height;
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+				canvas.toBlob(function(small_blob) {
+					img.src = '';
+					setCachedFile('small', filename, small_blob, function(is_success) {
+						if (! is_success) {
+							onStorageFull(filename);
+						}
+						cb();
+					});
+				});
+			};
+			img.onerror = function() {
+				URL.revokeObjectURL(url);
+				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+				cb();
+			};
+			img.src = url;
 		});
 	} else {
-		var img = new Image();
-		img.onload = function() {
-			var ratio = 200.0 / img.width;
-			var width = img.width * ratio;
-			var height = img.height * ratio;
-			var canvas = document.createElement('canvas');
-			canvas.width = width;
-			canvas.height = height;
-			var ctx = canvas.getContext('2d');
-			ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
-			canvas.toBlob(function(small_blob) {
-				setCachedFile('small', filename, small_blob, function(is_success) {
-					if (! is_success) {
-						onStorageFull(filename);
-					}
-					var smaller_url = URL.createObjectURL(small_blob);
-					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + smaller_url);
-					console.info(smaller_url);
-					g_small_urls[index] = smaller_url;
-				});
-			});
-		};
-		img.onerror = function() {
-			g_small_urls[index] = null;
-		};
-		img.src = url;
+		cb();
 	}
 }
 
