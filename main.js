@@ -9,7 +9,6 @@ var g_file_name = null;
 var g_image_index = 0;
 var g_image_count = 0;
 var g_urls = {};
-var g_small_urls = {};
 var g_titles = {};
 var g_are_thumbnails_loading = false;
 
@@ -225,54 +224,65 @@ function showBottomMenu(y_offset, is_instant) {
 		menu.empty();
 
 		var curr_image_index = g_image_index;
-		var length = Object.keys(g_small_urls).length;
+		var length = Object.keys(g_titles).length;
 		var loadNextThumbNail = function(i) {
 			if (i >= length) {
 				return;
 			}
 
-			console.info('Loading thumbnail #' + (i + 1));
-			var url = g_small_urls[i];
-			var img = document.createElement('img');
-			img.width = 100;
-			img.title = g_titles[i];
-			img.onclick = function(e) {
-				g_image_index = i;
-				loadCurrentPage();
-				hideAllMenus(false);
-				$(window).trigger('resize');
-			};
+			var file_name = g_titles[i];
+			getCachedFile('small', file_name, function(blob) {
+				console.info('Loading thumbnail #' + (i + 1));
+				var url = URL.createObjectURL(blob);
+				console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 
-			// The image loads successfully
-			img.onload = function() {
-				// Make the image twice as wide if it is in landscape mode
-				if (this.naturalWidth > this.naturalHeight) {
-					this.width = 200;
-					this.style.marginLeft = '20px';
-					this.style.marginRight = '20px';
+				var img = document.createElement('img');
+				img.width = 100;
+				img.title = g_titles[i];
+				img.onclick = function(e) {
+					g_image_index = i;
+					loadCurrentPage();
+					hideAllMenus(false);
+					$(window).trigger('resize');
+				};
+
+				// The image loads successfully
+				img.onload = function() {
+					URL.revokeObjectURL(url);
+					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+
+					// Make the image twice as wide if it is in landscape mode
+					if (this.naturalWidth > this.naturalHeight) {
+						this.width = 200;
+						this.style.marginLeft = '20px';
+						this.style.marginRight = '20px';
+					}
+					loadNextThumbNail(i + 1);
+				};
+				// The image fails to load
+				img.onerror = function() {
+					URL.revokeObjectURL(url);
+					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+
+					loadNextThumbNail(i + 1);
+				};
+
+				img.src = url;
+
+				var container = document.createElement('div');
+				if (i === curr_image_index) {
+					container.className = 'thumbNail selectedThumbNail';
+				} else {
+					container.className = 'thumbNail';
 				}
-				loadNextThumbNail(i + 1);
-			};
-			// The image fails to load
-			img.onerror = function() {
-				loadNextThumbNail(i + 1);
-			};
-
-			img.src = url;
-
-			var container = document.createElement('div');
-			if (i === curr_image_index) {
-				container.className = 'thumbNail selectedThumbNail';
-			} else {
-				container.className = 'thumbNail';
-			}
-			var caption = document.createElement('span');
-			caption.innerHTML = i + 1;
-			container.appendChild(img);
-			container.appendChild(document.createElement('br'));
-			container.appendChild(caption);
-			menu.append(container);
-		}
+				var caption = document.createElement('span');
+				caption.innerHTML = i + 1;
+				container.appendChild(img);
+				container.appendChild(document.createElement('br'));
+				container.appendChild(caption);
+				menu.append(container);
+			});
+		};
 
 		loadNextThumbNail(0);
 	}
@@ -447,13 +457,6 @@ function clearComicData() {
 		console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 	});
 
-	// Remove all the Object thumbnail URLs
-	Object.keys(g_small_urls).forEach(function(i) {
-		var url = g_small_urls[i];
-		URL.revokeObjectURL(url);
-		console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
-	});
-
 	// Close the connection to indexedDB
 	dbClose();
 
@@ -461,7 +464,6 @@ function clearComicData() {
 	g_image_index = 0;
 	g_image_count = 0;
 	g_urls = {};
-	g_small_urls = {};
 	g_titles = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
@@ -1302,12 +1304,12 @@ function startWorker() {
 				getCachedFile('big', filename, function(blob) {
 					var url = URL.createObjectURL(blob);
 					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
-
 					g_urls[index] = url;
+
 					g_titles[index] = filename;
 
 					// FIXME: Make this a callback
-					makeThumbNail(index, url, filename, is_cached);
+					makeThumbNail(index, blob, filename, is_cached);
 
 					var loadingProgress = $('#loadingProgress')[0];
 					loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
@@ -1352,17 +1354,16 @@ function startWorker() {
 
 }
 
-function makeThumbNail(index, url, filename, is_cached) {
-	if (is_cached) {
-		getCachedFile('small', filename, function(small_blob) {
-			var smaller_url = URL.createObjectURL(small_blob);
-			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + smaller_url);
-			console.info(smaller_url);
-			g_small_urls[index] = smaller_url;
-		});
-	} else {
+function makeThumbNail(index, blob, filename, is_cached) {
+	if (! is_cached) {
+		var url = URL.createObjectURL(blob);
+		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
+
 		var img = new Image();
 		img.onload = function() {
+			URL.revokeObjectURL(url);
+			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+
 			var ratio = 200.0 / img.width;
 			var width = img.width * ratio;
 			var height = img.height * ratio;
@@ -1376,15 +1377,12 @@ function makeThumbNail(index, url, filename, is_cached) {
 					if (! is_success) {
 						onStorageFull(filename);
 					}
-					var smaller_url = URL.createObjectURL(small_blob);
-					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + smaller_url);
-					console.info(smaller_url);
-					g_small_urls[index] = smaller_url;
 				});
 			});
 		};
 		img.onerror = function() {
-			g_small_urls[index] = null;
+			URL.revokeObjectURL(url);
+			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 		};
 		img.src = url;
 	}

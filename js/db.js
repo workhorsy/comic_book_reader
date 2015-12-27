@@ -215,7 +215,7 @@ function getCachedFile(name, file_name, cb) {
 		console.warn(event);
 	};
 	request.onsuccess = function(event) {
-		console.info('????????? Get worked: ' + file_name);
+		console.info('????????? Get worked: ' + name + ', ' + file_name);
 		var blob = event.target.result;
 		cb(blob);
 	};
@@ -240,7 +240,7 @@ function setCachedFile(name, file_name, blob, cb) {
 		cb(false);
 	};
 	request.onsuccess = function(event) {
-		console.info('????????? Put worked: ' + file_name);
+		console.info('????????? Put worked: ' + name + ', ' + file_name);
 		cb(true);
 	};
 }
