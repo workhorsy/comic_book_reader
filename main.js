@@ -1371,8 +1371,11 @@ function makeThumbNail(filename, is_cached, cb) {
 
 			var img = new Image();
 			img.onload = function() {
-				URL.revokeObjectURL(url);
-				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+				if (url) {
+					URL.revokeObjectURL(url);
+					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					url = null;
+				}
 
 				var ratio = 200.0 / img.width;
 				var width = img.width * ratio;
@@ -1388,19 +1391,32 @@ function makeThumbNail(filename, is_cached, cb) {
 						if (! is_success) {
 							onStorageFull(filename);
 						}
-						cb();
+						if (cb) {
+							cb();
+							cb = null;
+						}
 					});
 				});
 			};
-			img.onerror = function() {
-				URL.revokeObjectURL(url);
-				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
-				cb();
+			img.onerror = function(e) {
+				if (url) {
+					URL.revokeObjectURL(url);
+					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					url = null;
+				}
+
+				if (cb) {
+					cb();
+					cb = null;
+				}
 			};
 			img.src = url;
 		});
 	} else {
-		cb();
+		if (cb) {
+			cb();
+			cb = null;
+		}
 	}
 }
 
