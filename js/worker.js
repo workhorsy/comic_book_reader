@@ -65,7 +65,8 @@ function onUncompress(archive) {
 	var onEach = function(i) {
 		if (i === 0) {
 			onStart(entries);
-		} else if (i >= entries.length) {
+		}
+		if (i >= entries.length) {
 			onEnd();
 			return;
 		}
@@ -172,6 +173,7 @@ self.addEventListener('message', function(e) {
 				i++;
 			};
 
+			// FIXME: This should not need to load all pages on start
 			getAllCachedPages(filename, onStart, onEach, onEnd);
 			break;
 		case 'start':
