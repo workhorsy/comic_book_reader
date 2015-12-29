@@ -18,6 +18,8 @@ Comic Book Reader
 * Touch movement is broken in IE11
 
 # TODO Small:
+* try making thumb nails in an iframe with a shared worker
+* make sure it works with all broken archives
 * Add an option to disable user counter
 * Make sure broken page images work
 * Make sure broken archives work
