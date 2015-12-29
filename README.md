@@ -46,7 +46,6 @@ Comic Book Reader
 * Restarting a web worker will corrupt all created Object URLs (chrome)
 * Opening rar files is super slow in IE11 (because it uses Emscripten)
 * Change from App Cache to Service Workers (when they work in all browsers)
-* webkitRequestFullscreen does not expand the black body (chrome only)
 * webkitRequestFullscreen does not work the same as F11 full screen (chrome only)
 * There is no way to do swiping from screen edges yet in tablet browsers
 * There is no way to differentiate between mouse, touch, and pen input
