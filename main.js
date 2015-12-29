@@ -232,8 +232,11 @@ function showBottomMenu(y_offset, is_instant) {
 			var file_name = g_titles[i];
 			getCachedFile('small', file_name, function(blob) {
 				console.info('Loading thumbnail #' + (i + 1));
-				var url = URL.createObjectURL(blob);
-				console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+				var url = null;
+				if (blob) {
+					url = URL.createObjectURL(blob)
+					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+				}
 
 				var img = document.createElement('img');
 				img.width = 100;
@@ -247,8 +250,10 @@ function showBottomMenu(y_offset, is_instant) {
 
 				// The image loads successfully
 				img.onload = function() {
-					URL.revokeObjectURL(url);
-					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					if (url) {
+						URL.revokeObjectURL(url);
+						console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					}
 
 					// Make the image twice as wide if it is in landscape mode
 					if (this.naturalWidth > this.naturalHeight) {
@@ -260,13 +265,23 @@ function showBottomMenu(y_offset, is_instant) {
 				};
 				// The image fails to load
 				img.onerror = function() {
-					URL.revokeObjectURL(url);
-					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					if (url) {
+						URL.revokeObjectURL(url);
+						console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					}
+
+					img.onload = null;
+					img.onerror = null;
+					img.src = 'invalid_image.png';
 
 					loadNextThumbNail(i + 1);
 				};
 
-				img.src = url;
+				if (url) {
+					img.src = url;
+				} else {
+					img.src ='invalid_image.png'
+				}
 
 				var container = document.createElement('div');
 				if (i === curr_image_index) {
@@ -309,23 +324,39 @@ function showLibrary() {
 		}
 	};
 	var onEach = function(filename, pagename, blob) {
-		var url = URL.createObjectURL(blob);
-		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
-		console.info(pagename);
 		var img = new Image();
 		img.title = filename;
 		img.className = 'comicCover';
-		img.onclick = function(e) {
-			libraryMenu.hide();
-			libraryMenu.empty();
 
-			onLoaded(blob, filename, filesize, filetype);
-		};
-		img.onload = function() {
-			URL.revokeObjectURL(this.src);
-			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
-		};
-		img.src = url;
+		if (pagename && blob) {
+			var url = URL.createObjectURL(blob);
+			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+			console.info(pagename);
+			img.onclick = function(e) {
+				libraryMenu.hide();
+				libraryMenu.empty();
+
+				onLoaded(null, filename, filesize, filetype);
+			};
+			img.onload = function() {
+				URL.revokeObjectURL(this.src);
+				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
+			};
+			img.onerror = function() {
+				URL.revokeObjectURL(this.src);
+				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
+			};
+			img.src = url;
+		} else {
+			img.onclick = function(e) {
+				libraryMenu.hide();
+				libraryMenu.empty();
+
+				onLoaded(null, filename, filesize, filetype);
+			};
+			img.src = 'invalid_image.png';
+		}
+
 		libraryMenu.append(img);
 	};
 	getAllCachedFirstPages(onStart, onEach);
@@ -432,8 +463,14 @@ function loadImage(page, index, is_position_reset, cb) {
 			URL.revokeObjectURL(url);
 			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 
+			img.onload = null;
+			img.onerror = null;
+
 			img.title = '';
-			img.alt = 'Failed to load image';
+			img.alt = 'Invalid Image';
+			img.src = 'invalid_image.png';
+
+			onResize(g_screen_width, g_screen_height);
 			if (cb)
 				cb();
 		};

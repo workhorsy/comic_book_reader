@@ -55,14 +55,20 @@ function getAllCachedFirstPages(onStart, onEach) {
 
 				cursorRequest.onsuccess = function(evt) {
 					var cursor = evt.target.result;
+
+					// DB has files
 					if (cursor) {
 		//				console.info(cursor.key);
 		//				console.info(cursor.value);
 						onEach(filename, cursor.key, cursor.value);
-						trans.abort();
-						m_db.close();
-						nextElement();
+					// DB has no files
+					} else {
+						onEach(filename, null, null);
 					}
+
+					trans.abort();
+					m_db.close();
+					nextElement();
 				};
 			};
 		};
