@@ -44,6 +44,18 @@ function onUncompress(archive) {
 		}
 	});
 
+	// Show an error if there are no images
+	if (entries.length === 0) {
+		var error = 'Archive contains no images.';
+		var message = {
+			action: 'invalid_file',
+			error: error,
+			filename: archive.file_name
+		};
+		self.postMessage(message);
+		return;
+	}
+
 	// Tell the client that we are starting to uncompress
 	var onStart = function(entries) {
 		var message = {
