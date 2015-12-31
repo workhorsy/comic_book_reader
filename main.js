@@ -11,6 +11,7 @@ var g_image_count = 0;
 var g_titles = {};
 var g_are_thumbnails_loading = false;
 
+var g_is_mouse_mode = false;
 var g_is_mouse_down = false;
 var g_mouse_start_x = 0;
 var g_mouse_start_y = 0;
@@ -681,6 +682,10 @@ function onMouseMove(e) {
 }
 
 function onInputDown(target, x, y) {
+	if (g_is_mouse_mode) {
+		return;
+	}
+
 	// Skip if clicking on something that is no touchable
 	if (! target.hasAttribute('touchable')) {
 		return;
@@ -709,6 +714,10 @@ function onInputDown(target, x, y) {
 }
 
 function onInputUp() {
+	if (g_is_mouse_mode) {
+		return;
+	}
+
 	if ((g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) ||
 		(g_bottom_menu_visible > 0.0 && g_bottom_menu_visible < 1.0)) {
 		hideAllMenus(false);
@@ -833,6 +842,10 @@ function onInputUp() {
 }
 
 function onInputMove(x, y) {
+	if (g_is_mouse_mode) {
+		return;
+	}
+
 	if (! g_is_mouse_down) {
 		return;
 	}
@@ -1458,6 +1471,20 @@ function makeThumbNail(filename, is_cached, cb) {
 }
 
 function main() {
+	$('#inputSelector').show();
+
+	$('#btnInputMouse').click(function () {
+		g_is_mouse_mode = true;
+		settings_set_is_mouse_mode(g_is_mouse_mode);
+		$('#inputSelector').hide();
+	});
+
+	$('#btnInputTouch').click(function () {
+		g_is_mouse_mode = false;
+		settings_set_is_mouse_mode(g_is_mouse_mode);
+		$('#inputSelector').hide();
+	});
+
 	g_page_left = $('#pageLeft');
 	g_page_middle = $('#pageMiddle');
 	g_page_right = $('#pageRight');
@@ -1496,11 +1523,22 @@ function main() {
 		if (is_visible) {
 			$('#settingsMenu').hide();
 		} else {
+			// Update the DB size
 			$('#totalDBSize').text('. . .');
-			$('#settingsMenu').show();
 			getTotalSize(function(length) {
 				$('#totalDBSize').text(toFriendlySize(length));
 			});
+
+			// Update the input mode
+			g_is_mouse_mode = settings_get_is_mouse_mode();
+			if (g_is_mouse_mode) {
+				$('#btnIsMouseMode').prop('checked', true);
+			} else {
+				$('#btnIsTouchMode').prop('checked', true);
+			}
+
+			// Show the menu
+			$('#settingsMenu').show();
 		}
 	});
 
@@ -1515,6 +1553,15 @@ function main() {
 	$('#btnEnableInstallUpdates').click(function() {
 		var value = settings_get_install_updates_enabled();
 		settings_set_install_updates_enabled(! value);
+	});
+
+	$('#btnIsMouseMode').click(function() {
+		g_is_mouse_mode = true;
+		settings_set_is_mouse_mode(g_is_mouse_mode);
+	});
+	$('#btnIsTouchMode').click(function() {
+		g_is_mouse_mode = false;
+		settings_set_is_mouse_mode(g_is_mouse_mode);
 	});
 
 	// Delete indexedDB and localStorage data
@@ -1533,8 +1580,14 @@ function main() {
 				settings_delete_all();
 				$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
 				$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
-				$('#totalDBSize').text('. . .');
+				g_is_mouse_mode = settings_get_is_mouse_mode();
+				if (g_is_mouse_mode) {
+					$('#btnIsMouseMode').prop('checked', true);
+				} else {
+					$('#btnIsTouchMode').prop('checked', true);
+				}
 
+				$('#totalDBSize').text('. . .');
 				getTotalSize(function(length) {
 					$('#totalDBSize').text(toFriendlySize(length));
 					alert('Done deleting comic data');
@@ -1611,6 +1664,8 @@ function main() {
 }
 
 $(document).ready(function() {
+	$('#inputSelector').hide();
+
 	// Show an error message if any required browser features are missing
 	requireBrowserFeatures(function() {
 		main();

@@ -19,6 +19,7 @@ function generate_random_user_id() {
 }
 
 function settings_delete_all() {
+	localStorage.removeItem('is_mouse_mode');
 	localStorage.removeItem('install_updates_enabled');
 	localStorage.removeItem('right_click_enabled');
 	localStorage.removeItem('db_names');
@@ -44,6 +45,14 @@ function settings_has(name) {
 	} else {
 		return false;
 	}
+}
+
+function settings_get_is_mouse_mode() {
+	return settings_get('is_mouse_mode', false);
+}
+
+function settings_set_is_mouse_mode(value) {
+	settings_set('is_mouse_mode', value);
 }
 
 function settings_get_install_updates_enabled() {

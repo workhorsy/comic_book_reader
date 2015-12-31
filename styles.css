@@ -55,6 +55,25 @@ body {
 	box-shadow: 0px 0px 200px DeepSkyBlue;
 }
 
+#inputSelector {
+	display: flex;
+	text-align: center;
+	font: 60px/100px Helvetica, Arial, sans-serif;
+	background-color: grey;
+	z-index: 3000;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	justify-content: center;
+	align-items: center;
+}
+
+#inputSelector button {
+	font: 60px/100px Helvetica, Arial, sans-serif;
+}
+
 #totalUsersOnline {
 	float: left;
 	color: grey;

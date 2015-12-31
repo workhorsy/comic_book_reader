@@ -14,6 +14,15 @@
 		<script src="js/last_change_date.js"></script>
 	</head>
 	<body>
+		<div id="inputSelector">
+			<div>
+				Comic Book Reader<br />
+				Select an input mode:<br />
+				<button id="btnInputMouse">Mouse</button>
+				or
+				<button id="btnInputTouch">Touch</button>
+			</div>
+		</div>
 		<div id="topMenu" class="unselectable">
 			<div style="overflow: hidden; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
 				<!--<input id="fileInput" type="file" required="required" accept=".cbr, .cbz, .cbt, .rar, .zip, .tar" />-->
@@ -41,6 +50,11 @@
 				</p>
 				<p>
 					<input id="btnEnableInstallUpdates" type="checkbox" /> Check for updates
+				</p>
+				<p>
+					Input mode:
+					<input id="btnIsMouseMode" type="radio" name="inputMode">Mouse
+					<input id="btnIsTouchMode" type="radio" name="inputMode">Touch
 				</p>
 				<p>
 					<button id="btnDeleteComicData">Delete comic data</button>
