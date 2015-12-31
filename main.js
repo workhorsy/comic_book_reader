@@ -195,6 +195,7 @@ function setWallPaperOpacity() {
 }
 
 function showTopMenu(y_offset, is_instant) {
+	// Move the top menu
 	var speed = is_instant ? '0.0s' : '0.1s';
 	var height = $('#topMenu').outerHeight() * 1.0;
 	var offset = (-height + (height * y_offset)) - 15;
@@ -203,6 +204,8 @@ function showTopMenu(y_offset, is_instant) {
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	style.width = (g_screen_width - 80) + 'px';
 	g_top_menu_visible = y_offset;
+
+	// Show the wall paper
 	setWallPaperOpacity();
 }
 
@@ -1470,19 +1473,56 @@ function makeThumbNail(filename, is_cached, cb) {
 	}
 }
 
+function changeInputModeMouse(value) {
+	g_is_mouse_mode = value;
+	settings_set_is_mouse_mode(g_is_mouse_mode);
+
+	if (value) {
+		$('#btnPageLeft').show();
+		$('#btnPageRight').show();
+		$('#btnToggleTopMenu').show();
+	} else {
+		$('#btnPageLeft').hide();
+		$('#btnPageRight').hide();
+		$('#btnToggleTopMenu').hide();
+	}
+}
+
 function main() {
 	$('#inputSelector').show();
 
 	$('#btnInputMouse').click(function () {
-		g_is_mouse_mode = true;
-		settings_set_is_mouse_mode(g_is_mouse_mode);
+		changeInputModeMouse(true);
 		$('#inputSelector').hide();
 	});
 
 	$('#btnInputTouch').click(function () {
-		g_is_mouse_mode = false;
-		settings_set_is_mouse_mode(g_is_mouse_mode);
+		changeInputModeMouse(false);
 		$('#inputSelector').hide();
+	});
+
+	$('#btnToggleTopMenu').click(function () {
+		if (g_top_menu_visible === 1.0) {
+			hideAllMenus(true);
+		} else {
+			showTopMenu(1.0, true);
+		}
+	});
+
+	$('#btnPageLeft').click(function () {
+		if (g_image_index > 0) {
+			g_image_index--;
+			loadCurrentPage();
+			$(window).trigger('resize');
+		}
+	});
+
+	$('#btnPageRight').click(function () {
+		if (g_image_index < g_image_count -1) {
+			g_image_index++;
+			loadCurrentPage();
+			$(window).trigger('resize');
+		}
 	});
 
 	g_page_left = $('#pageLeft');
@@ -1556,12 +1596,10 @@ function main() {
 	});
 
 	$('#btnIsMouseMode').click(function() {
-		g_is_mouse_mode = true;
-		settings_set_is_mouse_mode(g_is_mouse_mode);
+		changeInputModeMouse(true);
 	});
 	$('#btnIsTouchMode').click(function() {
-		g_is_mouse_mode = false;
-		settings_set_is_mouse_mode(g_is_mouse_mode);
+		changeInputModeMouse(false);
 	});
 
 	// Delete indexedDB and localStorage data

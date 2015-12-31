@@ -55,12 +55,34 @@ body {
 	box-shadow: 0px 0px 200px DeepSkyBlue;
 }
 
+.topButton {
+	width: 50px;
+	height: 50px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	z-index: 3000;
+	opacity: 0.5;
+}
+
+.sideButton {
+	display: flex;
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	top: 50%;
+	justify-content: center;
+	align-items: center;
+	z-index: 3000;
+	opacity: 0.5;
+}
+
 #inputSelector {
 	display: flex;
 	text-align: center;
 	font: 60px/100px Helvetica, Arial, sans-serif;
 	background-color: grey;
-	z-index: 3000;
+	z-index: 4000;
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
