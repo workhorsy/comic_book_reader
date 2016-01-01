@@ -1,3 +1,5 @@
+http://workhorsy.github.io/comic_book_reader
+
 Comic Book Reader
 ===================
 * Can read CBR, CBZ, and CBT files
