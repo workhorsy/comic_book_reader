@@ -179,6 +179,12 @@ function hideAllMenus(is_instant) {
 	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
 
+	// Show the side buttons in mouse mode
+	if (g_is_mouse_mode) {
+		$('#btnPageLeft').show();
+		$('#btnPageRight').show();
+	}
+
 	// Remove glow from top and bottom menu
 	$('#topMenu').removeClass('menuWithGlow');
 	$('#bottomMenu').removeClass('menuWithGlow');
@@ -204,6 +210,17 @@ function showTopMenu(y_offset, is_instant) {
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	style.width = (g_screen_width - 80) + 'px';
 	g_top_menu_visible = y_offset;
+
+	// Hide the side buttons
+	if (g_is_mouse_mode) {
+		if (y_offset === 1.0) {
+			$('#btnPageLeft').hide();
+			$('#btnPageRight').hide();
+		} else {
+			$('#btnPageLeft').show();
+			$('#btnPageRight').show();
+		}
+	}
 
 	// Show the wall paper
 	setWallPaperOpacity();
@@ -1477,10 +1494,12 @@ function changeInputModeMouse(value) {
 	g_is_mouse_mode = value;
 	settings_set_is_mouse_mode(g_is_mouse_mode);
 
-	if (value) {
-		$('#btnPageLeft').show();
-		$('#btnPageRight').show();
+	// Show the buttons in mouse mode
+	if (g_is_mouse_mode) {
+		//$('#btnPageLeft').show();
+		//$('#btnPageRight').show();
 		$('#btnToggleTopMenu').show();
+	// Hide the buttons in touch mode
 	} else {
 		$('#btnPageLeft').hide();
 		$('#btnPageRight').hide();
@@ -1490,6 +1509,8 @@ function changeInputModeMouse(value) {
 
 function main() {
 	$('#inputSelector').show();
+	$('#btnPageLeft').hide();
+	$('#btnPageRight').hide();
 
 	$('#btnInputMouse').click(function () {
 		changeInputModeMouse(true);
