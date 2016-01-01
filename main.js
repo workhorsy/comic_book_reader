@@ -1745,7 +1745,7 @@ function main() {
 	// FIXME: Check if indexedDB is full
 
 	startWorker();
-	$('#lastChangeDate').text('Last Update: ' + getLastChangeDate());
+	$('#lastChangeDate').text('Version: ' + getLastChangeDate());
 	updateTotalUsersOnline();
 	updateApplicationCache();
 }

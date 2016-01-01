@@ -10,7 +10,6 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # Bugs:
-* "Last Update" is confusing. Update of what? Change to it "Version"
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
 * The glow around menus show up when resizing sometimes
