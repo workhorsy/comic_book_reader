@@ -183,6 +183,8 @@ function hideAllMenus(is_instant) {
 	if (g_is_mouse_mode) {
 		$('#btnPageLeft').show();
 		$('#btnPageRight').show();
+		$('#btnToggleTopMenu').show();
+		$('#btnToggleBottomMenu').show();
 	}
 
 	// Remove glow from top and bottom menu
@@ -216,9 +218,11 @@ function showTopMenu(y_offset, is_instant) {
 		if (y_offset === 1.0) {
 			$('#btnPageLeft').hide();
 			$('#btnPageRight').hide();
+			$('#btnToggleBottomMenu').hide();
 		} else {
 			$('#btnPageLeft').show();
 			$('#btnPageRight').show();
+			$('#btnToggleBottomMenu').show();
 		}
 	}
 
@@ -235,6 +239,20 @@ function showBottomMenu(y_offset, is_instant) {
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	style.width = (g_screen_width - 80) + 'px';
 	g_bottom_menu_visible = y_offset;
+
+	// Hide the side buttons
+	if (g_is_mouse_mode) {
+		if (y_offset === 1.0) {
+			$('#btnPageLeft').hide();
+			$('#btnPageRight').hide();
+			$('#btnToggleTopMenu').hide();
+		} else {
+			$('#btnPageLeft').show();
+			$('#btnPageRight').show();
+			$('#btnToggleTopMenu').show();
+		}
+	}
+
 	setWallPaperOpacity();
 
 	if (! g_are_thumbnails_loading && g_bottom_menu_visible === 1.0) {
@@ -1496,14 +1514,13 @@ function changeInputModeMouse(value) {
 
 	// Show the buttons in mouse mode
 	if (g_is_mouse_mode) {
-		//$('#btnPageLeft').show();
-		//$('#btnPageRight').show();
 		$('#btnToggleTopMenu').show();
 	// Hide the buttons in touch mode
 	} else {
 		$('#btnPageLeft').hide();
 		$('#btnPageRight').hide();
 		$('#btnToggleTopMenu').hide();
+		$('#btnToggleBottomMenu').hide();
 	}
 }
 
@@ -1511,6 +1528,8 @@ function main() {
 	$('#inputSelector').show();
 	$('#btnPageLeft').hide();
 	$('#btnPageRight').hide();
+	$('#btnToggleTopMenu').hide();
+	$('#btnToggleBottomMenu').hide();
 
 	$('#btnInputMouse').click(function () {
 		changeInputModeMouse(true);
@@ -1527,6 +1546,15 @@ function main() {
 			hideAllMenus(true);
 		} else {
 			showTopMenu(1.0, true);
+		}
+	});
+
+	$('#btnToggleBottomMenu').click(function () {
+		console.info(g_bottom_menu_visible);
+		if (g_bottom_menu_visible === 1.0) {
+			hideAllMenus(true);
+		} else {
+			showBottomMenu(1.0, true);
 		}
 	});
 
