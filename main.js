@@ -157,6 +157,10 @@ function hideAllMenus(is_instant) {
 	$('#libraryMenu').hide();
 	$('#libraryMenu').empty();
 
+	// Remove glow from top and bottom menu
+	$('#topMenu').removeClass('menuWithGlow');
+	$('#bottomMenu').removeClass('menuWithGlow');
+
 	// Hide the top menu
 	var top_menu = $('#topMenu');
 	var style = top_menu[0].style;
@@ -186,10 +190,6 @@ function hideAllMenus(is_instant) {
 		$('#btnToggleTopMenu').show();
 		$('#btnToggleBottomMenu').show();
 	}
-
-	// Remove glow from top and bottom menu
-	$('#topMenu').removeClass('menuWithGlow');
-	$('#bottomMenu').removeClass('menuWithGlow');
 }
 
 function setWallPaperOpacity() {
