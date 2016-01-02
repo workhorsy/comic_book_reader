@@ -94,7 +94,9 @@ body {
 #welcomeScreen {
 	display: flex;
 	text-align: center;
-	font: 60px/100px Helvetica, Arial, sans-serif;
+	font-size: 7vmin;
+	font-family: Helvetica, Arial, sans-serif;
+	line-height: 10vmin;
 	background-color: grey;
 	z-index: 4000;
 	position: absolute;
@@ -107,7 +109,15 @@ body {
 }
 
 #welcomeScreen button {
-	font: 60px/100px Helvetica, Arial, sans-serif;
+	font-size: 7vmin;
+	font-family: Helvetica, Arial, sans-serif;
+	line-height: 10vmin;
+}
+
+#welcomeScreen footer {
+	font-size: 2vmin;
+	font-family: Helvetica, Arial, sans-serif;
+	line-height: 10vmin;
 }
 
 #totalUsersOnline {
