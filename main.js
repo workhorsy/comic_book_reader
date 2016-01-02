@@ -1657,7 +1657,7 @@ function main() {
 	});
 
 	// Delete indexedDB and localStorage data
-	$('#btnDeleteComicData').click(function() {
+	$('#btnClearAllData').click(function() {
 		var db_names = settings_get_db_names();
 
 		clearComicData();
@@ -1682,7 +1682,7 @@ function main() {
 				$('#totalDBSize').text('. . .');
 				getTotalSize(function(length) {
 					$('#totalDBSize').text(toFriendlySize(length));
-					alert('Done deleting comic data');
+					alert('Done clearing all data');
 				});
 			}
 		}

@@ -76,6 +76,8 @@ function getAllCachedFirstPages(onStart, onEach) {
 	nextElement();
 }
 
+// FIXME: This only gets the size of the big pages.
+// It needs to get the size of the small pages too.
 function getTotalSize(onEnd) {
 	var db_names = settings_get_db_names();
 	var total_comics = db_names.length;
