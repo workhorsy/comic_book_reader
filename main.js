@@ -1450,6 +1450,49 @@ function stopWorker() {
 	g_worker = null;
 }
 
+// FIXME: Move this to a utility.js file
+function imageToCanvas(img, width, height) {
+	var canvas = document.createElement('canvas');
+	canvas.width = width;
+	canvas.height = height;
+	var ctx = canvas.getContext('2d');
+	ctx.mozImageSmoothingEnabled = false;
+	ctx.webkitImageSmoothingEnabled = false;
+	ctx.msImageSmoothingEnabled = false;
+	ctx.imageSmoothingEnabled = false;
+	ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+	return canvas;
+}
+
+// FIXME: Move this to a utility.js file
+function resizeImage(img, width, height, is_smooth, cb) {
+	if (! is_smooth) {
+		var source = imageToCanvas(img, width, height);
+		source.toBlob(function(small_blob) {
+			cb(small_blob);
+		});
+	} else {
+		var source = imageToCanvas(img, img.width, img.height);
+
+		var dest = document.createElement('canvas');
+		dest.width = width;
+		dest.height = height;
+
+		window.pica.resizeCanvas(source, dest, {
+				quality: 0,
+				unsharpAmount: 80,
+				unsharpRadius: 0.6,
+				unsharpThreshold: 2,
+				transferable: true
+			}, function (err) {
+				dest.toBlob(function(small_blob) {
+					cb(small_blob);
+				});
+			}
+		);
+	}
+}
+
 function makePagePreview(filename, is_cached, cb) {
 	if (! is_cached) {
 		getCachedFile('big', filename, function(blob) {
@@ -1467,12 +1510,8 @@ function makePagePreview(filename, is_cached, cb) {
 				var ratio = 200.0 / img.width;
 				var width = img.width * ratio;
 				var height = img.height * ratio;
-				var canvas = document.createElement('canvas');
-				canvas.width = width;
-				canvas.height = height;
-				var ctx = canvas.getContext('2d');
-				ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
-				canvas.toBlob(function(small_blob) {
+
+				resizeImage(img, width, height, true, function(small_blob) {
 					img.src = '';
 					setCachedFile('small', filename, small_blob, function(is_success) {
 						if (! is_success) {
