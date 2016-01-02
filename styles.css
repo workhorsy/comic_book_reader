@@ -33,7 +33,8 @@ body {
 	border: 1px solid black;
 	margin: 10px;
 	height: auto;
-	width: 100px;
+	width: 8vw;
+	min-width: 100px;
 }
 
 .comicPreviewLandscape {
@@ -42,7 +43,8 @@ body {
 	margin-left: 20px;
 	margin-right: 20px;
 	height: auto;
-	width: 200px;
+	width: 16vw;
+	min-width: 200px;
 }
 
 .comicPreviewBox {
@@ -150,9 +152,8 @@ body {
 	border-top: 0px;
 	margin: 0px;
 	margin-bottom: 20px;
-	padding: 20px;
+	padding: 0px;
 	padding-top: 15px;
-	padding-bottom: 0px;
 	background: silver;
 	text-align: center;
 }
