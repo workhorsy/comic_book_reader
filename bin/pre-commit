@@ -1,7 +1,7 @@
 #!/bin/sh
 
-printf "function getLastChangeDate() { return \"`date +"%B %d, %Y - %T"`\"; }\r\n" > js/last_change_date.js
-git add js/last_change_date.js
+printf "function getVersionDate() { return \"`date +"%B %d, %Y - %T"`\"; }\r\n" > js/version_date.js
+git add js/version_date.js
 
 printf \
 "CACHE MANIFEST\r\n\
@@ -15,7 +15,7 @@ main.js\r\n\
 invalid_image.png\r\n\
 js/settings.js\r\n\
 js/db.js\r\n\
-js/last_change_date.js\r\n\
+js/version_date.js\r\n\
 js/polyfill/polyfill.js\r\n\
 js/screenfull.js/screenfull.js\r\n\
 js/jquery-1.11.3.min.js\r\n\

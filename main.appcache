@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v1 Fri, Jan  1, 2016  4:18:07 PM
+# v1 Fri, Jan  1, 2016  4:51:04 PM
 
 CACHE:
 favicon.ico
@@ -9,7 +9,7 @@ main.js
 invalid_image.png
 js/settings.js
 js/db.js
-js/last_change_date.js
+js/version_date.js
 js/polyfill/polyfill.js
 js/screenfull.js/screenfull.js
 js/jquery-1.11.3.min.js

@@ -9,7 +9,7 @@ var g_file_name = null;
 var g_image_index = 0;
 var g_image_count = 0;
 var g_titles = {};
-var g_are_thumbnails_loading = false;
+var g_are_page_previews_loading = false;
 
 var g_is_mouse_mode = false;
 var g_is_mouse_down = false;
@@ -178,7 +178,7 @@ function hideAllMenus(is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
 
-	g_are_thumbnails_loading = false;
+	g_are_page_previews_loading = false;
 	g_top_menu_visible = 0.0;
 	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
@@ -255,22 +255,22 @@ function showBottomMenu(y_offset, is_instant) {
 
 	setWallPaperOpacity();
 
-	if (! g_are_thumbnails_loading && g_bottom_menu_visible === 1.0) {
-		console.info('Loading thumbnails .....................');
-		g_are_thumbnails_loading = true;
+	if (! g_are_page_previews_loading && g_bottom_menu_visible === 1.0) {
+		console.info('Loading page previews .....................');
+		g_are_page_previews_loading = true;
 		var menu = $('#bottomMenu');
 		menu.empty();
 
 		var curr_image_index = g_image_index;
 		var length = Object.keys(g_titles).length;
-		var loadNextThumbNail = function(i) {
+		var loadNextPagePreview = function(i) {
 			if (i >= length) {
 				return;
 			}
 
 			var file_name = g_titles[i];
 			getCachedFile('small', file_name, function(blob) {
-				console.info('Loading thumbnail #' + (i + 1));
+				console.info('Loading page preview #' + (i + 1));
 				var url = null;
 				if (blob) {
 					url = URL.createObjectURL(blob)
@@ -300,7 +300,7 @@ function showBottomMenu(y_offset, is_instant) {
 						this.style.marginLeft = '20px';
 						this.style.marginRight = '20px';
 					}
-					loadNextThumbNail(i + 1);
+					loadNextPagePreview(i + 1);
 				};
 				// The image fails to load
 				img.onerror = function() {
@@ -313,7 +313,7 @@ function showBottomMenu(y_offset, is_instant) {
 					img.onerror = null;
 					img.src = 'invalid_image.png';
 
-					loadNextThumbNail(i + 1);
+					loadNextPagePreview(i + 1);
 				};
 
 				if (url) {
@@ -324,9 +324,9 @@ function showBottomMenu(y_offset, is_instant) {
 
 				var container = document.createElement('div');
 				if (i === curr_image_index) {
-					container.className = 'thumbNail selectedThumbNail';
+					container.className = 'comicPagePreview comicPagePreviewSelected';
 				} else {
-					container.className = 'thumbNail';
+					container.className = 'comicPagePreview';
 				}
 				var caption = document.createElement('span');
 				caption.innerHTML = i + 1;
@@ -337,7 +337,7 @@ function showBottomMenu(y_offset, is_instant) {
 			});
 		};
 
-		loadNextThumbNail(0);
+		loadNextPagePreview(0);
 	}
 }
 
@@ -365,7 +365,7 @@ function showLibrary() {
 	var onEach = function(filename, pagename, blob) {
 		var img = new Image();
 		img.title = filename;
-		img.className = 'comicCover';
+		img.className = 'comicCoverPreviewPortrait';
 
 		if (pagename && blob) {
 			var url = URL.createObjectURL(blob);
@@ -383,7 +383,7 @@ function showLibrary() {
 
 				// Make the image twice as wide if it is in landscape mode
 				if (this.naturalWidth > this.naturalHeight) {
-					this.className = 'comicCoverWide';
+					this.className = 'comicCoverPreviewLandscape';
 				}
 			};
 			img.onerror = function() {
@@ -490,7 +490,7 @@ function loadImage(page, index, is_position_reset, cb) {
 		var img = document.createElement('img');
 		img.id = 'page_' + index;
 		img.title = filename;
-		img.className = 'comicImage';
+		img.className = 'comicPage';
 		img.ondragstart = function() { return false; }
 		img.onload = function() {
 			URL.revokeObjectURL(url);
@@ -549,7 +549,7 @@ function clearComicData() {
 	g_titles = {};
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
-	g_are_thumbnails_loading = false;
+	g_are_page_previews_loading = false;
 }
 
 // FIXME: Remove the size and type parameters, as they are not used
@@ -1395,7 +1395,7 @@ function startWorker() {
 				var loadingProgress = $('#loadingProgress')[0];
 				loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
 
-				makeThumbNail(filename, is_cached, function() {
+				makePagePreview(filename, is_cached, function() {
 					if (index === 0) {
 						loadCurrentPage(function() {
 							$(window).trigger('resize');
@@ -1456,7 +1456,7 @@ function stopWorker() {
 	g_worker = null;
 }
 
-function makeThumbNail(filename, is_cached, cb) {
+function makePagePreview(filename, is_cached, cb) {
 	if (! is_cached) {
 		getCachedFile('big', filename, function(blob) {
 			var url = URL.createObjectURL(blob);
@@ -1750,7 +1750,7 @@ function main() {
 	// FIXME: Check if indexedDB is full
 
 	startWorker();
-	$('#lastChangeDate').text('Version: ' + getLastChangeDate());
+	$('#versionDate').text('Version: ' + getVersionDate());
 	updateTotalUsersOnline();
 	updateApplicationCache();
 }

@@ -19,7 +19,7 @@ body {
 	-webkit-user-drag: none;
 }
 
-.comicImage {
+.comicPage {
 	pointer-events: none;
 	width: 100%;
 	user-select: none;
@@ -29,35 +29,35 @@ body {
 	-webkit-user-drag: none;
 }
 
-.thumbNail {
+.comicPagePreview {
 	overflow: hidden;
 	float: left;
 	min-height: 230px;
 }
 
-.thumbNail img {
+.comicPagePreview img {
 	border: 1px solid black;
 	margin: 10px;
 }
 
-.comicCover {
+.comicPagePreviewSelected {
+	background-color: DeepSkyBlue;
+}
+
+.comicCoverPreviewPortrait {
 	border: 1px solid black;
 	margin: 10px;
 	height: auto;
 	width: 100px;
 }
 
-.comicCoverWide {
+.comicCoverPreviewLandscape {
 	border: 1px solid black;
 	margin: 10px;
 	margin-left: 20px;
 	margin-right: 20px;
 	height: auto;
 	width: 200px;
-}
-
-.selectedThumbNail {
-	background-color: DeepSkyBlue;
 }
 
 .menuWithGlow {
@@ -120,7 +120,7 @@ body {
 	color: grey;
 }
 
-#lastChangeDate {
+#versionDate {
 	float: right;
 	color: grey;
 }
