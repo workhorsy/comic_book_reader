@@ -29,35 +29,30 @@ body {
 	-webkit-user-drag: none;
 }
 
-.comicPagePreview {
-	overflow: hidden;
-	float: left;
-	min-height: 230px;
-}
-
-.comicPagePreview img {
-	border: 1px solid black;
-	margin: 10px;
-}
-
-.comicPagePreviewSelected {
-	background-color: DeepSkyBlue;
-}
-
-.comicCoverPreviewPortrait {
+.comicPreviewPortrait {
 	border: 1px solid black;
 	margin: 10px;
 	height: auto;
 	width: 100px;
 }
 
-.comicCoverPreviewLandscape {
+.comicPreviewLandscape {
 	border: 1px solid black;
 	margin: 10px;
 	margin-left: 20px;
 	margin-right: 20px;
 	height: auto;
 	width: 200px;
+}
+
+.comicPreviewBox {
+	overflow: hidden;
+	float: left;
+	min-height: 230px;
+}
+
+.comicPreviewBoxSelected {
+	background-color: DeepSkyBlue;
 }
 
 .menuWithGlow {

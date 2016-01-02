@@ -278,7 +278,7 @@ function showBottomMenu(y_offset, is_instant) {
 				}
 
 				var img = document.createElement('img');
-				img.width = 100;
+				img.className = 'comicPreviewPortrait';
 				img.title = g_titles[i];
 				img.onclick = function(e) {
 					g_image_index = i;
@@ -296,9 +296,7 @@ function showBottomMenu(y_offset, is_instant) {
 
 					// Make the image twice as wide if it is in landscape mode
 					if (this.naturalWidth > this.naturalHeight) {
-						this.width = 200;
-						this.style.marginLeft = '20px';
-						this.style.marginRight = '20px';
+						this.className = 'comicPreviewLandscape';
 					}
 					loadNextPagePreview(i + 1);
 				};
@@ -324,9 +322,9 @@ function showBottomMenu(y_offset, is_instant) {
 
 				var container = document.createElement('div');
 				if (i === curr_image_index) {
-					container.className = 'comicPagePreview comicPagePreviewSelected';
+					container.className = 'comicPreviewBox comicPreviewBoxSelected';
 				} else {
-					container.className = 'comicPagePreview';
+					container.className = 'comicPreviewBox';
 				}
 				var caption = document.createElement('span');
 				caption.innerHTML = i + 1;
@@ -365,7 +363,7 @@ function showLibrary() {
 	var onEach = function(filename, pagename, blob) {
 		var img = new Image();
 		img.title = filename;
-		img.className = 'comicCoverPreviewPortrait';
+		img.className = 'comicPreviewPortrait';
 
 		if (pagename && blob) {
 			var url = URL.createObjectURL(blob);
@@ -383,7 +381,7 @@ function showLibrary() {
 
 				// Make the image twice as wide if it is in landscape mode
 				if (this.naturalWidth > this.naturalHeight) {
-					this.className = 'comicCoverPreviewLandscape';
+					this.className = 'comicPreviewLandscape';
 				}
 			};
 			img.onerror = function() {
