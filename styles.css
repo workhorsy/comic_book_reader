@@ -91,7 +91,7 @@ body {
 	opacity: 0.5;
 }
 
-#inputSelector {
+#welcomeScreen {
 	display: flex;
 	text-align: center;
 	font: 60px/100px Helvetica, Arial, sans-serif;
@@ -106,7 +106,7 @@ body {
 	align-items: center;
 }
 
-#inputSelector button {
+#welcomeScreen button {
 	font: 60px/100px Helvetica, Arial, sans-serif;
 }
 

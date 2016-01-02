@@ -1526,7 +1526,7 @@ function changeInputModeMouse(value) {
 function main() {
 	// Show the welcome screen if this is the first run
 	if (settings_get_is_first_run()) {
-		$('#inputSelector').show();
+		$('#welcomeScreen').show();
 	}
 
 	$('#btnPageLeft').hide();
@@ -1536,13 +1536,13 @@ function main() {
 
 	$('#btnInputMouse').click(function () {
 		changeInputModeMouse(true);
-		$('#inputSelector').hide();
+		$('#welcomeScreen').hide();
 		settings_set_is_first_run(false);
 	});
 
 	$('#btnInputTouch').click(function () {
 		changeInputModeMouse(false);
-		$('#inputSelector').hide();
+		$('#welcomeScreen').hide();
 		settings_set_is_first_run(false);
 	});
 
@@ -1756,7 +1756,7 @@ function main() {
 }
 
 $(document).ready(function() {
-	$('#inputSelector').hide();
+	$('#welcomeScreen').hide();
 
 	// Show an error message if any required browser features are missing
 	requireBrowserFeatures(function() {
