@@ -19,6 +19,7 @@ function generate_random_user_id() {
 }
 
 function settings_delete_all() {
+	localStorage.removeItem('is_first_run');
 	localStorage.removeItem('is_mouse_mode');
 	localStorage.removeItem('install_updates_enabled');
 	localStorage.removeItem('right_click_enabled');
@@ -45,6 +46,14 @@ function settings_has(name) {
 	} else {
 		return false;
 	}
+}
+
+function settings_get_is_first_run() {
+	return settings_get('is_first_run', true);
+}
+
+function settings_set_is_first_run(value) {
+	settings_set('is_first_run', value);
 }
 
 function settings_get_is_mouse_mode() {

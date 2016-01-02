@@ -1524,7 +1524,11 @@ function changeInputModeMouse(value) {
 }
 
 function main() {
-	$('#inputSelector').show();
+	// Show the welcome screen if this is the first run
+	if (settings_get_is_first_run()) {
+		$('#inputSelector').show();
+	}
+
 	$('#btnPageLeft').hide();
 	$('#btnPageRight').hide();
 	$('#btnToggleTopMenu').hide();
@@ -1533,11 +1537,13 @@ function main() {
 	$('#btnInputMouse').click(function () {
 		changeInputModeMouse(true);
 		$('#inputSelector').hide();
+		settings_set_is_first_run(false);
 	});
 
 	$('#btnInputTouch').click(function () {
 		changeInputModeMouse(false);
 		$('#inputSelector').hide();
+		settings_set_is_first_run(false);
 	});
 
 	$('#btnToggleTopMenu').click(function () {
