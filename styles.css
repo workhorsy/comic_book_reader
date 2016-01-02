@@ -47,6 +47,15 @@ body {
 	width: 100px;
 }
 
+.comicCoverWide {
+	border: 1px solid black;
+	margin: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+	height: auto;
+	width: 200px;
+}
+
 .selectedThumbNail {
 	background-color: DeepSkyBlue;
 }

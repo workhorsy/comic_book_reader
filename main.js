@@ -380,6 +380,11 @@ function showLibrary() {
 			img.onload = function() {
 				URL.revokeObjectURL(this.src);
 				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
+
+				// Make the image twice as wide if it is in landscape mode
+				if (this.naturalWidth > this.naturalHeight) {
+					this.className = 'comicCoverWide';
+				}
 			};
 			img.onerror = function() {
 				URL.revokeObjectURL(this.src);
