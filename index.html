@@ -49,21 +49,38 @@
 			</div>
 
 			<div id="settingsMenu">
-				<p>
-					<input id="btnDisableRightClick" type="checkbox" /> Allow right click
-				</p>
-				<p>
-					<input id="btnEnableInstallUpdates" type="checkbox" /> Check for updates
-				</p>
-				<p>
-					Input mode:
-					<input id="btnIsMouseMode" type="radio" name="inputMode">Mouse
-					<input id="btnIsTouchMode" type="radio" name="inputMode">Touch
-				</p>
-				<p>
-					<button id="btnClearAllData">Clear all data</button>
-					<span id="totalDBSize">. . .</span> of storage used
-				</p>
+				<div>
+					<p>
+						<label>Allow right click</label>
+						<span>
+							<input id="btnDisableRightClick" type="checkbox" />
+						</span>
+					</p>
+					<p>
+						<label>Check for updates</label>
+						<span>
+							<input id="btnEnableInstallUpdates" type="checkbox" />
+						</span>
+					</p>
+					<p>
+						<label>Input mode</label>
+						<span>
+							<input id="btnIsMouseMode" type="radio" name="inputMode">Mouse
+							<input id="btnIsTouchMode" type="radio" name="inputMode">Touch
+						</span>
+					</p>
+					<p>
+						<label>Storage used</label>
+						<span>
+							<span id="totalDBSize" style="margin: 4px;">. . .</span>
+						</span>
+					</p>
+					<p>
+						<span>
+							<button id="btnClearAllData">Clear all data</button>
+						</span>
+					</p>
+				</div>
 			</div>
 
 			<div id="libraryMenu">

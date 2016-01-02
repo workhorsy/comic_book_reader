@@ -1757,6 +1757,8 @@ function main() {
 
 $(document).ready(function() {
 	$('#welcomeScreen').hide();
+	$('#settingsMenu').hide();
+	$('#libraryMenu').hide();
 
 	// Show an error message if any required browser features are missing
 	requireBrowserFeatures(function() {

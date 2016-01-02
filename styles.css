@@ -148,10 +148,31 @@ body {
 }
 
 #settingsMenu {
-	display: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	overflow: hidden;
 	clear: both;
 	border: 1px solid black;
+}
+
+#settingsMenu div {
+	display: table;
+	border-spacing: 30px;
+}
+
+#settingsMenu div > p {
+	display: table-row;
+}
+
+#settingsMenu div > p > label {
+	display: table-cell;
+	text-align: left;
+}
+
+#settingsMenu div > p > span {
+	display: table-cell;
+	text-align: left;
 }
 
 #libraryMenu {
