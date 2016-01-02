@@ -164,7 +164,6 @@ function hideAllMenus(is_instant) {
 	// Hide the top menu
 	var top_menu = $('#topMenu');
 	var style = top_menu[0].style;
-	style.width = (g_screen_width - 80) + 'px';
 	var height = top_menu.outerHeight() + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
@@ -173,7 +172,6 @@ function hideAllMenus(is_instant) {
 	var bottom_menu = $('#bottomMenu');
 	bottom_menu.empty();
 	var style = bottom_menu[0].style;
-	style.width = (g_screen_width - 80) + 'px';
 	var height = bottom_menu.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
@@ -210,7 +208,6 @@ function showTopMenu(y_offset, is_instant) {
 	var style = $('#topMenu')[0].style;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
-	style.width = (g_screen_width - 80) + 'px';
 	g_top_menu_visible = y_offset;
 
 	// Hide the side buttons
@@ -237,7 +234,6 @@ function showBottomMenu(y_offset, is_instant) {
 	var style = $('#bottomMenu')[0].style;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
-	style.width = (g_screen_width - 80) + 'px';
 	g_bottom_menu_visible = y_offset;
 
 	// Hide the side buttons
