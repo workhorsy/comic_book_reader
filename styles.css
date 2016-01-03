@@ -179,11 +179,13 @@ body {
 #settingsMenu div > p > label {
 	display: table-cell;
 	text-align: left;
+	vertical-align: middle;
 }
 
 #settingsMenu div > p > span {
 	display: table-cell;
 	text-align: left;
+	vertical-align: middle;
 }
 
 #libraryMenu {
