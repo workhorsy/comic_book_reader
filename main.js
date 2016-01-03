@@ -1331,16 +1331,19 @@ function updateApplicationCache() {
 		if (is_updatable) {
 			var status = window.applicationCache.status;
 			console.info('Checking for Application Cache update. Current status: ' + getApplicationCacheStatusText(status) + ' (' + status + ')');
-			var is_idle = status === window.applicationCache.IDLE;
-			if (is_idle) {
-				window.applicationCache.update();
+			if (status !== window.applicationCache.UNCACHED) {
+				try {
+					window.applicationCache.update();
+				} catch (e) {
+					//
+				}
 			}
 		}
 
 		setTimeout(checkForUpdate, update_timeout);
 	};
 
-	setTimeout(checkForUpdate, 10000); // 10 seconds
+	setTimeout(checkForUpdate, 1000 * 10); // 10 seconds
 }
 
 function onStorageFull(filename) {
