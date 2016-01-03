@@ -10,6 +10,7 @@ var g_image_index = 0;
 var g_image_count = 0;
 var g_titles = {};
 var g_are_page_previews_loading = false;
+var g_use_higher_quality_previews = false;
 
 var g_is_mouse_mode = false;
 var g_is_mouse_down = false;
@@ -565,6 +566,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 	$('#comicPanel').show();
 
 	// Get the names of all the cached comics
+	g_use_higher_quality_previews = settings_get_use_higher_quality_previews();
 	var db_names = settings_get_db_names();
 	var has_file = db_names.includes(filename);
 
@@ -1465,8 +1467,8 @@ function imageToCanvas(img, width, height) {
 }
 
 // FIXME: Move this to a utility.js file
-function resizeImage(img, width, height, is_smooth, cb) {
-	if (! is_smooth) {
+function resizeImage(img, width, height, use_higher_quality, cb) {
+	if (! use_higher_quality) {
 		var source = imageToCanvas(img, width, height);
 		source.toBlob(function(small_blob) {
 			cb(small_blob);
@@ -1511,7 +1513,7 @@ function makePagePreview(filename, is_cached, cb) {
 				var width = img.width * ratio;
 				var height = img.height * ratio;
 
-				resizeImage(img, width, height, true, function(small_blob) {
+				resizeImage(img, width, height, g_use_higher_quality_previews, function(small_blob) {
 					img.src = '';
 					setCachedFile('small', filename, small_blob, function(is_success) {
 						if (! is_success) {
@@ -1688,6 +1690,12 @@ function main() {
 		settings_set_install_updates_enabled(! value);
 	});
 
+	$('#btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
+	$('#btnUseHigherQualityPreviews').click(function() {
+		var value = settings_get_use_higher_quality_previews();
+		settings_set_use_higher_quality_previews(! value);
+	});
+
 	$('#btnIsMouseMode').click(function() {
 		changeInputModeMouse(true);
 	});
@@ -1711,6 +1719,7 @@ function main() {
 				settings_delete_all();
 				$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
 				$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
+				$('#btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
 				g_is_mouse_mode = settings_get_is_mouse_mode();
 				if (g_is_mouse_mode) {
 					$('#btnIsMouseMode').prop('checked', true);

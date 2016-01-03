@@ -21,6 +21,7 @@ function generate_random_user_id() {
 function settings_delete_all() {
 	localStorage.removeItem('is_first_run');
 	localStorage.removeItem('is_mouse_mode');
+	localStorage.removeItem('use_higher_quality_previews');
 	localStorage.removeItem('install_updates_enabled');
 	localStorage.removeItem('right_click_enabled');
 	localStorage.removeItem('db_names');
@@ -54,6 +55,14 @@ function settings_get_is_first_run() {
 
 function settings_set_is_first_run(value) {
 	settings_set('is_first_run', value);
+}
+
+function settings_get_use_higher_quality_previews() {
+	return settings_get('use_higher_quality_previews', false);
+}
+
+function settings_set_use_higher_quality_previews(value) {
+	settings_set('use_higher_quality_previews', value);
 }
 
 function settings_get_is_mouse_mode() {
