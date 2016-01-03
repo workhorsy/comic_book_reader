@@ -10,6 +10,8 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # Bugs:
+* Font scaling is done manually on resize. This is slow and jerky. Replace with
+	more viewport size scaling (vw instead of px).
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
 * Thumb nails are too small on a high dpi screen
@@ -28,6 +30,7 @@ Comic Book Reader
 * Remember previous page number when reloading files
 
 # TODO Big:
+* Dark theme for night reading
 * Before decompressing, check indexedDB to see if we have enough free space
 * Move image resizing into workers
 * Save dates all comics are opened on
