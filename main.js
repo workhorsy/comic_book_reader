@@ -757,6 +757,16 @@ function onInputUp() {
 		return;
 	}
 
+	// Remove glow from the top menu if it is not completly out
+	if (g_top_menu_visible !== 1.0) {
+		$('#topMenu').removeClass('menuWithGlow');
+	}
+
+	// Remove glow from the bottom menu if it is not completly out
+	if (g_bottom_menu_visible !== 1.0) {
+		$('#bottomMenu').removeClass('menuWithGlow');
+	}
+
 	if ((g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) ||
 		(g_bottom_menu_visible > 0.0 && g_bottom_menu_visible < 1.0)) {
 		hideAllMenus(false);
