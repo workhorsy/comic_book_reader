@@ -84,7 +84,7 @@ function onUncompress(archive) {
 		}
 
 		var entry = entries[i];
-		entry.readData(function(data) {
+		entry.readData(function(data, err) {
 			var blob = new Blob([data], {type: getFileMimeType(entry.name)});
 
 			setCachedFile('big', entry.name, blob, function(is_success) {
