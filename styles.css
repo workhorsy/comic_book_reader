@@ -176,6 +176,7 @@ button {
 	font-size: 7vmin;
 	line-height: 10vmin;
 	background-color: grey;
+	color: black;
 	z-index: 4000;
 	position: absolute;
 	top: 0px;
@@ -251,9 +252,10 @@ button {
 }
 @media (min-width: 901px) {
 	#topMenuButtons button {
-		width: 20%;
+		width: 18%;
 		height: 180px;
 		font-size: 46px;
+		margin: 1%;
 	}
 }
 
@@ -267,35 +269,22 @@ button {
 	border: 1px solid black;
 }
 
-#settingsMenu label {
-	font-size: 4vmin;
-}
-
-#settingsMenu span {
-	display: inline;
+#settingsMenu label, #settingsMenu span, #settingsMenu button {
 	font-size: 4vmin;
 }
 
 @media (min-width: 1px) and (max-width: 379px) {
-	#settingsMenu div {
-		border-spacing: 0px;
-		text-align: center;
-	}
-
 	#settingsMenu div > p {
 		magin: 0px;
 		padding: 0px;
-		background-color: #999999;
 	}
 
 	#settingsMenu div > p > label {
 		display: block;
-		text-align: center;
 	}
 
 	#settingsMenu div > p > span {
 		display: block;
-		text-align: center;
 	}
 }
 
