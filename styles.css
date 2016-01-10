@@ -48,9 +48,14 @@ body {
 }
 
 .comicPreviewBox {
+	box-sizing: border-box;
 	overflow: hidden;
 	float: left;
+	height: 17vw;
 	min-height: 230px;
+	font-size: 3vmin;
+	font-family: Helvetica, Arial, sans-serif;
+	color: #444444;
 }
 
 .comicPreviewBoxSelected {
