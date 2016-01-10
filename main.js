@@ -1811,7 +1811,7 @@ function main() {
 	// FIXME: Check if indexedDB is full
 
 	startWorker();
-	$('#versionDate').text('Version: ' + getVersionDate());
+	$('#versionDate').text(getVersionDate());
 	updateTotalUsersOnline();
 	updateApplicationCache();
 }
