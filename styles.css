@@ -1,7 +1,13 @@
 
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+
 html {
 	min-height: 100%;
 	height: 100%;
+	font-family: Helvetica, Arial, sans-serif;
+	color: white;
 }
 
 body {
@@ -9,6 +15,72 @@ body {
 	padding: 0;
 	overflow: hidden;
 	min-height: 100%;
+}
+
+.headerLabel {
+	display: block;
+	font-size: 4vmin;
+}
+
+.inputLabel {
+	display: block;
+	position: relative;
+	margin: 10px 0;
+	padding-left: 5vmin;
+	font-size: 4vmin;
+	cursor: pointer;
+}
+
+.inputLabel::before, .inputLabel::after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	content: '';
+}
+
+.inputLabel::before {
+	display: block;
+	width: 3.5vmin;
+	height: 3.5vmin;
+	border: 0.5vmin solid white;
+	margin: 0;
+	padding: 0;
+}
+
+.inputLabel::after {
+	display: none;
+	width: 2vmin;
+	height: 2vmin;
+	margin: 0;
+	padding: 0;
+	top: 0.75vmin;
+	left: 0.75vmin;
+	background-color: #61AFEF;
+}
+
+input[type="radio"] + .inputLabel::before,
+input[type="radio"] + .inputLabel::after {
+	border-radius: 50%;
+}
+
+input[type="checkbox"], input[type="radio"] {
+	position: absolute;
+	left: -999px;
+}
+
+input:focus + .inputLabel::before {
+	border-color: #61AFEF;
+}
+
+input:checked + .inputLabel::after {
+	display: block;
+}
+
+button {
+	appearance: none;
+	border: 2px solid white;
+	background-color: #61AFEF;
+	cursor: pointer;
 }
 
 .unselectable {
@@ -54,12 +126,12 @@ body {
 	height: 17vw;
 	min-height: 230px;
 	font-size: 3vmin;
-	font-family: Helvetica, Arial, sans-serif;
-	color: #444444;
+	color: #ABB2BF;
 }
 
 .comicPreviewBoxSelected {
-	background-color: DeepSkyBlue;
+	background-color: #61AFEF;
+	color: black;
 }
 
 .menuWithGlow {
@@ -102,7 +174,6 @@ body {
 	display: flex;
 	text-align: center;
 	font-size: 7vmin;
-	font-family: Helvetica, Arial, sans-serif;
 	line-height: 10vmin;
 	background-color: grey;
 	z-index: 4000;
@@ -117,19 +188,17 @@ body {
 
 #welcomeScreen button {
 	font-size: 7vmin;
-	font-family: Helvetica, Arial, sans-serif;
 	line-height: 10vmin;
 }
 
 #welcomeScreen footer {
 	font-size: 2vmin;
-	font-family: Helvetica, Arial, sans-serif;
 	line-height: 10vmin;
 }
 
 #totalUsersOnline {
 	float: left;
-	color: grey;
+	padding-left: 20px;
 }
 
 #wallPaper {
@@ -148,13 +217,13 @@ body {
 	width: 100%;
 	top: 0px;
 	z-index: 1000;
-	border: 1px solid DeepSkyBlue;
+	border: 1px solid #61AFEF;
 	border-top: 0px;
 	margin: 0px;
 	margin-bottom: 20px;
 	padding: 0px;
 	padding-top: 15px;
-	background: silver;
+	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
 }
 
@@ -172,14 +241,12 @@ body {
 		width: 100%;
 		height: 40px;
 		font-size: 18px;
-		font-family: Helvetica, Arial, sans-serif;
 	}
 }
 @media (min-width: 380px) and (max-width: 900px) {
 	#topMenuButtons button {
 		width: 20%;
 		font-size: 5vw;
-		font-family: Helvetica, Arial, sans-serif;
 	}
 }
 @media (min-width: 901px) {
@@ -187,17 +254,26 @@ body {
 		width: 20%;
 		height: 180px;
 		font-size: 46px;
-		font-family: Helvetica, Arial, sans-serif;
 	}
 }
 
 #settingsMenu {
+	text-align: left;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
 	clear: both;
 	border: 1px solid black;
+}
+
+#settingsMenu label {
+	font-size: 4vmin;
+}
+
+#settingsMenu span {
+	display: inline;
+	font-size: 4vmin;
 }
 
 @media (min-width: 1px) and (max-width: 379px) {
@@ -222,36 +298,6 @@ body {
 		text-align: center;
 	}
 }
-@media (min-width: 380px) {
-	#settingsMenu div {
-		display: table;
-		font-family: Helvetica, Arial, sans-serif;
-		font-size: 3vmin;
-		border-spacing: 3vmin;
-	}
-
-	#settingsMenu div > p {
-		display: table-row;
-	}
-
-	#settingsMenu div > p > label {
-		display: table-cell;
-		text-align: left;
-		vertical-align: middle;
-	}
-
-	#settingsMenu div > p > span {
-		display: table-cell;
-		text-align: left;
-		vertical-align: middle;
-	}
-
-	#settingsMenu button {
-		font-size: 3vmin;
-		font-family: Helvetica, Arial, sans-serif;
-		line-height: 5vmin;
-	}
-}
 
 #libraryMenu {
 	display: none;
@@ -272,13 +318,13 @@ body {
 	min-height: 300px;
 	bottom: 0px;
 	z-index: 1000;
-	border: 1px solid DeepSkyBlue;
+	border: 1px solid #61AFEF;
 	border-bottom: 0px;
 	margin: 0px;
 	margin-top: 20px;
 	padding: 20px;
 	padding-bottom: 0px;
-	background: silver;
+	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
 }
 
@@ -326,7 +372,6 @@ body {
 	display: flex;
 	justify-content: top;
 	align-items: left;
-	font: 100px Helvetica, Arial, sans-serif;
 	color: DeepSkyBlue;
 	text-shadow: 4px 4px 20px black;
 	opacity: 0.5;
@@ -338,7 +383,6 @@ body {
 	top: 0px;
 	right: 0px;
 	z-index: 500;
-	font: 100px Helvetica, Arial, sans-serif;
 	color: DeepSkyBlue;
 	text-shadow: 4px 4px 20px black;
 	opacity: 0.5;

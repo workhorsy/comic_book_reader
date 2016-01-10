@@ -58,46 +58,35 @@
 			<div id="settingsMenu">
 				<div>
 					<p>
-						<label>Allow right click</label>
-						<span>
-							<input id="btnDisableRightClick" type="checkbox" />
-						</span>
+						<input id="btnDisableRightClick" type="checkbox" />
+						<label for="btnDisableRightClick" class="inputLabel">Allow right click</label>
 					</p>
 					<p>
-						<label>Check for updates</label>
-						<span>
-							<input id="btnEnableInstallUpdates" type="checkbox" />
-						</span>
+						<input id="btnEnableInstallUpdates" type="checkbox" />
+						<label for="btnEnableInstallUpdates" class="inputLabel">Check for updates</label>
 					</p>
 					<p>
-						<label>Input mode</label>
-						<span>
-							<input id="btnIsMouseMode" type="radio" name="inputMode">Mouse
-							<input id="btnIsTouchMode" type="radio" name="inputMode">Touch
-						</span>
+						<labe class="headerLabel">Input mode:</label>
+						<input id="btnIsMouseMode" type="radio" name="inputMode">
+						<label for="btnIsMouseMode" class="inputLabel">Mouse</label>
+
+						<input id="btnIsTouchMode" type="radio" name="inputMode">
+						<label for="btnIsTouchMode" class="inputLabel">Touch</label>
 					</p>
 					<p>
-						<label>Use Higher Quality Previews</label>
-						<span>
-							<input id="btnUseHigherQualityPreviews" type="checkbox" />
-						</span>
+						<input id="btnUseHigherQualityPreviews" type="checkbox" />
+						<label for="btnUseHigherQualityPreviews" class="inputLabel">Use Higher Quality Previews</label>
 					</p>
 					<p>
-						<label>Storage used</label>
-						<span>
-							<span id="totalDBSize" style="margin: 4px;">. . .</span>
-						</span>
+						<label>Storage used:</label>
+						<span id="totalDBSize" style="margin: 4px;">. . .</span>
 					</p>
 					<p>
-						<span>
-							<button id="btnClearAllData">Clear all data</button>
-						</span>
+						<button id="btnClearAllData">Clear all data</button>
 					</p>
 					<p>
-						<label>Software Version</label>
-						<span>
-							<span id="versionDate" style="margin: 4px;">...</span>
-						</span>
+						<label>Software Version:</label>
+						<span id="versionDate" style="margin: 4px;">...</span>
 					</p>
 				</div>
 			</div>
