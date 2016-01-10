@@ -35,16 +35,14 @@
 		</div>
 
 		<div id="topMenu" class="unselectable">
-			<div style="overflow: hidden; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+			<div id="topMenuButtons">
 				<!--<input id="fileInput" type="file" required="required" accept=".cbr, .cbz, .cbt, .rar, .zip, .tar" />-->
 				<input id="fileInput" type="file" required="required" />
 				<button id="btnFileLoad">Open comic file</button>
 				<button id="btnLibrary">Library</button>
 				<button id="btnFullScreen">Full Screen</button>
-				<div style="overflow: hidden; display: flex; flex-direction: column;">
-					<button id="btnHomepage">Homepage</button>
-					<button id="btnSettings">Settings</button>
-				</div>
+				<button id="btnHomepage">Home Page</button>
+				<button id="btnSettings">Settings</button>
 			</div>
 
 			<progress id="loadProgress" max="1" value="0"></progress>
