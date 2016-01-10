@@ -266,7 +266,7 @@ button {
 	justify-content: center;
 	overflow: hidden;
 	clear: both;
-	border: 1px solid black;
+	border: 1px solid #ABB2BF;
 }
 
 #settingsMenu label, #settingsMenu span, #settingsMenu button {
@@ -290,7 +290,7 @@ button {
 	overflow: hidden;
 	overflow-y: scroll;
 	clear: both;
-	border: 1px solid black;
+	border: 1px solid #ABB2BF;
 }
 
 #bottomMenu {
