@@ -200,25 +200,57 @@ body {
 	border: 1px solid black;
 }
 
-#settingsMenu div {
-	display: table;
-	border-spacing: 30px;
-}
+@media (min-width: 1px) and (max-width: 379px) {
+	#settingsMenu div {
+		border-spacing: 0px;
+		text-align: center;
+	}
 
-#settingsMenu div > p {
-	display: table-row;
-}
+	#settingsMenu div > p {
+		magin: 0px;
+		padding: 0px;
+		background-color: #999999;
+	}
 
-#settingsMenu div > p > label {
-	display: table-cell;
-	text-align: left;
-	vertical-align: middle;
-}
+	#settingsMenu div > p > label {
+		display: block;
+		text-align: center;
+	}
 
-#settingsMenu div > p > span {
-	display: table-cell;
-	text-align: left;
-	vertical-align: middle;
+	#settingsMenu div > p > span {
+		display: block;
+		text-align: center;
+	}
+}
+@media (min-width: 380px) {
+	#settingsMenu div {
+		display: table;
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 3vmin;
+		border-spacing: 3vmin;
+	}
+
+	#settingsMenu div > p {
+		display: table-row;
+	}
+
+	#settingsMenu div > p > label {
+		display: table-cell;
+		text-align: left;
+		vertical-align: middle;
+	}
+
+	#settingsMenu div > p > span {
+		display: table-cell;
+		text-align: left;
+		vertical-align: middle;
+	}
+
+	#settingsMenu button {
+		font-size: 3vmin;
+		font-family: Helvetica, Arial, sans-serif;
+		line-height: 5vmin;
+	}
 }
 
 #libraryMenu {
