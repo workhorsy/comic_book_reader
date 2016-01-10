@@ -102,7 +102,7 @@ button {
 }
 
 .comicPreviewPortrait {
-	border: 1px solid black;
+	border: 1px solid #ABB2BF;
 	margin: 10px;
 	height: auto;
 	width: 8vw;
@@ -110,7 +110,7 @@ button {
 }
 
 .comicPreviewLandscape {
-	border: 1px solid black;
+	border: 1px solid #ABB2BF;
 	margin: 10px;
 	margin-left: 21px;
 	margin-right: 21px;
