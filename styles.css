@@ -135,7 +135,7 @@ button {
 }
 
 .menuWithGlow {
-	box-shadow: 0px 0px 200px DeepSkyBlue;
+	box-shadow: 0px 0px 10vh DeepSkyBlue;
 }
 
 .topButton {
