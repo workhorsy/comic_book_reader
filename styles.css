@@ -274,16 +274,12 @@ button {
 }
 
 @media (min-width: 1px) and (max-width: 379px) {
-	#settingsMenu div > p {
+	#settingsMenu p {
 		magin: 0px;
 		padding: 0px;
 	}
 
-	#settingsMenu div > p > label {
-		display: block;
-	}
-
-	#settingsMenu div > p > span {
+	#settingsMenu label, #settingsMenu span {
 		display: block;
 	}
 }
