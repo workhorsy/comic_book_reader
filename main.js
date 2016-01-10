@@ -144,7 +144,7 @@ function toFriendlySize(size) {
 	} else if (size >= 1) {
 		return (size / 1).toFixed(2) + ' B';
 	} else if (size === 0) {
-		return '0 B';
+		return 'None';
 	}
 
 	return '?';
