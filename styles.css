@@ -28,12 +28,12 @@ body {
 	left: 0;
 }
 
-.headerLabel {
+.touchHeaderLabel {
 	display: block;
 	font-size: 4vmin;
 }
 
-.inputLabel {
+.touchLabel {
 	display: block;
 	position: relative;
 	margin: 10px 0;
@@ -42,14 +42,14 @@ body {
 	cursor: pointer;
 }
 
-.inputLabel::before, .inputLabel::after {
+.touchLabel::before, .touchLabel::after {
 	position: absolute;
 	top: 0;
 	left: 0;
 	content: '';
 }
 
-.inputLabel::before {
+.touchLabel::before {
 	display: block;
 	width: 3.5vmin;
 	height: 3.5vmin;
@@ -58,7 +58,7 @@ body {
 	padding: 0;
 }
 
-.inputLabel::after {
+.touchLabel::after {
 	display: none;
 	width: 2vmin;
 	height: 2vmin;
@@ -69,25 +69,25 @@ body {
 	background-color: #61AFEF;
 }
 
-input[type="radio"] + .inputLabel::before,
-input[type="radio"] + .inputLabel::after {
+.touchRadioButton + .touchLabel::before,
+.touchRadioButton + .touchLabel::after {
 	border-radius: 50%;
 }
 
-input[type="checkbox"], input[type="radio"] {
+.touchCheckBox, .touchRadioButton {
 	position: absolute;
 	left: -999px;
 }
 
-input:focus + .inputLabel::before {
+input:focus + .touchLabel::before {
 	border-color: #61AFEF;
 }
 
-input:checked + .inputLabel::after {
+input:checked + .touchLabel::after {
 	display: block;
 }
 
-button {
+.touchButton {
 	appearance: none;
 	border: 2px solid white;
 	background-color: #61AFEF;

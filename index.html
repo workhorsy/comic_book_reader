@@ -25,9 +25,9 @@
 					A touch friendly CBR/CBZ/CBT reader, that even works when offline.
 				</p>
 				<p>
-					Start in <button id="btnInputMouse">Mouse</button>
+					Start in <button id="btnInputMouse" class="touchButton">Mouse</button>
 					or
-					<button id="btnInputTouch">Touch</button> mode.
+					<button id="btnInputTouch" class="touchButton">Touch</button> mode.
 				</p>
 				<footer>
 					Copyright &copy; 2016 <a href="https://github.com/workhorsy/comic_book_reader">
@@ -54,23 +54,23 @@
 			<div class="settingsMenu">
 				<p>
 					<input id="btnMouseDisableRightClick" class="btnDisableRightClick" type="checkbox" />
-					<label for="btnMouseDisableRightClick" class="inputLabel">Allow right click</label>
+					<label for="btnMouseDisableRightClick">Allow right click</label>
 				</p>
 				<p>
 					<input id="btnMouseEnableInstallUpdates" class="btnEnableInstallUpdates" type="checkbox" />
-					<label for="btnMouseEnableInstallUpdates" class="inputLabel">Check for updates</label>
+					<label for="btnMouseEnableInstallUpdates">Check for updates</label>
 				</p>
 				<p>
 					<input id="btnMouseUseHigherQualityPreviews" class="btnUseHigherQualityPreviews" type="checkbox" />
-					<label for="btnMouseUseHigherQualityPreviews" class="inputLabel">Use Higher Quality Previews</label>
+					<label for="btnMouseUseHigherQualityPreviews">Use Higher Quality Previews</label>
 				</p>
 				<p>
-					<label class="headerLabel">Input mode:</label>
+					<label>Input mode:</label>
 					<input id="btnMouseIsMouseMode" class="btnIsMouseMode" type="radio" name="inputMode" />
-					<label for="btnMouseIsMouseMode"class="inputLabel">Mouse</label>
+					<label for="btnMouseIsMouseMode">Mouse</label>
 
 					<input id="btnMouseIsTouchMode" class="btnIsTouchMode" type="radio" name="inputMode" />
-					<label for="btnMouseIsTouchMode"class="inputLabel">Touch</label>
+					<label for="btnMouseIsTouchMode">Touch</label>
 				</p>
 				<p>
 					<label>Storage used:</label>
@@ -92,11 +92,11 @@
 		<div id="touchUI" style="display: none;">
 			<div id="topMenu" class="unselectable">
 				<div id="topMenuButtons">
-					<button class="btnFileLoad">Open comic file</button>
-					<button id="btnTouchLibrary" class="btnLibrary">Library</button>
-					<button class="btnFullScreen">Full Screen</button>
-					<button class="btnHomepage">Home Page</button>
-					<button class="btnSettings">Settings</button>
+					<button class="btnFileLoad touchButton">Open comic file</button>
+					<button id="btnTouchLibrary" class="btnLibrary touchButton">Library</button>
+					<button class="btnFullScreen touchButton">Full Screen</button>
+					<button class="btnHomepage touchButton">Home Page</button>
+					<button class="btnSettings touchButton">Settings</button>
 				</div>
 
 				<p><span id="loadError"></span></p>
@@ -111,31 +111,31 @@
 				<div class="settingsMenu settingsTouchMenu">
 					<div>
 						<p>
-							<input id="btnTouchDisableRightClick" class="btnDisableRightClick" type="checkbox" />
-							<label for="btnTouchDisableRightClick" class="inputLabel">Allow right click</label>
+							<input id="btnTouchDisableRightClick" class="btnDisableRightClick touchCheckBox" type="checkbox" />
+							<label for="btnTouchDisableRightClick" class="touchLabel">Allow right click</label>
 						</p>
 						<p>
-							<input id="btnTouchEnableInstallUpdates" class="btnEnableInstallUpdates" type="checkbox" />
-							<label for="btnTouchEnableInstallUpdates" class="inputLabel">Check for updates</label>
+							<input id="btnTouchEnableInstallUpdates" class="btnEnableInstallUpdates touchCheckBox" type="checkbox" />
+							<label for="btnTouchEnableInstallUpdates" class="touchLabel">Check for updates</label>
 						</p>
 						<p>
-							<input id="btnTouchUseHigherQualityPreviews" class="btnUseHigherQualityPreviews" type="checkbox" />
-							<label for="btnTouchUseHigherQualityPreviews" class="inputLabel">Use Higher Quality Previews</label>
+							<input id="btnTouchUseHigherQualityPreviews" class="btnUseHigherQualityPreviews touchCheckBox" type="checkbox" />
+							<label for="btnTouchUseHigherQualityPreviews" class="touchLabel">Use Higher Quality Previews</label>
 						</p>
 						<p>
-							<label class="headerLabel">Input mode:</label>
-							<input id="btnTouchIsMouseMode" class="btnIsMouseMode" type="radio" name="inputMode" />
-							<label for="btnTouchIsMouseMode" class="inputLabel">Mouse</label>
+							<label class="touchHeaderLabel">Input mode:</label>
+							<input id="btnTouchIsMouseMode" class="btnIsMouseMode touchRadioButton" type="radio" name="inputMode" />
+							<label for="btnTouchIsMouseMode" class="touchLabel">Mouse</label>
 
-							<input id="btnTouchIsTouchMode" class="btnIsTouchMode" type="radio" name="inputMode" />
-							<label for="btnTouchIsTouchMode" class="inputLabel">Touch</label>
+							<input id="btnTouchIsTouchMode" class="btnIsTouchMode touchRadioButton" type="radio" name="inputMode" />
+							<label for="btnTouchIsTouchMode" class="touchLabel">Touch</label>
 						</p>
 						<p>
 							<label>Storage used:</label>
 							<span class="totalDBSize" style="margin: 4px;">. . .</span>
 						</p>
 						<p>
-							<button class="btnClearAllData">Clear all data</button>
+							<button class="btnClearAllData touchButton">Clear all data</button>
 						</p>
 						<p>
 							<label>Software Version:</label>
