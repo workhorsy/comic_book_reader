@@ -390,33 +390,43 @@ function friendlyPageNumber() {
 function loadCurrentPage(cb) {
 	// Update the page number
 	var page = friendlyPageNumber();
-	$('#overlayPageNumber')[0].innerHTML = '&nbsp;' + page;
+	$('.overlayPageNumber')[0].innerHTML = '&nbsp;' + page;
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
-	// Load the middle page
-	loadImage(g_page_middle, g_image_index, true, function() {
-		if (cb) {
-			cb();
+	// Mouse mode
+	if (g_is_mouse_mode) {
+		loadImage($('#mousePageMiddle'), g_image_index, true, function() {
+			if (cb) {
+				cb();
+			}
+		});
+	// Touch mode
+	} else {
+		// Load the middle page
+		loadImage(g_page_middle, g_image_index, true, function() {
+			if (cb) {
+				cb();
+			}
+			updateScrollBar();
+		});
+
+		// Load right page
+		if (g_image_index === g_image_count -1) {
+			g_page_right.empty();
+		} else if (g_image_index < g_image_count -1) {
+			loadImage(g_page_right, g_image_index + 1, false, function() {
+				updateScrollBar();
+			});
 		}
-		updateScrollBar();
-	});
 
-	// Load right page
-	if (g_image_index === g_image_count -1) {
-		g_page_right.empty();
-	} else if (g_image_index < g_image_count -1) {
-		loadImage(g_page_right, g_image_index + 1, false, function() {
-			updateScrollBar();
-		});
-	}
-
-	// Load left page
-	if (g_image_index === 0) {
-		g_page_left.empty();
-	} else if (g_image_index > 0) {
-		loadImage(g_page_left, g_image_index - 1, false, function() {
-			updateScrollBar();
-		});
+		// Load left page
+		if (g_image_index === 0) {
+			g_page_left.empty();
+		} else if (g_image_index > 0) {
+			loadImage(g_page_left, g_image_index - 1, false, function() {
+				updateScrollBar();
+			});
+		}
 	}
 }
 
@@ -518,7 +528,7 @@ function onLoaded(blob, filename, filesize, filetype) {
 
 	// Clear everything
 	$('.btnFileLoad').prop('disabled', true);
-	$('#btnLibrary').prop('disabled', true);
+	$('.btnLibrary').prop('disabled', true);
 	$('.btnSettings').prop('disabled', true);
 	hideAllMenus(false);
 	clearComicData();
@@ -563,7 +573,7 @@ function onError(msg) {
 	showTopMenu(1.0, true);
 
 	$('.btnFileLoad').prop('disabled', false);
-	$('#btnLibrary').prop('disabled', false);
+	$('.btnLibrary').prop('disabled', false);
 	$('.btnSettings').prop('disabled', false);
 }
 
@@ -1090,7 +1100,7 @@ function onResize(screen_width, screen_height) {
 	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
-	style = $('#overlayPageNumber')[0].style;
+	style = $('.overlayPageNumber')[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
@@ -1181,8 +1191,6 @@ function overlayHide() {
 //	console.info('hide ...');
 	var scroll_bar = $('#scrollBar');
 	scroll_bar.hide();
-//	var overlay = $('#overlayPageNumber');
-//	overlay.hide();
 }
 
 function overlayShow(is_fading) {
@@ -1204,7 +1212,7 @@ function overlayShow(is_fading) {
 		});
 	}
 
-	var overlay = $('#overlayPageNumber');
+	var overlay = $('.overlayPageNumber');
 	overlay.stop();
 	overlay[0].style.opacity = 0.5;
 	if (is_fading) {
@@ -1324,9 +1332,8 @@ function startWorker() {
 			case 'uncompressed_start':
 				// Update the progress
 				g_image_count =  e.data.count;
-				var loadingProgress = $('#loadingProgress')[0];
-				loadingProgress.innerHTML = 'Loading 0.0% ...';
-				$('#loadingProgress').show();
+				$('.loadingProgress').html('Loading 0.0% ...');
+				$('.loadingProgress').show();
 				break;
 			case 'uncompressed_done':
 				break;
@@ -1338,8 +1345,7 @@ function startWorker() {
 
 				g_titles[index] = filename;
 
-				var loadingProgress = $('#loadingProgress')[0];
-				loadingProgress.innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
+				$('.loadingProgress').html('Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...');
 
 				makePagePreview(filename, is_cached, function() {
 					if (index === 0) {
@@ -1353,10 +1359,10 @@ function startWorker() {
 					if (is_last) {
 						stopWorker();
 
-						$('#loadingProgress').hide();
-						$('#loadingProgress')[0].innerHTML = '';
+						$('.loadingProgress').hide();
+						$('.loadingProgress').html('');
 						$('.btnFileLoad').prop('disabled', false);
-						$('#btnLibrary').prop('disabled', false);
+						$('.btnLibrary').prop('disabled', false);
 						$('.btnSettings').prop('disabled', false);
 
 						startWorker();
@@ -1511,14 +1517,16 @@ function main() {
 	}
 
 	$('#btnInputMouse').click(function () {
-		settings_set_is_mouse_mode(true);
+		g_is_mouse_mode = true;
+		settings_set_is_mouse_mode(g_is_mouse_mode);
 		$('#welcomeScreen').hide();
 		$('#mouseUI').show();
 		settings_set_is_first_run(false);
 	});
 
 	$('#btnInputTouch').click(function () {
-		settings_set_is_mouse_mode(false);
+		g_is_mouse_mode = false;
+		settings_set_is_mouse_mode(g_is_mouse_mode);
 		$('#welcomeScreen').hide();
 		$('#touchUI').show();
 		settings_set_is_first_run(false);
@@ -1661,7 +1669,7 @@ function main() {
 		deleteNextDB();
 	});
 
-	$('#btnLibrary').click(function() {
+	$('#btnTouchLibrary').click(function() {
 		showLibrary();
 	});
 
@@ -1710,7 +1718,7 @@ function main() {
 	$(window).trigger('resize');
 	clearComicData();
 	$('.btnFileLoad').prop('disabled', false);
-	$('#btnLibrary').prop('disabled', false);
+	$('.btnLibrary').prop('disabled', false);
 	$('.btnSettings').prop('disabled', false);
 
 	// Warn the user if indexedDB is full

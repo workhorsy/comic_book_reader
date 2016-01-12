@@ -17,6 +17,17 @@ body {
 	min-height: 100%;
 }
 
+#mouseUI {
+	background-color: rgba(0, 0, 0, 0.6);
+	overflow: scroll;
+	box-sizing: border-box;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+
 .headerLabel {
 	display: block;
 	font-size: 4vmin;
@@ -314,7 +325,7 @@ button {
 	/*background-color: blue;*/
 }
 
-#overlayPageNumber {
+.touchOverlayPageNumber {
 	position: absolute;
 	pointer-events: none;
 	display: flex;
@@ -326,7 +337,7 @@ button {
 	opacity: 0.5;
 }
 
-#loadingProgress {
+.touchLoadingProgress {
 	pointer-events: none;
 	position: fixed;
 	top: 0px;
