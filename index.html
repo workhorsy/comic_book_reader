@@ -40,7 +40,7 @@
 		</div>
 
 		<div id="mouseUI" style="display: none;">
-			<div>
+			<div id="mouseTopMenu">
 				<button class="btnFileLoad">Open comic file</button>
 				<button id="btnMouseLibrary" class="btnLibrary" style="background-color: red;">Library</button>
 				<button class="btnFullScreen">Full Screen</button>
@@ -51,40 +51,40 @@
 				<button id="btnMousePageRight">Next</button>
 				<span class="overlayPageNumber"></span>
 				<span class="loadingProgress"></span>
-			</div>
 
-			<div class="settingsMenu">
-				<p>
-					<input id="btnMouseDisableRightClick" class="btnDisableRightClick" type="checkbox" />
-					<label for="btnMouseDisableRightClick">Allow right click</label>
-				</p>
-				<p>
-					<input id="btnMouseEnableInstallUpdates" class="btnEnableInstallUpdates" type="checkbox" />
-					<label for="btnMouseEnableInstallUpdates">Check for updates</label>
-				</p>
-				<p>
-					<input id="btnMouseUseHigherQualityPreviews" class="btnUseHigherQualityPreviews" type="checkbox" />
-					<label for="btnMouseUseHigherQualityPreviews">Use Higher Quality Previews</label>
-				</p>
-				<p>
-					<label>Input mode:</label>
-					<input id="btnMouseIsMouseMode" class="btnIsMouseMode" type="radio" name="inputMode" />
-					<label for="btnMouseIsMouseMode">Mouse (Experimental)</label>
+				<div class="settingsMenu">
+					<p>
+						<input id="btnMouseDisableRightClick" class="btnDisableRightClick" type="checkbox" />
+						<label for="btnMouseDisableRightClick">Allow right click</label>
+					</p>
+					<p>
+						<input id="btnMouseEnableInstallUpdates" class="btnEnableInstallUpdates" type="checkbox" />
+						<label for="btnMouseEnableInstallUpdates">Check for updates</label>
+					</p>
+					<p>
+						<input id="btnMouseUseHigherQualityPreviews" class="btnUseHigherQualityPreviews" type="checkbox" />
+						<label for="btnMouseUseHigherQualityPreviews">Use Higher Quality Previews</label>
+					</p>
+					<p>
+						<label>Input mode:</label>
+						<input id="btnMouseIsMouseMode" class="btnIsMouseMode" type="radio" name="inputMode" />
+						<label for="btnMouseIsMouseMode">Mouse (Experimental)</label>
 
-					<input id="btnMouseIsTouchMode" class="btnIsTouchMode" type="radio" name="inputMode" />
-					<label for="btnMouseIsTouchMode">Touch</label>
-				</p>
-				<p>
-					<label>Storage used:</label>
-					<span class="totalDBSize" style="margin: 4px;">. . .</span>
-				</p>
-				<p>
-					<button class="btnClearAllData">Clear all data</button>
-				</p>
-				<p>
-					<label>Software Version:</label>
-					<span class="versionDate" style="margin: 4px;">...</span>
-				</p>
+						<input id="btnMouseIsTouchMode" class="btnIsTouchMode" type="radio" name="inputMode" />
+						<label for="btnMouseIsTouchMode">Touch</label>
+					</p>
+					<p>
+						<label>Storage used:</label>
+						<span class="totalDBSize" style="margin: 4px;">. . .</span>
+					</p>
+					<p>
+						<button class="btnClearAllData">Clear all data</button>
+					</p>
+					<p>
+						<label>Software Version:</label>
+						<span class="versionDate" style="margin: 4px;">...</span>
+					</p>
+				</div>
 			</div>
 
 			<div id="mousePageMiddle">
