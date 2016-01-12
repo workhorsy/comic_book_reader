@@ -10,8 +10,6 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # Bugs:
-* Font scaling is done manually on resize. This is slow and jerky. Replace with
-	more viewport size scaling (vw instead of px).
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
 * Thumb nails are too small on a high dpi screen

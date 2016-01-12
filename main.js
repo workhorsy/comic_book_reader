@@ -1139,13 +1139,6 @@ function onResize(screen_width, screen_height) {
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(' + (1 * g_screen_width) + 'px, 0px, 0px)';
 
-	// Make the overlay font 1/20th the screen width
-	var size = g_screen_width / 20;
-	if (size < 25) {
-		size = 25;
-	}
-	style.fontSize = size + 'px';
-
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_left[0].style;
 	style.width = g_screen_width + 'px';
@@ -1187,14 +1180,6 @@ function onResize(screen_width, screen_height) {
 	style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
 
 	updateScrollBar();
-
-	// Make the loading font as wide as the screen width
-	var loadingProgress = $('#loadingProgress')[0];
-	var size = g_screen_width / 20;
-	if (size < 25) {
-		size = 25;
-	}
-	loadingProgress.style.fontSize = size + 'px';
 }
 
 function updateScrollBar() {
@@ -1384,11 +1369,6 @@ function startWorker() {
 				g_image_count =  e.data.count;
 				var loadingProgress = $('#loadingProgress')[0];
 				loadingProgress.innerHTML = 'Loading 0.0% ...';
-				var size = g_screen_width / 20;
-				if (size < 25) {
-					size = 25;
-				}
-				loadingProgress.style.fontSize = size + 'px';
 				$('#loadingProgress').show();
 				break;
 			case 'uncompressed_done':

@@ -358,6 +358,7 @@ button {
 	justify-content: top;
 	align-items: left;
 	color: DeepSkyBlue;
+	font-size: 5vw;
 	text-shadow: 4px 4px 20px black;
 	opacity: 0.5;
 }
@@ -369,6 +370,7 @@ button {
 	right: 0px;
 	z-index: 500;
 	color: DeepSkyBlue;
+	font-size: 5vw;
 	text-shadow: 4px 4px 20px black;
 	opacity: 0.5;
 	display: none;
