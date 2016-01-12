@@ -151,6 +151,11 @@ function toFriendlySize(size) {
 }
 
 function hideAllMenus(is_instant) {
+	hideTopMenu(is_instant);
+	hideBottomMenu(is_instant);
+}
+
+function hideTopMenu(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
 
 	// Hide the top menus
@@ -160,7 +165,6 @@ function hideAllMenus(is_instant) {
 
 	// Remove glow from top and bottom menu
 	$('#topMenu').removeClass('menuWithGlow');
-	$('#bottomMenu').removeClass('menuWithGlow');
 
 	// Hide the top menu
 	var top_menu = $('#topMenu');
@@ -168,6 +172,16 @@ function hideAllMenus(is_instant) {
 	var height = top_menu.outerHeight() + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
+
+	g_top_menu_visible = 0.0;
+	$('#wallPaper')[0].style.opacity = 1.0;
+}
+
+function hideBottomMenu(is_instant) {
+	var speed = is_instant ? '0.0s' : '0.3s';
+
+	// Remove glow from top and bottom menu
+	$('#bottomMenu').removeClass('menuWithGlow');
 
 	// Hide the bottom menu
 	var bottom_menu = $('#bottomMenu');
@@ -178,7 +192,6 @@ function hideAllMenus(is_instant) {
 	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
 
 	g_are_page_previews_loading = false;
-	g_top_menu_visible = 0.0;
 	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
 }
@@ -1514,6 +1527,8 @@ function main() {
 	// Otherwise show the touch UI
 	} else {
 		$('#touchUI').show();
+		hideBottomMenu(true);
+		showTopMenu(true);
 	}
 
 	$('#btnInputMouse').click(function () {
@@ -1529,6 +1544,8 @@ function main() {
 		settings_set_is_mouse_mode(g_is_mouse_mode);
 		$('#welcomeScreen').hide();
 		$('#touchUI').show();
+		hideBottomMenu(true);
+		showTopMenu(true);
 		settings_set_is_first_run(false);
 	});
 
@@ -1633,6 +1650,8 @@ function main() {
 		settings_set_is_mouse_mode(false);
 		$('#mouseUI').hide();
 		$('#touchUI').show();
+		hideBottomMenu(true);
+		showTopMenu(true);
 	});
 
 	// Delete indexedDB and localStorage data
