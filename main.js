@@ -1621,24 +1621,28 @@ function main() {
 	$('.btnDisableRightClick').click(function() {
 		var value = settings_get_right_click_enabled();
 		settings_set_right_click_enabled(! value);
+		$('.btnDisableRightClick').prop('checked', ! value);
 	});
 
 	$('.btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
 	$('.btnEnableInstallUpdates').click(function() {
 		var value = settings_get_install_updates_enabled();
 		settings_set_install_updates_enabled(! value);
+		$('.btnEnableInstallUpdates').prop('checked', ! value);
 	});
 
 	$('.btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
 	$('.btnUseHigherQualityPreviews').click(function() {
 		var value = settings_get_use_higher_quality_previews();
 		settings_set_use_higher_quality_previews(! value);
+		$('.btnUseHigherQualityPreviews').prop('checked', ! value);
 	});
 
 	$('.btnIsMouseMode').click(function() {
 		settings_set_is_mouse_mode(true);
 		$('#touchUI').hide();
 		$('#mouseUI').show();
+		$('.btnIsMouseMode').prop('checked', true);
 	});
 	$('.btnIsTouchMode').click(function() {
 		settings_set_is_mouse_mode(false);
@@ -1646,6 +1650,7 @@ function main() {
 		$('#touchUI').show();
 		hideBottomMenu(true);
 		showTopMenu(true);
+		$('.btnIsTouchMode').prop('checked', true);
 	});
 
 	// Delete indexedDB and localStorage data
