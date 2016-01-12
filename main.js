@@ -403,7 +403,8 @@ function friendlyPageNumber() {
 function loadCurrentPage(cb) {
 	// Update the page number
 	var page = friendlyPageNumber();
-	$('.overlayPageNumber')[0].innerHTML = '&nbsp;' + page;
+	$('.overlayPageNumber').html('&nbsp;' + page);
+	$('.overlayPageNumber').show();
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
 	// Mouse mode
@@ -1113,13 +1114,6 @@ function onResize(screen_width, screen_height) {
 	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
-	style = $('.overlayPageNumber')[0].style;
-	style.width = g_screen_width + 'px';
-	style.height = g_screen_height + 'px';
-	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(' + (1 * g_screen_width) + 'px, 0px, 0px)';
-
-	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_left[0].style;
 	style.width = g_screen_width + 'px';
 	style.height = height + 'px';
@@ -1227,7 +1221,7 @@ function overlayShow(is_fading) {
 
 	var overlay = $('.overlayPageNumber');
 	overlay.stop();
-	overlay[0].style.opacity = 0.5;
+	overlay.css({opacity: 0.5});
 	if (is_fading) {
 		overlay.show();
 		overlay.animate({
