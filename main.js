@@ -154,7 +154,7 @@ function hideAllMenus(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
 
 	// Hide the top menus
-	$('#settingsMenu').hide();
+	$('.settingsMenu').hide();
 	$('#libraryMenu').hide();
 	$('#libraryMenu').empty();
 
@@ -303,7 +303,7 @@ function showBottomMenu(y_offset, is_instant) {
 }
 
 function showLibrary() {
-	$('#settingsMenu').hide();
+	$('.settingsMenu').hide();
 
 	var libraryMenu = $('#libraryMenu');
 	libraryMenu.empty();
@@ -517,9 +517,9 @@ function onLoaded(blob, filename, filesize, filetype) {
 	$('body')[0].style.backgroundColor = 'black';
 
 	// Clear everything
-	$('#btnFileLoad').prop('disabled', true);
+	$('.btnFileLoad').prop('disabled', true);
 	$('#btnLibrary').prop('disabled', true);
-	$('#btnSettings').prop('disabled', true);
+	$('.btnSettings').prop('disabled', true);
 	hideAllMenus(false);
 	clearComicData();
 	setComicData(filename);
@@ -562,9 +562,9 @@ function onError(msg) {
 	$('#loadError').show();
 	showTopMenu(1.0, true);
 
-	$('#btnFileLoad').prop('disabled', false);
+	$('.btnFileLoad').prop('disabled', false);
 	$('#btnLibrary').prop('disabled', false);
-	$('#btnSettings').prop('disabled', false);
+	$('.btnSettings').prop('disabled', false);
 }
 
 function largestNumber(a, b, c) {
@@ -1355,9 +1355,9 @@ function startWorker() {
 
 						$('#loadingProgress').hide();
 						$('#loadingProgress')[0].innerHTML = '';
-						$('#btnFileLoad').prop('disabled', false);
+						$('.btnFileLoad').prop('disabled', false);
 						$('#btnLibrary').prop('disabled', false);
-						$('#btnSettings').prop('disabled', false);
+						$('.btnSettings').prop('disabled', false);
 
 						startWorker();
 					}
@@ -1559,76 +1559,76 @@ function main() {
 	});
 
 	// Toggle full screen
-	$('#btnFullScreen').click(function () {
+	$('.btnFullScreen').click(function () {
 		toggleFullScreen();
 	});
 
 	// Open github in a new tab
-	$('#btnHomepage').click(function () {
+	$('.btnHomepage').click(function () {
 		var url = "https://github.com/workhorsy/comic_book_reader";
 		window.open(url, '_blank');
 	});
 
 	// Show the settings menu
-	$('#btnSettings').click(function () {
+	$('.btnSettings').click(function () {
 		$('#libraryMenu').hide();
 		$('#libraryMenu').empty();
 
-		var is_visible = $('#settingsMenu').is(":visible");
+		var is_visible = $('.settingsMenu').is(":visible");
 		if (is_visible) {
-			$('#settingsMenu').hide();
+			$('.settingsMenu').hide();
 		} else {
 			// Update the DB size
-			$('#totalDBSize').text('. . .');
+			$('.totalDBSize').text('. . .');
 			getTotalSize(function(length) {
-				$('#totalDBSize').text(toFriendlySize(length));
+				$('.totalDBSize').text(toFriendlySize(length));
 			});
 
 			// Update the input mode
 			g_is_mouse_mode = settings_get_is_mouse_mode();
 			if (g_is_mouse_mode) {
-				$('#btnIsMouseMode').prop('checked', true);
+				$('.btnIsMouseMode').prop('checked', true);
 			} else {
-				$('#btnIsTouchMode').prop('checked', true);
+				$('.btnIsTouchMode').prop('checked', true);
 			}
 
 			// Show the menu
-			$('#settingsMenu').show();
+			$('.settingsMenu').show();
 		}
 	});
 
 	// Right click toggle
-	$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
-	$('#btnDisableRightClick').click(function() {
+	$('.btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
+	$('.btnDisableRightClick').click(function() {
 		var value = settings_get_right_click_enabled();
 		settings_set_right_click_enabled(! value);
 	});
 
-	$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
-	$('#btnEnableInstallUpdates').click(function() {
+	$('.btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
+	$('.btnEnableInstallUpdates').click(function() {
 		var value = settings_get_install_updates_enabled();
 		settings_set_install_updates_enabled(! value);
 	});
 
-	$('#btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
-	$('#btnUseHigherQualityPreviews').click(function() {
+	$('.btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
+	$('.btnUseHigherQualityPreviews').click(function() {
 		var value = settings_get_use_higher_quality_previews();
 		settings_set_use_higher_quality_previews(! value);
 	});
 
-	$('#btnIsMouseMode').click(function() {
+	$('.btnIsMouseMode').click(function() {
 		settings_set_is_mouse_mode(true);
 		$('#touchUI').hide();
 		$('#mouseUI').show();
 	});
-	$('#btnIsTouchMode').click(function() {
+	$('.btnIsTouchMode').click(function() {
 		settings_set_is_mouse_mode(false);
 		$('#mouseUI').hide();
 		$('#touchUI').show();
 	});
 
 	// Delete indexedDB and localStorage data
-	$('#btnClearAllData').click(function() {
+	$('.btnClearAllData').click(function() {
 		var db_names = settings_get_db_names();
 
 		clearComicData();
@@ -1641,19 +1641,19 @@ function main() {
 				});
 			} else {
 				settings_delete_all();
-				$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
-				$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
-				$('#btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
+				$('.btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
+				$('.btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
+				$('.btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
 				g_is_mouse_mode = settings_get_is_mouse_mode();
 				if (g_is_mouse_mode) {
-					$('#btnIsMouseMode').prop('checked', true);
+					$('.btnIsMouseMode').prop('checked', true);
 				} else {
-					$('#btnIsTouchMode').prop('checked', true);
+					$('.btnIsTouchMode').prop('checked', true);
 				}
 
-				$('#totalDBSize').text('. . .');
+				$('.totalDBSize').text('. . .');
 				getTotalSize(function(length) {
-					$('#totalDBSize').text(toFriendlySize(length));
+					$('.totalDBSize').text(toFriendlySize(length));
 					alert('Done clearing all data');
 				});
 			}
@@ -1666,7 +1666,7 @@ function main() {
 	});
 
 	// Open the file selection box
-	$('#btnFileLoad').click(function() {
+	$('.btnFileLoad').click(function() {
 		$('#fileInput').click();
 	});
 
@@ -1709,9 +1709,9 @@ function main() {
 	$('#comicPanel').hide();
 	$(window).trigger('resize');
 	clearComicData();
-	$('#btnFileLoad').prop('disabled', false);
+	$('.btnFileLoad').prop('disabled', false);
 	$('#btnLibrary').prop('disabled', false);
-	$('#btnSettings').prop('disabled', false);
+	$('.btnSettings').prop('disabled', false);
 
 	// Warn the user if indexedDB is full
 	var storage_is_full = localStorage.getItem('storage_is_full');
@@ -1723,14 +1723,14 @@ function main() {
 	// FIXME: Check if indexedDB is full
 
 	startWorker();
-	$('#versionDate').text(getVersionDate());
+	$('.versionDate').text(getVersionDate());
 	updateTotalUsersOnline();
 	updateApplicationCache();
 }
 
 $(document).ready(function() {
 	$('#welcomeScreen').hide();
-	$('#settingsMenu').hide();
+	$('.settingsMenu').hide();
 	$('#libraryMenu').hide();
 
 	// Show an error message if any required browser features are missing

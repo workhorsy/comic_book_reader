@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="main.appcache">
+<html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>Comic Book Reader</title>
@@ -34,15 +34,51 @@
 			<img src="favicon.ico" style="position: absolute; bottom: 0px; right: 0px;" />
 		</div>
 
-		<div id="mouseUI" style="display: none;">
-			<button id="btnMouseFileLoad">Open</button>
-			<button id="btnMouseLibrary">Library</button>
-			<button id="btnMouseFullScreen">Full Screen</button>
-			<button id="btnMouseHomepage">Home Page</button>
-			<button id="btnMouseSettings">Settings</button>
-			<button id="btnMousePages">Pages</button>
-			<button id="btnMousePageLeft">Prev</button>
-			<button id="btnMousePageRight">Next</button>
+		<div id="mouseUI" style="display: none; background-color: rgba(0, 0, 0, 0.6);">
+			<div>
+				<button class="btnFileLoad">Open</button>
+				<button id="btnMouseLibrary" style="background-color: red;">Library</button>
+				<button class="btnFullScreen">Full Screen</button>
+				<button class="btnHomepage">Home Page</button>
+				<button class="btnSettings">Settings</button>
+				<button id="btnMousePages" style="background-color: red;">Pages</button>
+				<button id="btnMousePageLeft" style="background-color: red;">Prev</button>
+				<button id="btnMousePageRight" style="background-color: red;">Next</button>
+			</div>
+
+			<div class="settingsMenu">
+				<p>
+					<input id="btnMouseDisableRightClick" class="btnDisableRightClick" type="checkbox" />
+					<label for="btnMouseDisableRightClick" class="inputLabel">Allow right click</label>
+				</p>
+				<p>
+					<input id="btnMouseEnableInstallUpdates" class="btnEnableInstallUpdates" type="checkbox" />
+					<label for="btnMouseEnableInstallUpdates" class="inputLabel">Check for updates</label>
+				</p>
+				<p>
+					<input id="btnMouseUseHigherQualityPreviews" class="btnUseHigherQualityPreviews" type="checkbox" />
+					<label for="btnMouseUseHigherQualityPreviews" class="inputLabel">Use Higher Quality Previews</label>
+				</p>
+				<p>
+					<label class="headerLabel">Input mode:</label>
+					<input id="btnMouseIsMouseMode" class="btnIsMouseMode" type="radio" name="inputMode" />
+					<label for="btnMouseIsMouseMode"class="inputLabel">Mouse</label>
+
+					<input id="btnMouseIsTouchMode" class="btnIsTouchMode" type="radio" name="inputMode" />
+					<label for="btnMouseIsTouchMode"class="inputLabel">Touch</label>
+				</p>
+				<p>
+					<label>Storage used:</label>
+					<span class="totalDBSize" style="margin: 4px;">. . .</span>
+				</p>
+				<p>
+					<button class="btnClearAllData">Clear all data</button>
+				</p>
+				<p>
+					<label>Software Version:</label>
+					<span class="versionDate" style="margin: 4px;">...</span>
+				</p>
+			</div>
 		</div>
 
 		<div id="touchUI" style="display: none;">
@@ -50,11 +86,11 @@
 				<div id="topMenuButtons">
 					<!--<input id="fileInput" type="file" required="required" accept=".cbr, .cbz, .cbt, .rar, .zip, .tar" />-->
 					<input id="fileInput" type="file" required="required" />
-					<button id="btnFileLoad">Open comic file</button>
+					<button class="btnFileLoad">Open comic file</button>
 					<button id="btnLibrary">Library</button>
-					<button id="btnFullScreen">Full Screen</button>
-					<button id="btnHomepage">Home Page</button>
-					<button id="btnSettings">Settings</button>
+					<button class="btnFullScreen">Full Screen</button>
+					<button class="btnHomepage">Home Page</button>
+					<button class="btnSettings">Settings</button>
 				</div>
 
 				<p><span id="loadError"></span></p>
@@ -66,38 +102,38 @@
 					<span id="totalUsersOnline"></span>
 				</div>
 
-				<div id="settingsMenu">
+				<div class="settingsMenu settingsTouchMenu">
 					<div>
 						<p>
-							<input id="btnDisableRightClick" type="checkbox" />
-							<label for="btnDisableRightClick" class="inputLabel">Allow right click</label>
+							<input id="btnTouchDisableRightClick" class="btnDisableRightClick" type="checkbox" />
+							<label for="btnTouchDisableRightClick" class="inputLabel">Allow right click</label>
 						</p>
 						<p>
-							<input id="btnEnableInstallUpdates" type="checkbox" />
-							<label for="btnEnableInstallUpdates" class="inputLabel">Check for updates</label>
+							<input id="btnTouchEnableInstallUpdates" class="btnEnableInstallUpdates" type="checkbox" />
+							<label for="btnTouchEnableInstallUpdates" class="inputLabel">Check for updates</label>
 						</p>
 						<p>
-							<input id="btnUseHigherQualityPreviews" type="checkbox" />
-							<label for="btnUseHigherQualityPreviews" class="inputLabel">Use Higher Quality Previews</label>
+							<input id="btnTouchUseHigherQualityPreviews" class="btnUseHigherQualityPreviews" type="checkbox" />
+							<label for="btnTouchUseHigherQualityPreviews" class="inputLabel">Use Higher Quality Previews</label>
 						</p>
 						<p>
 							<label class="headerLabel">Input mode:</label>
-							<input id="btnIsMouseMode" type="radio" name="inputMode" />
-							<label for="btnIsMouseMode" class="inputLabel">Mouse</label>
+							<input id="btnTouchIsMouseMode" class="btnIsMouseMode" type="radio" name="inputMode" />
+							<label for="btnTouchIsMouseMode" class="inputLabel">Mouse</label>
 
-							<input id="btnIsTouchMode" type="radio" name="inputMode" />
-							<label for="btnIsTouchMode" class="inputLabel">Touch</label>
+							<input id="btnTouchIsTouchMode" class="btnIsTouchMode" type="radio" name="inputMode" />
+							<label for="btnTouchIsTouchMode" class="inputLabel">Touch</label>
 						</p>
 						<p>
 							<label>Storage used:</label>
-							<span id="totalDBSize" style="margin: 4px;">. . .</span>
+							<span class="totalDBSize" style="margin: 4px;">. . .</span>
 						</p>
 						<p>
-							<button id="btnClearAllData">Clear all data</button>
+							<button class="btnClearAllData">Clear all data</button>
 						</p>
 						<p>
 							<label>Software Version:</label>
-							<span id="versionDate" style="margin: 4px;">...</span>
+							<span class="versionDate" style="margin: 4px;">...</span>
 						</p>
 					</div>
 				</div>

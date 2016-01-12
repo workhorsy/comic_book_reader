@@ -227,7 +227,7 @@ button {
 	}
 }
 
-#settingsMenu {
+.settingsTouchMenu {
 	text-align: left;
 	display: flex;
 	align-items: center;
@@ -237,17 +237,17 @@ button {
 	border: 1px solid #ABB2BF;
 }
 
-#settingsMenu label, #settingsMenu span, #settingsMenu button {
+.settingsTouchMenu label, .settingsTouchMenu span, .settingsTouchMenu button {
 	font-size: 4vmin;
 }
 
 @media (min-width: 1px) and (max-width: 379px) {
-	#settingsMenu p {
+	.settingsTouchMenu p {
 		magin: 0px;
 		padding: 0px;
 	}
 
-	#settingsMenu label, #settingsMenu span {
+	.settingsTouchMenu label, .settingsTouchMenu span {
 		display: block;
 	}
 }
