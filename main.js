@@ -181,14 +181,6 @@ function hideAllMenus(is_instant) {
 	g_top_menu_visible = 0.0;
 	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
-
-	// Show the side buttons in mouse mode
-	if (g_is_mouse_mode) {
-		$('#btnPageLeft').show();
-		$('#btnPageRight').show();
-		$('#btnToggleTopMenu').show();
-		$('#btnToggleBottomMenu').show();
-	}
 }
 
 function setWallPaperOpacity() {
@@ -211,19 +203,6 @@ function showTopMenu(y_offset, is_instant) {
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_top_menu_visible = y_offset;
 
-	// Hide the side buttons
-	if (g_is_mouse_mode) {
-		if (y_offset === 1.0) {
-			$('#btnPageLeft').hide();
-			$('#btnPageRight').hide();
-			$('#btnToggleBottomMenu').hide();
-		} else {
-			$('#btnPageLeft').show();
-			$('#btnPageRight').show();
-			$('#btnToggleBottomMenu').show();
-		}
-	}
-
 	// Show the wall paper
 	setWallPaperOpacity();
 }
@@ -236,19 +215,6 @@ function showBottomMenu(y_offset, is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_bottom_menu_visible = y_offset;
-
-	// Hide the side buttons
-	if (g_is_mouse_mode) {
-		if (y_offset === 1.0) {
-			$('#btnPageLeft').hide();
-			$('#btnPageRight').hide();
-			$('#btnToggleTopMenu').hide();
-		} else {
-			$('#btnPageLeft').show();
-			$('#btnPageRight').show();
-			$('#btnToggleTopMenu').show();
-		}
-	}
 
 	setWallPaperOpacity();
 
@@ -1532,63 +1498,33 @@ function makePagePreview(filename, is_cached, cb) {
 	}
 }
 
-function changeInputModeMouse(value) {
-	g_is_mouse_mode = value;
-	settings_set_is_mouse_mode(g_is_mouse_mode);
-
-	// Show the buttons in mouse mode
-	if (g_is_mouse_mode) {
-		$('#btnToggleTopMenu').show();
-	// Hide the buttons in touch mode
-	} else {
-		$('#btnPageLeft').hide();
-		$('#btnPageRight').hide();
-		$('#btnToggleTopMenu').hide();
-		$('#btnToggleBottomMenu').hide();
-	}
-}
-
 function main() {
 	// Show the welcome screen if this is the first run
 	if (settings_get_is_first_run()) {
 		$('#welcomeScreen').show();
+	// Show the mouse UI
+	} else if (settings_get_is_mouse_mode()) {
+		$('#mouseUI').show();
+	// Otherwise show the touch UI
+	} else {
+		$('#touchUI').show();
 	}
 
-	$('#btnPageLeft').hide();
-	$('#btnPageRight').hide();
-	$('#btnToggleTopMenu').hide();
-	$('#btnToggleBottomMenu').hide();
-
 	$('#btnInputMouse').click(function () {
-		changeInputModeMouse(true);
+		settings_set_is_mouse_mode(true);
 		$('#welcomeScreen').hide();
+		$('#mouseUI').show();
 		settings_set_is_first_run(false);
 	});
 
 	$('#btnInputTouch').click(function () {
-		changeInputModeMouse(false);
+		settings_set_is_mouse_mode(false);
 		$('#welcomeScreen').hide();
+		$('#touchUI').show();
 		settings_set_is_first_run(false);
 	});
 
-	$('#btnToggleTopMenu').click(function () {
-		if (g_top_menu_visible === 1.0) {
-			hideAllMenus(true);
-		} else {
-			showTopMenu(1.0, true);
-		}
-	});
-
-	$('#btnToggleBottomMenu').click(function () {
-		console.info(g_bottom_menu_visible);
-		if (g_bottom_menu_visible === 1.0) {
-			hideAllMenus(true);
-		} else {
-			showBottomMenu(1.0, true);
-		}
-	});
-
-	$('#btnPageLeft').click(function () {
+	$('#btnMousePageLeft').click(function () {
 		if (g_image_index > 0) {
 			g_image_index--;
 			loadCurrentPage();
@@ -1596,7 +1532,7 @@ function main() {
 		}
 	});
 
-	$('#btnPageRight').click(function () {
+	$('#btnMousePageRight').click(function () {
 		if (g_image_index < g_image_count -1) {
 			g_image_index++;
 			loadCurrentPage();
@@ -1681,10 +1617,14 @@ function main() {
 	});
 
 	$('#btnIsMouseMode').click(function() {
-		changeInputModeMouse(true);
+		settings_set_is_mouse_mode(true);
+		$('#touchUI').hide();
+		$('#mouseUI').show();
 	});
 	$('#btnIsTouchMode').click(function() {
-		changeInputModeMouse(false);
+		settings_set_is_mouse_mode(false);
+		$('#mouseUI').hide();
+		$('#touchUI').show();
 	});
 
 	// Delete indexedDB and localStorage data
