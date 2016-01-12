@@ -1559,6 +1559,14 @@ function main() {
 		}
 	});
 
+	$('#btnMouseLibrary').click(function() {
+		alert('FIXME: Add the library menu for mouse mode.');
+	});
+
+	$('#btnMousePages').click(function() {
+		alert('FIXME: Add the page selector for mouse mode.');
+	});
+
 	g_page_left = $('#pageLeft');
 	g_page_middle = $('#pageMiddle');
 	g_page_right = $('#pageRight');
