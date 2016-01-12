@@ -528,7 +528,6 @@ function setComicData(name) {
 function clearComicData() {
 	// Reset the UI
 	$('#loadError').hide();
-	$('#loadProgress').val(0);
 	setComicData('');
 	g_page_middle.empty();
 	g_page_left.empty();
@@ -560,9 +559,6 @@ function onLoaded(blob, filename, filesize, filetype) {
 	setComicData(filename);
 
 	// Read the file
-	// FIXME: Remove the progress bar, because it is not used
-	onProgress(1, 1);
-	$('#loadProgress').hide();
 	$('#comicPanel').show();
 
 	// Get the names of all the cached comics
@@ -603,11 +599,6 @@ function onError(msg) {
 	$('#btnFileLoad').prop('disabled', false);
 	$('#btnLibrary').prop('disabled', false);
 	$('#btnSettings').prop('disabled', false);
-}
-
-function onProgress(loaded, total) {
-	$('#loadProgress').show();
-	$('#loadProgress').val(loaded / total);
 }
 
 function largestNumber(a, b, c) {

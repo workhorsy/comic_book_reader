@@ -313,11 +313,6 @@ button {
 	text-align: center;
 }
 
-#loadProgress {
-	width: 100%;
-	display: none;
-}
-
 #fileInput {
 	display: none;
 }
