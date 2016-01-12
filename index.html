@@ -25,9 +25,11 @@
 					A touch friendly CBR/CBZ/CBT reader, that even works when offline.
 				</p>
 				<p>
-					Start in <button id="btnInputMouse" class="touchButton">Mouse</button>
+					Start in
+					<button id="btnInputTouch" class="touchButton">Touch</button>
 					or
-					<button id="btnInputTouch" class="touchButton">Touch</button> mode.
+					<button id="btnInputMouse" class="touchButton">Mouse <span style="font-size: 5vmin; line-height: 0; color: #666666;">(Experimental)</span></button>
+					mode.
 				</p>
 				<footer>
 					Copyright &copy; 2016 <a href="https://github.com/workhorsy/comic_book_reader">
@@ -67,7 +69,7 @@
 				<p>
 					<label>Input mode:</label>
 					<input id="btnMouseIsMouseMode" class="btnIsMouseMode" type="radio" name="inputMode" />
-					<label for="btnMouseIsMouseMode">Mouse</label>
+					<label for="btnMouseIsMouseMode">Mouse (Experimental)</label>
 
 					<input id="btnMouseIsTouchMode" class="btnIsTouchMode" type="radio" name="inputMode" />
 					<label for="btnMouseIsTouchMode">Touch</label>
@@ -125,7 +127,7 @@
 						<p>
 							<label class="touchHeaderLabel">Input mode:</label>
 							<input id="btnTouchIsMouseMode" class="btnIsMouseMode touchRadioButton" type="radio" name="inputMode" />
-							<label for="btnTouchIsMouseMode" class="touchLabel">Mouse</label>
+							<label for="btnTouchIsMouseMode" class="touchLabel">Mouse (Experimental)</label>
 
 							<input id="btnTouchIsTouchMode" class="btnIsTouchMode touchRadioButton" type="radio" name="inputMode" />
 							<label for="btnTouchIsTouchMode" class="touchLabel">Touch</label>
