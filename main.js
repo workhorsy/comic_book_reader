@@ -1788,10 +1788,11 @@ function main() {
 	document.body.addEventListener('touchmove', onTouchMove, false);
 
 	// MS Pointer Events
-	// FIXME: Touch dragging does not work in IE 11
+	/*
 	document.body.addEventListener('MSPointerDown', onPointerStart, false);
 	document.body.addEventListener('MSPointerUp', onPointerEnd, false);
 	document.body.addEventListener('MSPointerMove', onPointerMove, false);
+	*/
 
 	// Reset everything
 	$('#comicPanel').hide();

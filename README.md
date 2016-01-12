@@ -18,7 +18,6 @@ Comic Book Reader
 * If the first page is short, all the following pages get their bottom chopped off
 * cant touch scroll the page selector (chrome)
 * Multi touch input twitches the screen
-* Touch movement is broken in IE11
 
 # TODO Small:
 * Add an option to disable user counter
