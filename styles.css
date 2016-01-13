@@ -18,7 +18,6 @@ body {
 }
 
 #mouseUI {
-	background-color: rgba(0, 0, 0, 0.6);
 	overflow: scroll;
 	box-sizing: border-box;
 	position: absolute;
@@ -32,8 +31,23 @@ body {
 	position: fixed;
 	top: 0;
 	left: 0;
-	right: 0;
+	/* FIXME: This assumes the scroll bar is 17 pixels wide */
+	right: 17px;
 	z-index: 500;
+}
+
+#mouseSettingsMenu {
+	margin: 20px;
+	padding: 20px;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+.mouseOverlayPageNumber {
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+.mouseLoadingProgress {
+	background-color: rgba(0, 0, 0, 0.8);
 }
 
 .touchHeaderLabel {
@@ -246,7 +260,7 @@ input:checked + .touchLabel::after {
 	}
 }
 
-.settingsTouchMenu {
+#touchSettingsMenu {
 	text-align: left;
 	display: flex;
 	align-items: center;
@@ -256,17 +270,17 @@ input:checked + .touchLabel::after {
 	border: 1px solid #ABB2BF;
 }
 
-.settingsTouchMenu label, .settingsTouchMenu span, .settingsTouchMenu button {
+#touchSettingsMenu label, #touchSettingsMenu span, #touchSettingsMenu button {
 	font-size: 4vmin;
 }
 
 @media (min-width: 1px) and (max-width: 379px) {
-	.settingsTouchMenu p {
+	#touchSettingsMenu p {
 		magin: 0px;
 		padding: 0px;
 	}
 
-	.settingsTouchMenu label, .settingsTouchMenu span {
+	#touchSettingsMenu label, #touchSettingsMenu span {
 		display: block;
 	}
 }

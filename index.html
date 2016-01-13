@@ -48,10 +48,10 @@
 				<button id="btnMousePages" style="background-color: red;">Pages</button>
 				<button id="btnMousePageLeft">Prev</button>
 				<button id="btnMousePageRight">Next</button>
-				<span class="overlayPageNumber"></span>
-				<span class="loadingProgress"></span>
+				<span class="overlayPageNumber mouseOverlayPageNumber"></span>
+				<span class="loadingProgress mouseLoadingProgress"></span>
 
-				<div class="settingsMenu">
+				<div id="mouseSettingsMenu" class="settingsMenu">
 					<p>
 						<input id="btnMouseDisableRightClick" class="btnDisableRightClick" type="checkbox" />
 						<label for="btnMouseDisableRightClick">Allow right click</label>
@@ -109,7 +109,7 @@
 					<span id="totalUsersOnline"></span>
 				</div>
 
-				<div class="settingsMenu settingsTouchMenu">
+				<div id="touchSettingsMenu" class="settingsMenu">
 					<div>
 						<p>
 							<input id="btnTouchDisableRightClick" class="btnDisableRightClick touchCheckBox" type="checkbox" />
