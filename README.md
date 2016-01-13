@@ -19,8 +19,11 @@ Comic Book Reader
 
 # TODO Mouse UI:
 * Add the "Experimental" text to the background of the mouse UI mode.
+* The prev and next buttons should be disabled when there is no comic loaded.
 * Loading the second comic from the open menu, fails.
 * When the UI clears all the data, it resets the UI to touch mode. Don't reset the UI mode.
+* Add a library menu
+* Add a page menu
 
 # TODO Small:
 * Add an option to disable user counter
