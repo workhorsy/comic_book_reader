@@ -17,6 +17,11 @@ Comic Book Reader
 * cant touch scroll the page selector (chrome)
 * Multi touch input twitches the screen
 
+# TODO Mouse UI:
+* Add the "Experimental" text to the background of the mouse UI mode.
+* Loading the second comic from the open menu, fails.
+* When the UI clears all the data, it resets the UI to touch mode. Don't reset the UI mode.
+
 # TODO Small:
 * Add an option to disable user counter
 * Stop browser navigation when loading
