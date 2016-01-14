@@ -209,7 +209,7 @@ input:checked + .touchLabel::after {
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
-	left: 300px;
+	left: 0px;
 	right: 0px;
 }
 
@@ -325,6 +325,7 @@ input:checked + .touchLabel::after {
 	/*border: 10px solid orange;*/
 	overflow: hidden;
 	background-color: brown;
+	outline: 5px solid pink;
 }
 
 #pageLeft {

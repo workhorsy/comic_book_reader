@@ -19,6 +19,7 @@ var g_mouse_start_y = 0;
 
 var g_screen_width = 0;
 var g_screen_height = 0;
+var g_page_width = 0;
 var g_scroll_y_temp = 0;
 var g_scroll_y_start = 0;
 var g_needs_resize = false;
@@ -400,6 +401,7 @@ function friendlyPageNumber() {
 }
 
 function loadCurrentPage(cb) {
+	console.info("@@@@@@@@@@@@@ loadCurrentPage");
 	// Update the page number
 	var page = friendlyPageNumber();
 	$('.overlayPageNumber').html('&nbsp;' + page);
@@ -597,83 +599,12 @@ function largestNumber(a, b, c) {
 	return larger;
 }
 
-function largestPageNaturalHeight() {
-	var left_children = g_page_left.children();
-	var middle_children = g_page_middle.children();
-	var right_children = g_page_right.children();
-
-	var left_width = left_children.length > 0 ? left_children[0].naturalWidth : 0;
-	var middle_width = middle_children.length > 0 ? middle_children[0].naturalWidth : 0;
-	var right_width = right_children.length > 0 ? right_children[0].naturalWidth : 0;
-
-	var left_ratio = left_width !== 0 ? g_screen_width / left_width : 0;
-	var middle_ratio = middle_width !== 0 ? g_screen_width / middle_width : 0;
-	var right_ratio = right_width !== 0 ? g_screen_width / right_width : 0;
-
-	var left_height = left_children.length > 0 ? left_ratio * left_children[0].naturalHeight : 0;
-	var middle_height = middle_children.length > 0 ? middle_ratio * middle_children[0].naturalHeight : 0;
-	var right_height =  right_children.length > 0 ?  right_ratio *  right_children[0].naturalHeight : 0;
-
-	return largestNumber(left_height, middle_height, right_height);
-}
-
 function ignoreEvent(e) {
 	//console.info(e.type);
 	e.preventDefault();
 	e.stopPropagation();
 }
-/*
-function onTouchStart(e) {
-	console.log('@@@@@@ onTouchStart');
-	//e.preventDefault();
-	//e.stopPropagation();
 
-	g_moving_page = g_page_middle[0];
-	var x = e.changedTouches[0].clientX | 0;
-	var y = e.changedTouches[0].clientY | 0;
-	onInputDown(e.target, x, y);
-}
-
-function onTouchEnd(e) {
-	console.log('@@@@@@ onTouchEnd');
-	//e.preventDefault();
-	//e.stopPropagation();
-
-	g_moving_page = null;
-	onInputUp();
-}
-
-function onTouchMove(e) {
-	console.log('@@@@@@ onTouchMove');
-	e.preventDefault();
-	e.stopPropagation();
-
-	var x = e.changedTouches[0].clientX | 0;
-	var y = e.changedTouches[0].clientY | 0;
-	onInputMove(x, y);
-}
-
-function onPointerStart(e) {
-	//console.log('@@@@@@ onPointerStart');
-	g_moving_page = g_page_middle[0];
-	var x = e.clientX | 0;
-	var y = e.clientY | 0;
-	onInputDown(e.target, x, y);
-}
-
-function onPointerEnd(e) {
-	//console.log('@@@@@@ onPointerEnd');
-	g_moving_page = null;
-	onInputUp();
-}
-
-function onPointerMove(e) {
-	//console.log('@@@@@@ onPointerMove');
-	var x = e.clientX | 0;
-	var y = e.clientY | 0;
-	onInputMove(x, y);
-}
-*/
 function onMouseDown(e) {
 	console.log('@@@@@@ onMouseDown');
 	var x = e.clientX;
@@ -719,6 +650,8 @@ function onInputDown(target, x, y) {
 }
 
 function onInputUp() {
+	console.info(g_is_swiping_left + ', ' + g_is_swiping_right);
+
 	// Remove glow from the top menu if it is not completly out
 	if (g_top_menu_visible !== 1.0) {
 		$('#topMenu').removeClass('menuWithGlow');
@@ -740,42 +673,20 @@ function onInputUp() {
 	g_is_mouse_down = false;
 	g_scroll_y_start += g_scroll_y_temp;
 	g_scroll_y_temp = 0;
-/*
+
+	// Turning page right
 	if (g_is_swiping_right) {
 		g_is_swiping_right = false;
 
-		var style = g_page_middle[0].style;
+		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
-
-		style = g_page_left[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
-
-		style = $('#overlayLeft')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+		style.transform = 'translate3d(' + (g_page_width * 1) + 'px, 0px, 0px)';
 
 		// Update the page orderings, after the pages move into position
 		setTimeout(function() {
-			var old_left = g_page_left;
-			var old_middle = g_page_middle;
-			var old_right = g_page_right;
-			g_page_right = old_middle;
-			g_page_middle = old_left;
-			g_page_left = old_right;
-
-			g_page_left[0].panel_index = 0;
-			g_page_middle[0].panel_index = 1;
-			g_page_right[0].panel_index = 2;
-
-			style = g_page_left[0].style;
+			var style = $('#comicPanel')[0].style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
-
-			style = $('#overlayLeft')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
+			style.transform = 'translate3d(0px, 0px, 0px)';
 			g_scroll_y_start = 0;
 
 			if (g_image_index > 0) {
@@ -783,71 +694,34 @@ function onInputUp() {
 				loadCurrentPage();
 			}
 		}, 300);
+	// Turning page left
 	} else if (g_is_swiping_left) {
 		g_is_swiping_left = false;
 
-		var style = g_page_middle[0].style;
+		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(0px, 0px, 0px)';
-
-		style = g_page_right[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
-
-		style = $('#overlayRight')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+		style.transform = 'translate3d(' + (- (g_page_width * 1)) + 'px, 0px, 0px)';
 
 		// Update the page orderings, after the pages move into position
 		setTimeout(function() {
-			var old_left = g_page_left;
-			var old_middle = g_page_middle;
-			var old_right = g_page_right;
-			g_page_left = old_middle;
-			g_page_middle = old_right;
-			g_page_right = old_left;
-
-			g_page_left[0].panel_index = 0;
-			g_page_middle[0].panel_index = 1;
-			g_page_right[0].panel_index = 2;
-
-			style = g_page_right[0].style;
+			var style = $('#comicPanel')[0].style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+			style.transform = 'translate3d(0px, 0px, 0px)';
 			g_scroll_y_start = 0;
-
-			style = $('#overlayRight')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
 
 			if (g_image_index < g_image_count -1) {
 				g_image_index++;
 				loadCurrentPage();
 			}
 		}, 300);
+	// Reset the page to center
 	} else {
-		var style = g_page_left[0].style;
+		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(0px, 0px, 0px)';
-
-		var y = g_scroll_y_temp + g_scroll_y_start;
-		style = g_page_middle[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, ' + y + 'px, 0px)';
-
-		style = g_page_right[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
-
-		style = $('#overlayLeft')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 0) + 'px, 0px, 0px)';
-
-		style = $('#overlayRight')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
+		g_scroll_y_start = 0;
 	}
-*/
+
 	overlayShow(true);
 }
 
@@ -879,7 +753,11 @@ function onInputMove(x, y) {
 			showBottomMenu(y / g_down_swipe_size, true);
 		// Scroll the page up and down
 		} else {
-			var image_height = $('#' + g_moving_page.children[0].id).height();
+//			console.info('fuuuuuuuuuuuuuuuu');
+			// FIXME: Super slow to call every movement. Look for similar calls, and replace them
+			var zzz = $('#pageMiddle').children();
+			console.info(zzz);
+			var image_height = $('#' + zzz[0].id).height();
 			x_offset = x_offset / 20.0;
 			y_offset = y_offset / 20.0;
 
@@ -895,8 +773,8 @@ function onInputMove(x, y) {
 			// Only scroll up if the bottom of the image is below the screen bottom
 			g_scroll_y_start = new_offset;
 
-			var x = (g_moving_page.panel_index * g_screen_width);
-			var style = g_moving_page.style;
+			var x = g_page_width;
+			var style = $('#pageMiddle')[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
 
@@ -905,26 +783,16 @@ function onInputMove(x, y) {
 	}
 
 	// Scroll the comic panels if we are swiping right or left
-	if (! is_vertical && g_moving_page) {
-		var x = (g_moving_page.panel_index * g_screen_width) + x_offset;
+	if (! is_vertical) {
+		var x = x_offset;
 		var y = g_scroll_y_temp + g_scroll_y_start;
 		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.0s';
 		style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
-/*
+
 		// Swiping right
 		if (x_offset > 0) {
-			var x = (g_page_left[0].panel_index * g_screen_width) + x_offset;
-			var style = g_page_left[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			style = $('#overlayLeft')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index > 0) {
-//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
+			if (Math.abs(x_offset) > (g_page_width / 2) && g_image_index > 0) {
 				g_is_swiping_right = true;
 			} else {
 				g_is_swiping_right = false;
@@ -932,24 +800,13 @@ function onInputMove(x, y) {
 			}
 		// Swiping left
 		} else {
-			var x = (g_page_right[0].panel_index * g_screen_width) + x_offset;
-			var style = g_page_right[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			style = $('#overlayRight')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_image_count -1) {
-//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
+			if (Math.abs(x_offset) > (g_page_width / 2) && g_image_index < g_image_count -1) {
 				g_is_swiping_left = true;
 			} else {
 				g_is_swiping_right = false;
 				g_is_swiping_left = false;
 			}
 		}
-*/
 	}
 }
 
@@ -1046,6 +903,7 @@ function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
 	g_screen_height = screen_height;
+	g_page_width = (g_screen_width / 3);
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 
@@ -1075,61 +933,42 @@ function onResize(screen_width, screen_height) {
 	}
 	console.info('??? Resize called ...');
 
-	// Find the largest natural height from the images
-	var height = largestPageNaturalHeight();
-
 	// Make the panel as wide as the screen
 	g_needs_resize = false;
 	var style = $('#comicPanel')[0].style;
 	style.width = (g_screen_width * 1) + 'px';
 	style.height = (g_screen_height * 1) + 'px';
-/*
-	// Make it as wide as the screen and as tall as the tallest image
-	style = $('#pageContainer')[0].style;
-	style.width = (g_screen_width * 3) + 'px';
-	style.height = height + 'px';
-	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
-*/
+	style.top = 0 + 'px';
+	style.left = (- g_page_width) + 'px';
+
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_left[0].style;
-	style.width = (g_screen_width / 3) + 'px';
+	style.width = g_page_width + 'px';
 	style.height = g_screen_height + 'px';
-	//style.transitionDuration = '0.0s';
-	//g_page_left[0].panel_index = 0;
-	//style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_middle[0].style;
-	style.width = (g_screen_width / 3) + 'px';
+	style.width = g_page_width + 'px';
 	style.height = g_screen_height + 'px';
-	//style.transitionDuration = '0.0s';
-	//g_page_middle[0].panel_index = 1;
-	//var x = g_page_middle[0].panel_index * g_screen_width;
-	//var y = g_scroll_y_temp + g_scroll_y_start;
-	//style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_right[0].style;
-	style.width = (g_screen_width / 3) + 'px';
+	style.width = g_page_width + 'px';
 	style.height = g_screen_height + 'px';
-	//style.transitionDuration = '0.0s';
-	//g_page_right[0].panel_index = 2;
-	//style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	// Move the arrow to be on top of the right page
 	style = $('#overlayRight')[0].style;
-	style.width =  (g_screen_width / 3) + 'px';
+	style.width =  g_page_width + 'px';
 	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
+	style.transform = 'translate3d(' + (2 * g_page_width) + 'px, 0px, 0px)';
 
 	// Move the arrow to be on top of the left page
 	style = $('#overlayLeft')[0].style;
-	style.width =  (g_screen_width / 3) + 'px';
+	style.width =  g_page_width + 'px';
 	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
+	style.transform = 'translate3d(' + (0 * g_page_width) + 'px, 0px, 0px)';
 
 	updateScrollBar();
 }
@@ -1691,8 +1530,8 @@ function main() {
 	$(document).keydown(onKeyPress);
 
 	// Mouse wheel events
-	document.body.addEventListener('mousewheel', onMouseWheel, false);
-	document.body.addEventListener('DOMMouseScroll', onMouseWheel, false);
+//	document.body.addEventListener('mousewheel', onMouseWheel, false);
+//	document.body.addEventListener('DOMMouseScroll', onMouseWheel, false);
 
 	// Mouse events for the page container
 	var comicPanel = $('#comicPanel')[0];
@@ -1700,20 +1539,6 @@ function main() {
 	comicPanel.addEventListener('mouseup', onMouseUp, false);
 	comicPanel.addEventListener('mouseleave', onMouseUp, false);
 	comicPanel.addEventListener('mousemove', onMouseMove, false);
-
-	// Touch events
-	/*
-	comicPanel.addEventListener('touchstart', onTouchStart, false);
-	comicPanel.addEventListener('touchend', onTouchEnd, false);
-	comicPanel.addEventListener('touchcancel', ignoreEvent, false);
-	comicPanel.addEventListener('touchmove', onTouchMove, false);
-	*/
-	// MS Pointer Events
-	/*
-	document.body.addEventListener('MSPointerDown', onPointerStart, false);
-	document.body.addEventListener('MSPointerUp', onPointerEnd, false);
-	document.body.addEventListener('MSPointerMove', onPointerMove, false);
-	*/
 
 	// Reset everything
 	$('#comicPanel').hide();
