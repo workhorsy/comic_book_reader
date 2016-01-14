@@ -204,11 +204,12 @@ input:checked + .touchLabel::after {
 }
 
 #wallPaper {
+	border: 2px solid yellow;
 	background-color: silver;
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
-	left: 0px;
+	left: 300px;
 	right: 0px;
 }
 
@@ -319,32 +320,29 @@ input:checked + .touchLabel::after {
 }
 
 #comicPanel {
+	box-sizing: border-box;
 	position: absolute;
 	/*border: 10px solid orange;*/
 	overflow: hidden;
-}
-
-#pageContainer {
-	/*border: 20px solid black;*/
-	overflow: visible;
+	background-color: brown;
 }
 
 #pageLeft {
-	position: absolute;
+	float: left;
 	text-align: center;
-	/*background-color: red;*/
+	background-color: red;
 }
 
 #pageMiddle {
-	position: absolute;
+	float: left;
 	text-align: center;
-	/*background-color: green;*/
+	background-color: green;
 }
 
 #pageRight {
-	position: absolute;
+	float: left;
 	text-align: center;
-	/*background-color: blue;*/
+	background-color: blue;
 }
 
 .touchOverlayPageNumber {

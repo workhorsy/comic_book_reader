@@ -29,7 +29,6 @@ var g_is_swiping_left = false;
 var g_top_menu_visible = 1.0;
 var g_bottom_menu_visible = 0.0;
 
-var g_moving_page = null;
 var g_page_left = null;
 var g_page_middle = null;
 var g_page_right = null;
@@ -409,6 +408,7 @@ function loadCurrentPage(cb) {
 
 	// Mouse mode
 	if (g_is_mouse_mode) {
+
 		loadImage($('#mousePageMiddle'), g_image_index, true, function() {
 			if (cb) {
 				cb();
@@ -622,9 +622,9 @@ function ignoreEvent(e) {
 	e.preventDefault();
 	e.stopPropagation();
 }
-
+/*
 function onTouchStart(e) {
-	//console.log('@@@@@@ onTouchStart');
+	console.log('@@@@@@ onTouchStart');
 	//e.preventDefault();
 	//e.stopPropagation();
 
@@ -635,7 +635,7 @@ function onTouchStart(e) {
 }
 
 function onTouchEnd(e) {
-	//console.log('@@@@@@ onTouchEnd');
+	console.log('@@@@@@ onTouchEnd');
 	//e.preventDefault();
 	//e.stopPropagation();
 
@@ -644,7 +644,7 @@ function onTouchEnd(e) {
 }
 
 function onTouchMove(e) {
-	//console.log('@@@@@@ onTouchMove');
+	console.log('@@@@@@ onTouchMove');
 	e.preventDefault();
 	e.stopPropagation();
 
@@ -673,24 +673,16 @@ function onPointerMove(e) {
 	var y = e.clientY | 0;
 	onInputMove(x, y);
 }
-
-function onPageMouseDown(e) {
-	if (this.panel_index === 1) {
-		g_moving_page = this;
-	} else {
-		g_moving_page = null;
-	}
-}
-
+*/
 function onMouseDown(e) {
-	//console.log('@@@@@@ onMouseDown');
+	console.log('@@@@@@ onMouseDown');
 	var x = e.clientX;
 	var y = e.clientY;
 	onInputDown(e.target, x, y);
 }
 
 function onMouseUp(e) {
-	//console.log('@@@@@@ onMouseUp');
+	console.log('@@@@@@ onMouseUp');
 	onInputUp();
 }
 
@@ -702,17 +694,10 @@ function onMouseMove(e) {
 }
 
 function onInputDown(target, x, y) {
-	if (g_is_mouse_mode) {
-		return;
-	}
-
-	// Skip if clicking on something that is no touchable
-	if (! target.hasAttribute('touchable')) {
-		return;
-	}
+	console.info(target);
 
 	// If any menus are showing, hide them
-	if (target.hasAttribute('touchable') && g_top_menu_visible > 0.0 || g_bottom_menu_visible > 0.0) {
+	if (g_top_menu_visible > 0.0 || g_bottom_menu_visible > 0.0) {
 		hideAllMenus(false);
 		return;
 	}
@@ -734,10 +719,6 @@ function onInputDown(target, x, y) {
 }
 
 function onInputUp() {
-	if (g_is_mouse_mode) {
-		return;
-	}
-
 	// Remove glow from the top menu if it is not completly out
 	if (g_top_menu_visible !== 1.0) {
 		$('#topMenu').removeClass('menuWithGlow');
@@ -757,10 +738,9 @@ function onInputUp() {
 		return;
 	}
 	g_is_mouse_down = false;
-	g_moving_page = null;
 	g_scroll_y_start += g_scroll_y_temp;
 	g_scroll_y_temp = 0;
-
+/*
 	if (g_is_swiping_right) {
 		g_is_swiping_right = false;
 
@@ -867,21 +847,16 @@ function onInputUp() {
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
 	}
-
+*/
 	overlayShow(true);
 }
 
 function onInputMove(x, y) {
-	if (g_is_mouse_mode) {
-		return;
-	}
-
 	if (! g_is_mouse_down) {
 		return;
 	}
-
+	console.info("!!!!!!!!!!!!!!!!!!!!!!!!! onInputMove");
 	// Figure out if we are moving vertically or horizontally
-//		console.info(x + ', ' + g_mouse_start_x + ', ' + g_moving_page.panel_index + ', ' + g_moving_page.id);
 	var is_vertical = false;
 	if (Math.abs(y - g_mouse_start_y) > Math.abs(x - g_mouse_start_x)) {
 		is_vertical = true;
@@ -893,7 +868,7 @@ function onInputMove(x, y) {
 	var x_offset = x - g_mouse_start_x;
 	var y_offset = y - g_mouse_start_y;
 
-	if (is_vertical && g_moving_page) {
+	if (is_vertical) {
 		// Show the top panel if we are swiping down from the top
 		if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
 			var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
@@ -933,10 +908,10 @@ function onInputMove(x, y) {
 	if (! is_vertical && g_moving_page) {
 		var x = (g_moving_page.panel_index * g_screen_width) + x_offset;
 		var y = g_scroll_y_temp + g_scroll_y_start;
-		var style = g_moving_page.style;
+		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.0s';
 		style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
-
+/*
 		// Swiping right
 		if (x_offset > 0) {
 			var x = (g_page_left[0].panel_index * g_screen_width) + x_offset;
@@ -974,6 +949,7 @@ function onInputMove(x, y) {
 				g_is_swiping_left = false;
 			}
 		}
+*/
 	}
 }
 
@@ -1104,52 +1080,54 @@ function onResize(screen_width, screen_height) {
 
 	// Make the panel as wide as the screen
 	g_needs_resize = false;
-	$('#comicPanel')[0].style.width = (g_screen_width * 1) + 'px';
-
+	var style = $('#comicPanel')[0].style;
+	style.width = (g_screen_width * 1) + 'px';
+	style.height = (g_screen_height * 1) + 'px';
+/*
 	// Make it as wide as the screen and as tall as the tallest image
-	var style = $('#pageContainer')[0].style;
+	style = $('#pageContainer')[0].style;
 	style.width = (g_screen_width * 3) + 'px';
 	style.height = height + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
-
+*/
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_left[0].style;
-	style.width = g_screen_width + 'px';
-	style.height = height + 'px';
-	style.transitionDuration = '0.0s';
-	g_page_left[0].panel_index = 0;
-	style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+	style.width = (g_screen_width / 3) + 'px';
+	style.height = g_screen_height + 'px';
+	//style.transitionDuration = '0.0s';
+	//g_page_left[0].panel_index = 0;
+	//style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_middle[0].style;
-	style.width = g_screen_width + 'px';
-	style.height = height + 'px';
-	style.transitionDuration = '0.0s';
-	g_page_middle[0].panel_index = 1;
-	var x = g_page_middle[0].panel_index * g_screen_width;
-	var y = g_scroll_y_temp + g_scroll_y_start;
-	style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
+	style.width = (g_screen_width / 3) + 'px';
+	style.height = g_screen_height + 'px';
+	//style.transitionDuration = '0.0s';
+	//g_page_middle[0].panel_index = 1;
+	//var x = g_page_middle[0].panel_index * g_screen_width;
+	//var y = g_scroll_y_temp + g_scroll_y_start;
+	//style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_right[0].style;
-	style.width = g_screen_width + 'px';
-	style.height = height + 'px';
-	style.transitionDuration = '0.0s';
-	g_page_right[0].panel_index = 2;
-	style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+	style.width = (g_screen_width / 3) + 'px';
+	style.height = g_screen_height + 'px';
+	//style.transitionDuration = '0.0s';
+	//g_page_right[0].panel_index = 2;
+	//style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
 
 	// Move the arrow to be on top of the right page
 	style = $('#overlayRight')[0].style;
-	style.width =  g_screen_width + 'px';
-	style.height = height + 'px';
+	style.width =  (g_screen_width / 3) + 'px';
+	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
 
 	// Move the arrow to be on top of the left page
 	style = $('#overlayLeft')[0].style;
-	style.width =  g_screen_width + 'px';
-	style.height = height + 'px';
+	style.width =  (g_screen_width / 3) + 'px';
+	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
 	style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
 
@@ -1580,8 +1558,8 @@ function main() {
 
 	// Resize everything when the browser resizes
 	$(window).resize(function() {
-		var width = $(window).width();
-		var height = $(window).height();
+		var width = 900;//$(window).width();
+		var height = 300;//$(window).height();
 		onResize(width, height);
 	});
 
@@ -1712,26 +1690,24 @@ function main() {
 	// Key press events
 	$(document).keydown(onKeyPress);
 
-	// Mouse events for the pages
-	g_page_left.mousedown(onPageMouseDown);
-	g_page_middle.mousedown(onPageMouseDown);
-	g_page_right.mousedown(onPageMouseDown);
-
-	// Mouse events for the body
-	$('body').mousedown(onMouseDown);
-	$('body').on('mouseup mouseleave', onMouseUp);
-	$('body').mousemove(onMouseMove);
-
 	// Mouse wheel events
 	document.body.addEventListener('mousewheel', onMouseWheel, false);
 	document.body.addEventListener('DOMMouseScroll', onMouseWheel, false);
 
-	// Touch events
-	document.body.addEventListener('touchstart', onTouchStart, false);
-	document.body.addEventListener('touchend', onTouchEnd, false);
-	document.body.addEventListener('touchcancel', ignoreEvent, false);
-	document.body.addEventListener('touchmove', onTouchMove, false);
+	// Mouse events for the page container
+	var comicPanel = $('#comicPanel')[0];
+	comicPanel.addEventListener('mousedown', onMouseDown, false);
+	comicPanel.addEventListener('mouseup', onMouseUp, false);
+	comicPanel.addEventListener('mouseleave', onMouseUp, false);
+	comicPanel.addEventListener('mousemove', onMouseMove, false);
 
+	// Touch events
+	/*
+	comicPanel.addEventListener('touchstart', onTouchStart, false);
+	comicPanel.addEventListener('touchend', onTouchEnd, false);
+	comicPanel.addEventListener('touchcancel', ignoreEvent, false);
+	comicPanel.addEventListener('touchmove', onTouchMove, false);
+	*/
 	// MS Pointer Events
 	/*
 	document.body.addEventListener('MSPointerDown', onPointerStart, false);
