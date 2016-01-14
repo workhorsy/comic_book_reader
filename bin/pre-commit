@@ -11,6 +11,7 @@ CACHE:\r\n\
 favicon.ico\r\n\
 index.html\r\n\
 styles.css\r\n\
+js/lru.js\r\n\
 main.js\r\n\
 invalid_image.png\r\n\
 js/settings.js\r\n\

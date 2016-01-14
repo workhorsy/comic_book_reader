@@ -4,6 +4,7 @@
 "use strict";
 
 var g_is_terminated = false;
+var g_cached_images = new LRUCache(6);
 var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
@@ -460,6 +461,35 @@ function loadCurrentPage(cb) {
 	}
 }
 
+function getCachedFileUrl(filename, cb) {
+	// Just return it if it already exists
+	var value = g_cached_images.get(filename);
+	if (typeof value !== "undefined") {
+		console.info("$$$$$$$$$$$$$$$$$$$$$ cached file: " + filename);
+		cb(value);
+		return;
+	}
+
+	// Create the new url
+	getCachedFile('big', filename, function(blob) {
+		console.info("@@@@@@@@@@@@@@@@@ creating file: " + filename);
+		if (blob) {
+			var url = URL.createObjectURL(blob);
+
+			// If the cache is too big, remove lest recently used item
+			if (g_cached_images.size >= g_cached_images.limit) {
+				var old_url = g_cached_images.head.value;
+				var old_filename = g_cached_images.head.key;
+				URL.revokeObjectURL(old_url);
+				console.info("----------------- removed file: " + old_filename);
+			}
+
+			g_cached_images.put(filename, url);
+			cb(url);
+		}
+	});
+}
+
 function loadImage(page, index, is_position_reset, cb) {
 	var filename = g_titles[index];
 
@@ -483,10 +513,7 @@ function loadImage(page, index, is_position_reset, cb) {
 		style.transform = 'translate3d(0px, 0px, 0px)';
 	}
 
-	getCachedFile('big', filename, function(blob) {
-		var url = URL.createObjectURL(blob);
-		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
-
+	getCachedFileUrl(filename, function(url) {
 		// Create a new image
 		var img = document.createElement('img');
 		img.id = 'page_' + index;
@@ -494,9 +521,6 @@ function loadImage(page, index, is_position_reset, cb) {
 		img.className = 'comicPage';
 		img.ondragstart = function() { return false; }
 		img.onload = function() {
-			URL.revokeObjectURL(url);
-			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
-
 			console.info('!!! Loading image ' + index + ': ' + img.title);
 			if (g_needs_resize) {
 				onResize(g_screen_width, g_screen_height);
@@ -505,9 +529,6 @@ function loadImage(page, index, is_position_reset, cb) {
 				cb();
 		};
 		img.onerror = function() {
-			URL.revokeObjectURL(url);
-			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
-
 			img.onload = null;
 			img.onerror = null;
 
@@ -550,6 +571,12 @@ function clearComicData() {
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 	g_are_page_previews_loading = false;
+
+	// Clear all the cached images
+	g_cached_images.forEach(function(filename, url) {
+		URL.revokeObjectURL(url);
+	}, true);
+	g_cached_images.removeAll();
 }
 
 // FIXME: Remove the size and type parameters, as they are not used
