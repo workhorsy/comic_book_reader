@@ -4,6 +4,7 @@
 "use strict";
 
 var g_is_terminated = false;
+var g_cached_images = new LRUCache(6);
 var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
@@ -19,6 +20,8 @@ var g_mouse_start_y = 0;
 
 var g_screen_width = 0;
 var g_screen_height = 0;
+var g_page_width = 0;
+var g_page_y = 0;
 var g_scroll_y_temp = 0;
 var g_scroll_y_start = 0;
 var g_needs_resize = false;
@@ -29,7 +32,6 @@ var g_is_swiping_left = false;
 var g_top_menu_visible = 1.0;
 var g_bottom_menu_visible = 0.0;
 
-var g_moving_page = null;
 var g_page_left = null;
 var g_page_middle = null;
 var g_page_right = null;
@@ -172,6 +174,7 @@ function hideTopMenu(is_instant) {
 	var height = top_menu.outerHeight() + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
+	style.pointerEvents = 'none';
 
 	g_top_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
@@ -190,6 +193,7 @@ function hideBottomMenu(is_instant) {
 	var height = bottom_menu.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
+	style.pointerEvents = 'none';
 
 	g_are_page_previews_loading = false;
 	g_bottom_menu_visible = 0.0;
@@ -215,6 +219,11 @@ function showTopMenu(y_offset, is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_top_menu_visible = y_offset;
+	if (g_top_menu_visible == 1.0) {
+		style.pointerEvents = 'all';
+	} else {
+		style.pointerEvents = 'none';
+	}
 
 	// Show the wall paper
 	setWallPaperOpacity();
@@ -228,6 +237,11 @@ function showBottomMenu(y_offset, is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_bottom_menu_visible = y_offset;
+	if (g_bottom_menu_visible == 1.0) {
+		style.pointerEvents = 'all';
+	} else {
+		style.pointerEvents = 'none';
+	}
 
 	setWallPaperOpacity();
 
@@ -246,11 +260,11 @@ function showBottomMenu(y_offset, is_instant) {
 
 			var file_name = g_titles[i];
 			getCachedFile('small', file_name, function(blob) {
-				console.info('Loading page preview #' + (i + 1));
+				//console.info('Loading page preview #' + (i + 1));
 				var url = null;
 				if (blob) {
 					url = URL.createObjectURL(blob)
-					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+					//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 				}
 
 				var img = document.createElement('img');
@@ -267,7 +281,7 @@ function showBottomMenu(y_offset, is_instant) {
 				img.onload = function() {
 					if (url) {
 						URL.revokeObjectURL(url);
-						console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+						//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 					}
 
 					// Make the image twice as wide if it is in landscape mode
@@ -280,7 +294,7 @@ function showBottomMenu(y_offset, is_instant) {
 				img.onerror = function() {
 					if (url) {
 						URL.revokeObjectURL(url);
-						console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+						//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 					}
 
 					img.onload = null;
@@ -343,8 +357,8 @@ function showLibrary() {
 
 		if (pagename && blob) {
 			var url = URL.createObjectURL(blob);
-			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
-			console.info(pagename);
+			//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+			//console.info(pagename);
 			img.onclick = function(e) {
 				libraryMenu.hide();
 				libraryMenu.empty();
@@ -353,7 +367,7 @@ function showLibrary() {
 			};
 			img.onload = function() {
 				URL.revokeObjectURL(this.src);
-				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
+				//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
 
 				// Make the image twice as wide if it is in landscape mode
 				if (this.naturalWidth > this.naturalHeight) {
@@ -362,7 +376,7 @@ function showLibrary() {
 			};
 			img.onerror = function() {
 				URL.revokeObjectURL(this.src);
-				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
+				//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
 			};
 			img.src = url;
 		} else {
@@ -407,8 +421,11 @@ function loadCurrentPage(cb) {
 	$('.overlayPageNumber').show();
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
+	g_page_y = 0;
+
 	// Mouse mode
 	if (g_is_mouse_mode) {
+
 		loadImage($('#mousePageMiddle'), g_image_index, true, function() {
 			if (cb) {
 				cb();
@@ -444,6 +461,35 @@ function loadCurrentPage(cb) {
 	}
 }
 
+function getCachedFileUrl(filename, cb) {
+	// Just return it if it already exists
+	var value = g_cached_images.get(filename);
+	if (typeof value !== "undefined") {
+		console.info("$$$$$$$$$$$$$$$$$ cached: " + filename);
+		cb(value);
+		return;
+	}
+
+	// Create the new url
+	getCachedFile('big', filename, function(blob) {
+		console.info("+++++++++++++++++ adding cache: " + filename);
+		if (blob) {
+			var url = URL.createObjectURL(blob);
+
+			// If the cache is too big, remove lest recently used item
+			if (g_cached_images.size >= g_cached_images.limit) {
+				var old_url = g_cached_images.head.value;
+				var old_filename = g_cached_images.head.key;
+				URL.revokeObjectURL(old_url);
+				console.info("----------------- removing cache: " + old_filename);
+			}
+
+			g_cached_images.put(filename, url);
+			cb(url);
+		}
+	});
+}
+
 function loadImage(page, index, is_position_reset, cb) {
 	var filename = g_titles[index];
 
@@ -467,10 +513,7 @@ function loadImage(page, index, is_position_reset, cb) {
 		style.transform = 'translate3d(0px, 0px, 0px)';
 	}
 
-	getCachedFile('big', filename, function(blob) {
-		var url = URL.createObjectURL(blob);
-		console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
-
+	getCachedFileUrl(filename, function(url) {
 		// Create a new image
 		var img = document.createElement('img');
 		img.id = 'page_' + index;
@@ -478,10 +521,7 @@ function loadImage(page, index, is_position_reset, cb) {
 		img.className = 'comicPage';
 		img.ondragstart = function() { return false; }
 		img.onload = function() {
-			URL.revokeObjectURL(url);
-			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
-
-			console.info('!!! Loading image ' + index + ': ' + img.title);
+			//console.info('!!! Loading image ' + index + ': ' + img.title);
 			if (g_needs_resize) {
 				onResize(g_screen_width, g_screen_height);
 			}
@@ -489,9 +529,6 @@ function loadImage(page, index, is_position_reset, cb) {
 				cb();
 		};
 		img.onerror = function() {
-			URL.revokeObjectURL(url);
-			console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
-
 			img.onload = null;
 			img.onerror = null;
 
@@ -534,6 +571,12 @@ function clearComicData() {
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 	g_are_page_previews_loading = false;
+
+	// Clear all the cached images
+	g_cached_images.forEach(function(filename, url) {
+		URL.revokeObjectURL(url);
+	}, true);
+	g_cached_images.removeAll();
 }
 
 // FIXME: Remove the size and type parameters, as they are not used
@@ -591,32 +634,6 @@ function onError(msg) {
 	$('.btnSettings').prop('disabled', false);
 }
 
-function largestNumber(a, b, c) {
-	var larger = a > b ? a : b;
-	larger = larger > c ? larger : c;
-	return larger;
-}
-
-function largestPageNaturalHeight() {
-	var left_children = g_page_left.children();
-	var middle_children = g_page_middle.children();
-	var right_children = g_page_right.children();
-
-	var left_width = left_children.length > 0 ? left_children[0].naturalWidth : 0;
-	var middle_width = middle_children.length > 0 ? middle_children[0].naturalWidth : 0;
-	var right_width = right_children.length > 0 ? right_children[0].naturalWidth : 0;
-
-	var left_ratio = left_width !== 0 ? g_screen_width / left_width : 0;
-	var middle_ratio = middle_width !== 0 ? g_screen_width / middle_width : 0;
-	var right_ratio = right_width !== 0 ? g_screen_width / right_width : 0;
-
-	var left_height = left_children.length > 0 ? left_ratio * left_children[0].naturalHeight : 0;
-	var middle_height = middle_children.length > 0 ? middle_ratio * middle_children[0].naturalHeight : 0;
-	var right_height =  right_children.length > 0 ?  right_ratio *  right_children[0].naturalHeight : 0;
-
-	return largestNumber(left_height, middle_height, right_height);
-}
-
 function ignoreEvent(e) {
 	//console.info(e.type);
 	e.preventDefault();
@@ -628,7 +645,6 @@ function onTouchStart(e) {
 	//e.preventDefault();
 	//e.stopPropagation();
 
-	g_moving_page = g_page_middle[0];
 	var x = e.changedTouches[0].clientX | 0;
 	var y = e.changedTouches[0].clientY | 0;
 	onInputDown(e.target, x, y);
@@ -639,7 +655,6 @@ function onTouchEnd(e) {
 	//e.preventDefault();
 	//e.stopPropagation();
 
-	g_moving_page = null;
 	onInputUp();
 }
 
@@ -651,35 +666,6 @@ function onTouchMove(e) {
 	var x = e.changedTouches[0].clientX | 0;
 	var y = e.changedTouches[0].clientY | 0;
 	onInputMove(x, y);
-}
-
-function onPointerStart(e) {
-	//console.log('@@@@@@ onPointerStart');
-	g_moving_page = g_page_middle[0];
-	var x = e.clientX | 0;
-	var y = e.clientY | 0;
-	onInputDown(e.target, x, y);
-}
-
-function onPointerEnd(e) {
-	//console.log('@@@@@@ onPointerEnd');
-	g_moving_page = null;
-	onInputUp();
-}
-
-function onPointerMove(e) {
-	//console.log('@@@@@@ onPointerMove');
-	var x = e.clientX | 0;
-	var y = e.clientY | 0;
-	onInputMove(x, y);
-}
-
-function onPageMouseDown(e) {
-	if (this.panel_index === 1) {
-		g_moving_page = this;
-	} else {
-		g_moving_page = null;
-	}
 }
 
 function onMouseDown(e) {
@@ -702,17 +688,8 @@ function onMouseMove(e) {
 }
 
 function onInputDown(target, x, y) {
-	if (g_is_mouse_mode) {
-		return;
-	}
-
-	// Skip if clicking on something that is no touchable
-	if (! target.hasAttribute('touchable')) {
-		return;
-	}
-
 	// If any menus are showing, hide them
-	if (target.hasAttribute('touchable') && g_top_menu_visible > 0.0 || g_bottom_menu_visible > 0.0) {
+	if (g_top_menu_visible > 0.0 || g_bottom_menu_visible > 0.0) {
 		hideAllMenus(false);
 		return;
 	}
@@ -734,10 +711,6 @@ function onInputDown(target, x, y) {
 }
 
 function onInputUp() {
-	if (g_is_mouse_mode) {
-		return;
-	}
-
 	// Remove glow from the top menu if it is not completly out
 	if (g_top_menu_visible !== 1.0) {
 		$('#topMenu').removeClass('menuWithGlow');
@@ -757,45 +730,22 @@ function onInputUp() {
 		return;
 	}
 	g_is_mouse_down = false;
-	g_moving_page = null;
 	g_scroll_y_start += g_scroll_y_temp;
 	g_scroll_y_temp = 0;
 
+	// Turning page right
 	if (g_is_swiping_right) {
 		g_is_swiping_right = false;
 
-		var style = g_page_middle[0].style;
+		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
-
-		style = g_page_left[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
-
-		style = $('#overlayLeft')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+		style.transform = 'translate3d(' + (g_page_width * 1) + 'px, 0px, 0px)';
 
 		// Update the page orderings, after the pages move into position
 		setTimeout(function() {
-			var old_left = g_page_left;
-			var old_middle = g_page_middle;
-			var old_right = g_page_right;
-			g_page_right = old_middle;
-			g_page_middle = old_left;
-			g_page_left = old_right;
-
-			g_page_left[0].panel_index = 0;
-			g_page_middle[0].panel_index = 1;
-			g_page_right[0].panel_index = 2;
-
-			style = g_page_left[0].style;
+			var style = $('#comicPanel')[0].style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
-
-			style = $('#overlayLeft')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
+			style.transform = 'translate3d(0px, 0px, 0px)';
 			g_scroll_y_start = 0;
 
 			if (g_image_index > 0) {
@@ -803,85 +753,43 @@ function onInputUp() {
 				loadCurrentPage();
 			}
 		}, 300);
+	// Turning page left
 	} else if (g_is_swiping_left) {
 		g_is_swiping_left = false;
 
-		var style = g_page_middle[0].style;
+		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(0px, 0px, 0px)';
-
-		style = g_page_right[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
-
-		style = $('#overlayRight')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width) + 'px, 0px, 0px)';
+		style.transform = 'translate3d(' + (- (g_page_width * 1)) + 'px, 0px, 0px)';
 
 		// Update the page orderings, after the pages move into position
 		setTimeout(function() {
-			var old_left = g_page_left;
-			var old_middle = g_page_middle;
-			var old_right = g_page_right;
-			g_page_left = old_middle;
-			g_page_middle = old_right;
-			g_page_right = old_left;
-
-			g_page_left[0].panel_index = 0;
-			g_page_middle[0].panel_index = 1;
-			g_page_right[0].panel_index = 2;
-
-			style = g_page_right[0].style;
+			var style = $('#comicPanel')[0].style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+			style.transform = 'translate3d(0px, 0px, 0px)';
 			g_scroll_y_start = 0;
-
-			style = $('#overlayRight')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
 
 			if (g_image_index < g_image_count -1) {
 				g_image_index++;
 				loadCurrentPage();
 			}
 		}, 300);
+	// Reset the page to center
 	} else {
-		var style = g_page_left[0].style;
+		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.3s';
 		style.transform = 'translate3d(0px, 0px, 0px)';
-
-		var y = g_scroll_y_temp + g_scroll_y_start;
-		style = g_page_middle[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 1) + 'px, ' + y + 'px, 0px)';
-
-		style = g_page_right[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
-
-		style = $('#overlayLeft')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 0) + 'px, 0px, 0px)';
-
-		style = $('#overlayRight')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_screen_width * 2) + 'px, 0px, 0px)';
+		g_scroll_y_start = 0;
 	}
 
 	overlayShow(true);
 }
 
 function onInputMove(x, y) {
-	if (g_is_mouse_mode) {
-		return;
-	}
-
 	if (! g_is_mouse_down) {
 		return;
 	}
 
 	// Figure out if we are moving vertically or horizontally
-//		console.info(x + ', ' + g_mouse_start_x + ', ' + g_moving_page.panel_index + ', ' + g_moving_page.id);
 	var is_vertical = false;
 	if (Math.abs(y - g_mouse_start_y) > Math.abs(x - g_mouse_start_x)) {
 		is_vertical = true;
@@ -893,7 +801,7 @@ function onInputMove(x, y) {
 	var x_offset = x - g_mouse_start_x;
 	var y_offset = y - g_mouse_start_y;
 
-	if (is_vertical && g_moving_page) {
+	if (is_vertical) {
 		// Show the top panel if we are swiping down from the top
 		if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
 			var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
@@ -904,12 +812,14 @@ function onInputMove(x, y) {
 			showBottomMenu(y / g_down_swipe_size, true);
 		// Scroll the page up and down
 		} else {
-			var image_height = $('#' + g_moving_page.children[0].id).height();
+			// FIXME: Super slow to get the height this way every movement. Look for similar calls, and replace them
+			var children = g_page_middle.children();
+			var image_height = $('#' + children[0].id).height();
 			x_offset = x_offset / 20.0;
 			y_offset = y_offset / 20.0;
 
 			// Reset the scroll position if it goes past the screen top or bottom
-			var new_offset = y_offset + g_scroll_y_start;
+			var new_offset = y_offset + g_page_y;
 			if (new_offset > 0) {
 				new_offset = 0;
 			} else if (image_height + new_offset < g_screen_height) {
@@ -920,36 +830,25 @@ function onInputMove(x, y) {
 			// Only scroll up if the bottom of the image is below the screen bottom
 			g_scroll_y_start = new_offset;
 
-			var x = (g_moving_page.panel_index * g_screen_width);
-			var style = g_moving_page.style;
+			var style = g_page_middle[0].style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+			style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
+			g_page_y = new_offset;
 
 			updateScrollBar();
 		}
 	}
 
 	// Scroll the comic panels if we are swiping right or left
-	if (! is_vertical && g_moving_page) {
-		var x = (g_moving_page.panel_index * g_screen_width) + x_offset;
-		var y = g_scroll_y_temp + g_scroll_y_start;
-		var style = g_moving_page.style;
+	if (! is_vertical) {
+		var x = x_offset;
+		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.0s';
-		style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
+		style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
 		// Swiping right
 		if (x_offset > 0) {
-			var x = (g_page_left[0].panel_index * g_screen_width) + x_offset;
-			var style = g_page_left[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			style = $('#overlayLeft')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index > 0) {
-//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
+			if (Math.abs(x_offset) > (g_page_width / 2) && g_image_index > 0) {
 				g_is_swiping_right = true;
 			} else {
 				g_is_swiping_right = false;
@@ -957,17 +856,7 @@ function onInputMove(x, y) {
 			}
 		// Swiping left
 		} else {
-			var x = (g_page_right[0].panel_index * g_screen_width) + x_offset;
-			var style = g_page_right[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			style = $('#overlayRight')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-			if (Math.abs(x_offset) > g_screen_width / 2 && g_image_index < g_image_count -1) {
-//				console.info(Math.abs(x_offset) + ' > ' + (g_screen_width / 2));
+			if (Math.abs(x_offset) > (g_page_width / 2) && g_image_index < g_image_count -1) {
 				g_is_swiping_left = true;
 			} else {
 				g_is_swiping_right = false;
@@ -978,11 +867,6 @@ function onInputMove(x, y) {
 }
 
 function onMouseWheel(e) {
-	// Just do default mouse wheel things if not on the middle page
-	if (e.target !== g_page_middle[0]) {
-		return;
-	}
-
 	e.preventDefault();
 	e.stopPropagation();
 
@@ -994,8 +878,8 @@ function onMouseWheel(e) {
 		y_offset = -100;
 	}
 
-	g_moving_page = g_page_middle[0];
-	var image_height = $('#' + g_moving_page.children[0].id).height();
+	var moving_page = $('#pageMiddle')[0];
+	var image_height = $('#' + moving_page.children[0].id).height();
 
 	// Reset the scroll position if it goes past the screen top or bottom
 	var new_offset = y_offset + g_scroll_y_start;
@@ -1010,10 +894,9 @@ function onMouseWheel(e) {
 	if (new_offset <= 0 && image_height + new_offset >= g_screen_height) {
 		g_scroll_y_start = new_offset;
 
-		var x = (g_moving_page.panel_index * g_screen_width);
-		var style = g_moving_page.style;
+		var style = moving_page.style;
 		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+		style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
 
 		updateScrollBar();
 	}
@@ -1041,8 +924,8 @@ function onKeyPress(e) {
 			return;
 	}
 
-	g_moving_page = g_page_middle[0];
-	var image_height = $('#' + g_moving_page.children[0].id).height();
+	var moving_page = $('#pageMiddle')[0];
+	var image_height = $('#' + moving_page.children[0].id).height();
 
 	// Reset the scroll position if it goes past the screen top or bottom
 	var new_offset = y_offset + g_scroll_y_start;
@@ -1057,10 +940,9 @@ function onKeyPress(e) {
 	if (new_offset <= 0 && image_height + new_offset >= g_screen_height) {
 		g_scroll_y_start = new_offset;
 
-		var x = (g_moving_page.panel_index * g_screen_width);
-		var style = g_moving_page.style;
+		var style = moving_page.style;
 		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+		style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
 
 		updateScrollBar();
 	}
@@ -1070,6 +952,7 @@ function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
 	g_screen_height = screen_height;
+	g_page_width = (g_screen_width / 1);
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 
@@ -1099,59 +982,41 @@ function onResize(screen_width, screen_height) {
 	}
 	console.info('??? Resize called ...');
 
-	// Find the largest natural height from the images
-	var height = largestPageNaturalHeight();
-
 	// Make the panel as wide as the screen
 	g_needs_resize = false;
-	$('#comicPanel')[0].style.width = (g_screen_width * 1) + 'px';
-
-	// Make it as wide as the screen and as tall as the tallest image
-	var style = $('#pageContainer')[0].style;
+	var style = $('#comicPanel')[0].style;
 	style.width = (g_screen_width * 3) + 'px';
-	style.height = height + 'px';
-	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(-' + g_screen_width + 'px, 0px, 0px)';
+	style.height = g_screen_height + 'px';
+	style.left = (- g_page_width) + 'px';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_left[0].style;
-	style.width = g_screen_width + 'px';
-	style.height = height + 'px';
-	style.transitionDuration = '0.0s';
-	g_page_left[0].panel_index = 0;
-	style.transform = 'translate3d(' + (g_page_left[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+	style.width = g_page_width + 'px';
+	style.height = g_screen_height + 'px';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_middle[0].style;
-	style.width = g_screen_width + 'px';
-	style.height = height + 'px';
-	style.transitionDuration = '0.0s';
-	g_page_middle[0].panel_index = 1;
-	var x = g_page_middle[0].panel_index * g_screen_width;
-	var y = g_scroll_y_temp + g_scroll_y_start;
-	style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
+	style.width = g_page_width + 'px';
+	style.height = g_screen_height + 'px';
 
 	// Make it as wide as the screen and as tall as the tallest image
 	style = g_page_right[0].style;
-	style.width = g_screen_width + 'px';
-	style.height = height + 'px';
-	style.transitionDuration = '0.0s';
-	g_page_right[0].panel_index = 2;
-	style.transform = 'translate3d(' + (g_page_right[0].panel_index * g_screen_width) + 'px, 0px, 0px)';
+	style.width = g_page_width + 'px';
+	style.height = g_screen_height + 'px';
 
 	// Move the arrow to be on top of the right page
 	style = $('#overlayRight')[0].style;
-	style.width =  g_screen_width + 'px';
-	style.height = height + 'px';
+	style.width =  g_page_width + 'px';
+	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(' + (2 * g_screen_width) + 'px, 0px, 0px)';
+	style.transform = 'translate3d(' + (2 * g_page_width) + 'px, 0px, 0px)';
 
 	// Move the arrow to be on top of the left page
 	style = $('#overlayLeft')[0].style;
-	style.width =  g_screen_width + 'px';
-	style.height = height + 'px';
+	style.width =  g_page_width + 'px';
+	style.height = g_screen_height + 'px';
 	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(' + (0 * g_screen_width) + 'px, 0px, 0px)';
+	style.transform = 'translate3d(' + (0 * g_page_width) + 'px, 0px, 0px)';
 
 	updateScrollBar();
 }
@@ -1462,13 +1327,13 @@ function makePagePreview(filename, is_cached, cb) {
 	if (! is_cached) {
 		getCachedFile('big', filename, function(blob) {
 			var url = URL.createObjectURL(blob);
-			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
+			//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
 
 			var img = new Image();
 			img.onload = function() {
 				if (url) {
 					URL.revokeObjectURL(url);
-					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 					url = null;
 				}
 
@@ -1492,7 +1357,7 @@ function makePagePreview(filename, is_cached, cb) {
 			img.onerror = function(e) {
 				if (url) {
 					URL.revokeObjectURL(url);
-					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 					url = null;
 				}
 
@@ -1709,35 +1574,26 @@ function main() {
 		loadComic();
 	});
 
+	var comicPanel = $('#comicPanel')[0];
+
 	// Key press events
 	$(document).keydown(onKeyPress);
 
-	// Mouse events for the pages
-	g_page_left.mousedown(onPageMouseDown);
-	g_page_middle.mousedown(onPageMouseDown);
-	g_page_right.mousedown(onPageMouseDown);
-
-	// Mouse events for the body
-	$('body').mousedown(onMouseDown);
-	$('body').on('mouseup mouseleave', onMouseUp);
-	$('body').mousemove(onMouseMove);
-
 	// Mouse wheel events
-	document.body.addEventListener('mousewheel', onMouseWheel, false);
-	document.body.addEventListener('DOMMouseScroll', onMouseWheel, false);
+	comicPanel.addEventListener('mousewheel', onMouseWheel, false);
+	comicPanel.addEventListener('DOMMouseScroll', onMouseWheel, false);
+
+	// Mouse events for the page container
+	comicPanel.addEventListener('mousedown', onMouseDown, false);
+	comicPanel.addEventListener('mouseup', onMouseUp, false);
+	comicPanel.addEventListener('mouseleave', onMouseUp, false);
+	comicPanel.addEventListener('mousemove', onMouseMove, false);
 
 	// Touch events
-	document.body.addEventListener('touchstart', onTouchStart, false);
-	document.body.addEventListener('touchend', onTouchEnd, false);
-	document.body.addEventListener('touchcancel', ignoreEvent, false);
-	document.body.addEventListener('touchmove', onTouchMove, false);
-
-	// MS Pointer Events
-	/*
-	document.body.addEventListener('MSPointerDown', onPointerStart, false);
-	document.body.addEventListener('MSPointerUp', onPointerEnd, false);
-	document.body.addEventListener('MSPointerMove', onPointerMove, false);
-	*/
+	comicPanel.addEventListener('touchstart', onTouchStart, false);
+	comicPanel.addEventListener('touchend', onTouchEnd, false);
+	comicPanel.addEventListener('touchcancel', ignoreEvent, false);
+	comicPanel.addEventListener('touchmove', onTouchMove, false);
 
 	// Reset everything
 	$('#comicPanel').hide();

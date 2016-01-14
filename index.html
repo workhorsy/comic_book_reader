@@ -2,10 +2,12 @@
 <html manifest="main.appcache">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<title>Comic Book Reader</title>
 		<link type="image/x-icon" href="favicon.ico" rel="shortcut icon" />
 		<link type="text/css" href="styles.css" media="screen" rel="Stylesheet" />
 		<script src="js/jquery-1.11.3.min.js"></script>
+		<script src="js/lru.js"></script>
 		<script src="js/polyfill/polyfill.js"></script>
 		<script src="js/settings.js"></script>
 		<script src="main.js"></script>
@@ -163,23 +165,21 @@
 				</div>
 
 				<div id="comicPanel" class="unselectable" touchable>
-					<div id="pageContainer" class="unselectable" touchable>
-						<div id="pageLeft" class="unselectable" touchable>
-							Left Page
-						</div>
-						<div id="pageMiddle" class="unselectable" touchable>
-							Middle Page
-						</div>
-						<div id="pageRight" class="unselectable" touchable>
-							Right Page
-						</div>
+					<div id="pageLeft" class="unselectable" touchable>
+						Left Page
+					</div>
+					<div id="pageMiddle" class="unselectable" touchable>
+						Middle Page
+					</div>
+					<div id="pageRight" class="unselectable" touchable>
+						Right Page
+					</div>
 
-						<div id="overlayRight" class="unselectable" touchable>
-							<div id="arrowRight"></div>
-						</div>
-						<div id="overlayLeft" class="unselectable" touchable>
-							<div id="arrowLeft"></div>
-						</div>
+					<div id="overlayRight" class="unselectable" touchable>
+						<div id="arrowRight"></div>
+					</div>
+					<div id="overlayLeft" class="unselectable" touchable>
+						<div id="arrowLeft"></div>
 					</div>
 				</div>
 			</div>

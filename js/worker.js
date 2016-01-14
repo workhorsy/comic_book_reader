@@ -113,7 +113,7 @@ function onUncompress(archive) {
 }
 
 self.addEventListener('message', function(e) {
-	console.info(e);
+	//console.info(e);
 
 	// If the data posted is a file, monkey patch the action to be uncompress
 	if (e.data instanceof File) {
@@ -172,7 +172,7 @@ self.addEventListener('message', function(e) {
 
 			var i = 0;
 			var onEach = function(name, blob) {
-				console.info(name);
+				//console.info(name);
 
 				var message = {
 					action: 'uncompressed_each',

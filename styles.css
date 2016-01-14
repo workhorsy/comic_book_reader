@@ -319,30 +319,26 @@ input:checked + .touchLabel::after {
 }
 
 #comicPanel {
+	box-sizing: border-box;
 	position: absolute;
-	/*border: 10px solid orange;*/
+	top: 0;
 	overflow: hidden;
 }
 
-#pageContainer {
-	/*border: 20px solid black;*/
-	overflow: visible;
-}
-
 #pageLeft {
-	position: absolute;
+	float: left;
 	text-align: center;
 	/*background-color: red;*/
 }
 
 #pageMiddle {
-	position: absolute;
+	float: left;
 	text-align: center;
 	/*background-color: green;*/
 }
 
 #pageRight {
-	position: absolute;
+	float: left;
 	text-align: center;
 	/*background-color: blue;*/
 }

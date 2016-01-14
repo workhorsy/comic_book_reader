@@ -1,10 +1,11 @@
 CACHE MANIFEST
-# v1 Tue, Jan 12, 2016  8:56:24 PM
+# v1 Thu, Jan 14, 2016  1:01:49 PM
 
 CACHE:
 favicon.ico
 index.html
 styles.css
+js/lru.js
 main.js
 invalid_image.png
 js/settings.js
