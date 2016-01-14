@@ -925,7 +925,7 @@ function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
 	g_screen_height = screen_height;
-	g_page_width = (g_screen_width / 3);
+	g_page_width = (g_screen_width / 1);
 	g_scroll_y_temp = 0;
 	g_scroll_y_start = 0;
 
@@ -958,8 +958,8 @@ function onResize(screen_width, screen_height) {
 	// Make the panel as wide as the screen
 	g_needs_resize = false;
 	var style = $('#comicPanel')[0].style;
-	style.width = (g_screen_width * 1) + 'px';
-	style.height = (g_screen_height * 1) + 'px';
+	style.width = (g_screen_width * 3) + 'px';
+	style.height = g_screen_height + 'px';
 	style.left = (- g_page_width) + 'px';
 
 	// Make it as wide as the screen and as tall as the tallest image
@@ -1418,8 +1418,8 @@ function main() {
 
 	// Resize everything when the browser resizes
 	$(window).resize(function() {
-		var width = 1800;//$(window).width();
-		var height = 600;//$(window).height();
+		var width = $(window).width();
+		var height = $(window).height();
 		onResize(width, height);
 	});
 

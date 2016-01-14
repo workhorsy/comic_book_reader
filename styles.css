@@ -204,7 +204,6 @@ input:checked + .touchLabel::after {
 }
 
 #wallPaper {
-	border: 2px solid yellow;
 	background-color: silver;
 	position: absolute;
 	top: 0px;
@@ -324,26 +323,24 @@ input:checked + .touchLabel::after {
 	position: absolute;
 	top: 0;
 	overflow: hidden;
-	background-color: brown;
-	outline: 5px solid pink;
 }
 
 #pageLeft {
 	float: left;
 	text-align: center;
-	background-color: red;
+	/*background-color: red;*/
 }
 
 #pageMiddle {
 	float: left;
 	text-align: center;
-	background-color: green;
+	/*background-color: green;*/
 }
 
 #pageRight {
 	float: left;
 	text-align: center;
-	background-color: blue;
+	/*background-color: blue;*/
 }
 
 .touchOverlayPageNumber {
