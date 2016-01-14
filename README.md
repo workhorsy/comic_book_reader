@@ -25,6 +25,7 @@ Comic Book Reader
 * When the UI clears all the data, it resets the UI to touch mode. Don't reset the UI mode.
 * Add a library menu
 * Add a page menu
+* Add a zoom slider in the bottom right corner
 
 # TODO Small:
 * Add an option to disable user counter
