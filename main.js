@@ -838,13 +838,8 @@ function onInputMove(x, y) {
 		}
 	}
 }
-/*
-function onMouseWheel(e) {
-	// Just do default mouse wheel things if not on the middle page
-	if (e.target !== g_page_middle[0]) {
-		return;
-	}
 
+function onMouseWheel(e) {
 	e.preventDefault();
 	e.stopPropagation();
 
@@ -856,8 +851,8 @@ function onMouseWheel(e) {
 		y_offset = -100;
 	}
 
-	g_moving_page = g_page_middle[0];
-	var image_height = $('#' + g_moving_page.children[0].id).height();
+	var moving_page = $('#pageMiddle')[0];
+	var image_height = $('#' + moving_page.children[0].id).height();
 
 	// Reset the scroll position if it goes past the screen top or bottom
 	var new_offset = y_offset + g_scroll_y_start;
@@ -872,10 +867,9 @@ function onMouseWheel(e) {
 	if (new_offset <= 0 && image_height + new_offset >= g_screen_height) {
 		g_scroll_y_start = new_offset;
 
-		var x = (g_moving_page.panel_index * g_screen_width);
-		var style = g_moving_page.style;
+		var style = moving_page.style;
 		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+		style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
 
 		updateScrollBar();
 	}
@@ -903,8 +897,8 @@ function onKeyPress(e) {
 			return;
 	}
 
-	g_moving_page = g_page_middle[0];
-	var image_height = $('#' + g_moving_page.children[0].id).height();
+	var moving_page = $('#pageMiddle')[0];
+	var image_height = $('#' + moving_page.children[0].id).height();
 
 	// Reset the scroll position if it goes past the screen top or bottom
 	var new_offset = y_offset + g_scroll_y_start;
@@ -919,15 +913,14 @@ function onKeyPress(e) {
 	if (new_offset <= 0 && image_height + new_offset >= g_screen_height) {
 		g_scroll_y_start = new_offset;
 
-		var x = (g_moving_page.panel_index * g_screen_width);
-		var style = g_moving_page.style;
+		var style = moving_page.style;
 		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+		style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
 
 		updateScrollBar();
 	}
 }
-*/
+
 function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
@@ -1554,15 +1547,16 @@ function main() {
 		loadComic();
 	});
 
+	var comicPanel = $('#comicPanel')[0];
+
 	// Key press events
-//	$(document).keydown(onKeyPress);
+	$(document).keydown(onKeyPress);
 
 	// Mouse wheel events
-//	document.body.addEventListener('mousewheel', onMouseWheel, false);
-//	document.body.addEventListener('DOMMouseScroll', onMouseWheel, false);
+	comicPanel.addEventListener('mousewheel', onMouseWheel, false);
+	comicPanel.addEventListener('DOMMouseScroll', onMouseWheel, false);
 
 	// Mouse events for the page container
-	var comicPanel = $('#comicPanel')[0];
 	comicPanel.addEventListener('mousedown', onMouseDown, false);
 	comicPanel.addEventListener('mouseup', onMouseUp, false);
 	comicPanel.addEventListener('mouseleave', onMouseUp, false);
