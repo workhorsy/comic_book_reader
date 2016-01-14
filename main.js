@@ -604,16 +604,38 @@ function onError(msg) {
 	$('.btnSettings').prop('disabled', false);
 }
 
-function largestNumber(a, b, c) {
-	var larger = a > b ? a : b;
-	larger = larger > c ? larger : c;
-	return larger;
-}
-
 function ignoreEvent(e) {
 	//console.info(e.type);
 	e.preventDefault();
 	e.stopPropagation();
+}
+
+function onTouchStart(e) {
+	//console.log('@@@@@@ onTouchStart');
+	//e.preventDefault();
+	//e.stopPropagation();
+
+	var x = e.changedTouches[0].clientX | 0;
+	var y = e.changedTouches[0].clientY | 0;
+	onInputDown(e.target, x, y);
+}
+
+function onTouchEnd(e) {
+	//console.log('@@@@@@ onTouchEnd');
+	//e.preventDefault();
+	//e.stopPropagation();
+
+	onInputUp();
+}
+
+function onTouchMove(e) {
+	//console.log('@@@@@@ onTouchMove');
+	e.preventDefault();
+	e.stopPropagation();
+
+	var x = e.changedTouches[0].clientX | 0;
+	var y = e.changedTouches[0].clientY | 0;
+	onInputMove(x, y);
 }
 
 function onMouseDown(e) {
@@ -777,6 +799,7 @@ function onInputMove(x, y) {
 			// Only scroll down if the top of the image is above the screen top
 			// Only scroll up if the bottom of the image is below the screen bottom
 			g_scroll_y_start = new_offset;
+			//console.info(g_scroll_y_start);
 
 			var style = g_page_middle[0].style;
 			style.transitionDuration = '0.0s';
@@ -813,7 +836,7 @@ function onInputMove(x, y) {
 		}
 	}
 }
-
+/*
 function onMouseWheel(e) {
 	// Just do default mouse wheel things if not on the middle page
 	if (e.target !== g_page_middle[0]) {
@@ -902,7 +925,7 @@ function onKeyPress(e) {
 		updateScrollBar();
 	}
 }
-
+*/
 function onResize(screen_width, screen_height) {
 //	console.info('Resize called ...');
 	g_screen_width = screen_width;
@@ -942,7 +965,6 @@ function onResize(screen_width, screen_height) {
 	var style = $('#comicPanel')[0].style;
 	style.width = (g_screen_width * 1) + 'px';
 	style.height = (g_screen_height * 1) + 'px';
-	style.top = 0 + 'px';
 	style.left = (- g_page_width) + 'px';
 
 	// Make it as wide as the screen and as tall as the tallest image
@@ -1531,7 +1553,7 @@ function main() {
 	});
 
 	// Key press events
-	$(document).keydown(onKeyPress);
+//	$(document).keydown(onKeyPress);
 
 	// Mouse wheel events
 //	document.body.addEventListener('mousewheel', onMouseWheel, false);
@@ -1543,6 +1565,12 @@ function main() {
 	comicPanel.addEventListener('mouseup', onMouseUp, false);
 	comicPanel.addEventListener('mouseleave', onMouseUp, false);
 	comicPanel.addEventListener('mousemove', onMouseMove, false);
+
+	// Touch events
+	comicPanel.addEventListener('touchstart', onTouchStart, false);
+	comicPanel.addEventListener('touchend', onTouchEnd, false);
+	comicPanel.addEventListener('touchcancel', ignoreEvent, false);
+	comicPanel.addEventListener('touchmove', onTouchMove, false);
 
 	// Reset everything
 	$('#comicPanel').hide();

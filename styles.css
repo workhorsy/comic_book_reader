@@ -322,7 +322,7 @@ input:checked + .touchLabel::after {
 #comicPanel {
 	box-sizing: border-box;
 	position: absolute;
-	/*border: 10px solid orange;*/
+	top: 0;
 	overflow: hidden;
 	background-color: brown;
 	outline: 5px solid pink;
