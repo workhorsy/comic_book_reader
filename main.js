@@ -172,6 +172,7 @@ function hideTopMenu(is_instant) {
 	var height = top_menu.outerHeight() + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
+	style.pointerEvents = 'none';
 
 	g_top_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
@@ -190,6 +191,7 @@ function hideBottomMenu(is_instant) {
 	var height = bottom_menu.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
+	style.pointerEvents = 'none';
 
 	g_are_page_previews_loading = false;
 	g_bottom_menu_visible = 0.0;
@@ -215,6 +217,11 @@ function showTopMenu(y_offset, is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_top_menu_visible = y_offset;
+	if (g_top_menu_visible == 1.0) {
+		style.pointerEvents = 'all';
+	} else {
+		style.pointerEvents = 'none';
+	}
 
 	// Show the wall paper
 	setWallPaperOpacity();
@@ -228,6 +235,11 @@ function showBottomMenu(y_offset, is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_bottom_menu_visible = y_offset;
+	if (g_bottom_menu_visible == 1.0) {
+		style.pointerEvents = 'all';
+	} else {
+		style.pointerEvents = 'none';
+	}
 
 	setWallPaperOpacity();
 
@@ -401,7 +413,6 @@ function friendlyPageNumber() {
 }
 
 function loadCurrentPage(cb) {
-	console.info("@@@@@@@@@@@@@ loadCurrentPage");
 	// Update the page number
 	var page = friendlyPageNumber();
 	$('.overlayPageNumber').html('&nbsp;' + page);
@@ -606,14 +617,14 @@ function ignoreEvent(e) {
 }
 
 function onMouseDown(e) {
-	console.log('@@@@@@ onMouseDown');
+	//console.log('@@@@@@ onMouseDown');
 	var x = e.clientX;
 	var y = e.clientY;
 	onInputDown(e.target, x, y);
 }
 
 function onMouseUp(e) {
-	console.log('@@@@@@ onMouseUp');
+	//console.log('@@@@@@ onMouseUp');
 	onInputUp();
 }
 
@@ -625,8 +636,6 @@ function onMouseMove(e) {
 }
 
 function onInputDown(target, x, y) {
-	console.info(target);
-
 	// If any menus are showing, hide them
 	if (g_top_menu_visible > 0.0 || g_bottom_menu_visible > 0.0) {
 		hideAllMenus(false);
@@ -650,8 +659,6 @@ function onInputDown(target, x, y) {
 }
 
 function onInputUp() {
-	console.info(g_is_swiping_left + ', ' + g_is_swiping_right);
-
 	// Remove glow from the top menu if it is not completly out
 	if (g_top_menu_visible !== 1.0) {
 		$('#topMenu').removeClass('menuWithGlow');
@@ -729,7 +736,7 @@ function onInputMove(x, y) {
 	if (! g_is_mouse_down) {
 		return;
 	}
-	console.info("!!!!!!!!!!!!!!!!!!!!!!!!! onInputMove");
+
 	// Figure out if we are moving vertically or horizontally
 	var is_vertical = false;
 	if (Math.abs(y - g_mouse_start_y) > Math.abs(x - g_mouse_start_x)) {
@@ -753,11 +760,9 @@ function onInputMove(x, y) {
 			showBottomMenu(y / g_down_swipe_size, true);
 		// Scroll the page up and down
 		} else {
-//			console.info('fuuuuuuuuuuuuuuuu');
-			// FIXME: Super slow to call every movement. Look for similar calls, and replace them
-			var zzz = $('#pageMiddle').children();
-			console.info(zzz);
-			var image_height = $('#' + zzz[0].id).height();
+			// FIXME: Super slow to get the height this way every movement. Look for similar calls, and replace them
+			var children = g_page_middle.children();
+			var image_height = $('#' + children[0].id).height();
 			x_offset = x_offset / 20.0;
 			y_offset = y_offset / 20.0;
 
@@ -773,10 +778,9 @@ function onInputMove(x, y) {
 			// Only scroll up if the bottom of the image is below the screen bottom
 			g_scroll_y_start = new_offset;
 
-			var x = g_page_width;
-			var style = $('#pageMiddle')[0].style;
+			var style = g_page_middle[0].style;
 			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(' + x + 'px, ' + new_offset + 'px, 0px)';
+			style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
 
 			updateScrollBar();
 		}
@@ -1397,8 +1401,8 @@ function main() {
 
 	// Resize everything when the browser resizes
 	$(window).resize(function() {
-		var width = 900;//$(window).width();
-		var height = 300;//$(window).height();
+		var width = 1800;//$(window).width();
+		var height = 600;//$(window).height();
 		onResize(width, height);
 	});
 
