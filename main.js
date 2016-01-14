@@ -260,11 +260,11 @@ function showBottomMenu(y_offset, is_instant) {
 
 			var file_name = g_titles[i];
 			getCachedFile('small', file_name, function(blob) {
-				console.info('Loading page preview #' + (i + 1));
+				//console.info('Loading page preview #' + (i + 1));
 				var url = null;
 				if (blob) {
 					url = URL.createObjectURL(blob)
-					console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+					//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 				}
 
 				var img = document.createElement('img');
@@ -281,7 +281,7 @@ function showBottomMenu(y_offset, is_instant) {
 				img.onload = function() {
 					if (url) {
 						URL.revokeObjectURL(url);
-						console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+						//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 					}
 
 					// Make the image twice as wide if it is in landscape mode
@@ -294,7 +294,7 @@ function showBottomMenu(y_offset, is_instant) {
 				img.onerror = function() {
 					if (url) {
 						URL.revokeObjectURL(url);
-						console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+						//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 					}
 
 					img.onload = null;
@@ -357,8 +357,8 @@ function showLibrary() {
 
 		if (pagename && blob) {
 			var url = URL.createObjectURL(blob);
-			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
-			console.info(pagename);
+			//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
+			//console.info(pagename);
 			img.onclick = function(e) {
 				libraryMenu.hide();
 				libraryMenu.empty();
@@ -367,7 +367,7 @@ function showLibrary() {
 			};
 			img.onload = function() {
 				URL.revokeObjectURL(this.src);
-				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
+				//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
 
 				// Make the image twice as wide if it is in landscape mode
 				if (this.naturalWidth > this.naturalHeight) {
@@ -376,7 +376,7 @@ function showLibrary() {
 			};
 			img.onerror = function() {
 				URL.revokeObjectURL(this.src);
-				console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
+				//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + this.src);
 			};
 			img.src = url;
 		} else {
@@ -465,14 +465,14 @@ function getCachedFileUrl(filename, cb) {
 	// Just return it if it already exists
 	var value = g_cached_images.get(filename);
 	if (typeof value !== "undefined") {
-		console.info("$$$$$$$$$$$$$$$$$$$$$ cached file: " + filename);
+		console.info("$$$$$$$$$$$$$$$$$ cached: " + filename);
 		cb(value);
 		return;
 	}
 
 	// Create the new url
 	getCachedFile('big', filename, function(blob) {
-		console.info("@@@@@@@@@@@@@@@@@ creating file: " + filename);
+		console.info("+++++++++++++++++ adding cache: " + filename);
 		if (blob) {
 			var url = URL.createObjectURL(blob);
 
@@ -481,7 +481,7 @@ function getCachedFileUrl(filename, cb) {
 				var old_url = g_cached_images.head.value;
 				var old_filename = g_cached_images.head.key;
 				URL.revokeObjectURL(old_url);
-				console.info("----------------- removed file: " + old_filename);
+				console.info("----------------- removing cache: " + old_filename);
 			}
 
 			g_cached_images.put(filename, url);
@@ -521,7 +521,7 @@ function loadImage(page, index, is_position_reset, cb) {
 		img.className = 'comicPage';
 		img.ondragstart = function() { return false; }
 		img.onload = function() {
-			console.info('!!! Loading image ' + index + ': ' + img.title);
+			//console.info('!!! Loading image ' + index + ': ' + img.title);
 			if (g_needs_resize) {
 				onResize(g_screen_width, g_screen_height);
 			}
@@ -1327,13 +1327,13 @@ function makePagePreview(filename, is_cached, cb) {
 	if (! is_cached) {
 		getCachedFile('big', filename, function(blob) {
 			var url = URL.createObjectURL(blob);
-			console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
+			//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
 
 			var img = new Image();
 			img.onload = function() {
 				if (url) {
 					URL.revokeObjectURL(url);
-					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 					url = null;
 				}
 
@@ -1357,7 +1357,7 @@ function makePagePreview(filename, is_cached, cb) {
 			img.onerror = function(e) {
 				if (url) {
 					URL.revokeObjectURL(url);
-					console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
+					//console.log('<<<<<<<<<<<<<<<<<<<< revokeObjectURL: ' + url);
 					url = null;
 				}
 
