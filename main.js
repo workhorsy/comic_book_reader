@@ -20,6 +20,7 @@ var g_mouse_start_y = 0;
 var g_screen_width = 0;
 var g_screen_height = 0;
 var g_page_width = 0;
+var g_page_y = 0;
 var g_scroll_y_temp = 0;
 var g_scroll_y_start = 0;
 var g_needs_resize = false;
@@ -419,6 +420,8 @@ function loadCurrentPage(cb) {
 	$('.overlayPageNumber').show();
 	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
 
+	g_page_y = 0;
+
 	// Mouse mode
 	if (g_is_mouse_mode) {
 
@@ -789,7 +792,7 @@ function onInputMove(x, y) {
 			y_offset = y_offset / 20.0;
 
 			// Reset the scroll position if it goes past the screen top or bottom
-			var new_offset = y_offset + g_scroll_y_start;
+			var new_offset = y_offset + g_page_y;
 			if (new_offset > 0) {
 				new_offset = 0;
 			} else if (image_height + new_offset < g_screen_height) {
@@ -799,11 +802,11 @@ function onInputMove(x, y) {
 			// Only scroll down if the top of the image is above the screen top
 			// Only scroll up if the bottom of the image is below the screen bottom
 			g_scroll_y_start = new_offset;
-			//console.info(g_scroll_y_start);
 
 			var style = g_page_middle[0].style;
 			style.transitionDuration = '0.0s';
 			style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
+			g_page_y = new_offset;
 
 			updateScrollBar();
 		}
@@ -812,10 +815,9 @@ function onInputMove(x, y) {
 	// Scroll the comic panels if we are swiping right or left
 	if (! is_vertical) {
 		var x = x_offset;
-		var y = g_scroll_y_temp + g_scroll_y_start;
 		var style = $('#comicPanel')[0].style;
 		style.transitionDuration = '0.0s';
-		style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
+		style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
 
 		// Swiping right
 		if (x_offset > 0) {
