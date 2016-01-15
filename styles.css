@@ -172,20 +172,20 @@ input:checked + .touchLabel::after {
 }
 
 #welcomeScreen {
-	display: flex;
-	text-align: center;
-	font-size: 7vmin;
-	line-height: 10vmin;
-	background-color: grey;
-	color: black;
-	z-index: 4000;
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
+	z-index: 4000;
+	display: flex;
+	text-align: center;
 	justify-content: center;
 	align-items: center;
+	color: black;
+	font-size: 7vmin;
+	line-height: 10vmin;
+	background-color: grey;
 }
 
 #welcomeScreen button {
@@ -193,10 +193,35 @@ input:checked + .touchLabel::after {
 	line-height: 10vmin;
 }
 
+#welcomeScreen .experimental {
+	font-size: 5vmin;
+	line-height: 0;
+	color: #666666;
+}
+
 #welcomeScreen footer {
-	font-size: 2vmin;
+	font-size: 4vmin;
 	line-height: 10vmin;
 }
+
+@media (max-width: 379px) {
+	#welcomeScreen {
+		font-size: 14px;
+	}
+
+	#welcomeScreen button {
+		font-size: 14px;
+	}
+
+	#welcomeScreen .experimental {
+		font-size: 14px;
+	}
+
+	#welcomeScreen footer {
+		font-size: 14px;
+	}
+}
+
 
 #totalUsersOnline {
 	float: left;
