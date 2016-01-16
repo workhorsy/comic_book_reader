@@ -1098,7 +1098,7 @@ function overlayShow(is_fading) {
 	}
 }
 
-function updateTotalUsersOnline() {
+function monitorTotalUsersOnline() {
 	console.info("Getting total users online ...");
 	var update_timeout = 1000 * 60 * 5; // 5 minutes
 	var user_id = settings_get_user_id();
@@ -1113,7 +1113,7 @@ function updateTotalUsersOnline() {
 		console.info(textStatus);
 		console.info(errorThrown);
 	});
-	setTimeout(updateTotalUsersOnline, update_timeout);
+	setTimeout(monitorTotalUsersOnline, update_timeout);
 }
 
 function getApplicationCacheStatusText(status) {
@@ -1135,7 +1135,7 @@ function getApplicationCacheStatusText(status) {
 	}
 }
 
-function updateApplicationCache() {
+function monitorApplicationCacheUpdates() {
 	// When an app cache update is available, prompt the user to reload the page
 	window.applicationCache.addEventListener('updateready', function(e) {
 		var is_updatable = settings_get_install_updates_enabled();
@@ -1630,8 +1630,8 @@ function main() {
 
 	startWorker();
 	$('.versionDate').text(getVersionDate());
-	updateTotalUsersOnline();
-	updateApplicationCache();
+	monitorTotalUsersOnline();
+	monitorApplicationCacheUpdates();
 }
 
 $(document).ready(function() {
