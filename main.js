@@ -1168,6 +1168,18 @@ function updateApplicationCache() {
 	setTimeout(checkForUpdate, 1000 * 10); // 10 seconds
 }
 
+function manuallyUpdateApplicationCache() {
+	var status = window.applicationCache.status;
+	console.info('Checking for Application Cache update. Current status: ' + getApplicationCacheStatusText(status) + ' (' + status + ')');
+	if (status !== window.applicationCache.UNCACHED) {
+		try {
+			window.applicationCache.update();
+		} catch (e) {
+			console.log(e);
+		}
+	}
+}
+
 function onStorageFull(filename) {
 	if (g_is_terminated) {
 		return;
@@ -1558,6 +1570,10 @@ function main() {
 			}
 		}
 		deleteNextDB();
+	});
+
+	$('.btnCheckForUpdatesNow').click(function() {
+		manuallyUpdateApplicationCache();
 	});
 
 	$('#btnTouchLibrary').click(function() {
