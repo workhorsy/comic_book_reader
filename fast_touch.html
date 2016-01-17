@@ -67,8 +67,8 @@
 
 		<script type="text/javascript">
 			var g_is_mouse_down = false;
-			var g_is_scrolling = false;
 			var g_screen_width = 0;
+			var g_scroll_interval = null;
 
 			function onResize() {
 				g_screen_width = window.innerWidth;
@@ -84,22 +84,20 @@
 				style.width = (g_screen_width * cells.length) + 'px';
 			}
 
-			var g_fuck = null;
-
+			// Reset the page position, if the scroll is not on a page edge
 			function onScroll(e) {
 				//console.info('onScroll');
-				g_is_scrolling = true;
 
-				if (g_fuck === null) {
-					g_fuck = true;
+				if (g_scroll_interval === null) {
+					g_scroll_interval = true;
 					var comicPanel = document.querySelector('#comicPanel');
 					var old_left = comicPanel.scrollLeft;
-					g_fuck = setInterval(function() {
+					g_scroll_interval = setInterval(function() {
 						var new_left = comicPanel.scrollLeft;
 //						console.info('fuuuu ' + old_left + ', ' + new_left + ', ' + g_is_mouse_down);
 						if (old_left === new_left && ! g_is_mouse_down) {
-							clearInterval(g_fuck);
-							g_fuck = null;
+							clearInterval(g_scroll_interval);
+							g_scroll_interval = null;
 //							console.info('Done scrolling ??????????');
 
 							var new_offset = Math.round(new_left / g_screen_width) * g_screen_width;
@@ -114,8 +112,7 @@
 			}
 
 			function onMouseUp(e) {
-				console.info('onMouseUp');
-				onInputUp();
+				g_is_mouse_down = false;
 			}
 
 			function onMouseDown(e) {
@@ -127,32 +124,13 @@
 			}
 
 			function onTouchEnd(e) {
-				console.info('onTouchEnd');
-				onInputUp();
-			}
-
-			function onInputUp(e) {
-				if (g_is_scrolling && g_is_mouse_down) {
-/*
-					console.info('scrolled ....');
-					var comicPanel = document.querySelector('#comicPanel');
-					var offset = comicPanel.scrollLeft;
-
-					var new_offset = Math.round(offset / g_screen_width) * g_screen_width;
-					console.info(new_offset);
-					//comicPanel.scrollLeft = page * g_screen_width;
-					$('#comicPanel').animate({scrollLeft: new_offset}, 300);
-*/
-				}
 				g_is_mouse_down = false;
-				g_is_scrolling = false;
 			}
 
 			window.onresize = onResize;
 
 			onResize();
 
-			console.info('ready');
 			var comicPanel = document.querySelector('#comicPanel');
 			comicPanel.addEventListener('mousedown', onMouseDown, false);
 			comicPanel.addEventListener('mouseup', onMouseUp, false);
