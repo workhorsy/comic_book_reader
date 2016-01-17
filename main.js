@@ -24,6 +24,7 @@ var g_page_width = 0;
 var g_page_y = 0;
 var g_scroll_y_temp = 0;
 var g_scroll_y_start = 0;
+// FIXME: Remove this resize later garbage
 var g_needs_resize = false;
 
 var g_down_swipe_size = 100.0;
@@ -985,25 +986,12 @@ function onResize(screen_width, screen_height) {
 	// Make the panel as wide as the screen
 	g_needs_resize = false;
 	var style = $('#comicPanel')[0].style;
+	style.transitionDuration = '0.0s';
 	style.width = (g_screen_width * 3) + 'px';
 	style.height = g_screen_height + 'px';
 	style.left = (- g_page_width) + 'px';
 
-	// Make it as wide as the screen and as tall as the tallest image
-	style = g_page_left[0].style;
-	style.width = g_page_width + 'px';
-	style.height = g_screen_height + 'px';
-
-	// Make it as wide as the screen and as tall as the tallest image
-	style = g_page_middle[0].style;
-	style.width = g_page_width + 'px';
-	style.height = g_screen_height + 'px';
-
-	// Make it as wide as the screen and as tall as the tallest image
-	style = g_page_right[0].style;
-	style.width = g_page_width + 'px';
-	style.height = g_screen_height + 'px';
-
+	// FIXME: These should be fixed into the left and right pages
 	// Move the arrow to be on top of the right page
 	style = $('#overlayRight')[0].style;
 	style.width =  g_page_width + 'px';
