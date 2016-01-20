@@ -87,7 +87,8 @@
 					cells[i].style.flexBasis = g_screen_width + 'px';
 				}
 
-				document.querySelector('#comicPanel').scrollLeft = 0;
+				var new_left = g_image_index * g_screen_width;
+				document.querySelector('#comicPanel').scrollLeft = new_left;
 			}
 
 			function loadImage(page, index, cb) {
