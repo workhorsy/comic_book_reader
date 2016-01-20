@@ -87,13 +87,6 @@
 				g_screen_width = window.innerWidth;
 				//console.info(g_screen_width);
 
-				// FIXME: We should not have to set this every time the screen
-				// size changes.
-				var cells = document.querySelectorAll('.verticalScroller');
-				for (var i=0; i<cells.length; ++i) {
-					cells[i].style.flexBasis = g_screen_width + 'px';
-				}
-
 				var new_left = g_image_index * g_screen_width;
 				document.querySelector('#comicPanel').scrollLeft = new_left;
 			}
@@ -272,7 +265,6 @@
 
 				var page = document.createElement('div');
 				page.className = 'verticalScroller unselectable';
-				page.style.flexBasis = g_screen_width + 'px';
 				container.appendChild(page);
 				loadImage(page, i, function() {
 					loadNextPage(i + 1);
