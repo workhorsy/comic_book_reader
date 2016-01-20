@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<title>Comic Book Reader</title>
 		<script src="js/jquery-1.11.3.min.js"></script>
+		<script src="js/polyfill/polyfill.js"></script>
 	</head>
 	<style>
 		html {
@@ -58,6 +59,8 @@
 
 		<script type="text/javascript">
 			var g_is_mouse_down = false;
+			var g_has_scrolled = false;
+//			var g_ignore_scroll_event = false;
 			var g_screen_width = 0;
 			var g_titles = {};
 			var g_titles_small = {};
@@ -67,6 +70,7 @@
 			}
 			var g_image_index = 0;
 			var g_image_count = Object.keys(g_titles).length;
+			var g_is_busy_loading = false;
 
 			function onResize() {
 				g_screen_width = window.innerWidth;
@@ -120,38 +124,30 @@
 				page.appendChild(img);
 			}
 
-			var g_page = 0;
-			var g_is_busy_loading = false;
-			var g_has_scrolled = false;
-
-			function shit() {
-				var comicPanel = document.querySelector('#comicPanel');
-				var old_left = comicPanel.scrollLeft;
+			function monitorImageQualitySwapping() {
+				var comic_panel = document.querySelector('#comicPanel');
+				var old_left = comic_panel.scrollLeft;
 
 				setInterval(function() {
-					var new_left = comicPanel.scrollLeft;
-//					console.info('fuuuu ' + old_left + ', ' + new_left + ', ' + g_is_mouse_down);
+					var new_left = comic_panel.scrollLeft;
 
 					if (! g_is_busy_loading && g_has_scrolled && old_left === new_left && ! g_is_mouse_down) {
 						g_has_scrolled = false;
-//						console.info('Done scrolling ??????????');
 
 						//console.info('reset scroll ....................' + scroll_left);
-						var new_page = Math.round(new_left / g_screen_width);
-						var new_offset = new_page * g_screen_width;
-						//comicPanel.scrollLeft = new_offset;
-						$('#comicPanel').animate({scrollLeft: new_offset}, 300);
+						var new_image_index = Math.round(new_left / g_screen_width);
+						var new_left = new_image_index * g_screen_width;
+						$('#comicPanel').animate({scrollLeft: new_left}, 300);
 
 						setTimeout(function() {
 							g_is_busy_loading = true;
-							// Load hgith quality current page
-							console.info(g_page + ', ' + new_page);
+							console.info(g_image_index + ', ' + new_image_index);
 
-							// Make all pages except the middle, right, and left pages low quality
+							// Get all the images to swap out the quality
 							var imagesToSwap = [];
 							for (var i=0; i<g_image_count; ++i) {
 								var page = document.querySelector('#page_' + i);
-								if (i === new_page-1 || i === new_page || i === new_page+1) {
+								if (i === new_image_index-1 || i === new_image_index || i === new_image_index+1) {
 									if (! page.src.endsWith(page.src_high)) {
 										imagesToSwap.push({page: page, src: page.src_high});
 									}
@@ -162,7 +158,8 @@
 								}
 							}
 
-							var loadNextImage = function(i) {
+							// Swap out the images in serial
+							var loadNextPage = function(i) {
 								if (i >= imagesToSwap.length) {
 									g_is_busy_loading = false;
 									return;
@@ -177,7 +174,7 @@
 									this.onerror = null;
 									console.info(this.src);
 									document.title = this.src;
-									loadNextImage(i + 1);
+									loadNextPage(i + 1);
 								};
 								page.onerror = function() {
 									this.onload = null;
@@ -187,20 +184,18 @@
 									this.src = 'invalid_image.png';
 									console.info(this.src);
 									document.title = this.src;
-									loadNextImage(i + 1);
+									loadNextPage(i + 1);
 								};
 								page.src = src;
 							};
-							loadNextImage(0);
-							g_page = new_page;
+							loadNextPage(0);
+							g_image_index = new_image_index;
 						}, 300);
 					}
 
 					old_left = new_left;
 				}, 100);
 			}
-
-//			var g_ignore_scroll_event = false;
 
 			function onScroll(e) {
 				g_has_scrolled = true;
@@ -211,12 +206,12 @@
 				}
 
 				if (! g_is_mouse_down) {
-					var comicPanel = document.querySelector('#comicPanel');
-					var scroll_left = comicPanel.scrollLeft;
+					var comic_panel = document.querySelector('#comicPanel');
+					var scroll_left = comic_panel.scrollLeft;
 					var new_offset = Math.round(scroll_left / g_screen_width) * g_screen_width;
 					console.info(new_offset);
 					g_ignore_scroll_event = true;
-					comicPanel.scrollLeft = new_offset;
+					comic_panel.scrollLeft = new_offset;
 				}
 */
 			}
@@ -240,15 +235,15 @@
 			document.querySelector('#comicPanel').scrollLeft = 0;
 			window.onresize = onResize;
 
-			var comicPanel = document.querySelector('#comicPanel');
-			comicPanel.addEventListener('mousedown', onMouseDown, false);
-			comicPanel.addEventListener('mouseup', onMouseUp, false);
-			comicPanel.addEventListener('mouseleave', onMouseUp, false);
-			comicPanel.addEventListener('scroll', onScroll, false);
+			var comic_panel = document.querySelector('#comicPanel');
+			comic_panel.addEventListener('mousedown', onMouseDown, false);
+			comic_panel.addEventListener('mouseup', onMouseUp, false);
+			comic_panel.addEventListener('mouseleave', onMouseUp, false);
+			comic_panel.addEventListener('scroll', onScroll, false);
 
-			comicPanel.addEventListener('touchstart', onTouchStart, false);
-			comicPanel.addEventListener('touchend', onTouchEnd, false);
-			//comicPanel.addEventListener('touchcancel', ignoreEvent, false);
+			comic_panel.addEventListener('touchstart', onTouchStart, false);
+			comic_panel.addEventListener('touchend', onTouchEnd, false);
+			//comic_panel.addEventListener('touchcancel', ignoreEvent, false);
 
 			//onResize();
 			g_screen_width = window.innerWidth;
@@ -256,7 +251,7 @@
 			var container = document.querySelector('#horizontalScroller');
 			container.style.width = (g_screen_width * g_image_count) + 'px';
 
-			function loadNextPage(i) {
+			var loadNextPage = function(i) {
 				console.info('loadNextPage: ' + i);
 				document.title = i;
 				if (i >= g_image_count) {
@@ -270,9 +265,9 @@
 				loadImage(page, i, function() {
 					loadNextPage(i + 1);
 				});
-			}
+			};
 			loadNextPage(0);
-			shit();
+			monitorImageQualitySwapping();
 		</script>
 	</body>
 </html>
