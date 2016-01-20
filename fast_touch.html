@@ -141,30 +141,54 @@
 						//comicPanel.scrollLeft = new_offset;
 						$('#comicPanel').animate({scrollLeft: new_offset}, 300);
 
-//						setTimeout(function() {
+						setTimeout(function() {
 							// Load hgith quality current page
 							console.info(g_page + ', ' + new_page);
-							//var page = document.querySelector('#page_' + new_page);
-							//page.src = page.src_high;
 
 							// Make all pages except the middle, right, and left pages low quality
+							var imagesToSwap = [];
 							for (var i=0; i<g_image_count; ++i) {
 								var page = document.querySelector('#page_' + i);
 								if (i === new_page-1 || i === new_page || i === new_page+1) {
 									if (! page.src.endsWith(page.src_high)) {
-										page.src = page.src_high;
-										console.info(page.src);
+										imagesToSwap.push({page: page, src: page.src_high});
 									}
 								} else {
 									if (! page.src.endsWith(page.src_low)) {
-										page.src = page.src_low;
-										console.info(page.src);
+										imagesToSwap.push({page: page, src: page.src_low});
 									}
 								}
 							}
 
+							var loadNextImage = function(i) {
+								if (i >= imagesToSwap.length) {
+									return;
+								}
+
+								var item = imagesToSwap[i];
+								var page = item.page;
+								var src = item.src;
+
+								page.onload = function() {
+									this.onload = null;
+									this.onerror = null;
+									console.info(this.src);
+									loadNextImage(i + 1);
+								};
+								page.onerror = function() {
+									this.onload = null;
+									this.onerror = null;
+									this.title = '';
+									this.alt = 'Invalid Image';
+									this.src = 'invalid_image.png';
+									console.info(this.src);
+									loadNextImage(i + 1);
+								};
+								page.src = src;
+							};
+							loadNextImage(0);
 							g_page = new_page;
-//						}, 300);
+						}, 300);
 					}
 
 					old_left = new_left;
