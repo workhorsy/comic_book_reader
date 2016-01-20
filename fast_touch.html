@@ -22,6 +22,13 @@
 			overflow: hidden;
 			min-height: 100%;
 		}
+		.unselectable {
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			-webkit-user-drag: none;
+		}
 		#comicPanel {
 			box-sizing: border-box;
 			overflow: hidden;
@@ -101,8 +108,9 @@
 				img.src_low = g_titles_small[index];
 				img.id = 'page_' + index;
 				img.title = "FIXME";
-				img.className = 'comicPage';
-				img.ondragstart = function() { return false; }
+				img.className = 'comicPage unselectable';
+				img.ondragstart = function() { return false; };
+				img.draggable = false;
 				img.onload = function() {
 					img.onload = null;
 					img.onerror = null;
@@ -118,7 +126,7 @@
 					img.src = 'invalid_image.png';
 					cb(index);
 				};
-				img.draggable = 'false';
+
 				if (index < 2) {
 					img.src = img.src_high;
 				} else {
@@ -263,7 +271,7 @@
 				}
 
 				var page = document.createElement('div');
-				page.className = 'verticalScroller';
+				page.className = 'verticalScroller unselectable';
 				page.style.flexBasis = g_screen_width + 'px';
 				container.appendChild(page);
 				loadImage(page, i, function() {
