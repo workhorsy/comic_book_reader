@@ -135,19 +135,20 @@
 						g_has_scrolled = false;
 
 						//console.info('reset scroll ....................' + scroll_left);
-						var new_image_index = Math.round(new_left / g_screen_width);
-						var new_left = new_image_index * g_screen_width;
+						var new_page = Math.round(new_left / g_screen_width);
+						new_left = new_page * g_screen_width;
+						//console.info(new_page + ', ' + new_left);
 						$('#comicPanel').animate({scrollLeft: new_left}, 300);
 
 						setTimeout(function() {
 							g_is_busy_loading = true;
-							console.info(g_image_index + ', ' + new_image_index);
+							console.info(g_image_index + ', ' + new_page);
 
 							// Get all the images to swap out the quality
 							var imagesToSwap = [];
 							for (var i=0; i<g_image_count; ++i) {
 								var page = document.querySelector('#page_' + i);
-								if (i === new_image_index-1 || i === new_image_index || i === new_image_index+1) {
+								if (i === new_page-1 || i === new_page || i === new_page+1) {
 									if (! page.src.endsWith(page.src_high)) {
 										imagesToSwap.push({page: page, src: page.src_high});
 									}
@@ -189,7 +190,7 @@
 								page.src = src;
 							};
 							loadNextPage(0);
-							g_image_index = new_image_index;
+							g_image_index = new_page;
 						}, 300);
 					}
 
