@@ -153,6 +153,7 @@
 							var imagesToSwap = [];
 							for (var i=0; i<g_image_count; ++i) {
 								var page = document.querySelector('#page_' + i);
+								if (! page) continue;
 								if (i === new_page-1 || i === new_page || i === new_page+1) {
 									if (! page.src.endsWith(page.src_high)) {
 										imagesToSwap.push({page: page, src: page.src_high});
