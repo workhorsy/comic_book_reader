@@ -83,6 +83,10 @@
 			var g_image_count = Object.keys(g_titles).length;
 			var g_is_busy_loading = false;
 
+			function hasTouchSupport() {
+				return 'ontouchstart' in window || navigator.MaxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+			}
+
 			function onResize() {
 				g_screen_width = window.innerWidth;
 				//console.info(g_screen_width);
@@ -273,6 +277,7 @@
 			};
 			loadNextPage(0);
 			monitorImageQualitySwapping();
+			alert(hasTouchSupport());
 		</script>
 	</body>
 </html>
