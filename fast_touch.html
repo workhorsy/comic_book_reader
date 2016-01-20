@@ -23,6 +23,7 @@
 			min-height: 100%;
 		}
 		#comicPanel {
+			box-sizing: border-box;
 			overflow: hidden;
 			overflow-x: scroll;
 			position: absolute;
@@ -37,18 +38,21 @@
 			height: auto;
 		}
 		#horizontalScroller {
+			box-sizing: border-box;
 			display: flex;
 			flex-direction: row;
 			flex-wrap: nowrap;
 			justify-content: flex-start;
 			align-items: stretch;
 			height: 100%;
-			width: 200%;
 		}
 		.verticalScroller {
+			box-sizing: border-box;
 			overflow: hidden;
 			overflow-y: scroll;
 			border: 1px solid blue;
+			flex: none;
+			width: 100%;
 		}
 	</style>
 	<body>
@@ -76,16 +80,14 @@
 				g_screen_width = window.innerWidth;
 				//console.info(g_screen_width);
 
+				// FIXME: We should not have to set this every time the screen
+				// size changes.
 				var cells = document.querySelectorAll('.verticalScroller');
 				for (var i=0; i<cells.length; ++i) {
 					cells[i].style.flexBasis = g_screen_width + 'px';
-					//console.info(cells[i].style.flexBasis);
 				}
 
-				var style = document.querySelector('#horizontalScroller').style;
-				style.width = (g_screen_width * cells.length) + 'px';
-
-				document.querySelector('#comicPanel').scrollLeft = 0;//g_screen_width;
+				document.querySelector('#comicPanel').scrollLeft = 0;
 			}
 
 			function loadImage(page, index, cb) {
@@ -131,7 +133,8 @@
 				setInterval(function() {
 					var new_left = comic_panel.scrollLeft;
 
-					if (! g_is_busy_loading && g_has_scrolled && old_left === new_left && ! g_is_mouse_down) {
+					//console.info((! g_is_busy_loading) + ', ' + g_has_scrolled + ', ' + (! g_is_mouse_down) + ', ' + old_left + ', ' + new_left);
+					if (! g_is_busy_loading && g_has_scrolled && ! g_is_mouse_down && old_left === new_left) {
 						g_has_scrolled = false;
 
 						//console.info('reset scroll ....................' + scroll_left);
@@ -250,7 +253,6 @@
 			g_screen_width = window.innerWidth;
 
 			var container = document.querySelector('#horizontalScroller');
-			container.style.width = (g_screen_width * g_image_count) + 'px';
 
 			var loadNextPage = function(i) {
 				console.info('loadNextPage: ' + i);
