@@ -61,13 +61,9 @@
 			var g_screen_width = 0;
 			var g_titles = {};
 			var g_titles_small = {};
-			function pad(mystr) {
-				var pad = '000';
-				return (pad + mystr).slice(-pad.length);
-			}
-			for (var i=0; i<6; ++i) {
-				g_titles[i] = "comic/big-" + pad(i + 1) + ".jpg";
-				g_titles_small[i] = "comic/small-" + pad(i + 1) + ".jpg";
+			for (var i=0; i<200; ++i) {
+				g_titles[i] = "comic/" + (i + 1) + ".jpg";
+				g_titles_small[i] = "comic/small/small-" + (i + 1) + ".jpg";
 			}
 			var g_image_index = 0;
 			var g_image_count = Object.keys(g_titles).length;
@@ -116,11 +112,16 @@
 					cb(index);
 				};
 				img.draggable = 'false';
-				img.src = img.src_low;
+				if (index < 2) {
+					img.src = img.src_high;
+				} else {
+					img.src = img.src_low;
+				}
 				page.appendChild(img);
 			}
 
 			var g_page = 0;
+			var g_is_busy_loading = false;
 
 			function shit() {
 				var comicPanel = document.querySelector('#comicPanel');
@@ -132,7 +133,7 @@
 
 					var is_centered_on_page = (new_left % g_screen_width) === 0;
 
-					if (! is_centered_on_page && old_left === new_left && ! g_is_mouse_down) {
+					if (! g_is_busy_loading && ! is_centered_on_page && old_left === new_left && ! g_is_mouse_down) {
 //						console.info('Done scrolling ??????????');
 
 						//console.info('reset scroll ....................' + scroll_left);
@@ -142,6 +143,7 @@
 						$('#comicPanel').animate({scrollLeft: new_offset}, 300);
 
 						setTimeout(function() {
+							g_is_busy_loading = true;
 							// Load hgith quality current page
 							console.info(g_page + ', ' + new_page);
 
@@ -162,6 +164,7 @@
 
 							var loadNextImage = function(i) {
 								if (i >= imagesToSwap.length) {
+									g_is_busy_loading = false;
 									return;
 								}
 
@@ -173,6 +176,7 @@
 									this.onload = null;
 									this.onerror = null;
 									console.info(this.src);
+									document.title = this.src;
 									loadNextImage(i + 1);
 								};
 								page.onerror = function() {
@@ -182,6 +186,7 @@
 									this.alt = 'Invalid Image';
 									this.src = 'invalid_image.png';
 									console.info(this.src);
+									document.title = this.src;
 									loadNextImage(i + 1);
 								};
 								page.src = src;
@@ -231,6 +236,7 @@
 				g_is_mouse_down = false;
 			}
 
+			document.querySelector('#comicPanel').scrollLeft = 0;
 			window.onresize = onResize;
 
 			var comicPanel = document.querySelector('#comicPanel');
@@ -251,6 +257,7 @@
 
 			function loadNextPage(i) {
 				console.info('loadNextPage: ' + i);
+				document.title = i;
 				if (i >= g_image_count) {
 					return;
 				}
