@@ -4,8 +4,10 @@
 "use strict";
 
 var g_is_terminated = false;
+/*
 var g_cached_images = new LRUCache(30);
 var g_cached_images_small = new LRUCache(30);
+*/
 var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
@@ -403,7 +405,7 @@ function loadComic() {
 function friendlyPageNumber() {
 	return '(' + (g_image_index + 1) + ' of ' + g_image_count + ')';
 }
-
+/*
 function getCachedFileUrl(is_small, filename, cb) {
 	var cache = null;
 	var size = null;
@@ -442,7 +444,7 @@ function getCachedFileUrl(is_small, filename, cb) {
 		}
 	});
 }
-
+*/
 function loadImage(page, index, cb) {
 	var filename = g_titles[index];
 
@@ -452,34 +454,40 @@ function loadImage(page, index, cb) {
 		return;
 	}
 
-	getCachedFileUrl(true, filename, function(url_small) {
-		getCachedFileUrl(false, filename, function(url_big) {
-			page.innerHTML = '';
+	page.innerHTML = '';
 
-			console.info('    ' + url_small);
-			var img = document.createElement('img');
-			img.src_high = url_big;
-			img.src_low = url_small;
-			img.id = 'page_' + index;
-			img.title = "FIXME";
-			img.className = 'comicPage unselectable';
-			img.ondragstart = function() { return false; };
-			img.draggable = false;
-			img.onload = function() {
-				img.onload = null;
-				img.onerror = null;
+	var img = document.createElement('img');
+	img.id = 'page_' + index;
+	img.title = "FIXME";
+	img.className = 'comicPage unselectable';
+	img.ondragstart = function() { return false; };
+	img.draggable = false;
+	img.onload = function() {
+		img.onload = null;
+		img.onerror = null;
 
-				cb(index);
-			};
-			img.onerror = function() {
-				img.onload = null;
-				img.onerror = null;
+		cb(index);
+	};
+	img.onerror = function() {
+		img.onload = null;
+		img.onerror = null;
 
-				img.title = '';
-				img.alt = 'Invalid Image';
-				img.src = 'invalid_image.png';
-				cb(index);
-			};
+		img.title = '';
+		img.alt = 'Invalid Image';
+		img.src = 'invalid_image.png';
+		cb(index);
+	};
+
+	getCachedFile('big', filename, function(blob) {
+		if (blob) {
+			img.src_high = URL.createObjectURL(blob);
+			console.info('    ' + img.src_high);
+		}
+		getCachedFile('small', filename, function(blob) {
+			if (blob) {
+				img.src_low = URL.createObjectURL(blob);
+				console.info('    ' + img.src_low);
+			}
 
 			if (index < 2) {
 				img.src = img.src_high;
@@ -510,7 +518,7 @@ function clearComicData() {
 	g_image_count = 0;
 	g_titles = {};
 	g_are_page_previews_loading = false;
-
+/*
 	// Clear all the cached images
 	g_cached_images.forEach(function(filename, url) {
 		URL.revokeObjectURL(url);
@@ -521,6 +529,7 @@ function clearComicData() {
 		URL.revokeObjectURL(url);
 	}, true);
 	g_cached_images_small.removeAll();
+*/
 }
 
 // FIXME: Remove the size and type parameters, as they are not used
