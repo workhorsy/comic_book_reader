@@ -671,6 +671,71 @@ function getApplicationCacheStatusText(status) {
 	}
 }
 
+var g_anim_counter = 0;
+function animateCSS(element, start_fields, end_fields, duration, iteration_count, direction) {
+	iteration_count = iteration_count || 1;
+	direction = direction || 'normal';
+	var anim_name = 'anim_' + (++g_anim_counter);
+
+	var style = document.createElement('style');
+	style.type = 'text/css';
+	style.innerHTML = "\
+	." + anim_name + " {\
+		animation-duration: " + duration + ";\
+		animation-name: " + anim_name + ";\
+		animation-iteration-count: " + iteration_count + ";\
+		animation-direction: " + direction + ";\
+	}\
+	@keyframes " + anim_name + " {\
+		from {\
+			" + start_fields + "\
+		}\
+	}\
+	@keyframes " + anim_name + " {\
+		to {\
+			" + end_fields + "\
+		}\
+	}";
+	document.getElementsByTagName('head')[0].appendChild(style);
+
+	element.addEventListener('animationstart', function() {
+		console.info('animationstart');
+	}, false);
+	element.addEventListener('animationend', function() {
+		console.info('animationend');
+		document.getElementsByTagName('head')[0].removeChild(style);
+	}, false);
+	element.addEventListener('animationiteration', function() {
+		console.info('animationiteration');
+	}, false);
+	element.className = anim_name;
+}
+
+function animateValue(cb, old_value, new_value, duration) {
+	var is_bigger = old_value > new_value;
+	var diff_value = is_bigger ? old_value - new_value : new_value - old_value;
+	var start_time = new Date().getTime();
+	var frame_ms = 16.66666666666667;
+
+	var animation_interval = setInterval(function() {
+		var now_time = new Date().getTime();
+		var elapsed_time = now_time - start_time;
+		var percent = elapsed_time / duration;
+		if (percent >= 1.0) {
+			percent = 1.0;
+			clearInterval(animation_interval);
+		}
+
+		var trans_value = 0;
+		if (is_bigger) {
+			trans_value = old_value - (diff_value * percent);
+		} else {
+			trans_value= old_value + (diff_value * percent);
+		}
+		cb(trans_value);
+	}, frame_ms);
+}
+
 function monitorImageQualitySwapping() {
 	var comic_panel = document.querySelector('#comicPanel');
 	var old_left = comic_panel.scrollLeft;
@@ -686,7 +751,21 @@ function monitorImageQualitySwapping() {
 			var new_page = Math.round(new_left / g_screen_width);
 			new_left = new_page * g_screen_width;
 			//console.info(new_page + ', ' + new_left);
-			$('#comicPanel').animate({scrollLeft: new_left}, 300);
+			//$('#comicPanel').animate({scrollLeft: new_left}, 300);
+			var scroller = document.querySelector('#horizontalScroller');
+			/*
+			animateCSS(
+				scroller,
+				'opacity: 1;',
+				'opacity: 0;',
+				'3s',
+				9,
+				'alternate'
+			);
+			*/
+			animateValue(function(trans_value) {
+				comic_panel.scrollLeft = trans_value;
+			}, comic_panel.scrollLeft, new_left, 300);
 
 			setTimeout(function() {
 				g_is_busy_loading = true;
