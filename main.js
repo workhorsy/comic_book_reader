@@ -26,6 +26,8 @@ var g_top_menu_visible = 1.0;
 var g_bottom_menu_visible = 0.0;
 var g_top_menu_slider_mouse_down = false;
 var g_top_menu_slider_start_y = 0;
+var g_bottom_menu_slider_mouse_down = false;
+var g_bottom_menu_slider_start_y = 0;
 
 function hasTouchSupport() {
 	return 'ontouchstart' in window || navigator.MaxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
@@ -179,22 +181,26 @@ function hideTopMenu(is_instant) {
 }
 
 function hideBottomMenu(is_instant) {
+	/*
 	var speed = is_instant ? '0.0s' : '0.3s';
 
 	// Remove glow from top and bottom menu
-	$('#bottomMenu').removeClass('menuWithGlow');
+	$('#bottomMenuPanel').removeClass('menuWithGlow');
 
 	// Hide the bottom menu
+	var bottom_menu_panel = $('#bottomMenuPanel');
 	var bottom_menu = $('#bottomMenu');
-	bottom_menu.empty();
+	bottom_menu_panel.empty();
 	var style = bottom_menu[0].style;
-	var height = bottom_menu.outerHeight() + 10;
+	var height = bottom_menu_panel.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
+	console.info('!!!!!!!!!!!!!!!! hideBottomMenu: ' + height);
 
 	g_are_page_previews_loading = false;
 	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
+	*/
 }
 
 function setWallPaperOpacity() {
@@ -509,7 +515,7 @@ function clearComicData() {
 	// Reset the UI
 	$('#loadError').hide();
 	setComicData('');
-	$('#bottomMenu').empty();
+	$('#bottomMenuPanel').empty();
 
 	// Close the connection to indexedDB
 	dbClose();
@@ -1105,6 +1111,108 @@ function onTouchEnd(e) {
 	g_is_mouse_down = false;
 }
 
+function onBottomMenuSliderMouseDown(e) {
+	//console.log('@@@@@@ onBottomMenuSliderMouseDown');
+	onBottomMenuSliderInputDown(e.clientX, e.clientY);
+}
+
+function onBottomMenuSliderMouseUp(e) {
+	//console.log('@@@@@@ onBottomMenuSliderMouseUp');
+	onBottomMenuSliderInputUp();
+}
+
+function onBottomMenuSliderMouseMove(e) {
+	//console.log('@@@@@@ onBottomMenuSliderMouseMove');
+	onBottomMenuSliderInputMove(e.clientX, e.clientY);
+}
+
+function onBottomMenuSliderTouchStart(e) {
+	//console.log('@@@@@@ onBottomMenuSliderTouchStart');
+	//e.preventDefault();
+	//e.stopPropagation();
+	onBottomMenuSliderInputDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}
+
+function onBottomMenuSliderTouchEnd(e) {
+	//console.log('@@@@@@ onBottomMenuSliderTouchEnd');
+	//e.preventDefault();
+	//e.stopPropagation();
+	onBottomMenuSliderInputUp();
+}
+
+function onBottomMenuSliderTouchMove(e) {
+	//console.log('@@@@@@ onBottomMenuSliderTouchMove');
+	e.preventDefault();
+	e.stopPropagation();
+	onBottomMenuSliderInputMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}
+
+function onBottomMenuSliderIgnoreEvent(e) {
+	//console.info(e.type);
+	e.preventDefault();
+	e.stopPropagation();
+}
+
+function onBottomMenuSliderInputDown(x, y) {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mousedown');
+
+	g_bottom_menu_slider_start_y = y;
+	g_bottom_menu_slider_mouse_down = true;
+}
+
+function onBottomMenuSliderInputUp() {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mouseup');
+
+	g_bottom_menu_slider_start_y = 0;
+	g_bottom_menu_slider_mouse_down = false;
+	//var bottom = document.querySelector('#bottomMenu');
+	//bottom.style.transitionDuration = '0.0s';
+	//bottom.style.transform = 'translate3d(0px, ' + g_bottom_menu_slider_start_y + 'px, 0px)';
+
+	if (g_bottom_menu_visible !== 1.0) {
+		g_bottom_menu_visible = 0.0;
+	}
+
+	var height = $('#bottomMenuPanel').outerHeight();
+	var new_y = - (g_bottom_menu_visible * height);
+
+	var bottom = document.querySelector('#bottomMenu');
+	bottom.style.transitionDuration = '0.3s';
+	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+}
+
+function onBottomMenuSliderInputMove(x, y) {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mousemove');
+
+	if (g_bottom_menu_slider_mouse_down) {
+		var bottom_menu_panel = $('#bottomMenuPanel');
+		var height = bottom_menu_panel.outerHeight();
+		var offset = diff(Math.abs(g_bottom_menu_slider_start_y), Math.abs(y));
+		g_bottom_menu_visible = offset / height;
+
+		//console.info(offset);
+		//console.info(g_bottom_menu_slider_start_y + ', ' + y + ', ' + offset + ', ' + g_bottom_menu_visible);
+		if (g_bottom_menu_visible > 1) {
+			g_bottom_menu_visible = 1;
+		} else if (g_bottom_menu_visible < 0) {
+			g_bottom_menu_visible = 0;
+		}
+
+		//console.info(offset + ', ' + (offset - height) + ', ' + g_bottom_menu_visible);
+		var new_y = - (g_bottom_menu_visible * height);
+		console.info(new_y + ', ' + g_bottom_menu_visible);
+		//new_y = -offset;
+		//console.info(new_y + ', ' + offset + ', ' + (offset - height));
+
+		var bottom = document.querySelector('#bottomMenu');
+		bottom.style.transitionDuration = '0.0s';
+		bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+	}
+}
+
 function onTopMenuSliderMouseDown(e) {
 	//console.log('@@@@@@ onTopMenuSliderMouseDown');
 	onTopMenuSliderInputDown(e.clientX, e.clientY);
@@ -1186,6 +1294,7 @@ function onTopMenuSliderInputMove(x, y) {
 		var height = top_menu_panel.outerHeight();
 		var offset = diff(Math.abs(g_top_menu_slider_start_y), Math.abs(y));
 		g_top_menu_visible = offset / height;
+		//console.info(g_top_menu_slider_start_y + ', ' + y + ', ' + offset + ', ' + g_top_menu_visible);
 		if (g_top_menu_visible > 1) {
 			g_top_menu_visible = 1;
 		} else if (g_top_menu_visible < 0) {
@@ -1411,6 +1520,16 @@ function main() {
 	document.querySelector('#topMenuSlider').addEventListener('touchend', onTopMenuSliderTouchEnd, false);
 	document.querySelector('#topMenuSlider').addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
 	document.querySelector('#topMenuSlider').addEventListener('touchmove', onTopMenuSliderTouchMove, false);
+
+	document.querySelector('#bottomMenuSlider').addEventListener('mousedown', onBottomMenuSliderMouseDown, false);
+	document.querySelector('#bottomMenuSlider').addEventListener('mouseup', onBottomMenuSliderMouseUp, false);
+	document.querySelector('#bottomMenuSlider').addEventListener('mouseleave', onBottomMenuSliderMouseUp, false);
+	document.querySelector('#bottomMenuSlider').addEventListener('mousemove', onBottomMenuSliderMouseMove, false);
+
+	document.querySelector('#bottomMenuSlider').addEventListener('touchstart', onBottomMenuSliderTouchStart, false);
+	document.querySelector('#bottomMenuSlider').addEventListener('touchend', onBottomMenuSliderTouchEnd, false);
+	document.querySelector('#bottomMenuSlider').addEventListener('touchcancel', onBottomMenuSliderIgnoreEvent, false);
+	document.querySelector('#bottomMenuSlider').addEventListener('touchmove', onBottomMenuSliderTouchMove, false);
 /*
 	var comicPanel = $('#comicPanel')[0];
 
