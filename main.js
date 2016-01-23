@@ -1106,14 +1106,56 @@ function onTouchEnd(e) {
 }
 
 function onTopMenuSliderMouseDown(e) {
-	if (g_file_name === null || g_file_name === '') return;
-	//console.info('mousedown');
-
-	g_top_menu_slider_start_y = e.clientY;
-	g_top_menu_slider_mouse_down = true;
+	//console.log('@@@@@@ onTopMenuSliderMouseDown');
+	onTopMenuSliderInputDown(e.clientX, e.clientY);
 }
 
 function onTopMenuSliderMouseUp(e) {
+	//console.log('@@@@@@ onTopMenuSliderMouseUp');
+	onTopMenuSliderInputUp();
+}
+
+function onTopMenuSliderMouseMove(e) {
+	//console.log('@@@@@@ onTopMenuSliderMouseMove');
+	onTopMenuSliderInputMove(e.clientX, e.clientY);
+}
+
+function onTopMenuSliderTouchStart(e) {
+	//console.log('@@@@@@ onTopMenuSliderTouchStart');
+	//e.preventDefault();
+	//e.stopPropagation();
+	onTopMenuSliderInputDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}
+
+function onTopMenuSliderTouchEnd(e) {
+	//console.log('@@@@@@ onTopMenuSliderTouchEnd');
+	//e.preventDefault();
+	//e.stopPropagation();
+	onTopMenuSliderInputUp();
+}
+
+function onTopMenuSliderTouchMove(e) {
+	//console.log('@@@@@@ onTopMenuSliderTouchMove');
+	e.preventDefault();
+	e.stopPropagation();
+	onTopMenuSliderInputMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}
+
+function onTopMenuSliderIgnoreEvent(e) {
+	//console.info(e.type);
+	e.preventDefault();
+	e.stopPropagation();
+}
+
+function onTopMenuSliderInputDown(x, y) {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mousedown');
+
+	g_top_menu_slider_start_y = y;
+	g_top_menu_slider_mouse_down = true;
+}
+
+function onTopMenuSliderInputUp() {
 	if (g_file_name === null || g_file_name === '') return;
 	//console.info('mouseup');
 
@@ -1135,13 +1177,12 @@ function onTopMenuSliderMouseUp(e) {
 	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 }
 
-function onTopMenuSliderMouseMove(e) {
+function onTopMenuSliderInputMove(x, y) {
 	if (g_file_name === null || g_file_name === '') return;
 	//console.info('mousemove');
 
 	if (g_top_menu_slider_mouse_down) {
 		var top_menu_panel = $('#topMenuPanel');
-		var y = e.clientY;
 		var height = top_menu_panel.outerHeight();
 		var offset = diff(Math.abs(g_top_menu_slider_start_y), Math.abs(y));
 		g_top_menu_visible = offset / height;
@@ -1365,6 +1406,11 @@ function main() {
 	document.querySelector('#topMenuSlider').addEventListener('mouseup', onTopMenuSliderMouseUp, false);
 	document.querySelector('#topMenuSlider').addEventListener('mouseleave', onTopMenuSliderMouseUp, false);
 	document.querySelector('#topMenuSlider').addEventListener('mousemove', onTopMenuSliderMouseMove, false);
+
+	document.querySelector('#topMenuSlider').addEventListener('touchstart', onTopMenuSliderTouchStart, false);
+	document.querySelector('#topMenuSlider').addEventListener('touchend', onTopMenuSliderTouchEnd, false);
+	document.querySelector('#topMenuSlider').addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
+	document.querySelector('#topMenuSlider').addEventListener('touchmove', onTopMenuSliderTouchMove, false);
 /*
 	var comicPanel = $('#comicPanel')[0];
 
