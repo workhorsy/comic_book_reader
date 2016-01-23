@@ -128,6 +128,10 @@ function requireBrowserFeatures(cb) {
 	cb();
 }
 
+function diff(a, b) {
+	return a > b ? (a-b) : (b-a);
+}
+
 function toFriendlySize(size) {
 	if (size >= 1024000000) {
 		return (size / 1024000000).toFixed(2) + ' GB';
@@ -1310,6 +1314,63 @@ function main() {
 	$('#fileInput').change(function() {
 		loadComic();
 	});
+
+	var g_top_menu_slider_mouse_down = false;
+	var g_top_menu_slider_start_y = 0;
+	function onTopMenuSliderMouseDown(e) {
+		//console.info('mousedown');
+		g_top_menu_slider_start_y = e.clientY;
+		g_top_menu_slider_mouse_down = true;
+	}
+
+	function onTopMenuSliderMouseUp(e) {
+		//console.info('mouseup');
+		g_top_menu_slider_start_y = 0;
+		g_top_menu_slider_mouse_down = false;
+		//var top = document.querySelector('#topMenu');
+		//top.style.transitionDuration = '0.0s';
+		//top.style.transform = 'translate3d(0px, ' + g_top_menu_slider_start_y + 'px, 0px)';
+
+		if (g_top_menu_visible !== 1.0) {
+			g_top_menu_visible = 0.0;
+		}
+
+		var height = $('#topMenuPanel').outerHeight();
+		var new_y = - (height - (g_top_menu_visible * height));
+
+		var top = document.querySelector('#topMenu');
+		top.style.transitionDuration = '0.3s';
+		top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+	}
+
+	function onTopMenuSliderMouseMove(e) {
+		//console.info('mousemove ' + g_top_menu_slider_mouse_down);
+		if (g_top_menu_slider_mouse_down) {
+			var top_menu_panel = $('#topMenuPanel');
+			var y = e.clientY;
+			var height = top_menu_panel.outerHeight();
+			var offset = diff(Math.abs(g_top_menu_slider_start_y), Math.abs(y));
+			g_top_menu_visible = offset / height;
+			if (g_top_menu_visible > 1) {
+				g_top_menu_visible = 1;
+			} else if (g_top_menu_visible < 0) {
+				g_top_menu_visible = 0;
+			}
+
+			//console.info((offset - height) + ', ' + g_top_menu_visible);
+			var new_y = - (height - (g_top_menu_visible * height));
+			//console.info(new_y + ', ' + (offset - height));
+
+			var top = document.querySelector('#topMenu');
+			top.style.transitionDuration = '0.0s';
+			top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+		}
+	}
+
+	document.querySelector('#topMenuSlider').addEventListener('mousedown', onTopMenuSliderMouseDown, false);
+	document.querySelector('#topMenuSlider').addEventListener('mouseup', onTopMenuSliderMouseUp, false);
+	document.querySelector('#topMenuSlider').addEventListener('mouseleave', onTopMenuSliderMouseUp, false);
+	document.querySelector('#topMenuSlider').addEventListener('mousemove', onTopMenuSliderMouseMove, false);
 /*
 	var comicPanel = $('#comicPanel')[0];
 

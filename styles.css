@@ -265,6 +265,7 @@ input:checked + .touchLabel::after {
 }
 
 #topMenuSlider {
+	pointer-events: all;
 	border: 5px solid yellow;
 	height: 200px;
 }
