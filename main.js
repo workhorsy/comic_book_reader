@@ -223,21 +223,13 @@ function showTopMenu(y_offset, is_instant) {
 	setWallPaperOpacity();
 }
 
-function showBottomMenu(y_offset, is_instant) {
-	var speed = is_instant ? '0.0s' : '0.1s';
-	var height = $('#bottomMenu').outerHeight() * 1.0;
-	var offset = height + ((-height) * y_offset);
-	var style = $('#bottomMenu')[0].style;
-	style.transitionDuration = speed;
-	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
-	g_bottom_menu_visible = y_offset;
-
-	setWallPaperOpacity();
+function loadPagePreview() {
+	//setWallPaperOpacity();
 
 	if (! g_are_page_previews_loading && g_bottom_menu_visible === 1.0) {
 		console.info('Loading page previews .....................');
 		g_are_page_previews_loading = true;
-		var menu = $('#bottomMenu');
+		var menu = $('#bottomMenuPanel');
 		menu.empty();
 
 		var curr_image_index = g_image_index;
@@ -252,7 +244,7 @@ function showBottomMenu(y_offset, is_instant) {
 				//console.info('Loading page preview #' + (i + 1));
 				var url = null;
 				if (blob) {
-					url = URL.createObjectURL(blob)
+					url = URL.createObjectURL(blob);
 					//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 				}
 
@@ -260,11 +252,9 @@ function showBottomMenu(y_offset, is_instant) {
 				img.className = 'comicPreviewPortrait';
 				img.title = g_titles[i];
 				img.onclick = function(e) {
-					g_image_index = i;
-					updatePageNumber();
-					loadCurrentPage();
+					console.info(i * g_screen_width);
+					$('#comicPanel')[0].scrollLeft = i * g_screen_width;
 					hideAllMenus(false);
-					$(window).trigger('resize');
 				};
 
 				// The image loads successfully
@@ -1206,6 +1196,10 @@ function onBottomMenuSliderInputMove(x, y) {
 		var bottom = document.querySelector('#bottomMenu');
 		bottom.style.transitionDuration = '0.0s';
 		bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+
+		if (g_bottom_menu_visible === 1.0) {
+			loadPagePreview();
+		}
 	}
 }
 
