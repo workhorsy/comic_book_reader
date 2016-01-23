@@ -265,7 +265,7 @@ function showBottomMenu(y_offset, is_instant) {
 				img.title = g_titles[i];
 				img.onclick = function(e) {
 					g_image_index = i;
-					$('.overlayPageNumber').html(friendlyPageNumber());
+					updatePageNumber();
 					loadCurrentPage();
 					hideAllMenus(false);
 					$(window).trigger('resize');
@@ -402,6 +402,11 @@ function loadComic() {
 	var filetype = file.type;
 
 	onLoaded(file, filename, filesize, filetype);
+}
+
+function updatePageNumber() {
+	$('.overlayPageNumber').html(friendlyPageNumber());
+	document.title = friendlyPageNumber() + ' "' + g_file_name + '"';
 }
 
 function friendlyPageNumber() {
@@ -822,7 +827,7 @@ function monitorImageQualitySwapping() {
 				};
 				loadNextPage(0);
 				g_image_index = new_page;
-				$('.overlayPageNumber').html(friendlyPageNumber());
+				updatePageNumber();
 			}, 300);
 		}
 
@@ -1141,7 +1146,7 @@ function main() {
 	$('#btnMousePageLeft').click(function () {
 		if (g_image_index > 0) {
 			g_image_index--;
-			$('.overlayPageNumber').html(friendlyPageNumber());
+			updatePageNumber();
 			loadCurrentPage();
 			$(window).trigger('resize');
 		}
@@ -1150,7 +1155,7 @@ function main() {
 	$('#btnMousePageRight').click(function () {
 		if (g_image_index < g_image_count -1) {
 			g_image_index++;
-			$('.overlayPageNumber').html(friendlyPageNumber());
+			updatePageNumber();
 			loadCurrentPage();
 			$(window).trigger('resize');
 		}
