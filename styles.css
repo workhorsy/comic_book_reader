@@ -248,9 +248,7 @@ input:checked + .touchLabel::after {
 	z-index: 1000;
 	margin: 0px;
 	padding: 0px;
-	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
-	border: 5px solid red;
 }
 
 #topMenuPanel {
@@ -260,8 +258,8 @@ input:checked + .touchLabel::after {
 	border-top: 0px;
 	margin: 0px;
 	padding: 0px;
+	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
-	border: 5px solid blue;
 }
 
 #topMenuSlider {

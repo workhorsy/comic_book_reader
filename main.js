@@ -173,7 +173,6 @@ function hideTopMenu(is_instant) {
 	var height = top_menu_panel.outerHeight() + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
-	style.pointerEvents = 'none';
 
 	g_top_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
@@ -192,7 +191,6 @@ function hideBottomMenu(is_instant) {
 	var height = bottom_menu.outerHeight() + 10;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
-	style.pointerEvents = 'none';
 
 	g_are_page_previews_loading = false;
 	g_bottom_menu_visible = 0.0;
@@ -218,11 +216,6 @@ function showTopMenu(y_offset, is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_top_menu_visible = y_offset;
-	if (g_top_menu_visible == 1.0) {
-		style.pointerEvents = 'all';
-	} else {
-		style.pointerEvents = 'none';
-	}
 
 	// Show the wall paper
 	setWallPaperOpacity();
@@ -236,11 +229,6 @@ function showBottomMenu(y_offset, is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_bottom_menu_visible = y_offset;
-	if (g_bottom_menu_visible == 1.0) {
-		style.pointerEvents = 'all';
-	} else {
-		style.pointerEvents = 'none';
-	}
 
 	setWallPaperOpacity();
 
