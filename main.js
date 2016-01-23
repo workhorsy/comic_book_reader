@@ -1043,7 +1043,7 @@ function makePagePreview(filename, is_cached, cb) {
 					url = null;
 				}
 
-				var ratio = 200.0 / img.width;
+				var ratio = 400.0 / img.width;
 				var width = img.width * ratio;
 				var height = img.height * ratio;
 
