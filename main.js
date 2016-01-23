@@ -908,6 +908,7 @@ function startWorker() {
 				break;
 			case 'uncompressed_done':
 				console.info('!!!!!!!!!!!!!!!!!! monitorImageQualitySwapping');
+				$('#comicPanel')[0].scrollLeft = 0;
 				monitorImageQualitySwapping();
 				break;
 			case 'uncompressed_each':
