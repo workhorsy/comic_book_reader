@@ -1163,6 +1163,8 @@ function onBottomMenuSliderInputUp() {
 		g_bottom_menu_visible = 0.0;
 		// Remove glow from top and bottom menu
 		$('#bottomMenuPanel').removeClass('menuWithGlow');
+		$('#bottomMenuPanel').empty();
+		g_are_page_previews_loading = false;
 	}
 
 	var height = $('#bottomMenuPanel').outerHeight();
