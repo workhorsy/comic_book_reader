@@ -501,6 +501,8 @@ function clearComicData() {
 	$('#loadError').hide();
 	setComicData('');
 	$('#bottomMenuPanel').empty();
+	$('#horizontalScroller').empty();
+	$('#comicPanel')[0].scrollLeft = 0;
 
 	// Close the connection to indexedDB
 	dbClose();
