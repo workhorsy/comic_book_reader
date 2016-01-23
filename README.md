@@ -1,4 +1,4 @@
-http://workhorsy.github.io/comic_book_reader
+http://comic-book-reader.com
 
 Comic Book Reader
 ===================
