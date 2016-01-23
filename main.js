@@ -264,6 +264,7 @@ function showBottomMenu(y_offset, is_instant) {
 				img.title = g_titles[i];
 				img.onclick = function(e) {
 					g_image_index = i;
+					$('.overlayPageNumber').html(friendlyPageNumber());
 					loadCurrentPage();
 					hideAllMenus(false);
 					$(window).trigger('resize');
@@ -765,6 +766,9 @@ function monitorImageQualitySwapping() {
 			*/
 			animateValue(function(trans_value) {
 				comic_panel.scrollLeft = trans_value;
+				if (trans_value == new_left) {
+					overlayShow(true);
+				}
 			}, comic_panel.scrollLeft, new_left, 300);
 
 			setTimeout(function() {
@@ -802,7 +806,6 @@ function monitorImageQualitySwapping() {
 						this.onload = null;
 						this.onerror = null;
 						console.info(this.src);
-						document.title = this.src;
 						loadNextPage(i + 1);
 					};
 					page.onerror = function() {
@@ -812,13 +815,13 @@ function monitorImageQualitySwapping() {
 						this.alt = 'Invalid Image';
 						this.src = 'invalid_image.png';
 						console.info(this.src);
-						document.title = this.src;
 						loadNextPage(i + 1);
 					};
 					page.src = src;
 				};
 				loadNextPage(0);
 				g_image_index = new_page;
+				$('.overlayPageNumber').html(friendlyPageNumber());
 			}, 300);
 		}
 
@@ -1137,6 +1140,7 @@ function main() {
 	$('#btnMousePageLeft').click(function () {
 		if (g_image_index > 0) {
 			g_image_index--;
+			$('.overlayPageNumber').html(friendlyPageNumber());
 			loadCurrentPage();
 			$(window).trigger('resize');
 		}
@@ -1145,6 +1149,7 @@ function main() {
 	$('#btnMousePageRight').click(function () {
 		if (g_image_index < g_image_count -1) {
 			g_image_index++;
+			$('.overlayPageNumber').html(friendlyPageNumber());
 			loadCurrentPage();
 			$(window).trigger('resize');
 		}
