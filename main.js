@@ -1160,6 +1160,8 @@ function onBottomMenuSliderInputUp() {
 
 	if (g_bottom_menu_visible !== 1.0) {
 		g_bottom_menu_visible = 0.0;
+		// Remove glow from top and bottom menu
+		$('#bottomMenuPanel').removeClass('menuWithGlow');
 	}
 
 	var height = $('#bottomMenuPanel').outerHeight();
@@ -1268,6 +1270,8 @@ function onTopMenuSliderInputUp() {
 
 	if (g_top_menu_visible !== 1.0) {
 		g_top_menu_visible = 0.0;
+		// Remove glow from top and bottom menu
+		$('#topMenuPanel').removeClass('menuWithGlow');
 	}
 
 	var height = $('#topMenuPanel').outerHeight();
