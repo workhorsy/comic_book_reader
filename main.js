@@ -161,9 +161,10 @@ function hideTopMenu(is_instant) {
 	$('#topMenu').removeClass('menuWithGlow');
 
 	// Hide the top menu
+	var top_menu_panel = $('#topMenuPanel');
 	var top_menu = $('#topMenu');
 	var style = top_menu[0].style;
-	var height = top_menu.outerHeight() + 15;
+	var height = top_menu_panel.outerHeight() + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 	style.pointerEvents = 'none';

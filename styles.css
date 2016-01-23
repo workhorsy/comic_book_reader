@@ -246,14 +246,27 @@ input:checked + .touchLabel::after {
 	width: 100%;
 	top: 0px;
 	z-index: 1000;
+	margin: 0px;
+	padding: 0px;
+	background-color: rgba(0, 0, 0, 0.6);
+	text-align: center;
+	border: 5px solid red;
+}
+
+#topMenuPanel {
+	box-sizing: border-box;
+	width: 100%;
 	border: 1px solid #61AFEF;
 	border-top: 0px;
 	margin: 0px;
-	margin-bottom: 20px;
 	padding: 0px;
-	padding-top: 15px;
-	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
+	border: 5px solid blue;
+}
+
+#topMenuSlider {
+	border: 5px solid yellow;
+	height: 200px;
 }
 
 #topMenuButtons {
@@ -339,6 +352,7 @@ input:checked + .touchLabel::after {
 	padding-bottom: 0px;
 	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
+	border: 5px solid red;
 }
 
 #fileInput {

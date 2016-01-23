@@ -96,66 +96,72 @@
 		</div>
 
 		<div id="touchUI" style="display: none;">
-			<div id="topMenu" class="unselectable">
-				<div id="topMenuButtons">
-					<button class="btnFileLoad touchButton">Open comic file</button>
-					<button id="btnTouchLibrary" class="btnLibrary touchButton">Library</button>
-					<button class="btnFullScreen touchButton">Full Screen</button>
-					<button class="btnHomepage touchButton">Home Page</button>
-					<button class="btnSettings touchButton">Settings</button>
-				</div>
+			<div id="topMenu">
+				<div id="topMenuPanel" class="unselectable">
+					<div id="topMenuButtons">
+						<button class="btnFileLoad touchButton">Open comic file</button>
+						<button id="btnTouchLibrary" class="btnLibrary touchButton">Library</button>
+						<button class="btnFullScreen touchButton">Full Screen</button>
+						<button class="btnHomepage touchButton">Home Page</button>
+						<button class="btnSettings touchButton">Settings</button>
+					</div>
 
-				<p><span id="loadError"></span></p>
-				<div id="comicData">
-					<span id="nameValue"></span><br>
-				</div>
+					<p><span id="loadError"></span></p>
+					<div id="comicData">
+						<span id="nameValue"></span><br>
+					</div>
 
-				<div>
-					<span id="totalUsersOnline"></span>
-				</div>
-
-				<div id="touchSettingsMenu" class="settingsMenu">
 					<div>
-						<p>
-							<input id="btnTouchDisableRightClick" class="btnDisableRightClick touchCheckBox" type="checkbox" />
-							<label for="btnTouchDisableRightClick" class="touchLabel">Allow right click</label>
-						</p>
-						<p>
-							<input id="btnTouchEnableInstallUpdates" class="btnEnableInstallUpdates touchCheckBox" type="checkbox" />
-							<label for="btnTouchEnableInstallUpdates" class="touchLabel">Check for updates</label>
-						</p>
-						<p>
-							<input id="btnTouchUseHigherQualityPreviews" class="btnUseHigherQualityPreviews touchCheckBox" type="checkbox" />
-							<label for="btnTouchUseHigherQualityPreviews" class="touchLabel">Use Higher Quality Previews</label>
-						</p>
-						<p>
-							<label class="touchHeaderLabel">Input mode:</label>
-							<input id="btnTouchIsTouchMode" class="btnIsTouchMode touchRadioButton" type="radio" name="touchInputMode" />
-							<label for="btnTouchIsTouchMode" class="touchLabel">Touch</label>
+						<span id="totalUsersOnline"></span>
+					</div>
 
-							<input id="btnTouchIsMouseMode" class="btnIsMouseMode touchRadioButton" type="radio" name="touchInputMode" />
-							<label for="btnTouchIsMouseMode" class="touchLabel">Mouse (Experimental)</label>
-						</p>
-						<hr />
-						<p>
-							<label>Storage used:</label>
-							<span class="totalDBSize" style="margin: 4px;">. . .</span>
-						</p>
-						<p>
-							<button class="btnClearAllData touchButton">Clear all data</button>
-						</p>
-						<hr />
-						<p>
-							<label>Software Version:</label>
-							<span class="versionDate" style="margin: 4px;">...</span>
-						</p>
-						<p>
-							<button class="btnCheckForUpdatesNow touchButton">Check for updates now</button>
-						</p>
+					<div id="touchSettingsMenu" class="settingsMenu">
+						<div>
+							<p>
+								<input id="btnTouchDisableRightClick" class="btnDisableRightClick touchCheckBox" type="checkbox" />
+								<label for="btnTouchDisableRightClick" class="touchLabel">Allow right click</label>
+							</p>
+							<p>
+								<input id="btnTouchEnableInstallUpdates" class="btnEnableInstallUpdates touchCheckBox" type="checkbox" />
+								<label for="btnTouchEnableInstallUpdates" class="touchLabel">Check for updates</label>
+							</p>
+							<p>
+								<input id="btnTouchUseHigherQualityPreviews" class="btnUseHigherQualityPreviews touchCheckBox" type="checkbox" />
+								<label for="btnTouchUseHigherQualityPreviews" class="touchLabel">Use Higher Quality Previews</label>
+							</p>
+							<p>
+								<label class="touchHeaderLabel">Input mode:</label>
+								<input id="btnTouchIsTouchMode" class="btnIsTouchMode touchRadioButton" type="radio" name="touchInputMode" />
+								<label for="btnTouchIsTouchMode" class="touchLabel">Touch</label>
+
+								<input id="btnTouchIsMouseMode" class="btnIsMouseMode touchRadioButton" type="radio" name="touchInputMode" />
+								<label for="btnTouchIsMouseMode" class="touchLabel">Mouse (Experimental)</label>
+							</p>
+							<hr />
+							<p>
+								<label>Storage used:</label>
+								<span class="totalDBSize" style="margin: 4px;">. . .</span>
+							</p>
+							<p>
+								<button class="btnClearAllData touchButton">Clear all data</button>
+							</p>
+							<hr />
+							<p>
+								<label>Software Version:</label>
+								<span class="versionDate" style="margin: 4px;">...</span>
+							</p>
+							<p>
+								<button class="btnCheckForUpdatesNow touchButton">Check for updates now</button>
+							</p>
+						</div>
+					</div>
+
+					<div id="libraryMenu">
 					</div>
 				</div>
 
-				<div id="libraryMenu">
+				<div id="topMenuSlider">
+					herp........
 				</div>
 			</div>
 
