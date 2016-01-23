@@ -349,7 +349,6 @@ input:checked + .touchLabel::after {
 	margin: 0px;
 	padding: 0px;
 	text-align: center;
-	border: 5px solid red;
 }
 
 #bottomMenuPanel {
@@ -361,14 +360,13 @@ input:checked + .touchLabel::after {
 	padding: 0px;
 	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
-	border: 5px solid blue;
 }
 
 #bottomMenuSlider {
 	pointer-events: all;
 	border: 5px solid yellow;
-	/* FIXME: This does not stay at 200px */
 	height: 200px;
+	flex: none;
 }
 
 #fileInput {

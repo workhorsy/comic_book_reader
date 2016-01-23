@@ -181,26 +181,22 @@ function hideTopMenu(is_instant) {
 }
 
 function hideBottomMenu(is_instant) {
-	/*
 	var speed = is_instant ? '0.0s' : '0.3s';
 
 	// Remove glow from top and bottom menu
-	$('#bottomMenuPanel').removeClass('menuWithGlow');
+	var bottom_menu_panel = $('#bottomMenuPanel');
+	bottom_menu_panel.removeClass('menuWithGlow');
 
 	// Hide the bottom menu
-	var bottom_menu_panel = $('#bottomMenuPanel');
-	var bottom_menu = $('#bottomMenu');
 	bottom_menu_panel.empty();
-	var style = bottom_menu[0].style;
-	var height = bottom_menu_panel.outerHeight() + 10;
-	style.transitionDuration = speed;
-	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
-	console.info('!!!!!!!!!!!!!!!! hideBottomMenu: ' + height);
+	var height = bottom_menu_panel.outerHeight();
+	var bottom = document.querySelector('#bottomMenu');
+	bottom.style.transitionDuration = speed;
+	bottom.style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
 
 	g_are_page_previews_loading = false;
 	g_bottom_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
-	*/
 }
 
 function setWallPaperOpacity() {
@@ -1176,7 +1172,7 @@ function onBottomMenuSliderInputUp() {
 	}
 
 	var height = $('#bottomMenuPanel').outerHeight();
-	var new_y = - (g_bottom_menu_visible * height);
+	var new_y = height - (g_bottom_menu_visible * height);
 
 	var bottom = document.querySelector('#bottomMenu');
 	bottom.style.transitionDuration = '0.3s';
@@ -1202,8 +1198,8 @@ function onBottomMenuSliderInputMove(x, y) {
 		}
 
 		//console.info(offset + ', ' + (offset - height) + ', ' + g_bottom_menu_visible);
-		var new_y = - (g_bottom_menu_visible * height);
-		console.info(new_y + ', ' + g_bottom_menu_visible);
+		var new_y = height - (g_bottom_menu_visible * height);
+		//console.info(new_y + ', ' + g_bottom_menu_visible);
 		//new_y = -offset;
 		//console.info(new_y + ', ' + offset + ', ' + (offset - height));
 
