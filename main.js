@@ -132,6 +132,7 @@ function requireBrowserFeatures(cb) {
 	cb();
 }
 
+// FIXME: Move this to a utility.js file
 function diff(a, b) {
 	return a > b ? (a-b) : (b-a);
 }
@@ -1519,6 +1520,7 @@ function main() {
 		loadComic();
 	});
 
+	// Add top and bottom menu mouse and touch events
 	var top_slider = document.querySelector('#topMenuSlider');
 	var bottom_slider = document.querySelector('#bottomMenuSlider');
 	if (hasTouchSupport()) {
