@@ -1513,26 +1513,28 @@ function main() {
 		loadComic();
 	});
 
+	var top_slider = document.querySelector('#topMenuSlider');
+	var bottom_slider = document.querySelector('#bottomMenuSlider');
 	if (hasTouchSupport()) {
-		document.querySelector('#topMenuSlider').addEventListener('touchstart', onTopMenuSliderTouchStart, false);
-		document.querySelector('#topMenuSlider').addEventListener('touchend', onTopMenuSliderTouchEnd, false);
-		document.querySelector('#topMenuSlider').addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
-		document.querySelector('#topMenuSlider').addEventListener('touchmove', onTopMenuSliderTouchMove, false);
+		top_slider.addEventListener('touchstart', onTopMenuSliderTouchStart, false);
+		top_slider.addEventListener('touchend', onTopMenuSliderTouchEnd, false);
+		top_slider.addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
+		top_slider.addEventListener('touchmove', onTopMenuSliderTouchMove, false);
 
-		document.querySelector('#bottomMenuSlider').addEventListener('touchstart', onBottomMenuSliderTouchStart, false);
-		document.querySelector('#bottomMenuSlider').addEventListener('touchend', onBottomMenuSliderTouchEnd, false);
-		document.querySelector('#bottomMenuSlider').addEventListener('touchcancel', onBottomMenuSliderIgnoreEvent, false);
-		document.querySelector('#bottomMenuSlider').addEventListener('touchmove', onBottomMenuSliderTouchMove, false);
+		bottom_slider.addEventListener('touchstart', onBottomMenuSliderTouchStart, false);
+		bottom_slider.addEventListener('touchend', onBottomMenuSliderTouchEnd, false);
+		bottom_slider.addEventListener('touchcancel', onBottomMenuSliderIgnoreEvent, false);
+		bottom_slider.addEventListener('touchmove', onBottomMenuSliderTouchMove, false);
 	} else {
-		document.querySelector('#topMenuSlider').addEventListener('mousedown', onTopMenuSliderMouseDown, false);
-		document.querySelector('#topMenuSlider').addEventListener('mouseup', onTopMenuSliderMouseUp, false);
-		document.querySelector('#topMenuSlider').addEventListener('mouseleave', onTopMenuSliderMouseUp, false);
-		document.querySelector('#topMenuSlider').addEventListener('mousemove', onTopMenuSliderMouseMove, false);
+		top_slider.addEventListener('mousedown', onTopMenuSliderMouseDown, false);
+		top_slider.addEventListener('mouseup', onTopMenuSliderMouseUp, false);
+		top_slider.addEventListener('mouseleave', onTopMenuSliderMouseUp, false);
+		top_slider.addEventListener('mousemove', onTopMenuSliderMouseMove, false);
 
-		document.querySelector('#bottomMenuSlider').addEventListener('mousedown', onBottomMenuSliderMouseDown, false);
-		document.querySelector('#bottomMenuSlider').addEventListener('mouseup', onBottomMenuSliderMouseUp, false);
-		document.querySelector('#bottomMenuSlider').addEventListener('mouseleave', onBottomMenuSliderMouseUp, false);
-		document.querySelector('#bottomMenuSlider').addEventListener('mousemove', onBottomMenuSliderMouseMove, false);
+		bottom_slider.addEventListener('mousedown', onBottomMenuSliderMouseDown, false);
+		bottom_slider.addEventListener('mouseup', onBottomMenuSliderMouseUp, false);
+		bottom_slider.addEventListener('mouseleave', onBottomMenuSliderMouseUp, false);
+		bottom_slider.addEventListener('mousemove', onBottomMenuSliderMouseMove, false);
 	}
 /*
 	var comicPanel = $('#comicPanel')[0];
