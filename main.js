@@ -164,6 +164,7 @@ function hideTopMenu(is_instant) {
 	$('.settingsMenu').hide();
 	$('#libraryMenu').hide();
 	$('#libraryMenu').empty();
+	$('#bottomMenu').show();
 
 	// Remove glow from top and bottom menu
 	$('#topMenuPanel').removeClass('menuWithGlow');
@@ -310,6 +311,7 @@ function loadPagePreview() {
 
 function showLibrary() {
 	$('.settingsMenu').hide();
+	$('#bottomMenu').hide();
 
 	var libraryMenu = $('#libraryMenu');
 	libraryMenu.empty();
@@ -341,6 +343,7 @@ function showLibrary() {
 			img.onclick = function(e) {
 				libraryMenu.hide();
 				libraryMenu.empty();
+				$('#bottomMenu').show();
 
 				onLoaded(null, filename, filesize, filetype);
 			};
@@ -362,6 +365,7 @@ function showLibrary() {
 			img.onclick = function(e) {
 				libraryMenu.hide();
 				libraryMenu.empty();
+				$('#bottomMenu').show();
 
 				onLoaded(null, filename, filesize, filetype);
 			};
@@ -1404,6 +1408,7 @@ function main() {
 		var is_visible = $('.settingsMenu').is(":visible");
 		if (is_visible) {
 			$('.settingsMenu').hide();
+			$('#bottomMenu').show();
 		} else {
 			// Update the DB size
 			$('.totalDBSize').text('. . .');
@@ -1421,6 +1426,7 @@ function main() {
 
 			// Show the menu
 			$('.settingsMenu').show();
+			$('#bottomMenu').hide();
 		}
 	});
 
