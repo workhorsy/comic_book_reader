@@ -592,6 +592,18 @@ function onResize() {
 
 	var new_left = g_image_index * g_screen_width;
 	document.querySelector('#comicPanel').scrollLeft = new_left;
+
+	var height = $('#topMenuPanel').outerHeight();
+	var new_y = - (height - (g_top_menu_visible * height));
+	var top = document.querySelector('#topMenu');
+	top.style.transitionDuration = '0.0s';
+	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+
+	var height = $('#bottomMenuPanel').outerHeight();
+	var new_y = height - (g_bottom_menu_visible * height);
+	var bottom = document.querySelector('#bottomMenu');
+	bottom.style.transitionDuration = '0.0s';
+	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 }
 
 function overlayHide() {
