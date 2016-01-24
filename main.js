@@ -1102,6 +1102,10 @@ function onScroll(e) {
 
 function onMouseDown(e) {
 	g_is_mouse_down = true;
+
+	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
+		hideAllMenus(false);
+	}
 }
 
 function onMouseUp(e) {
@@ -1165,6 +1169,10 @@ function onBottomMenuSliderInputDown(x, y) {
 	g_bottom_menu_slider_start_y = y;
 	g_bottom_menu_slider_mouse_down = true;
 	$('#bottomMenuPanel').addClass('menuWithGlow');
+
+	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
+		hideAllMenus(false);
+	}
 }
 
 function onBottomMenuSliderInputUp() {
@@ -1278,6 +1286,10 @@ function onTopMenuSliderInputDown(x, y) {
 	g_top_menu_slider_start_y = y;
 	g_top_menu_slider_mouse_down = true;
 	$('#topMenuPanel').addClass('menuWithGlow');
+
+	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
+		hideAllMenus(false);
+	}
 }
 
 function onTopMenuSliderInputUp() {
