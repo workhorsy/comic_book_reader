@@ -1169,6 +1169,7 @@ function onBottomMenuSliderInputUp() {
 		// Remove glow from top and bottom menu
 		$('#bottomMenuPanel').removeClass('menuWithGlow');
 		$('#bottomMenuPanel').empty();
+		setWallPaperOpacity();
 		g_are_page_previews_loading = false;
 	}
 
@@ -1280,6 +1281,7 @@ function onTopMenuSliderInputUp() {
 		g_top_menu_visible = 0.0;
 		// Remove glow from top and bottom menu
 		$('#topMenuPanel').removeClass('menuWithGlow');
+		setWallPaperOpacity();
 	}
 
 	var height = $('#topMenuPanel').outerHeight();
