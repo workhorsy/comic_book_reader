@@ -1513,25 +1513,27 @@ function main() {
 		loadComic();
 	});
 
-	document.querySelector('#topMenuSlider').addEventListener('mousedown', onTopMenuSliderMouseDown, false);
-	document.querySelector('#topMenuSlider').addEventListener('mouseup', onTopMenuSliderMouseUp, false);
-	document.querySelector('#topMenuSlider').addEventListener('mouseleave', onTopMenuSliderMouseUp, false);
-	document.querySelector('#topMenuSlider').addEventListener('mousemove', onTopMenuSliderMouseMove, false);
+	if (hasTouchSupport()) {
+		document.querySelector('#topMenuSlider').addEventListener('touchstart', onTopMenuSliderTouchStart, false);
+		document.querySelector('#topMenuSlider').addEventListener('touchend', onTopMenuSliderTouchEnd, false);
+		document.querySelector('#topMenuSlider').addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
+		document.querySelector('#topMenuSlider').addEventListener('touchmove', onTopMenuSliderTouchMove, false);
 
-	document.querySelector('#topMenuSlider').addEventListener('touchstart', onTopMenuSliderTouchStart, false);
-	document.querySelector('#topMenuSlider').addEventListener('touchend', onTopMenuSliderTouchEnd, false);
-	document.querySelector('#topMenuSlider').addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
-	document.querySelector('#topMenuSlider').addEventListener('touchmove', onTopMenuSliderTouchMove, false);
+		document.querySelector('#bottomMenuSlider').addEventListener('touchstart', onBottomMenuSliderTouchStart, false);
+		document.querySelector('#bottomMenuSlider').addEventListener('touchend', onBottomMenuSliderTouchEnd, false);
+		document.querySelector('#bottomMenuSlider').addEventListener('touchcancel', onBottomMenuSliderIgnoreEvent, false);
+		document.querySelector('#bottomMenuSlider').addEventListener('touchmove', onBottomMenuSliderTouchMove, false);
+	} else {
+		document.querySelector('#topMenuSlider').addEventListener('mousedown', onTopMenuSliderMouseDown, false);
+		document.querySelector('#topMenuSlider').addEventListener('mouseup', onTopMenuSliderMouseUp, false);
+		document.querySelector('#topMenuSlider').addEventListener('mouseleave', onTopMenuSliderMouseUp, false);
+		document.querySelector('#topMenuSlider').addEventListener('mousemove', onTopMenuSliderMouseMove, false);
 
-	document.querySelector('#bottomMenuSlider').addEventListener('mousedown', onBottomMenuSliderMouseDown, false);
-	document.querySelector('#bottomMenuSlider').addEventListener('mouseup', onBottomMenuSliderMouseUp, false);
-	document.querySelector('#bottomMenuSlider').addEventListener('mouseleave', onBottomMenuSliderMouseUp, false);
-	document.querySelector('#bottomMenuSlider').addEventListener('mousemove', onBottomMenuSliderMouseMove, false);
-
-	document.querySelector('#bottomMenuSlider').addEventListener('touchstart', onBottomMenuSliderTouchStart, false);
-	document.querySelector('#bottomMenuSlider').addEventListener('touchend', onBottomMenuSliderTouchEnd, false);
-	document.querySelector('#bottomMenuSlider').addEventListener('touchcancel', onBottomMenuSliderIgnoreEvent, false);
-	document.querySelector('#bottomMenuSlider').addEventListener('touchmove', onBottomMenuSliderTouchMove, false);
+		document.querySelector('#bottomMenuSlider').addEventListener('mousedown', onBottomMenuSliderMouseDown, false);
+		document.querySelector('#bottomMenuSlider').addEventListener('mouseup', onBottomMenuSliderMouseUp, false);
+		document.querySelector('#bottomMenuSlider').addEventListener('mouseleave', onBottomMenuSliderMouseUp, false);
+		document.querySelector('#bottomMenuSlider').addEventListener('mousemove', onBottomMenuSliderMouseMove, false);
+	}
 /*
 	var comicPanel = $('#comicPanel')[0];
 
