@@ -722,19 +722,19 @@ function animateCSS(element, start_fields, end_fields, duration, iteration_count
 	element.className = anim_name;
 }
 
-function animateValue(cb, old_value, new_value, duration) {
+function animateValue(cb, old_value, new_value, target_time) {
 	var is_bigger = old_value > new_value;
 	var diff_value = is_bigger ? old_value - new_value : new_value - old_value;
-	var start_time = new Date().getTime();
-	var frame_ms = 16.66666666666667;
+	var start_time = null;
 
-	var animation_interval = setInterval(function() {
-		var now_time = new Date().getTime();
-		var elapsed_time = now_time - start_time;
-		var percent = elapsed_time / duration;
+	var stepTime = function(timestamp) {
+		if (start_time === null) {
+			start_time = timestamp;
+		}
+		var elapsed_time = timestamp - start_time;
+		var percent = elapsed_time / target_time;
 		if (percent >= 1.0) {
 			percent = 1.0;
-			clearInterval(animation_interval);
 		}
 
 		var trans_value = 0;
@@ -744,7 +744,9 @@ function animateValue(cb, old_value, new_value, duration) {
 			trans_value= old_value + (diff_value * percent);
 		}
 		cb(trans_value);
-	}, frame_ms);
+		window.requestAnimationFrame(stepTime);
+	};
+	window.requestAnimationFrame(stepTime);
 }
 
 function monitorImageQualitySwapping() {
