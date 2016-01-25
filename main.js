@@ -744,7 +744,9 @@ function animateValue(cb, old_value, new_value, target_time) {
 			trans_value= old_value + (diff_value * percent);
 		}
 		cb(trans_value);
-		window.requestAnimationFrame(stepTime);
+		if (percent !== 1.0) {
+			window.requestAnimationFrame(stepTime);
+		}
 	};
 	window.requestAnimationFrame(stepTime);
 }
