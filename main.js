@@ -1,4 +1,4 @@
-// Copyright (c) 2015 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
+// Copyright (c) 2016 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software is licensed under AGPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
@@ -28,6 +28,7 @@ var g_top_menu_slider_mouse_down = false;
 var g_top_menu_slider_start_y = 0;
 var g_bottom_menu_slider_mouse_down = false;
 var g_bottom_menu_slider_start_y = 0;
+var g_has_touch_support = false;
 
 function hasTouchSupport() {
 	return 'ontouchstart' in window || navigator.MaxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
@@ -778,12 +779,14 @@ function monitorImageQualitySwapping() {
 				'alternate'
 			);
 			*/
-			animateValue(function(trans_value) {
-				comic_panel.scrollLeft = trans_value;
-				if (trans_value === new_left) {
-					overlayShow(true);
-				}
-			}, comic_panel.scrollLeft, new_left, 300);
+			if (g_has_touch_support) {
+				animateValue(function(trans_value) {
+					comic_panel.scrollLeft = trans_value;
+					if (trans_value === new_left) {
+						overlayShow(true);
+					}
+				}, comic_panel.scrollLeft, new_left, 300);
+			}
 
 			setTimeout(function() {
 				g_is_busy_loading = true;
@@ -1114,7 +1117,8 @@ function onMouseDown(e) {
 
 function onMouseUp(e) {
 
-	if (g_is_mouse_down) {
+	// Move right or left if clicking in mouse mode only
+	if ( ! g_has_touch_support && g_is_mouse_down) {
 		var comic_panel = document.querySelector('#comicPanel');
 		// Get the current page
 		var i = Math.round(comic_panel.scrollLeft / g_screen_width);
@@ -1377,6 +1381,8 @@ function onTopMenuSliderInputMove(x, y) {
 }
 
 function main() {
+	g_has_touch_support = hasTouchSupport();
+
 	// Show the welcome screen if this is the first run
 	if (settings_get_is_first_run()) {
 		$('#welcomeScreen').show();
@@ -1581,7 +1587,7 @@ function main() {
 	// Add top and bottom menu mouse and touch events
 	var top_slider = document.querySelector('#topMenuSlider');
 	var bottom_slider = document.querySelector('#bottomMenuSlider');
-	if (hasTouchSupport()) {
+	if (g_has_touch_support) {
 		top_slider.addEventListener('touchstart', onTopMenuSliderTouchStart, false);
 		top_slider.addEventListener('touchend', onTopMenuSliderTouchEnd, false);
 		top_slider.addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
