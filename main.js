@@ -780,7 +780,7 @@ function monitorImageQualitySwapping() {
 			*/
 			animateValue(function(trans_value) {
 				comic_panel.scrollLeft = trans_value;
-				if (trans_value == new_left) {
+				if (trans_value === new_left) {
 					overlayShow(true);
 				}
 			}, comic_panel.scrollLeft, new_left, 300);
@@ -1113,6 +1113,34 @@ function onMouseDown(e) {
 }
 
 function onMouseUp(e) {
+
+	if (g_is_mouse_down) {
+		var comic_panel = document.querySelector('#comicPanel');
+		// Get the current page
+		var i = Math.round(comic_panel.scrollLeft / g_screen_width);
+
+		// Figure out if the click was on the right or left
+		var is_right = (e.clientX > (g_screen_width / 2));
+
+		// Next page
+		if (is_right) {
+			i++;
+		// Prev page
+		} else {
+			i--;
+		}
+		var new_left = i * g_screen_width;
+
+		g_is_busy_loading = true;
+		animateValue(function(trans_value) {
+			comic_panel.scrollLeft = trans_value;
+			if (trans_value === new_left) {
+				overlayShow(true);
+				g_is_busy_loading = false;
+			}
+		}, comic_panel.scrollLeft, new_left, 600);
+	}
+
 	g_is_mouse_down = false;
 }
 
