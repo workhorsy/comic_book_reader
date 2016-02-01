@@ -1116,9 +1116,8 @@ function onMouseDown(e) {
 }
 
 function onMouseUp(e) {
-
 	// Move right or left if clicking in mouse mode only
-	if ( ! g_has_touch_support && g_is_mouse_down) {
+	if ( ! g_has_touch_support && g_is_mouse_down && e.button === 0) {
 		var comic_panel = document.querySelector('#comicPanel');
 		// Get the current page
 		var i = Math.round(comic_panel.scrollLeft / g_screen_width);
