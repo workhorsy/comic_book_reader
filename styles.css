@@ -331,6 +331,7 @@ input:checked + .touchLabel::after {
 	overflow-y: scroll;
 	clear: both;
 	border: 1px solid #ABB2BF;
+	direction: rtl;
 }
 
 #bottomMenu {
@@ -360,6 +361,7 @@ input:checked + .touchLabel::after {
 	padding: 0px;
 	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
+	direction: rtl;
 }
 
 #bottomMenuSlider {
@@ -405,6 +407,7 @@ input:checked + .touchLabel::after {
 	overflow-y: scroll;
 	flex: none;
 	width: 100%;
+	direction: rtl;
 }
 
 .touchOverlayPageNumber {
