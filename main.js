@@ -22,6 +22,7 @@ var g_is_mouse_down = false;
 var g_has_scrolled = false;
 
 var g_screen_width = 0;
+var g_screen_height = 0;
 var g_top_menu_visible = 1.0;
 var g_bottom_menu_visible = 0.0;
 var g_top_menu_slider_mouse_down = false;
@@ -589,6 +590,7 @@ function onError(msg) {
 
 function onResize() {
 	g_screen_width = window.innerWidth;
+	g_screen_height = window.innerHeight;
 	//console.info(g_screen_width);
 
 	var new_left = g_image_index * g_screen_width;
@@ -1116,32 +1118,49 @@ function onMouseDown(e) {
 }
 
 function onMouseUp(e) {
-	// Move right or left if clicking in mouse mode only
+	// Detect right clicks only
 	if ( ! g_has_touch_support && g_is_mouse_down && e.button === 0) {
 		var comic_panel = document.querySelector('#comicPanel');
 		// Get the current page
 		var i = Math.round(comic_panel.scrollLeft / g_screen_width);
+		var x = e.clientX;
+		var y = e.clientY;
 
-		// Figure out if the click was on the right or left
-		var is_right = (e.clientX > (g_screen_width / 2));
-
-		// Next page
-		if (is_right) {
-			i++;
-		// Prev page
+		// Open top menu
+		if (y < 200) {
+			showTopMenu(1.0, false);
+		// Open bottom menu
+		} else if (y > (g_screen_height - 200)) {
+			var bottom = document.querySelector('#bottomMenu');
+			bottom.style.transitionDuration = '0.3s';
+			bottom.style.transform = 'translate3d(0px, ' + 200 + 'px, 0px)';
+			g_bottom_menu_visible = 1.0;
+			setWallPaperOpacity();
+			$('#bottomMenuPanel').addClass('menuWithGlow');
+			loadPagePreview();
+		// Move page right or left
 		} else {
-			i--;
-		}
-		var new_left = i * g_screen_width;
+			// Figure out if the click was on the right or left
+			var is_right = (x > (g_screen_width / 2));
 
-		g_is_busy_loading = true;
-		animateValue(function(trans_value) {
-			comic_panel.scrollLeft = trans_value;
-			if (trans_value === new_left) {
-				overlayShow(true);
-				g_is_busy_loading = false;
+			// Next page
+			if (is_right) {
+				i++;
+			// Prev page
+			} else {
+				i--;
 			}
-		}, comic_panel.scrollLeft, new_left, 600);
+			var new_left = i * g_screen_width;
+
+			g_is_busy_loading = true;
+			animateValue(function(trans_value) {
+				comic_panel.scrollLeft = trans_value;
+				if (trans_value === new_left) {
+					overlayShow(true);
+					g_is_busy_loading = false;
+				}
+			}, comic_panel.scrollLeft, new_left, 600);
+		}
 	}
 
 	g_is_mouse_down = false;
@@ -1393,6 +1412,12 @@ function main() {
 		$('#touchUI').show();
 		hideBottomMenu(true);
 		showTopMenu(true);
+	}
+
+	// Hide the sliders if not in touch mode
+	if (! g_has_touch_support) {
+		$('#topMenuSlider').hide();
+		$('#bottomMenuSlider').hide();
 	}
 
 	$('#btnInputMouse').click(function () {
