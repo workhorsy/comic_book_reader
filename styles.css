@@ -19,6 +19,17 @@ body {
 	min-height: 100%;
 }
 
+/* Make scroll bars small and blue on Chrome */
+::-webkit-scrollbar {
+	height: 5px;
+	width: 5px;
+}
+::-webkit-scrollbar-track {
+}
+::-webkit-scrollbar-thumb {
+	background: #61AFEF;
+}
+
 #mouseUI {
 	overflow: scroll;
 	box-sizing: border-box;
