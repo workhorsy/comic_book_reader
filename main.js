@@ -1111,15 +1111,17 @@ function onScroll(e) {
 
 function onMouseDown(e) {
 	g_is_mouse_down = true;
-
-	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
-		hideAllMenus(false);
-	}
 }
 
 function onMouseUp(e) {
 	// Detect right clicks only
 	if ( ! g_has_touch_support && g_is_mouse_down && e.button === 0) {
+		if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
+			hideAllMenus(false);
+			g_is_mouse_down = false;
+			return;
+		}
+
 		var comic_panel = document.querySelector('#comicPanel');
 		// Get the current page
 		var i = Math.round(comic_panel.scrollLeft / g_screen_width);
@@ -1131,6 +1133,7 @@ function onMouseUp(e) {
 			showTopMenu(1.0, false);
 		// Open bottom menu
 		} else if (y > (g_screen_height - 200)) {
+			// FIXME: Make this a showBottomMenu function
 			var bottom = document.querySelector('#bottomMenu');
 			bottom.style.transitionDuration = '0.3s';
 			bottom.style.transform = 'translate3d(0px, ' + 200 + 'px, 0px)';
