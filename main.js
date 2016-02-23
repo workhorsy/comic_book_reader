@@ -608,29 +608,11 @@ function onResize() {
 	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 }
 
-function overlayHide() {
-//	console.info('hide ...');
-	var scroll_bar = $('#scrollBar');
-	scroll_bar.hide();
-}
-
 function overlayShow(is_fading) {
 	if (is_fading) {
 //		console.info('show with fade ...');
 	} else {
 //		console.info('show ...');
-	}
-	var scroll_bar = $('#scrollBar');
-	scroll_bar.stop();
-	scroll_bar[0].style.opacity = 0.5;
-	if (is_fading) {
-		scroll_bar.show();
-		scroll_bar.animate({
-			opacity: 0.0
-		}, 5000, function() {
-			scroll_bar.hide();
-//			console.info('fade stop ...');
-		});
 	}
 
 	var overlay = $('.overlayPageNumber');
