@@ -1417,12 +1417,6 @@ function main() {
 		showTopMenu(true);
 	}
 
-	// Hide the sliders if not in touch mode
-	if (! g_has_touch_support) {
-		$('#topMenuSlider').hide();
-		$('#bottomMenuSlider').hide();
-	}
-
 	$('#btnInputMouse').click(function () {
 		g_is_mouse_mode = true;
 		settings_set_is_mouse_mode(g_is_mouse_mode);
@@ -1624,16 +1618,10 @@ function main() {
 		bottom_slider.addEventListener('touchend', onBottomMenuSliderTouchEnd, false);
 		bottom_slider.addEventListener('touchcancel', onBottomMenuSliderIgnoreEvent, false);
 		bottom_slider.addEventListener('touchmove', onBottomMenuSliderTouchMove, false);
+	// Hide the sliders if not in touch mode
 	} else {
-		top_slider.addEventListener('mousedown', onTopMenuSliderMouseDown, false);
-		top_slider.addEventListener('mouseup', onTopMenuSliderMouseUp, false);
-		top_slider.addEventListener('mouseleave', onTopMenuSliderMouseUp, false);
-		top_slider.addEventListener('mousemove', onTopMenuSliderMouseMove, false);
-
-		bottom_slider.addEventListener('mousedown', onBottomMenuSliderMouseDown, false);
-		bottom_slider.addEventListener('mouseup', onBottomMenuSliderMouseUp, false);
-		bottom_slider.addEventListener('mouseleave', onBottomMenuSliderMouseUp, false);
-		bottom_slider.addEventListener('mousemove', onBottomMenuSliderMouseMove, false);
+		$('#topMenuSlider').hide();
+		$('#bottomMenuSlider').hide();
 	}
 /*
 	var comicPanel = $('#comicPanel')[0];
