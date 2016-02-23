@@ -18,7 +18,6 @@ var g_use_higher_quality_previews = false;
 var g_is_busy_loading = false;
 
 var g_is_mouse_mode = false;
-var g_is_mouse_down = false;
 var g_has_scrolled = false;
 
 var g_screen_width = 0;
@@ -762,7 +761,7 @@ function monitorImageQualitySwapping() {
 		var new_left = comic_panel.scrollLeft;
 
 		//console.info((! g_is_busy_loading) + ', ' + g_has_scrolled + ', ' + (! g_is_mouse_down) + ', ' + old_left + ', ' + new_left);
-		if (! g_is_busy_loading && g_has_scrolled && ! g_is_mouse_down && old_left === new_left) {
+		if (! g_is_busy_loading && g_has_scrolled && old_left === new_left) {
 			g_has_scrolled = false;
 
 			//console.info('reset scroll ....................' + scroll_left);
@@ -1109,16 +1108,11 @@ function onScroll(e) {
 	g_has_scrolled = true;
 }
 
-function onMouseDown(e) {
-	g_is_mouse_down = true;
-}
-
-function onMouseUp(e) {
+function onMouseClick(e) {
 	// Detect right clicks only
-	if ( ! g_has_touch_support && g_is_mouse_down && e.button === 0) {
+	if ( ! g_has_touch_support) {
 		if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
 			hideAllMenus(false);
-			g_is_mouse_down = false;
 			return;
 		}
 
@@ -1165,16 +1159,6 @@ function onMouseUp(e) {
 			}, comic_panel.scrollLeft, new_left, 600);
 		}
 	}
-
-	g_is_mouse_down = false;
-}
-
-function onTouchStart(e) {
-	g_is_mouse_down = true;
-}
-
-function onTouchEnd(e) {
-	g_is_mouse_down = false;
 }
 
 function onBottomMenuSliderMouseDown(e) {
@@ -1635,13 +1619,8 @@ function main() {
 */
 	// Mouse events for the page container
 	var comic_panel = document.querySelector('#comicPanel');
-	comic_panel.addEventListener('mousedown', onMouseDown, false);
-	comic_panel.addEventListener('mouseup', onMouseUp, false);
-	comic_panel.addEventListener('mouseleave', onMouseUp, false);
+	comic_panel.addEventListener('click', onMouseClick, false);
 	comic_panel.addEventListener('scroll', onScroll, false);
-
-	comic_panel.addEventListener('touchstart', onTouchStart, false);
-	comic_panel.addEventListener('touchend', onTouchEnd, false);
 
 	// Reset everything
 	$('#comicPanel').hide();
