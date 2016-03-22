@@ -4,6 +4,7 @@
 }
 
 html {
+	box-sizing: border-box;
 	min-height: 100%;
 	height: 100%;
 	font-family: Helvetica, Arial, sans-serif;
@@ -11,10 +12,22 @@ html {
 }
 
 body {
+	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
 	min-height: 100%;
+}
+
+/* Make scroll bars small and blue on Chrome */
+::-webkit-scrollbar {
+	height: 5px;
+	width: 5px;
+}
+::-webkit-scrollbar-track {
+}
+::-webkit-scrollbar-thumb {
+	background: #61AFEF;
 }
 
 #mouseUI {
@@ -222,9 +235,10 @@ input:checked + .touchLabel::after {
 	}
 }
 
-
 #totalUsersOnline {
-	float: left;
+	position: absolute;
+	left: 0;
+	margin-top: -20px;
 	padding-left: 20px;
 }
 
@@ -244,14 +258,25 @@ input:checked + .touchLabel::after {
 	width: 100%;
 	top: 0px;
 	z-index: 1000;
-	border: 1px solid #61AFEF;
+	margin: 0px;
+	padding: 0px;
+	text-align: center;
+}
+
+#topMenuPanel {
+	box-sizing: border-box;
+	width: 100%;
+	border-bottom: 1px solid #61AFEF;
 	border-top: 0px;
 	margin: 0px;
-	margin-bottom: 20px;
 	padding: 0px;
-	padding-top: 15px;
 	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
+}
+
+#topMenuSlider {
+	pointer-events: all;
+	height: 200px;
 }
 
 #topMenuButtons {
@@ -321,22 +346,37 @@ input:checked + .touchLabel::after {
 
 #bottomMenu {
 	box-sizing: border-box;
-	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
 	opacity: 0.9;
 	position: fixed;
-	width: 100%;
-	height: 80%;
-	min-height: 300px;
 	bottom: 0px;
+	width: 100%;
+	height: 100%;
+	min-height: 100px;
 	z-index: 1000;
-	border: 1px solid #61AFEF;
-	border-bottom: 0px;
 	margin: 0px;
-	margin-top: 20px;
-	padding: 20px;
-	padding-bottom: 0px;
+	padding: 0px;
+	text-align: center;
+}
+
+#bottomMenuPanel {
+	box-sizing: border-box;
+	overflow-y: scroll;
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
 	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
+}
+
+#bottomMenuSlider {
+	pointer-events: all;
+	height: 200px;
+	flex: none;
 }
 
 #fileInput {
@@ -345,31 +385,37 @@ input:checked + .touchLabel::after {
 
 #comicPanel {
 	box-sizing: border-box;
+	overflow: hidden;
+	overflow-x: scroll;
 	position: absolute;
 	top: 0;
-	margin: 0;
-	padding: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+
+#comicPanel img {
+	pointer-events: none;
+	width: 100%;
+	height: auto;
+}
+
+#horizontalScroller {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: stretch;
+	height: 100%;
+}
+
+.verticalScroller {
+	box-sizing: border-box;
 	overflow: hidden;
-}
-
-.comicPanelPage {
-	float: left;
-	margin: 0;
-	padding: 0;
-	text-align: center;
-	width: 33.33%;
-}
-
-#pageLeft {
-	/*background-color: red;*/
-}
-
-#pageMiddle {
-	/*background-color: green;*/
-}
-
-#pageRight {
-	/*background-color: blue;*/
+	overflow-y: scroll;
+	flex: none;
+	width: 100%;
 }
 
 .touchOverlayPageNumber {

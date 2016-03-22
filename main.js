@@ -1,10 +1,13 @@
-// Copyright (c) 2015 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
+// Copyright (c) 2016 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software is licensed under AGPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
 var g_is_terminated = false;
-var g_cached_images = new LRUCache(6);
+/*
+var g_cached_images = new LRUCache(30);
+var g_cached_images_small = new LRUCache(30);
+*/
 var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
@@ -12,31 +15,24 @@ var g_image_count = 0;
 var g_titles = {};
 var g_are_page_previews_loading = false;
 var g_use_higher_quality_previews = false;
+var g_is_busy_loading = false;
 
 var g_is_mouse_mode = false;
-var g_is_mouse_down = false;
-var g_mouse_start_x = 0;
-var g_mouse_start_y = 0;
+var g_has_scrolled = false;
 
 var g_screen_width = 0;
 var g_screen_height = 0;
-var g_page_width = 0;
-var g_page_y = 0;
-var g_scroll_y_temp = 0;
-var g_scroll_y_start = 0;
-// FIXME: Remove this resize later garbage
-var g_needs_resize = false;
-
-var g_down_swipe_size = 100.0;
-var g_is_swiping_right = false;
-var g_is_swiping_left = false;
 var g_top_menu_visible = 1.0;
 var g_bottom_menu_visible = 0.0;
+var g_top_menu_slider_mouse_down = false;
+var g_top_menu_slider_start_y = 0;
+var g_bottom_menu_slider_mouse_down = false;
+var g_bottom_menu_slider_start_y = 0;
+var g_has_touch_support = false;
 
-var g_page_left = null;
-var g_page_middle = null;
-var g_page_right = null;
-
+function hasTouchSupport() {
+	return 'ontouchstart' in window || navigator.MaxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+}
 
 function requireBrowserFeatures(cb) {
 	var errors = [];
@@ -137,6 +133,11 @@ function requireBrowserFeatures(cb) {
 	cb();
 }
 
+// FIXME: Move this to a utility.js file
+function diff(a, b) {
+	return a > b ? (a-b) : (b-a);
+}
+
 function toFriendlySize(size) {
 	if (size >= 1024000000) {
 		return (size / 1024000000).toFixed(2) + ' GB';
@@ -165,17 +166,18 @@ function hideTopMenu(is_instant) {
 	$('.settingsMenu').hide();
 	$('#libraryMenu').hide();
 	$('#libraryMenu').empty();
+	$('#bottomMenu').show();
 
 	// Remove glow from top and bottom menu
-	$('#topMenu').removeClass('menuWithGlow');
+	$('#topMenuPanel').removeClass('menuWithGlow');
 
 	// Hide the top menu
+	var top_menu_panel = $('#topMenuPanel');
 	var top_menu = $('#topMenu');
 	var style = top_menu[0].style;
-	var height = top_menu.outerHeight() + 15;
+	var height = top_menu_panel.outerHeight() + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
-	style.pointerEvents = 'none';
 
 	g_top_menu_visible = 0.0;
 	$('#wallPaper')[0].style.opacity = 1.0;
@@ -185,16 +187,15 @@ function hideBottomMenu(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
 
 	// Remove glow from top and bottom menu
-	$('#bottomMenu').removeClass('menuWithGlow');
+	var bottom_menu_panel = $('#bottomMenuPanel');
+	bottom_menu_panel.removeClass('menuWithGlow');
 
 	// Hide the bottom menu
-	var bottom_menu = $('#bottomMenu');
-	bottom_menu.empty();
-	var style = bottom_menu[0].style;
-	var height = bottom_menu.outerHeight() + 10;
-	style.transitionDuration = speed;
-	style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
-	style.pointerEvents = 'none';
+	bottom_menu_panel.empty();
+	var height = bottom_menu_panel.outerHeight();
+	var bottom = document.querySelector('#bottomMenu');
+	bottom.style.transitionDuration = speed;
+	bottom.style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
 
 	g_are_page_previews_loading = false;
 	g_bottom_menu_visible = 0.0;
@@ -220,36 +221,17 @@ function showTopMenu(y_offset, is_instant) {
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_top_menu_visible = y_offset;
-	if (g_top_menu_visible == 1.0) {
-		style.pointerEvents = 'all';
-	} else {
-		style.pointerEvents = 'none';
-	}
 
 	// Show the wall paper
 	setWallPaperOpacity();
+	$('#topMenuPanel').addClass('menuWithGlow');
 }
 
-function showBottomMenu(y_offset, is_instant) {
-	var speed = is_instant ? '0.0s' : '0.1s';
-	var height = $('#bottomMenu').outerHeight() * 1.0;
-	var offset = height + ((-height) * y_offset);
-	var style = $('#bottomMenu')[0].style;
-	style.transitionDuration = speed;
-	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
-	g_bottom_menu_visible = y_offset;
-	if (g_bottom_menu_visible == 1.0) {
-		style.pointerEvents = 'all';
-	} else {
-		style.pointerEvents = 'none';
-	}
-
-	setWallPaperOpacity();
-
+function loadPagePreview() {
 	if (! g_are_page_previews_loading && g_bottom_menu_visible === 1.0) {
 		console.info('Loading page previews .....................');
 		g_are_page_previews_loading = true;
-		var menu = $('#bottomMenu');
+		var menu = $('#bottomMenuPanel');
 		menu.empty();
 
 		var curr_image_index = g_image_index;
@@ -264,7 +246,7 @@ function showBottomMenu(y_offset, is_instant) {
 				//console.info('Loading page preview #' + (i + 1));
 				var url = null;
 				if (blob) {
-					url = URL.createObjectURL(blob)
+					url = URL.createObjectURL(blob);
 					//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 				}
 
@@ -272,10 +254,9 @@ function showBottomMenu(y_offset, is_instant) {
 				img.className = 'comicPreviewPortrait';
 				img.title = g_titles[i];
 				img.onclick = function(e) {
-					g_image_index = i;
-					loadCurrentPage();
+					console.info(i * g_screen_width);
+					$('#comicPanel')[0].scrollLeft = i * g_screen_width;
 					hideAllMenus(false);
-					$(window).trigger('resize');
 				};
 
 				// The image loads successfully
@@ -332,6 +313,7 @@ function showBottomMenu(y_offset, is_instant) {
 
 function showLibrary() {
 	$('.settingsMenu').hide();
+	$('#bottomMenu').hide();
 
 	var libraryMenu = $('#libraryMenu');
 	libraryMenu.empty();
@@ -363,6 +345,7 @@ function showLibrary() {
 			img.onclick = function(e) {
 				libraryMenu.hide();
 				libraryMenu.empty();
+				$('#bottomMenu').show();
 
 				onLoaded(null, filename, filesize, filetype);
 			};
@@ -384,6 +367,7 @@ function showLibrary() {
 			img.onclick = function(e) {
 				libraryMenu.hide();
 				libraryMenu.empty();
+				$('#bottomMenu').show();
 
 				onLoaded(null, filename, filesize, filetype);
 			};
@@ -411,60 +395,28 @@ function loadComic() {
 	onLoaded(file, filename, filesize, filetype);
 }
 
+function updatePageNumber() {
+	$('.overlayPageNumber').html(friendlyPageNumber());
+	document.title = friendlyPageNumber() + ' "' + g_file_name + '"';
+}
+
 function friendlyPageNumber() {
 	return '(' + (g_image_index + 1) + ' of ' + g_image_count + ')';
 }
-
-function loadCurrentPage(cb) {
-	// Update the page number
-	var page = friendlyPageNumber();
-	$('.overlayPageNumber').html('&nbsp;' + page);
-	$('.overlayPageNumber').show();
-	document.title = page + ' "' + g_file_name + '" - Comic Book Reader';
-
-	g_page_y = 0;
-
-	// Mouse mode
-	if (g_is_mouse_mode) {
-
-		loadImage($('#mousePageMiddle'), g_image_index, true, function() {
-			if (cb) {
-				cb();
-			}
-		});
-	// Touch mode
+/*
+function getCachedFileUrl(is_small, filename, cb) {
+	var cache = null;
+	var size = null;
+	if (is_small) {
+		size = 'small';
+		cache = g_cached_images_small;
 	} else {
-		// Load the middle page
-		loadImage(g_page_middle, g_image_index, true, function() {
-			if (cb) {
-				cb();
-			}
-			updateScrollBar();
-		});
-
-		// Load right page
-		if (g_image_index === g_image_count -1) {
-			g_page_right.empty();
-		} else if (g_image_index < g_image_count -1) {
-			loadImage(g_page_right, g_image_index + 1, false, function() {
-				updateScrollBar();
-			});
-		}
-
-		// Load left page
-		if (g_image_index === 0) {
-			g_page_left.empty();
-		} else if (g_image_index > 0) {
-			loadImage(g_page_left, g_image_index - 1, false, function() {
-				updateScrollBar();
-			});
-		}
+		size = 'big';
+		cache = g_cached_images;
 	}
-}
 
-function getCachedFileUrl(filename, cb) {
 	// Just return it if it already exists
-	var value = g_cached_images.get(filename);
+	var value = cache.get(filename);
 	if (typeof value !== "undefined") {
 		console.info("$$$$$$$$$$$$$$$$$ cached: " + filename);
 		cb(value);
@@ -472,26 +424,26 @@ function getCachedFileUrl(filename, cb) {
 	}
 
 	// Create the new url
-	getCachedFile('big', filename, function(blob) {
+	getCachedFile(size, filename, function(blob) {
 		console.info("+++++++++++++++++ adding cache: " + filename);
 		if (blob) {
 			var url = URL.createObjectURL(blob);
 
 			// If the cache is too big, remove lest recently used item
-			if (g_cached_images.size >= g_cached_images.limit) {
-				var old_url = g_cached_images.head.value;
-				var old_filename = g_cached_images.head.key;
+			if (cache.size >= cache.limit) {
+				var old_url = cache.head.value;
+				var old_filename = cache.head.key;
 				URL.revokeObjectURL(old_url);
 				console.info("----------------- removing cache: " + old_filename);
 			}
 
-			g_cached_images.put(filename, url);
+			cache.put(filename, url);
 			cb(url);
 		}
 	});
 }
-
-function loadImage(page, index, is_position_reset, cb) {
+*/
+function loadImage(page, index, cb) {
 	var filename = g_titles[index];
 
 	// Just return if there is no index
@@ -500,51 +452,48 @@ function loadImage(page, index, is_position_reset, cb) {
 		return;
 	}
 
-	// Just return if the new and old images are the same
-	var children = page.children();
-	if (children && children.length > 0 && children[0].title && children[0].title === filename) {
-		return;
-	}
+	page.innerHTML = '';
 
-	// Remove the image and reset the page position if needed
-	page.empty();
-	if (is_position_reset) {
-		var style = page[0].style;
-		style.transitionDuration = '0.0s';
-		style.transform = 'translate3d(0px, 0px, 0px)';
-	}
+	var img = document.createElement('img');
+	img.id = 'page_' + index;
+	img.title = "FIXME";
+	img.className = 'comicPage unselectable';
+	img.ondragstart = function() { return false; };
+	img.draggable = false;
+	img.onload = function() {
+		img.onload = null;
+		img.onerror = null;
 
-	getCachedFileUrl(filename, function(url) {
-		// Create a new image
-		var img = document.createElement('img');
-		img.id = 'page_' + index;
-		img.title = filename;
-		img.className = 'comicPage';
-		img.ondragstart = function() { return false; }
-		img.onload = function() {
-			//console.info('!!! Loading image ' + index + ': ' + img.title);
-			if (g_needs_resize) {
-				onResize(g_screen_width, g_screen_height);
+		cb(index);
+	};
+	img.onerror = function() {
+		img.onload = null;
+		img.onerror = null;
+
+		img.title = '';
+		img.alt = 'Invalid Image';
+		img.src = 'invalid_image.png';
+		cb(index);
+	};
+
+	getCachedFile('big', filename, function(blob) {
+		if (blob) {
+			img.src_high = URL.createObjectURL(blob);
+			console.info('    ' + img.src_high);
+		}
+		getCachedFile('small', filename, function(blob) {
+			if (blob) {
+				img.src_low = URL.createObjectURL(blob);
+				console.info('    ' + img.src_low);
 			}
-			if (cb)
-				cb();
-		};
-		img.onerror = function() {
-			img.onload = null;
-			img.onerror = null;
 
-			img.title = '';
-			img.alt = 'Invalid Image';
-			img.src = 'invalid_image.png';
-
-			onResize(g_screen_width, g_screen_height);
-			if (cb)
-				cb();
-		};
-		img.draggable = 'false';
-		img.src = url;
-
-		page.append(img);
+			if (index < 2) {
+				img.src = img.src_high;
+			} else {
+				img.src = img.src_low;
+			}
+			page.appendChild(img);
+		});
 	});
 }
 
@@ -557,10 +506,9 @@ function clearComicData() {
 	// Reset the UI
 	$('#loadError').hide();
 	setComicData('');
-	g_page_middle.empty();
-	g_page_left.empty();
-	g_page_right.empty();
-	$('#bottomMenu').empty();
+	$('#bottomMenuPanel').empty();
+	$('#horizontalScroller').empty();
+	$('#comicPanel')[0].scrollLeft = 0;
 
 	// Close the connection to indexedDB
 	dbClose();
@@ -569,15 +517,19 @@ function clearComicData() {
 	g_image_index = 0;
 	g_image_count = 0;
 	g_titles = {};
-	g_scroll_y_temp = 0;
-	g_scroll_y_start = 0;
 	g_are_page_previews_loading = false;
-
+/*
 	// Clear all the cached images
 	g_cached_images.forEach(function(filename, url) {
 		URL.revokeObjectURL(url);
 	}, true);
 	g_cached_images.removeAll();
+
+	g_cached_images_small.forEach(function(filename, url) {
+		URL.revokeObjectURL(url);
+	}, true);
+	g_cached_images_small.removeAll();
+*/
 }
 
 // FIXME: Remove the size and type parameters, as they are not used
@@ -635,422 +587,25 @@ function onError(msg) {
 	$('.btnSettings').prop('disabled', false);
 }
 
-function ignoreEvent(e) {
-	//console.info(e.type);
-	e.preventDefault();
-	e.stopPropagation();
-}
-
-function onTouchStart(e) {
-	//console.log('@@@@@@ onTouchStart');
-	//e.preventDefault();
-	//e.stopPropagation();
-
-	var x = e.changedTouches[0].clientX | 0;
-	var y = e.changedTouches[0].clientY | 0;
-	onInputDown(e.target, x, y);
-}
-
-function onTouchEnd(e) {
-	//console.log('@@@@@@ onTouchEnd');
-	//e.preventDefault();
-	//e.stopPropagation();
-
-	onInputUp();
-}
-
-function onTouchMove(e) {
-	//console.log('@@@@@@ onTouchMove');
-	e.preventDefault();
-	e.stopPropagation();
-
-	var x = e.changedTouches[0].clientX | 0;
-	var y = e.changedTouches[0].clientY | 0;
-	onInputMove(x, y);
-}
-
-function onMouseDown(e) {
-	//console.log('@@@@@@ onMouseDown');
-	var x = e.clientX;
-	var y = e.clientY;
-	onInputDown(e.target, x, y);
-}
-
-function onMouseUp(e) {
-	//console.log('@@@@@@ onMouseUp');
-	onInputUp();
-}
-
-function onMouseMove(e) {
-	//console.log('@@@@@@ onMouseMove');
-	var x = e.clientX;
-	var y = e.clientY;
-	onInputMove(x, y);
-}
-
-function onInputDown(target, x, y) {
-	// If any menus are showing, hide them
-	if (g_top_menu_visible > 0.0 || g_bottom_menu_visible > 0.0) {
-		hideAllMenus(false);
-		return;
-	}
-
-	g_is_mouse_down = true;
-	g_mouse_start_x = x;
-	g_mouse_start_y = y;
-	//console.info(x + ', ' + y);
-
-	// Add a glow around the top menu if it is the thing that is selected
-	if (g_mouse_start_y < g_down_swipe_size) {
-		$('#topMenu').addClass('menuWithGlow');
-	}
-
-	// Add a glow around the bottom menu if it is the thing that is selected
-	if ((g_screen_height - g_mouse_start_y) < g_down_swipe_size) {
-		$('#bottomMenu').addClass('menuWithGlow');
-	}
-}
-
-function onInputUp() {
-	// Remove glow from the top menu if it is not completly out
-	if (g_top_menu_visible !== 1.0) {
-		$('#topMenu').removeClass('menuWithGlow');
-	}
-
-	// Remove glow from the bottom menu if it is not completly out
-	if (g_bottom_menu_visible !== 1.0) {
-		$('#bottomMenu').removeClass('menuWithGlow');
-	}
-
-	if ((g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) ||
-		(g_bottom_menu_visible > 0.0 && g_bottom_menu_visible < 1.0)) {
-		hideAllMenus(false);
-	}
-
-	if (! g_is_mouse_down) {
-		return;
-	}
-	g_is_mouse_down = false;
-	g_scroll_y_start += g_scroll_y_temp;
-	g_scroll_y_temp = 0;
-
-	// Turning page right
-	if (g_is_swiping_right) {
-		g_is_swiping_right = false;
-
-		var style = $('#comicPanel')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (g_page_width * 1) + 'px, 0px, 0px)';
-
-		// Update the page orderings, after the pages move into position
-		setTimeout(function() {
-			var style = $('#comicPanel')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(0px, 0px, 0px)';
-			g_scroll_y_start = 0;
-
-			if (g_image_index > 0) {
-				g_image_index--;
-				loadCurrentPage();
-			}
-		}, 300);
-	// Turning page left
-	} else if (g_is_swiping_left) {
-		g_is_swiping_left = false;
-
-		var style = $('#comicPanel')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(' + (- (g_page_width * 1)) + 'px, 0px, 0px)';
-
-		// Update the page orderings, after the pages move into position
-		setTimeout(function() {
-			var style = $('#comicPanel')[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(0px, 0px, 0px)';
-			g_scroll_y_start = 0;
-
-			if (g_image_index < g_image_count -1) {
-				g_image_index++;
-				loadCurrentPage();
-			}
-		}, 300);
-	// Reset the page to center
-	} else {
-		var style = $('#comicPanel')[0].style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(0px, 0px, 0px)';
-		g_scroll_y_start = 0;
-	}
-
-	overlayShow(true);
-}
-
-function onInputMove(x, y) {
-	if (! g_is_mouse_down) {
-		return;
-	}
-
-	// Figure out if we are moving vertically or horizontally
-	var is_vertical = false;
-	if (Math.abs(y - g_mouse_start_y) > Math.abs(x - g_mouse_start_x)) {
-		is_vertical = true;
-	} else {
-		is_vertical = false;
-	}
-
-	// Get how far we have moved since pressing down
-	var x_offset = x - g_mouse_start_x;
-	var y_offset = y - g_mouse_start_y;
-
-	if (is_vertical) {
-		// Show the top panel if we are swiping down from the top
-		if (g_mouse_start_y < g_down_swipe_size && y_offset > 0) {
-			var y = y_offset > g_down_swipe_size ? g_down_swipe_size : y_offset;
-			showTopMenu(y / g_down_swipe_size, true);
-		// Show the bottom panel if we are swiping up from the bottom
-		} else if ((g_screen_height - g_mouse_start_y) < g_down_swipe_size && y_offset < 0) {
-			var y = (-y_offset) > g_down_swipe_size ? g_down_swipe_size : (-y_offset);
-			showBottomMenu(y / g_down_swipe_size, true);
-		// Scroll the page up and down
-		} else {
-			// FIXME: Super slow to get the height this way every movement. Look for similar calls, and replace them
-			var children = g_page_middle.children();
-			var image_height = $('#' + children[0].id).height();
-			x_offset = x_offset / 20.0;
-			y_offset = y_offset / 20.0;
-
-			// Reset the scroll position if it goes past the screen top or bottom
-			var new_offset = y_offset + g_page_y;
-			if (new_offset > 0) {
-				new_offset = 0;
-			} else if (image_height + new_offset < g_screen_height) {
-				new_offset = g_screen_height - image_height;
-			}
-
-			// Only scroll down if the top of the image is above the screen top
-			// Only scroll up if the bottom of the image is below the screen bottom
-			g_scroll_y_start = new_offset;
-
-			var style = g_page_middle[0].style;
-			style.transitionDuration = '0.0s';
-			style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
-			g_page_y = new_offset;
-
-			updateScrollBar();
-		}
-	}
-
-	// Scroll the comic panels if we are swiping right or left
-	if (! is_vertical) {
-		var x = x_offset;
-		var style = $('#comicPanel')[0].style;
-		style.transitionDuration = '0.0s';
-		style.transform = 'translate3d(' + x + 'px, 0px, 0px)';
-
-		// Swiping right
-		if (x_offset > 0) {
-			if (Math.abs(x_offset) > (g_page_width / 2) && g_image_index > 0) {
-				g_is_swiping_right = true;
-			} else {
-				g_is_swiping_right = false;
-				g_is_swiping_left = false;
-			}
-		// Swiping left
-		} else {
-			if (Math.abs(x_offset) > (g_page_width / 2) && g_image_index < g_image_count -1) {
-				g_is_swiping_left = true;
-			} else {
-				g_is_swiping_right = false;
-				g_is_swiping_left = false;
-			}
-		}
-	}
-}
-
-function onMouseWheel(e) {
-	e.preventDefault();
-	e.stopPropagation();
-
-	var y_offset = 0;
-	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-	if (delta === 1) {
-		y_offset = 100;
-	} else if (delta === -1) {
-		y_offset = -100;
-	}
-
-	var moving_page = $('#pageMiddle')[0];
-	var image_height = $('#' + moving_page.children[0].id).height();
-
-	// Reset the scroll position if it goes past the screen top or bottom
-	var new_offset = y_offset + g_scroll_y_start;
-	if (new_offset > 0) {
-		new_offset = 0;
-	} else if (image_height + new_offset < g_screen_height) {
-		new_offset = g_screen_height - image_height;
-	}
-
-	// Only scroll down if the top of the image is above the screen top
-	// Only scroll up if the bottom of the image is below the screen bottom
-	if (new_offset <= 0 && image_height + new_offset >= g_screen_height) {
-		g_scroll_y_start = new_offset;
-
-		var style = moving_page.style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
-
-		updateScrollBar();
-	}
-}
-
-function onKeyPress(e) {
-	// Just return if not an arrow key
-	if (e.keyCode < 37 || e.keyCode > 40) {
-		return;
-	}
-
-	e.preventDefault();
-
-	var y_offset = 0;
-	switch (e.keyCode) {
-		case 40: // Arrow down
-			y_offset = -100;
-			break;
-		case 38: // Arrow up
-			y_offset = 100;
-			break;
-		case 37: // Arrow left
-			return;
-		case 39: // Arrow right
-			return;
-	}
-
-	var moving_page = $('#pageMiddle')[0];
-	var image_height = $('#' + moving_page.children[0].id).height();
-
-	// Reset the scroll position if it goes past the screen top or bottom
-	var new_offset = y_offset + g_scroll_y_start;
-	if (new_offset > 0) {
-		new_offset = 0;
-	} else if (image_height + new_offset < g_screen_height) {
-		new_offset = g_screen_height - image_height;
-	}
-
-	// Only scroll down if the top of the image is above the screen top
-	// Only scroll up if the bottom of the image is below the screen bottom
-	if (new_offset <= 0 && image_height + new_offset >= g_screen_height) {
-		g_scroll_y_start = new_offset;
-
-		var style = moving_page.style;
-		style.transitionDuration = '0.3s';
-		style.transform = 'translate3d(0px, ' + new_offset + 'px, 0px)';
-
-		updateScrollBar();
-	}
-}
-
-function onResize(screen_width, screen_height) {
-//	console.info('Resize called ...');
-	g_screen_width = screen_width;
-	g_screen_height = screen_height;
-	g_page_width = (g_screen_width / 1);
-	g_scroll_y_temp = 0;
-	g_scroll_y_start = 0;
-
-	// Close the menus if they are partially open
-	if ((g_top_menu_visible > 0.0 && g_top_menu_visible < 1.0) ||
-		(g_bottom_menu_visible > 0.0 && g_bottom_menu_visible < 1.0)) {
-		hideAllMenus(true);
-	}
-	if (g_top_menu_visible >= 0.0) {
-		showTopMenu(g_top_menu_visible, true);
-	}
-	if (g_bottom_menu_visible >= 0.0) {
-		showBottomMenu(g_bottom_menu_visible, true);
-	}
-
-	// Figure out if the images are loaded yet.
-	// If not, we will manually fire the resize event when they do
-	var children = g_page_middle.children();
-	if (children.length === 0) {
-		g_needs_resize = true;
-//		console.info('Needs resize ...');
-		return;
-	} else if (children[0].naturalWidth === 0) {
-		g_needs_resize = true;
-//		console.info('Needs resize ...');
-		return;
-	}
-	console.info('??? Resize called ...');
-
-	// Make the panel as wide as the screen
-	g_needs_resize = false;
-	var style = $('#comicPanel')[0].style;
-	style.transitionDuration = '0.0s';
-	style.width = (g_screen_width * 3) + 'px';
-	style.height = g_screen_height + 'px';
-	style.left = (- g_page_width) + 'px';
-
-	// FIXME: These should be fixed into the left and right pages
-	// Move the arrow to be on top of the right page
-	style = $('#overlayRight')[0].style;
-	style.width =  g_page_width + 'px';
-	style.height = g_screen_height + 'px';
-	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(' + (2 * g_page_width) + 'px, 0px, 0px)';
-
-	// Move the arrow to be on top of the left page
-	style = $('#overlayLeft')[0].style;
-	style.width =  g_page_width + 'px';
-	style.height = g_screen_height + 'px';
-	style.transitionDuration = '0.0s';
-	style.transform = 'translate3d(' + (0 * g_page_width) + 'px, 0px, 0px)';
-
-	updateScrollBar();
-}
-
-function updateScrollBar() {
-	var children = g_page_middle.children();
-	if (children.length <= 0) {
-		return;
-	}
-
-	// Get the heights
-	var image_height = $('#' + children[0].id).height();
-	if (g_screen_height < 1 || image_height < 1) {
-		return;
-	}
-
-	// Get the percentage of screen height to image height
-	var height_percentage = g_screen_height / image_height;
-	if (height_percentage > 1.0) {
-		height_percentage = 1.0;
-	}
-
-	// Get the percentage of scroll height
-	var y = g_scroll_y_temp + g_scroll_y_start;
-	var y_percentage = (image_height + y) / image_height;
-
-	// Update the scroll bar size and position
-	var scroll_bar = $('#scrollBar');
-	var style = scroll_bar[0].style;
-	style.height = (height_percentage * g_screen_height) + 'px';
-	style.top = (g_screen_height - (y_percentage * g_screen_height)) + 'px';
-
-	// Hide the scroll bar if it is at least 98% full size
-	if (height_percentage >= 0.98) {
-		overlayHide();
-	} else if (scroll_bar.is(':hidden')) {
-		overlayShow(true);
-	} else {
-		overlayShow(false);
-	}
-}
-
-function overlayHide() {
-//	console.info('hide ...');
-	var scroll_bar = $('#scrollBar');
-	scroll_bar.hide();
+function onResize() {
+	g_screen_width = window.innerWidth;
+	g_screen_height = window.innerHeight;
+	//console.info(g_screen_width);
+
+	var new_left = g_image_index * g_screen_width;
+	document.querySelector('#comicPanel').scrollLeft = new_left;
+
+	var height = $('#topMenuPanel').outerHeight();
+	var new_y = - (height - (g_top_menu_visible * height));
+	var top = document.querySelector('#topMenu');
+	top.style.transitionDuration = '0.0s';
+	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+
+	var height = $('#bottomMenuPanel').outerHeight();
+	var new_y = height - (g_bottom_menu_visible * height);
+	var bottom = document.querySelector('#bottomMenu');
+	bottom.style.transitionDuration = '0.0s';
+	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 }
 
 function overlayShow(is_fading) {
@@ -1058,18 +613,6 @@ function overlayShow(is_fading) {
 //		console.info('show with fade ...');
 	} else {
 //		console.info('show ...');
-	}
-	var scroll_bar = $('#scrollBar');
-	scroll_bar.stop();
-	scroll_bar[0].style.opacity = 0.5;
-	if (is_fading) {
-		scroll_bar.show();
-		scroll_bar.animate({
-			opacity: 0.0
-		}, 5000, function() {
-			scroll_bar.hide();
-//			console.info('fade stop ...');
-		});
 	}
 
 	var overlay = $('.overlayPageNumber');
@@ -1121,6 +664,169 @@ function getApplicationCacheStatusText(status) {
 		default:
 			return 'UNKNOWN';
 	}
+}
+
+var g_anim_counter = 0;
+function animateCSS(element, start_fields, end_fields, duration, iteration_count, direction) {
+	iteration_count = iteration_count || 1;
+	direction = direction || 'normal';
+	var anim_name = 'anim_' + (++g_anim_counter);
+
+	var style = document.createElement('style');
+	style.type = 'text/css';
+	style.innerHTML = "\
+	." + anim_name + " {\
+		animation-duration: " + duration + ";\
+		animation-name: " + anim_name + ";\
+		animation-iteration-count: " + iteration_count + ";\
+		animation-direction: " + direction + ";\
+	}\
+	@keyframes " + anim_name + " {\
+		from {\
+			" + start_fields + "\
+		}\
+	}\
+	@keyframes " + anim_name + " {\
+		to {\
+			" + end_fields + "\
+		}\
+	}";
+	document.getElementsByTagName('head')[0].appendChild(style);
+
+	element.addEventListener('animationstart', function() {
+		console.info('animationstart');
+	}, false);
+	element.addEventListener('animationend', function() {
+		console.info('animationend');
+		document.getElementsByTagName('head')[0].removeChild(style);
+	}, false);
+	element.addEventListener('animationiteration', function() {
+		console.info('animationiteration');
+	}, false);
+	element.className = anim_name;
+}
+
+function animateValue(cb, old_value, new_value, target_time) {
+	var is_bigger = old_value > new_value;
+	var diff_value = is_bigger ? old_value - new_value : new_value - old_value;
+	var start_time = null;
+
+	var stepTime = function(timestamp) {
+		if (start_time === null) {
+			start_time = timestamp;
+		}
+		var elapsed_time = timestamp - start_time;
+		var percent = elapsed_time / target_time;
+		if (percent >= 1.0) {
+			percent = 1.0;
+		}
+
+		var trans_value = 0;
+		if (is_bigger) {
+			trans_value = old_value - (diff_value * percent);
+		} else {
+			trans_value= old_value + (diff_value * percent);
+		}
+		cb(trans_value);
+		if (percent !== 1.0) {
+			window.requestAnimationFrame(stepTime);
+		}
+	};
+	window.requestAnimationFrame(stepTime);
+}
+
+function monitorImageQualitySwapping() {
+	var comic_panel = document.querySelector('#comicPanel');
+	var old_left = comic_panel.scrollLeft;
+
+	setInterval(function() {
+		var new_left = comic_panel.scrollLeft;
+
+		//console.info((! g_is_busy_loading) + ', ' + g_has_scrolled + ', ' + (! g_is_mouse_down) + ', ' + old_left + ', ' + new_left);
+		if (! g_is_busy_loading && g_has_scrolled && old_left === new_left) {
+			g_has_scrolled = false;
+
+			//console.info('reset scroll ....................' + scroll_left);
+			var new_page = Math.round(new_left / g_screen_width);
+			new_left = new_page * g_screen_width;
+			//console.info(new_page + ', ' + new_left);
+			//$('#comicPanel').animate({scrollLeft: new_left}, 300);
+			var scroller = document.querySelector('#horizontalScroller');
+			/*
+			animateCSS(
+				scroller,
+				'opacity: 1;',
+				'opacity: 0;',
+				'3s',
+				9,
+				'alternate'
+			);
+			*/
+			if (g_has_touch_support) {
+				animateValue(function(trans_value) {
+					comic_panel.scrollLeft = trans_value;
+					if (trans_value === new_left) {
+						overlayShow(true);
+					}
+				}, comic_panel.scrollLeft, new_left, 300);
+			}
+
+			setTimeout(function() {
+				g_is_busy_loading = true;
+				console.info(g_image_index + ', ' + new_page);
+
+				// Get all the images to swap out the quality
+				var imagesToSwap = [];
+				for (var i=0; i<g_image_count; ++i) {
+					var page = document.querySelector('#page_' + i);
+					if (! page) continue;
+					if (i === new_page-1 || i === new_page || i === new_page+1) {
+						if (! page.src.endsWith(page.src_high)) {
+							imagesToSwap.push({page: page, src: page.src_high});
+						}
+					} else {
+						if (! page.src.endsWith(page.src_low)) {
+							imagesToSwap.push({page: page, src: page.src_low});
+						}
+					}
+				}
+
+				// Swap out the images in serial
+				var loadNextPage = function(i) {
+					if (i >= imagesToSwap.length) {
+						g_is_busy_loading = false;
+						return;
+					}
+
+					var item = imagesToSwap[i];
+					var page = item.page;
+					var src = item.src;
+
+					page.onload = function() {
+						this.onload = null;
+						this.onerror = null;
+						console.info(this.src);
+						loadNextPage(i + 1);
+					};
+					page.onerror = function() {
+						this.onload = null;
+						this.onerror = null;
+						this.title = '';
+						this.alt = 'Invalid Image';
+						this.src = 'invalid_image.png';
+						console.info(this.src);
+						loadNextPage(i + 1);
+					};
+					page.src = src;
+				};
+				loadNextPage(0);
+				g_image_index = new_page;
+				updatePageNumber();
+			}, 300);
+		}
+
+		old_left = new_left;
+	}, 100);
 }
 
 function monitorApplicationCacheUpdates() {
@@ -1208,6 +914,9 @@ function startWorker() {
 				$('.loadingProgress').show();
 				break;
 			case 'uncompressed_done':
+				console.info('!!!!!!!!!!!!!!!!!! monitorImageQualitySwapping');
+				$('#comicPanel')[0].scrollLeft = 0;
+				monitorImageQualitySwapping();
 				break;
 			case 'uncompressed_each':
 				var filename = e.data.filename;
@@ -1220,13 +929,14 @@ function startWorker() {
 				$('.loadingProgress').html('Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...');
 
 				makePagePreview(filename, is_cached, function() {
-					if (index === 0) {
-						loadCurrentPage(function() {
-							$(window).trigger('resize');
-						});
-					} else if (index === 1) {
-						loadCurrentPage();
-					}
+					var container = document.querySelector('#horizontalScroller');
+					var page = document.createElement('div');
+					page.className = 'verticalScroller unselectable';
+					container.appendChild(page);
+
+					loadImage(page, index, function() {
+						//
+					});
 
 					if (is_last) {
 						stopWorker();
@@ -1337,7 +1047,7 @@ function makePagePreview(filename, is_cached, cb) {
 					url = null;
 				}
 
-				var ratio = 200.0 / img.width;
+				var ratio = 400.0 / img.width;
 				var width = img.width * ratio;
 				var height = img.height * ratio;
 
@@ -1376,7 +1086,290 @@ function makePagePreview(filename, is_cached, cb) {
 	}
 }
 
+function onScroll(e) {
+	g_has_scrolled = true;
+}
+
+function onMouseClick(e) {
+	// Detect right clicks only
+	if ( ! g_has_touch_support) {
+		if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
+			hideAllMenus(false);
+			return;
+		}
+
+		var comic_panel = document.querySelector('#comicPanel');
+		// Get the current page
+		var i = Math.round(comic_panel.scrollLeft / g_screen_width);
+		var x = e.clientX;
+		var y = e.clientY;
+
+		// Open top menu
+		if (y < 200) {
+			showTopMenu(1.0, false);
+		// Open bottom menu
+		} else if (y > (g_screen_height - 200)) {
+			// FIXME: Make this a showBottomMenu function
+			var bottom = document.querySelector('#bottomMenu');
+			bottom.style.transitionDuration = '0.3s';
+			bottom.style.transform = 'translate3d(0px, ' + 200 + 'px, 0px)';
+			g_bottom_menu_visible = 1.0;
+			setWallPaperOpacity();
+			$('#bottomMenuPanel').addClass('menuWithGlow');
+			loadPagePreview();
+		// Move page right or left
+		} else {
+			// Figure out if the click was on the right or left
+			var is_right = (x > (g_screen_width / 2));
+
+			// Next page
+			if (is_right) {
+				i++;
+			// Prev page
+			} else {
+				i--;
+			}
+			var new_left = i * g_screen_width;
+
+			g_is_busy_loading = true;
+			animateValue(function(trans_value) {
+				comic_panel.scrollLeft = trans_value;
+				if (trans_value === new_left) {
+					overlayShow(true);
+					g_is_busy_loading = false;
+				}
+			}, comic_panel.scrollLeft, new_left, 600);
+		}
+	}
+}
+
+function onBottomMenuSliderMouseDown(e) {
+	//console.log('@@@@@@ onBottomMenuSliderMouseDown');
+	onBottomMenuSliderInputDown(e.clientX, e.clientY);
+}
+
+function onBottomMenuSliderMouseUp(e) {
+	//console.log('@@@@@@ onBottomMenuSliderMouseUp');
+	onBottomMenuSliderInputUp();
+}
+
+function onBottomMenuSliderMouseMove(e) {
+	//console.log('@@@@@@ onBottomMenuSliderMouseMove');
+	onBottomMenuSliderInputMove(e.clientX, e.clientY);
+}
+
+function onBottomMenuSliderTouchStart(e) {
+	//console.log('@@@@@@ onBottomMenuSliderTouchStart');
+	//e.preventDefault();
+	//e.stopPropagation();
+	onBottomMenuSliderInputDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}
+
+function onBottomMenuSliderTouchEnd(e) {
+	//console.log('@@@@@@ onBottomMenuSliderTouchEnd');
+	//e.preventDefault();
+	//e.stopPropagation();
+	onBottomMenuSliderInputUp();
+}
+
+function onBottomMenuSliderTouchMove(e) {
+	//console.log('@@@@@@ onBottomMenuSliderTouchMove');
+	e.preventDefault();
+	e.stopPropagation();
+	onBottomMenuSliderInputMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}
+
+function onBottomMenuSliderIgnoreEvent(e) {
+	//console.info(e.type);
+	e.preventDefault();
+	e.stopPropagation();
+}
+
+function onBottomMenuSliderInputDown(x, y) {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mousedown');
+
+	g_bottom_menu_slider_start_y = y;
+	g_bottom_menu_slider_mouse_down = true;
+	$('#bottomMenuPanel').addClass('menuWithGlow');
+
+	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
+		hideAllMenus(false);
+	}
+}
+
+function onBottomMenuSliderInputUp() {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mouseup');
+
+	g_bottom_menu_slider_start_y = 0;
+	g_bottom_menu_slider_mouse_down = false;
+	//var bottom = document.querySelector('#bottomMenu');
+	//bottom.style.transitionDuration = '0.0s';
+	//bottom.style.transform = 'translate3d(0px, ' + g_bottom_menu_slider_start_y + 'px, 0px)';
+
+	if (g_bottom_menu_visible !== 1.0) {
+		g_bottom_menu_visible = 0.0;
+		// Remove glow from top and bottom menu
+		$('#bottomMenuPanel').removeClass('menuWithGlow');
+		$('#bottomMenuPanel').empty();
+		setWallPaperOpacity();
+		g_are_page_previews_loading = false;
+	}
+
+	var height = $('#bottomMenuPanel').outerHeight();
+	var new_y = height - (g_bottom_menu_visible * height);
+
+	var bottom = document.querySelector('#bottomMenu');
+	bottom.style.transitionDuration = '0.3s';
+	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+}
+
+function onBottomMenuSliderInputMove(x, y) {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mousemove');
+
+	if (g_bottom_menu_slider_mouse_down) {
+		var bottom_menu_panel = $('#bottomMenuPanel');
+		var height = bottom_menu_panel.outerHeight();
+		var offset = diff(Math.abs(g_bottom_menu_slider_start_y), Math.abs(y));
+		g_bottom_menu_visible = offset / height;
+
+		//console.info(offset);
+		//console.info(g_bottom_menu_slider_start_y + ', ' + y + ', ' + offset + ', ' + g_bottom_menu_visible);
+		if (g_bottom_menu_visible > 1) {
+			g_bottom_menu_visible = 1;
+		} else if (g_bottom_menu_visible < 0) {
+			g_bottom_menu_visible = 0;
+		}
+
+		//console.info(offset + ', ' + (offset - height) + ', ' + g_bottom_menu_visible);
+		var new_y = height - (g_bottom_menu_visible * height);
+		//console.info(new_y + ', ' + g_bottom_menu_visible);
+		//new_y = -offset;
+		//console.info(new_y + ', ' + offset + ', ' + (offset - height));
+
+		var bottom = document.querySelector('#bottomMenu');
+		bottom.style.transitionDuration = '0.0s';
+		bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+		setWallPaperOpacity();
+
+		if (g_bottom_menu_visible === 1.0) {
+			loadPagePreview();
+		}
+	}
+}
+
+function onTopMenuSliderMouseDown(e) {
+	//console.log('@@@@@@ onTopMenuSliderMouseDown');
+	onTopMenuSliderInputDown(e.clientX, e.clientY);
+}
+
+function onTopMenuSliderMouseUp(e) {
+	//console.log('@@@@@@ onTopMenuSliderMouseUp');
+	onTopMenuSliderInputUp();
+}
+
+function onTopMenuSliderMouseMove(e) {
+	//console.log('@@@@@@ onTopMenuSliderMouseMove');
+	onTopMenuSliderInputMove(e.clientX, e.clientY);
+}
+
+function onTopMenuSliderTouchStart(e) {
+	//console.log('@@@@@@ onTopMenuSliderTouchStart');
+	//e.preventDefault();
+	//e.stopPropagation();
+	onTopMenuSliderInputDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}
+
+function onTopMenuSliderTouchEnd(e) {
+	//console.log('@@@@@@ onTopMenuSliderTouchEnd');
+	//e.preventDefault();
+	//e.stopPropagation();
+	onTopMenuSliderInputUp();
+}
+
+function onTopMenuSliderTouchMove(e) {
+	//console.log('@@@@@@ onTopMenuSliderTouchMove');
+	e.preventDefault();
+	e.stopPropagation();
+	onTopMenuSliderInputMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}
+
+function onTopMenuSliderIgnoreEvent(e) {
+	//console.info(e.type);
+	e.preventDefault();
+	e.stopPropagation();
+}
+
+function onTopMenuSliderInputDown(x, y) {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mousedown');
+
+	g_top_menu_slider_start_y = y;
+	g_top_menu_slider_mouse_down = true;
+	$('#topMenuPanel').addClass('menuWithGlow');
+
+	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
+		hideAllMenus(false);
+	}
+}
+
+function onTopMenuSliderInputUp() {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mouseup');
+
+	g_top_menu_slider_start_y = 0;
+	g_top_menu_slider_mouse_down = false;
+	//var top = document.querySelector('#topMenu');
+	//top.style.transitionDuration = '0.0s';
+	//top.style.transform = 'translate3d(0px, ' + g_top_menu_slider_start_y + 'px, 0px)';
+
+	if (g_top_menu_visible !== 1.0) {
+		g_top_menu_visible = 0.0;
+		// Remove glow from top and bottom menu
+		$('#topMenuPanel').removeClass('menuWithGlow');
+		setWallPaperOpacity();
+	}
+
+	var height = $('#topMenuPanel').outerHeight();
+	var new_y = - (height - (g_top_menu_visible * height));
+
+	var top = document.querySelector('#topMenu');
+	top.style.transitionDuration = '0.3s';
+	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+}
+
+function onTopMenuSliderInputMove(x, y) {
+	if (g_file_name === null || g_file_name === '') return;
+	//console.info('mousemove');
+
+	if (g_top_menu_slider_mouse_down) {
+		var top_menu_panel = $('#topMenuPanel');
+		var height = top_menu_panel.outerHeight();
+		var offset = diff(Math.abs(g_top_menu_slider_start_y), Math.abs(y));
+		g_top_menu_visible = offset / height;
+		//console.info(g_top_menu_slider_start_y + ', ' + y + ', ' + offset + ', ' + g_top_menu_visible);
+		if (g_top_menu_visible > 1) {
+			g_top_menu_visible = 1;
+		} else if (g_top_menu_visible < 0) {
+			g_top_menu_visible = 0;
+		}
+
+		//console.info((offset - height) + ', ' + g_top_menu_visible);
+		var new_y = - (height - (g_top_menu_visible * height));
+		//console.info(new_y + ', ' + (offset - height));
+
+		var top = document.querySelector('#topMenu');
+		top.style.transitionDuration = '0.0s';
+		top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+		setWallPaperOpacity();
+	}
+}
+
 function main() {
+	g_has_touch_support = hasTouchSupport();
+
 	// Show the welcome screen if this is the first run
 	if (settings_get_is_first_run()) {
 		$('#welcomeScreen').show();
@@ -1411,6 +1404,7 @@ function main() {
 	$('#btnMousePageLeft').click(function () {
 		if (g_image_index > 0) {
 			g_image_index--;
+			updatePageNumber();
 			loadCurrentPage();
 			$(window).trigger('resize');
 		}
@@ -1419,6 +1413,7 @@ function main() {
 	$('#btnMousePageRight').click(function () {
 		if (g_image_index < g_image_count -1) {
 			g_image_index++;
+			updatePageNumber();
 			loadCurrentPage();
 			$(window).trigger('resize');
 		}
@@ -1431,10 +1426,6 @@ function main() {
 	$('#btnMousePages').click(function() {
 		alert('FIXME: Add the page selector for mouse mode.');
 	});
-
-	g_page_left = $('#pageLeft');
-	g_page_middle = $('#pageMiddle');
-	g_page_right = $('#pageRight');
 
 	// Stop the right click menu from popping up
 	$(document).on('contextmenu', function(e) {
@@ -1469,6 +1460,7 @@ function main() {
 		var is_visible = $('.settingsMenu').is(":visible");
 		if (is_visible) {
 			$('.settingsMenu').hide();
+			$('#bottomMenu').show();
 		} else {
 			// Update the DB size
 			$('.totalDBSize').text('. . .');
@@ -1486,6 +1478,7 @@ function main() {
 
 			// Show the menu
 			$('.settingsMenu').show();
+			$('#bottomMenu').hide();
 		}
 	});
 
@@ -1578,6 +1571,25 @@ function main() {
 		loadComic();
 	});
 
+	// Add top and bottom menu mouse and touch events
+	var top_slider = document.querySelector('#topMenuSlider');
+	var bottom_slider = document.querySelector('#bottomMenuSlider');
+	if (g_has_touch_support) {
+		top_slider.addEventListener('touchstart', onTopMenuSliderTouchStart, false);
+		top_slider.addEventListener('touchend', onTopMenuSliderTouchEnd, false);
+		top_slider.addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
+		top_slider.addEventListener('touchmove', onTopMenuSliderTouchMove, false);
+
+		bottom_slider.addEventListener('touchstart', onBottomMenuSliderTouchStart, false);
+		bottom_slider.addEventListener('touchend', onBottomMenuSliderTouchEnd, false);
+		bottom_slider.addEventListener('touchcancel', onBottomMenuSliderIgnoreEvent, false);
+		bottom_slider.addEventListener('touchmove', onBottomMenuSliderTouchMove, false);
+	// Hide the sliders if not in touch mode
+	} else {
+		$('#topMenuSlider').hide();
+		$('#bottomMenuSlider').hide();
+	}
+/*
 	var comicPanel = $('#comicPanel')[0];
 
 	// Key press events
@@ -1586,18 +1598,11 @@ function main() {
 	// Mouse wheel events
 	comicPanel.addEventListener('mousewheel', onMouseWheel, false);
 	comicPanel.addEventListener('DOMMouseScroll', onMouseWheel, false);
-
+*/
 	// Mouse events for the page container
-	comicPanel.addEventListener('mousedown', onMouseDown, false);
-	comicPanel.addEventListener('mouseup', onMouseUp, false);
-	comicPanel.addEventListener('mouseleave', onMouseUp, false);
-	comicPanel.addEventListener('mousemove', onMouseMove, false);
-
-	// Touch events
-	comicPanel.addEventListener('touchstart', onTouchStart, false);
-	comicPanel.addEventListener('touchend', onTouchEnd, false);
-	comicPanel.addEventListener('touchcancel', ignoreEvent, false);
-	comicPanel.addEventListener('touchmove', onTouchMove, false);
+	var comic_panel = document.querySelector('#comicPanel');
+	comic_panel.addEventListener('click', onMouseClick, false);
+	comic_panel.addEventListener('scroll', onScroll, false);
 
 	// Reset everything
 	$('#comicPanel').hide();

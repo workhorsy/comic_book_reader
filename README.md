@@ -10,11 +10,9 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # Bugs:
-* The first image is sometimes added twice
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
 * Thumb nails are too small on a high dpi screen
-* If the first page is short, all the following pages get their bottom chopped off
 * cant touch scroll the page selector (chrome)
 * Multi touch input twitches the screen
 

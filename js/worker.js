@@ -1,4 +1,4 @@
-// Copyright (c) 2015 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
+// Copyright (c) 2016 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software is licensed under AGPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
