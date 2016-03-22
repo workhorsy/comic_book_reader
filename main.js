@@ -17,7 +17,6 @@ var g_are_page_previews_loading = false;
 var g_use_higher_quality_previews = false;
 var g_is_busy_loading = false;
 
-var g_is_mouse_mode = false;
 var g_has_scrolled = false;
 
 var g_screen_width = 0;
@@ -1373,9 +1372,6 @@ function main() {
 	// Show the welcome screen if this is the first run
 	if (settings_get_is_first_run()) {
 		$('#welcomeScreen').show();
-	// Show the mouse UI
-	} else if (settings_get_is_mouse_mode()) {
-		$('#mouseUI').show();
 	// Otherwise show the touch UI
 	} else {
 		$('#touchUI').show();
@@ -1383,48 +1379,12 @@ function main() {
 		showTopMenu(true);
 	}
 
-	$('#btnInputMouse').click(function () {
-		g_is_mouse_mode = true;
-		settings_set_is_mouse_mode(g_is_mouse_mode);
-		$('#welcomeScreen').hide();
-		$('#mouseUI').show();
-		settings_set_is_first_run(false);
-	});
-
 	$('#btnInputTouch').click(function () {
-		g_is_mouse_mode = false;
-		settings_set_is_mouse_mode(g_is_mouse_mode);
 		$('#welcomeScreen').hide();
 		$('#touchUI').show();
 		hideBottomMenu(true);
 		showTopMenu(true);
 		settings_set_is_first_run(false);
-	});
-
-	$('#btnMousePageLeft').click(function () {
-		if (g_image_index > 0) {
-			g_image_index--;
-			updatePageNumber();
-			loadCurrentPage();
-			$(window).trigger('resize');
-		}
-	});
-
-	$('#btnMousePageRight').click(function () {
-		if (g_image_index < g_image_count -1) {
-			g_image_index++;
-			updatePageNumber();
-			loadCurrentPage();
-			$(window).trigger('resize');
-		}
-	});
-
-	$('#btnMouseLibrary').click(function() {
-		alert('FIXME: Add the library menu for mouse mode.');
-	});
-
-	$('#btnMousePages').click(function() {
-		alert('FIXME: Add the page selector for mouse mode.');
 	});
 
 	// Stop the right click menu from popping up
@@ -1468,14 +1428,6 @@ function main() {
 				$('.totalDBSize').text(toFriendlySize(length));
 			});
 
-			// Update the input mode
-			g_is_mouse_mode = settings_get_is_mouse_mode();
-			if (g_is_mouse_mode) {
-				$('.btnIsMouseMode').prop('checked', true);
-			} else {
-				$('.btnIsTouchMode').prop('checked', true);
-			}
-
 			// Show the menu
 			$('.settingsMenu').show();
 			$('#bottomMenu').hide();
@@ -1504,21 +1456,6 @@ function main() {
 		$('.btnUseHigherQualityPreviews').prop('checked', ! value);
 	});
 
-	$('.btnIsMouseMode').click(function() {
-		settings_set_is_mouse_mode(true);
-		$('#touchUI').hide();
-		$('#mouseUI').show();
-		$('.btnIsMouseMode').prop('checked', true);
-	});
-	$('.btnIsTouchMode').click(function() {
-		settings_set_is_mouse_mode(false);
-		$('#mouseUI').hide();
-		$('#touchUI').show();
-		hideBottomMenu(true);
-		showTopMenu(true);
-		$('.btnIsTouchMode').prop('checked', true);
-	});
-
 	// Delete indexedDB and localStorage data
 	$('.btnClearAllData').click(function() {
 		var db_names = settings_get_db_names();
@@ -1536,12 +1473,6 @@ function main() {
 				$('.btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
 				$('.btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
 				$('.btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
-				g_is_mouse_mode = settings_get_is_mouse_mode();
-				if (g_is_mouse_mode) {
-					$('.btnIsMouseMode').prop('checked', true);
-				} else {
-					$('.btnIsTouchMode').prop('checked', true);
-				}
 
 				$('.totalDBSize').text('. . .');
 				getTotalSize(function(length) {

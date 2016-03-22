@@ -30,39 +30,6 @@ body {
 	background: #61AFEF;
 }
 
-#mouseUI {
-	overflow: scroll;
-	box-sizing: border-box;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
-}
-
-#mouseTopMenu {
-	position: fixed;
-	top: 0;
-	left: 0;
-	/* FIXME: This assumes the scroll bar is 17 pixels wide */
-	right: 17px;
-	z-index: 500;
-}
-
-#mouseSettingsMenu {
-	margin: 20px;
-	padding: 20px;
-	background-color: rgba(0, 0, 0, 0.8);
-}
-
-.mouseOverlayPageNumber {
-	background-color: rgba(0, 0, 0, 0.8);
-}
-
-.mouseLoadingProgress {
-	background-color: rgba(0, 0, 0, 0.8);
-}
-
 .touchHeaderLabel {
 	display: block;
 	font-size: 4vmin;

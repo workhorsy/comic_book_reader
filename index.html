@@ -27,71 +27,12 @@
 					A touch friendly CBR/CBZ/CBT reader, that even works when offline.
 				</p>
 				<p>
-					Start in
-					<button id="btnInputTouch" class="touchButton">Touch</button>
-					or
-					<button id="btnInputMouse" class="touchButton">Mouse <span class="experimental">(Experimental)</span></button>
-					mode.
+					<button id="btnInputTouch" class="touchButton">Start</button>
 				</p>
 				<footer>
 					Copyright &copy; 2016 <a href="https://github.com/workhorsy/comic_book_reader">
 						Matthew Brennan Jones</a>
 				</footer>
-			</div>
-		</div>
-
-		<div id="mouseUI" style="display: none;">
-			<div id="mouseTopMenu">
-				<button class="btnFileLoad">Open comic file</button>
-				<button id="btnMouseLibrary" class="btnLibrary" style="background-color: red;">Library</button>
-				<button class="btnFullScreen">Full Screen</button>
-				<button class="btnHomepage">Home Page</button>
-				<button class="btnSettings">Settings</button>
-				<button id="btnMousePages" style="background-color: red;">Pages</button>
-				<button id="btnMousePageLeft">Prev</button>
-				<button id="btnMousePageRight">Next</button>
-				<span class="overlayPageNumber mouseOverlayPageNumber"></span>
-				<span class="loadingProgress mouseLoadingProgress"></span>
-
-				<div id="mouseSettingsMenu" class="settingsMenu">
-					<p>
-						<input id="btnMouseDisableRightClick" class="btnDisableRightClick" type="checkbox" />
-						<label for="btnMouseDisableRightClick">Allow right click</label>
-					</p>
-					<p>
-						<input id="btnMouseEnableInstallUpdates" class="btnEnableInstallUpdates" type="checkbox" />
-						<label for="btnMouseEnableInstallUpdates">Check for updates</label>
-					</p>
-					<p>
-						<input id="btnMouseUseHigherQualityPreviews" class="btnUseHigherQualityPreviews" type="checkbox" />
-						<label for="btnMouseUseHigherQualityPreviews">Use Higher Quality Previews</label>
-					</p>
-					<p>
-						<label>Input mode:</label>
-						<input id="btnMouseIsTouchMode" class="btnIsTouchMode" type="radio" name="mouseInputMode" />
-						<label for="btnMouseIsTouchMode">Touch</label>
-
-						<input id="btnMouseIsMouseMode" class="btnIsMouseMode" type="radio" name="mouseInputMode" />
-						<label for="btnMouseIsMouseMode">Mouse (Experimental)</label>
-					</p>
-					<p>
-						<label>Storage used:</label>
-						<span class="totalDBSize" style="margin: 4px;">. . .</span>
-					</p>
-					<p>
-						<button class="btnClearAllData">Clear all data</button>
-					</p>
-					<p>
-						<label>Software Version:</label>
-						<span class="versionDate" style="margin: 4px;">...</span>
-					</p>
-					<p>
-						<button class="btnCheckForUpdatesNow">Check for updates now</button>
-					</p>
-				</div>
-			</div>
-
-			<div id="mousePageMiddle">
 			</div>
 		</div>
 
@@ -128,14 +69,6 @@
 							<p>
 								<input id="btnTouchUseHigherQualityPreviews" class="btnUseHigherQualityPreviews touchCheckBox" type="checkbox" />
 								<label for="btnTouchUseHigherQualityPreviews" class="touchLabel">Use Higher Quality Previews</label>
-							</p>
-							<p>
-								<label class="touchHeaderLabel">Input mode:</label>
-								<input id="btnTouchIsTouchMode" class="btnIsTouchMode touchRadioButton" type="radio" name="touchInputMode" />
-								<label for="btnTouchIsTouchMode" class="touchLabel">Touch</label>
-
-								<input id="btnTouchIsMouseMode" class="btnIsMouseMode touchRadioButton" type="radio" name="touchInputMode" />
-								<label for="btnTouchIsMouseMode" class="touchLabel">Mouse (Experimental)</label>
 							</p>
 							<hr />
 							<p>
