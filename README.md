@@ -18,7 +18,6 @@ Comic Book Reader
 # TODO Small:
 * Add an option to disable user counter
 * Stop browser navigation when loading
-* Add a place holder in the page selector, for images that have not loaded
 * Make esc un full screen and bring down the top menu
 * Have the right and left keys work like swiping right and left to turn pages
 * Manga (left to right) support
@@ -38,16 +37,11 @@ Comic Book Reader
 * There is no way to detect out of memory errors. It just prints them to console.
 * Firefox does not actually load an image, until it is on screen. This makes the right page apear to load lazily.
 * Browsers have giant, ugly, non customizable full screen indicators.
-* Firefox and Chrome are 32bit, so they crash if they use more than 4
-	gigs of ram.
+* 32bit browsers can will run out of ram, when loading comics.
 * Restarting a web worker will corrupt all created Object URLs (chrome)
 * Opening rar files is super slow in IE11 (because it uses Emscripten)
 * Change from App Cache to Service Workers (when they work in all browsers)
 * webkitRequestFullscreen does not work the same as F11 full screen (chrome only)
-* There is no way to do swiping from screen edges yet in tablet browsers
-* There is no way to differentiate between mouse, touch, and pen input
-	in different browsers.
-* We will have to manually add Kinetic scrolling
 * We have to run the thumb nailer in the main thread, which makes the UI
 	unresponsive.
 * There is no way to check how much free space is left in indexedDB.
