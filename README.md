@@ -35,9 +35,10 @@ Comic Book Reader
 
 # Browser limitations:
 * There is no way to detect out of memory errors. It just prints them to console.
-* Firefox does not actually load an image, until it is on screen. This makes the right page apear to load lazily.
+* Firefox does not actually load an image, until it is on screen. This makes the
+	right page appear to load lazily.
 * Browsers have giant, ugly, non customizable full screen indicators.
-* 32bit browsers can will run out of ram, when loading comics.
+* 32bit browsers can run out of ram, when loading comics.
 * Restarting a web worker will corrupt all created Object URLs (chrome)
 * Opening rar files is super slow in IE11 (because it uses Emscripten)
 * Change from App Cache to Service Workers (when they work in all browsers)
