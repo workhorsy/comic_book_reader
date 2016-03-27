@@ -632,7 +632,7 @@ function monitorTotalUsersOnline() {
 	console.info("Getting total users online ...");
 	var update_timeout = 1000 * 60 * 5; // 5 minutes
 	var user_id = settings_get_user_id();
-	var url = "http://workhorsy.org/comic_book_reader_counter/count.php?id=" + user_id;
+	var url = "http://comic-book-reader.com/server/count.php?id=" + user_id;
 
 	$.get(url).success(function(data, status) {
 		if (status === 'success') {
