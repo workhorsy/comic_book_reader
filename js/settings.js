@@ -4,10 +4,10 @@
 "use strict";
 
 function generate_random_user_id() {
-	// Get a 20 character user id
+	// Get a 18 character user id
 	var code_table = "0123456789";
 	var user_id = "";
-	for (var i = 0; i < 20; ++i) {
+	for (var i = 0; i < 18; ++i) {
 		// Get a random number between 0 and 10
 		var num = Math.floor((Math.random() * code_table.length));
 
@@ -90,15 +90,19 @@ function settings_set_db_names(value) {
 }
 
 function settings_get_user_id() {
-	return settings_get('user_id', []);
-}
-
-function settings_get_user_id() {
+	// Get or create the user id
 	if (! settings_has('user_id')) {
 		var user_id = generate_random_user_id();
 		settings_set('user_id', user_id);
 	}
+	user_id = settings_get('user_id');
 
-	return settings_get('user_id');
+	// If the user id is longer than 18 characters, get a new one
+	if (user_id.length > 18) {
+		console.warn('The user_id was too long. Making a new one.');
+		user_id = generate_random_user_id();
+		settings_set('user_id', user_id);
+	}
 
+	return user_id;
 }
