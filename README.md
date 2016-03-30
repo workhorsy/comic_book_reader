@@ -9,6 +9,15 @@ Comic Book Reader
 * Works when offline
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
+# TODO NOW:
+* Remove LRU caching library
+* Remove touch scrolling
+* Remove timer that loads high quality images
+* page number if blank when loading from library
+* Make page number overlay faster
+* Remove JQuery
+* The page selector often cuts off the bottom row of pages.
+
 # Bugs:
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
