@@ -4,10 +4,6 @@
 "use strict";
 
 var g_is_terminated = false;
-/*
-var g_cached_images = new LRUCache(30);
-var g_cached_images_small = new LRUCache(30);
-*/
 var g_worker = null;
 var g_file_name = null;
 var g_image_index = 0;
@@ -402,46 +398,7 @@ function updatePageNumber() {
 function friendlyPageNumber() {
 	return '(' + (g_image_index + 1) + ' of ' + g_image_count + ')';
 }
-/*
-function getCachedFileUrl(is_small, filename, cb) {
-	var cache = null;
-	var size = null;
-	if (is_small) {
-		size = 'small';
-		cache = g_cached_images_small;
-	} else {
-		size = 'big';
-		cache = g_cached_images;
-	}
 
-	// Just return it if it already exists
-	var value = cache.get(filename);
-	if (typeof value !== "undefined") {
-		console.info("$$$$$$$$$$$$$$$$$ cached: " + filename);
-		cb(value);
-		return;
-	}
-
-	// Create the new url
-	getCachedFile(size, filename, function(blob) {
-		console.info("+++++++++++++++++ adding cache: " + filename);
-		if (blob) {
-			var url = URL.createObjectURL(blob);
-
-			// If the cache is too big, remove lest recently used item
-			if (cache.size >= cache.limit) {
-				var old_url = cache.head.value;
-				var old_filename = cache.head.key;
-				URL.revokeObjectURL(old_url);
-				console.info("----------------- removing cache: " + old_filename);
-			}
-
-			cache.put(filename, url);
-			cb(url);
-		}
-	});
-}
-*/
 function loadImage(page, index, cb) {
 	var filename = g_titles[index];
 
@@ -517,18 +474,6 @@ function clearComicData() {
 	g_image_count = 0;
 	g_titles = {};
 	g_are_page_previews_loading = false;
-/*
-	// Clear all the cached images
-	g_cached_images.forEach(function(filename, url) {
-		URL.revokeObjectURL(url);
-	}, true);
-	g_cached_images.removeAll();
-
-	g_cached_images_small.forEach(function(filename, url) {
-		URL.revokeObjectURL(url);
-	}, true);
-	g_cached_images_small.removeAll();
-*/
 }
 
 // FIXME: Remove the size and type parameters, as they are not used

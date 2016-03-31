@@ -10,7 +10,6 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # TODO NOW:
-* Remove LRU caching library
 * Remove touch scrolling
 * Remove timer that loads high quality images
 * page number if blank when loading from library
