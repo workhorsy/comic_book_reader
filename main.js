@@ -289,7 +289,7 @@ function showLibrary() {
 		libraryMenu.style.display = 'none';
 		return;
 	} else {
-		libraryMenu.style.display = 'block';
+		libraryMenu.style.display = '';
 	}
 
 	var filesize = 0; // FIXME: Get the zip file size
@@ -528,7 +528,7 @@ function overlayShow() {
 
 	// Restart the animation
 	var overlay = $one('#overlayPageNumber');
-	overlay.style.display = 'block';
+	overlay.style.display = '';
 	animateCSS(overlay, "opacity: 0.5", "opacity: 0.0", "5000ms",
 	function() {
 		overlay.style.display = 'none';
