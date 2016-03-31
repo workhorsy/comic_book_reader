@@ -218,8 +218,19 @@ function loadPagePreview() {
 					console.info(i * g_screen_width);
 					$one('#comicPanel').scrollLeft = i * g_screen_width;
 					hideAllMenus(false);
+					var old_i = g_image_index;
 					g_image_index = i;
 					overlayShow();
+
+					// Load the big page image
+					var img = document.querySelector('#page_' + i);
+					img.src = img.src_big;
+
+					// Unload the previous image
+					if (old_i !== i) {
+						img = document.querySelector('#page_' + old_i);
+						img.src = '';
+					}
 				};
 
 				// The image loads successfully
@@ -831,7 +842,7 @@ function onMouseClick(e) {
 		animateValue(function(trans_value) {
 			comic_panel.scrollLeft = trans_value;
 			// Unload the previous image
-			if (trans_value === new_left) {
+			if (trans_value === new_left && i !== old_i) {
 				var img = document.querySelector('#page_' + old_i);
 				img.src = '';
 			}
