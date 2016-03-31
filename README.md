@@ -12,11 +12,11 @@ Comic Book Reader
 # TODO NOW:
 * Remove touch scrolling
 * Remove timer that loads high quality images
-* Make page number overlay faster
 * Remove JQuery
 * The page selector often cuts off the bottom row of pages.
 
 # Bugs:
+* Sometimes pages are not loaded in the correct order (Chrome mostly)
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
 * Thumb nails are too small on a high dpi screen

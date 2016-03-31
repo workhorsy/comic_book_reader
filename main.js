@@ -252,6 +252,8 @@ function loadPagePreview() {
 					console.info(i * g_screen_width);
 					$('#comicPanel')[0].scrollLeft = i * g_screen_width;
 					hideAllMenus(false);
+					g_image_index = i;
+					overlayShow();
 				};
 
 				// The image loads successfully
@@ -388,11 +390,6 @@ function loadComic() {
 	var filetype = file.type;
 
 	onLoaded(file, filename, filesize, filetype);
-}
-
-function updatePageNumber() {
-	$('.overlayPageNumber').html(friendlyPageNumber());
-	document.title = friendlyPageNumber() + ' "' + g_file_name + '"';
 }
 
 function friendlyPageNumber() {
@@ -553,25 +550,23 @@ function onResize() {
 	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 }
 
-function overlayShow(is_fading) {
-	if (is_fading) {
-//		console.info('show with fade ...');
-	} else {
-//		console.info('show ...');
-	}
+function overlayShow() {
+	// Update the page number
+	var number = friendlyPageNumber();
+	$('.overlayPageNumber').html(number);
+	document.title = number + ' "' + g_file_name + '"';
 
+	// Restart the animation
 	var overlay = $('.overlayPageNumber');
 	overlay.stop();
 	overlay.css({opacity: 0.5});
-	if (is_fading) {
-		overlay.show();
-		overlay.animate({
-			opacity: 0.0
-		}, 5000, function() {
-			overlay.hide();
-//			console.info('fade stop ...');
-		});
-	}
+	overlay.show();
+	overlay.animate({
+		opacity: 0.0
+	}, 5000, function() {
+		overlay.hide();
+		//console.info('fade stop ...');
+	});
 }
 
 function monitorTotalUsersOnline() {
@@ -711,7 +706,7 @@ function monitorImageQualitySwapping() {
 				animateValue(function(trans_value) {
 					comic_panel.scrollLeft = trans_value;
 					if (trans_value === new_left) {
-						overlayShow(true);
+						overlayShow();
 					}
 				}, comic_panel.scrollLeft, new_left, 300);
 			}
@@ -766,7 +761,6 @@ function monitorImageQualitySwapping() {
 				};
 				loadNextPage(0);
 				g_image_index = new_page;
-				updatePageNumber();
 			}, 300);
 		}
 
@@ -862,7 +856,7 @@ function startWorker() {
 				console.info('!!!!!!!!!!!!!!!!!! monitorImageQualitySwapping');
 				$('#comicPanel')[0].scrollLeft = 0;
 				monitorImageQualitySwapping();
-				updatePageNumber();
+				overlayShow();
 				break;
 			case 'uncompressed_each':
 				var filename = e.data.filename;
@@ -1070,18 +1064,19 @@ function onMouseClick(e) {
 
 			// Next page
 			if (is_right) {
-				i++;
+				if (i < g_image_count - 1) i++;
 			// Prev page
 			} else {
-				i--;
+				if (i > 0) i--;
 			}
 			var new_left = i * g_screen_width;
+			g_image_index = i;
+			overlayShow();
 
 			g_is_busy_loading = true;
 			animateValue(function(trans_value) {
 				comic_panel.scrollLeft = trans_value;
 				if (trans_value === new_left) {
-					overlayShow(true);
 					g_is_busy_loading = false;
 				}
 			}, comic_panel.scrollLeft, new_left, 600);
