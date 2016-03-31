@@ -130,7 +130,7 @@ function hideTopMenu(is_instant) {
 	// Hide the top menus
 	hide('#settingsMenu');
 	hide('#libraryMenu');
-	hide('#libraryMenu');
+	$one('#libraryMenu').innerHTML = '';
 	hide('#bottomMenu');
 
 	// Remove glow from top and bottom menu
@@ -289,7 +289,7 @@ function showLibrary() {
 		libraryMenu.style.display = 'none';
 		return;
 	} else {
-		libraryMenu.style.display = '';
+		libraryMenu.style.display = 'block';
 	}
 
 	var filesize = 0; // FIXME: Get the zip file size
@@ -528,8 +528,11 @@ function overlayShow() {
 
 	// Restart the animation
 	var overlay = $one('#overlayPageNumber');
-	overlay.style.display = '';
-	animateCSS(overlay, "opacity: 0.5", "opacity: 0.0", "5000ms");
+	overlay.style.display = 'block';
+	animateCSS(overlay, "opacity: 0.5", "opacity: 0.0", "5000ms",
+	function() {
+		overlay.style.display = 'none';
+	});
 }
 
 function monitorTotalUsersOnline() {
@@ -539,7 +542,7 @@ function monitorTotalUsersOnline() {
 	var url = "http://comic-book-reader.com/server/count.php?id=" + user_id;
 
 	httpGet(url, function(data, status) {
-		if (data && status === 'success') {
+		if (data && status === 200) {
 			$one('#totalUsersOnline').textContent = "Total users online: " + parseInt(data);
 		} else {
 			console.info(data);

@@ -22,7 +22,7 @@ function $all(selector) {
 function hide(selector) {
 	var elements = document.querySelectorAll(selector);
 	for (var i=0; i<elements.length; ++i) {
-    console.error('hide: ', elements[i].id);
+    //console.error('hide: ', elements[i].id);
 		//elements[i].classList.add('hidden');
     elements[i].style.display = 'none';
 	}
@@ -31,9 +31,9 @@ function hide(selector) {
 function show(selector) {
 	var elements = document.querySelectorAll(selector);
 	for (var i=0; i<elements.length; ++i) {
-    console.error('show: ', elements[i].id);
+    //console.error('show: ', elements[i].id);
 		//elements[i].classList.remove('hidden');
-    elements[i].style.display = '';
+    elements[i].style.display = 'block';
 	}
 }
 
@@ -73,7 +73,7 @@ function httpRequest(url, method, cb, timeout) {
 
 // FIXME: Use a unique random number, rather than this global
 var g_anim_counter = 0;
-function animateCSS(element, start_fields, end_fields, duration, iteration_count, direction) {
+function animateCSS(element, start_fields, end_fields, duration, cb_on_end, iteration_count, direction) {
 	iteration_count = iteration_count || 1;
 	direction = direction || 'normal';
 	var anim_name = 'anim_' + (++g_anim_counter);
@@ -100,14 +100,15 @@ function animateCSS(element, start_fields, end_fields, duration, iteration_count
 	document.getElementsByTagName('head')[0].appendChild(style);
 
 	element.addEventListener('animationstart', function() {
-		console.info('animationstart');
+		console.error('animationstart', anim_name);
 	}, false);
 	element.addEventListener('animationend', function() {
-		console.info('animationend');
+		console.error('animationend', anim_name);
 		document.getElementsByTagName('head')[0].removeChild(style);
+		if (cb_on_end) cb_on_end();
 	}, false);
 	element.addEventListener('animationiteration', function() {
-		console.info('animationiteration');
+		console.error('animationiteration', anim_name);
 	}, false);
 	element.className = anim_name;
 }
