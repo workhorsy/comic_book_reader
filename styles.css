@@ -30,11 +30,6 @@ body {
 	background: #61AFEF;
 }
 
-.touchHeaderLabel {
-	display: block;
-	font-size: 4vmin;
-}
-
 .touchLabel {
 	display: block;
 	position: relative;
@@ -173,12 +168,6 @@ input:checked + .touchLabel::after {
 	line-height: 10vmin;
 }
 
-#welcomeScreen .experimental {
-	font-size: 5vmin;
-	line-height: 0;
-	color: #666666;
-}
-
 #welcomeScreen footer {
 	font-size: 4vmin;
 	line-height: 10vmin;
@@ -190,10 +179,6 @@ input:checked + .touchLabel::after {
 	}
 
 	#welcomeScreen button {
-		font-size: 14px;
-	}
-
-	#welcomeScreen .experimental {
 		font-size: 14px;
 	}
 
@@ -277,7 +262,7 @@ input:checked + .touchLabel::after {
 	}
 }
 
-#touchSettingsMenu {
+#settingsMenu {
 	text-align: left;
 	display: flex;
 	align-items: center;
@@ -287,17 +272,17 @@ input:checked + .touchLabel::after {
 	border: 1px solid #ABB2BF;
 }
 
-#touchSettingsMenu label, #touchSettingsMenu span, #touchSettingsMenu button {
+#settingsMenu label, #settingsMenu span, #settingsMenu button {
 	font-size: 4vmin;
 }
 
 @media (min-width: 1px) and (max-width: 379px) {
-	#touchSettingsMenu p {
+	#settingsMenu p {
 		magin: 0px;
 		padding: 0px;
 	}
 
-	#touchSettingsMenu label, #touchSettingsMenu span {
+	#settingsMenu label, #settingsMenu span {
 		display: block;
 	}
 }
@@ -385,7 +370,7 @@ input:checked + .touchLabel::after {
 	width: 100%;
 }
 
-.touchOverlayPageNumber {
+#overlayPageNumber {
 	pointer-events: none;
 	position: fixed;
 	top: 0px;
@@ -398,7 +383,7 @@ input:checked + .touchLabel::after {
 	display: none;
 }
 
-.touchLoadingProgress {
+#loadingProgress {
 	pointer-events: none;
 	position: fixed;
 	top: 0px;

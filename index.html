@@ -35,15 +35,15 @@
 			</div>
 		</div>
 
-		<div id="touchUI" style="display: none;">
+		<div id="mainUI" style="display: none;">
 			<div id="topMenu">
 				<div id="topMenuPanel" class="unselectable">
 					<div id="topMenuButtons">
-						<button class="btnFileLoad touchButton">Open comic file</button>
-						<button id="btnTouchLibrary" class="btnLibrary touchButton">Library</button>
-						<button class="btnFullScreen touchButton">Full Screen</button>
-						<button class="btnHomepage touchButton">Home Page</button>
-						<button class="btnSettings touchButton">Settings</button>
+						<button id="btnFileLoad" class="touchButton">Open comic file</button>
+						<button id="btnLibrary" class="touchButton">Library</button>
+						<button id="btnFullScreen" class="touchButton">Full Screen</button>
+						<button id="btnHomepage" class="touchButton">Home Page</button>
+						<button id="btnSettings" class="touchButton">Settings</button>
 					</div>
 
 					<p><span id="loadError"></span></p>
@@ -55,35 +55,35 @@
 						<span id="totalUsersOnline"></span>
 					</div>
 
-					<div id="touchSettingsMenu" class="settingsMenu">
+					<div id="settingsMenu">
 						<div>
 							<p>
-								<input id="btnTouchDisableRightClick" class="btnDisableRightClick touchCheckBox" type="checkbox" />
-								<label for="btnTouchDisableRightClick" class="touchLabel">Allow right click</label>
+								<input id="btnDisableRightClick" class="touchCheckBox" type="checkbox" />
+								<label for="btnDisableRightClick" class="touchLabel">Allow right click</label>
 							</p>
 							<p>
-								<input id="btnTouchEnableInstallUpdates" class="btnEnableInstallUpdates touchCheckBox" type="checkbox" />
-								<label for="btnTouchEnableInstallUpdates" class="touchLabel">Check for updates</label>
+								<input id="btnEnableInstallUpdates" class="touchCheckBox" type="checkbox" />
+								<label for="btnEnableInstallUpdates" class="touchLabel">Check for updates</label>
 							</p>
 							<p>
-								<input id="btnTouchUseHigherQualityPreviews" class="btnUseHigherQualityPreviews touchCheckBox" type="checkbox" />
-								<label for="btnTouchUseHigherQualityPreviews" class="touchLabel">Use Higher Quality Previews</label>
+								<input id="btnUseHigherQualityPreviews" class="touchCheckBox" type="checkbox" />
+								<label for="btnUseHigherQualityPreviews" class="touchLabel">Use Higher Quality Previews</label>
 							</p>
 							<hr />
 							<p>
 								<label>Storage used:</label>
-								<span class="totalDBSize" style="margin: 4px;">. . .</span>
+								<span id="totalDBSize" style="margin: 4px;">. . .</span>
 							</p>
 							<p>
-								<button class="btnClearAllData touchButton">Clear all data</button>
+								<button id="btnClearAllData" class="touchButton">Clear all data</button>
 							</p>
 							<hr />
 							<p>
 								<label>Software Version:</label>
-								<span class="versionDate" style="margin: 4px;">...</span>
+								<span id="versionDate" style="margin: 4px;">...</span>
 							</p>
 							<p>
-								<button class="btnCheckForUpdatesNow touchButton">Check for updates now</button>
+								<button id="btnCheckForUpdatesNow" class="touchButton">Check for updates now</button>
 							</p>
 						</div>
 					</div>
@@ -105,10 +105,10 @@
 			</div>
 
 			<div id="wallPaper">
-				<div class="loadingProgress touchLoadingProgress unselectable">
+				<div id="loadingProgress" class="unselectable">
 				</div>
 
-				<div class="overlayPageNumber touchOverlayPageNumber unselectable">
+				<div id="overlayPageNumber" class="unselectable">
 				</div>
 
 				<div id="comicPanel">
