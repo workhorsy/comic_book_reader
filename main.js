@@ -128,43 +128,43 @@ function hideTopMenu(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
 
 	// Hide the top menus
-	$('#settingsMenu').hide();
-	$('#libraryMenu').hide();
-	$('#libraryMenu').empty();
-	$('#bottomMenu').show();
+	hide('#settingsMenu');
+	hide('#libraryMenu');
+	hide('#libraryMenu');
+	hide('#bottomMenu');
 
 	// Remove glow from top and bottom menu
-	$('#topMenuPanel').removeClass('menuWithGlow');
+	$one('#topMenuPanel').classList.remove('menuWithGlow');
 
 	// Hide the top menu
-	var top_menu_panel = $('#topMenuPanel');
-	var top_menu = $('#topMenu');
-	var style = top_menu[0].style;
-	var height = top_menu_panel.outerHeight() + 15;
+	var top_menu_panel = $one('#topMenuPanel');
+	var top_menu = $one('#topMenu');
+	var style = top_menu.style;
+	var height = top_menu_panel.offsetHeight + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 
 	g_top_menu_visible = 0.0;
-	$('#wallPaper')[0].style.opacity = 1.0;
+	$one('#wallPaper').style.opacity = 1.0;
 }
 
 function hideBottomMenu(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
 
 	// Remove glow from top and bottom menu
-	var bottom_menu_panel = $('#bottomMenuPanel');
-	bottom_menu_panel.removeClass('menuWithGlow');
+	var bottom_menu_panel = $one('#bottomMenuPanel');
+	bottom_menu_panel.classList.remove('menuWithGlow');
 
 	// Hide the bottom menu
-	bottom_menu_panel.empty();
-	var height = bottom_menu_panel.outerHeight();
-	var bottom = document.querySelector('#bottomMenu');
+	bottom_menu_panel.innerHTML = '';
+	var height = bottom_menu_panel.offsetHeight;
+	var bottom = $one('#bottomMenu');
 	bottom.style.transitionDuration = speed;
 	bottom.style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
 
 	g_are_page_previews_loading = false;
 	g_bottom_menu_visible = 0.0;
-	$('#wallPaper')[0].style.opacity = 1.0;
+	$one('#wallPaper').style.opacity = 1.0;
 }
 
 function setWallPaperOpacity() {
@@ -174,30 +174,30 @@ function setWallPaperOpacity() {
 	} else {
 		visible = g_bottom_menu_visible;
 	}
-	$('#wallPaper')[0].style.opacity = 1.0 - (0.9 * visible);
+	$one('#wallPaper').style.opacity = 1.0 - (0.9 * visible);
 }
 
 function showTopMenu(y_offset, is_instant) {
 	// Move the top menu
 	var speed = is_instant ? '0.0s' : '0.1s';
-	var height = $('#topMenu').outerHeight() * 1.0;
+	var height = $one('#topMenu').offsetHeight * 1.0;
 	var offset = (-height + (height * y_offset)) - 15;
-	var style = $('#topMenu')[0].style;
+	var style = $one('#topMenu').style;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_top_menu_visible = y_offset;
 
 	// Show the wall paper
 	setWallPaperOpacity();
-	$('#topMenuPanel').addClass('menuWithGlow');
+	$one('#topMenuPanel').classList.add('menuWithGlow');
 }
 
 function loadPagePreview() {
 	if (! g_are_page_previews_loading && g_bottom_menu_visible === 1.0) {
 		console.info('Loading page previews .....................');
 		g_are_page_previews_loading = true;
-		var menu = $('#bottomMenuPanel');
-		menu.empty();
+		var menu = $one('#bottomMenuPanel');
+		menu.innerHTML = '';
 
 		var curr_image_index = g_image_index;
 		var length = Object.keys(g_titles).length;
@@ -220,7 +220,7 @@ function loadPagePreview() {
 				img.title = g_titles[i];
 				img.onclick = function(e) {
 					console.info(i * g_screen_width);
-					$('#comicPanel')[0].scrollLeft = i * g_screen_width;
+					$one('#comicPanel').scrollLeft = i * g_screen_width;
 					hideAllMenus(false);
 					g_image_index = i;
 					overlayShow();
@@ -270,7 +270,7 @@ function loadPagePreview() {
 				container.appendChild(img);
 				container.appendChild(document.createElement('br'));
 				container.appendChild(caption);
-				menu.append(container);
+				menu.appendChild(container);
 			});
 		};
 
@@ -279,17 +279,17 @@ function loadPagePreview() {
 }
 
 function showLibrary() {
-	$('#settingsMenu').hide();
-	$('#bottomMenu').hide();
+	hide('#settingsMenu');
+	hide('#bottomMenu');
 
-	var libraryMenu = $('#libraryMenu');
-	libraryMenu.empty();
-	var is_visible = libraryMenu.is(":visible");
+	var libraryMenu = $one('#libraryMenu');
+	libraryMenu.innerHTML = '';
+	var is_visible = libraryMenu.style.display != 'none';
 	if (is_visible) {
-		libraryMenu.hide();
+		libraryMenu.style.display = 'none';
 		return;
 	} else {
-		libraryMenu.show();
+		libraryMenu.style.display = '';
 	}
 
 	var filesize = 0; // FIXME: Get the zip file size
@@ -297,7 +297,7 @@ function showLibrary() {
 
 	var onStart = function(count) {
 		if (count === 0) {
-			libraryMenu.html('Library is empty');
+			libraryMenu.innerHTML = 'Library is empty';
 		}
 	};
 	var onEach = function(filename, pagename, blob) {
@@ -310,9 +310,9 @@ function showLibrary() {
 			//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 			//console.info(pagename);
 			img.onclick = function(e) {
-				libraryMenu.hide();
-				libraryMenu.empty();
-				$('#bottomMenu').show();
+				libraryMenu.style.display = 'none';
+				libraryMenu.innerHTML = '';
+				show('#bottomMenu');
 
 				onLoaded(null, filename, filesize, filetype);
 			};
@@ -332,29 +332,29 @@ function showLibrary() {
 			img.src = url;
 		} else {
 			img.onclick = function(e) {
-				libraryMenu.hide();
-				libraryMenu.empty();
-				$('#bottomMenu').show();
+				libraryMenu.style.display = 'none';
+				libraryMenu.innerHTML = '';
+				show('#bottomMenu');
 
 				onLoaded(null, filename, filesize, filetype);
 			};
 			img.src = 'invalid_image.png';
 		}
 
-		libraryMenu.append(img);
+		libraryMenu.appendChild(img);
 	};
 	getAllCachedFirstPages(onStart, onEach);
 }
 
 function loadComic() {
 	// Just return if there is no file selected
-	var file_input = $('#fileInput');
-	if (file_input[0].files.length === 0) {
+	var file_input = $one('#fileInput');
+	if (file_input.files.length === 0) {
 		return;
 	}
 
 	// Get the file's info
-	var file = file_input[0].files[0];
+	var file = file_input.files[0];
 	var filename = file.name;
 	var filesize = file.size;
 	var filetype = file.type;
@@ -422,17 +422,17 @@ function loadImage(page, index, cb) {
 
 function setComicData(name) {
 	g_file_name = name;
-	$('#nameValue').text(name);
+	$one('#nameValue').textContent = name;
 }
 
 function clearComicData() {
 	// Reset the UI
 	document.title = 'Comic Book Reader';
-	$('#loadError').hide();
+	hide('#loadError');
 	setComicData('');
-	$('#bottomMenuPanel').empty();
-	$('#horizontalScroller').empty();
-	$('#comicPanel')[0].scrollLeft = 0;
+	$one('#bottomMenuPanel').innerHTML = '';
+	$one('#horizontalScroller').innerHTML = '';
+	$one('#comicPanel').scrollLeft = 0;
 
 	// Close the connection to indexedDB
 	dbClose();
@@ -446,18 +446,18 @@ function clearComicData() {
 
 // FIXME: Remove the size and type parameters, as they are not used
 function onLoaded(blob, filename, filesize, filetype) {
-	$('body')[0].style.backgroundColor = 'black';
+	document.body.style.backgroundColor = 'black';
 
 	// Clear everything
-	$('#btnFileLoad').prop('disabled', true);
-	$('#btnLibrary').prop('disabled', true);
-	$('#btnSettings').prop('disabled', true);
+	$one('#btnFileLoad').disabled = true;
+	$one('#btnLibrary').disabled = true;
+	$one('#btnSettings').disabled = true;
 	hideAllMenus(false);
 	clearComicData();
 	setComicData(filename);
 
 	// Read the file
-	$('#comicPanel').show();
+	show('#comicPanel');
 
 	// Get the names of all the cached comics
 	g_use_higher_quality_previews = settings_get_use_higher_quality_previews();
@@ -488,15 +488,15 @@ function onLoaded(blob, filename, filesize, filetype) {
 }
 
 function onError(msg) {
-	$('#comicPanel').hide();
+	hide('#comicPanel');
 	setComicData('');
-	$('#loadError').text('Error: ' + msg);
-	$('#loadError').show();
+	$one('#loadError').textContent = 'Error: ' + msg;
+	show('#loadError');
 	showTopMenu(1.0, true);
 
-	$('#btnFileLoad').prop('disabled', false);
-	$('#btnLibrary').prop('disabled', false);
-	$('#btnSettings').prop('disabled', false);
+	$one('#btnFileLoad').disabled = false;
+	$one('#btnLibrary').disabled = false;
+	$one('#btnSettings').disabled = false;
 }
 
 function onResize() {
@@ -505,17 +505,17 @@ function onResize() {
 	//console.info(g_screen_width);
 
 	var new_left = g_image_index * g_screen_width;
-	document.querySelector('#comicPanel').scrollLeft = new_left;
+	$one('#comicPanel').scrollLeft = new_left;
 
-	var height = $('#topMenuPanel').outerHeight();
+	var height = $one('#topMenuPanel').offsetHeight;
 	var new_y = - (height - (g_top_menu_visible * height));
-	var top = document.querySelector('#topMenu');
+	var top = $one('#topMenu');
 	top.style.transitionDuration = '0.0s';
 	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 
-	var height = $('#bottomMenuPanel').outerHeight();
+	var height = $one('#bottomMenuPanel').offsetHeight;
 	var new_y = height - (g_bottom_menu_visible * height);
-	var bottom = document.querySelector('#bottomMenu');
+	var bottom = $one('#bottomMenu');
 	bottom.style.transitionDuration = '0.0s';
 	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 }
@@ -523,20 +523,13 @@ function onResize() {
 function overlayShow() {
 	// Update the page number
 	var number = friendlyPageNumber();
-	$('#overlayPageNumber').html(number);
+	$one('#overlayPageNumber').innerHTML = number;
 	document.title = number + ' "' + g_file_name + '"';
 
 	// Restart the animation
-	var overlay = $('#overlayPageNumber');
-	overlay.stop();
-	overlay.css({opacity: 0.5});
-	overlay.show();
-	overlay.animate({
-		opacity: 0.0
-	}, 5000, function() {
-		overlay.hide();
-		//console.info('fade stop ...');
-	});
+	var overlay = $one('#overlayPageNumber');
+	overlay.style.display = '';
+	animateCSS(overlay, "opacity: 0.5", "opacity: 0.0", "5000ms");
 }
 
 function monitorTotalUsersOnline() {
@@ -545,14 +538,13 @@ function monitorTotalUsersOnline() {
 	var user_id = settings_get_user_id();
 	var url = "http://comic-book-reader.com/server/count.php?id=" + user_id;
 
-	$.get(url).success(function(data, status) {
-		if (status === 'success') {
-			$('#totalUsersOnline').text("Total users online: " + parseInt(data));
+	httpGet(url, function(data, status) {
+		if (data && status === 'success') {
+			$one('#totalUsersOnline').textContent = "Total users online: " + parseInt(data);
+		} else {
+			console.info(data);
+			console.info(status);
 		}
-	}).error(function(jqXHR, textStatus, errorThrown) {
-		console.info(jqXHR);
-		console.info(textStatus);
-		console.info(errorThrown);
 	});
 	setTimeout(monitorTotalUsersOnline, update_timeout);
 }
@@ -577,7 +569,7 @@ function getApplicationCacheStatusText(status) {
 }
 
 function monitorImageQualitySwapping() {
-	var comic_panel = document.querySelector('#comicPanel');
+	var comic_panel = $one('#comicPanel');
 	var old_left = comic_panel.scrollLeft;
 
 	setInterval(function() {
@@ -592,7 +584,7 @@ function monitorImageQualitySwapping() {
 			new_left = new_page * g_screen_width;
 			//console.info(new_page + ', ' + new_left);
 			//$('#comicPanel').animate({scrollLeft: new_left}, 300);
-			var scroller = document.querySelector('#horizontalScroller');
+			var scroller = $one('#horizontalScroller');
 			/*
 			animateCSS(
 				scroller,
@@ -611,7 +603,7 @@ function monitorImageQualitySwapping() {
 				// Get all the images to swap out the quality
 				var imagesToSwap = [];
 				for (var i=0; i<g_image_count; ++i) {
-					var page = document.querySelector('#page_' + i);
+					var page = $one('#page_' + i);
 					if (! page) continue;
 					if (i === new_page-1 || i === new_page || i === new_page+1) {
 						if (! page.src.endsWith(page.src_high)) {
@@ -742,12 +734,12 @@ function startWorker() {
 			case 'uncompressed_start':
 				// Update the progress
 				g_image_count =  e.data.count;
-				$('#loadingProgress').html('Loading 0.0% ...');
-				$('#loadingProgress').show();
+				$one('#loadingProgress').innerHTML = 'Loading 0.0% ...';
+				show('#loadingProgress');
 				break;
 			case 'uncompressed_done':
 				console.info('!!!!!!!!!!!!!!!!!! monitorImageQualitySwapping');
-				$('#comicPanel')[0].scrollLeft = 0;
+				$one('#comicPanel').scrollLeft = 0;
 				monitorImageQualitySwapping();
 				overlayShow();
 				break;
@@ -759,10 +751,10 @@ function startWorker() {
 
 				g_titles[index] = filename;
 
-				$('#loadingProgress').html('Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...');
+				$one('#loadingProgress').innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
 
 				makePagePreview(filename, is_cached, function() {
-					var container = document.querySelector('#horizontalScroller');
+					var container = $one('#horizontalScroller');
 					var page = document.createElement('div');
 					page.className = 'verticalScroller unselectable';
 					container.appendChild(page);
@@ -774,11 +766,11 @@ function startWorker() {
 					if (is_last) {
 						stopWorker();
 
-						$('#loadingProgress').hide();
-						$('#loadingProgress').html('');
-						$('#btnFileLoad').prop('disabled', false);
-						$('#btnLibrary').prop('disabled', false);
-						$('#btnSettings').prop('disabled', false);
+						hide('#loadingProgress');
+						$one('#loadingProgress').innerHTML = '';
+						$one('#btnFileLoad').disabled = false;
+						$one('#btnLibrary').disabled = false;
+						$one('#btnSettings').disabled = false;
 
 						startWorker();
 					}
@@ -887,7 +879,7 @@ function onMouseClick(e) {
 		return;
 	}
 
-	var comic_panel = document.querySelector('#comicPanel');
+	var comic_panel = $one('#comicPanel');
 	// Get the current page
 	var i = Math.round(comic_panel.scrollLeft / g_screen_width);
 	var x = e.clientX;
@@ -899,12 +891,12 @@ function onMouseClick(e) {
 	// Open bottom menu
 	} else if (y > (g_screen_height - 200)) {
 		// FIXME: Make this a showBottomMenu function
-		var bottom = document.querySelector('#bottomMenu');
+		var bottom = $one('#bottomMenu');
 		bottom.style.transitionDuration = '0.3s';
 		bottom.style.transform = 'translate3d(0px, ' + 200 + 'px, 0px)';
 		g_bottom_menu_visible = 1.0;
 		setWallPaperOpacity();
-		$('#bottomMenuPanel').addClass('menuWithGlow');
+		$one('#bottomMenuPanel').classList.add('menuWithGlow');
 		loadPagePreview();
 	// Move page right or left
 	} else {
@@ -935,93 +927,93 @@ function onMouseClick(e) {
 function main() {
 	// Show the welcome screen if this is the first run
 	if (settings_get_is_first_run()) {
-		$('#welcomeScreen').show();
+		show('#welcomeScreen');
 	// Otherwise show the touch UI
 	} else {
-		$('#mainUI').show();
+		show('#mainUI');
 		hideBottomMenu(true);
 		showTopMenu(true);
 	}
 
-	$('#btnInputTouch').click(function () {
-		$('#welcomeScreen').hide();
-		$('#mainUI').show();
+	$one('#btnInputTouch').addEventListener('click', function () {
+		hide('#welcomeScreen');
+		show('#mainUI');
 		hideBottomMenu(true);
 		showTopMenu(true);
 		settings_set_is_first_run(false);
 	});
 
 	// Stop the right click menu from popping up
-	$(document).on('contextmenu', function(e) {
+	document.addEventListener('contextmenu', function(e) {
 		if (! settings_get_right_click_enabled()) {
 			e.preventDefault();
 		}
 	});
 
 	// Resize everything when the browser resizes
-	$(window).resize(function() {
-		var width = $(window).width();
-		var height = $(window).height();
+	window.addEventListener('resize', function() {
+		var width = window.innerWidth;
+		var height = window.innerHeight;
 		onResize(width, height);
 	});
 
 	// Toggle full screen
-	$('#btnFullScreen').click(function () {
+	$one('#btnFullScreen').addEventListener('click', function () {
 		toggleFullScreen();
 	});
 
 	// Open github in a new tab
-	$('#btnHomepage').click(function () {
+	$one('#btnHomepage').addEventListener('click', function () {
 		var url = "https://github.com/workhorsy/comic_book_reader";
 		window.open(url, '_blank');
 	});
 
 	// Show the settings menu
-	$('#btnSettings').click(function () {
-		$('#libraryMenu').hide();
-		$('#libraryMenu').empty();
+	$one('#btnSettings').addEventListener('click', function () {
+		hide('#libraryMenu');
+		$one('#libraryMenu').innerHTML = '';
 
-		var is_visible = $('#settingsMenu').is(":visible");
+		var is_visible = $one('#settingsMenu').style.display != 'none';
 		if (is_visible) {
-			$('#settingsMenu').hide();
-			$('#bottomMenu').show();
+			hide('#settingsMenu');
+			show('#bottomMenu');
 		} else {
 			// Update the DB size
-			$('#totalDBSize').text('. . .');
+			$one('#totalDBSize').textContent = '. . .';
 			getTotalSize(function(length) {
-				$('#totalDBSize').text(toFriendlySize(length));
+				$one('#totalDBSize').textContent = toFriendlySize(length);
 			});
 
 			// Show the menu
-			$('#settingsMenu').show();
-			$('#bottomMenu').hide();
+			show('#settingsMenu');
+			hide('#bottomMenu');
 		}
 	});
 
 	// Right click toggle
-	$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
-	$('#btnDisableRightClick').click(function() {
+	$one('#btnDisableRightClick').checked = settings_get_right_click_enabled();
+	$one('#btnDisableRightClick').addEventListener('click', function() {
 		var value = settings_get_right_click_enabled();
 		settings_set_right_click_enabled(! value);
-		$('#btnDisableRightClick').prop('checked', ! value);
+		$one('#btnDisableRightClick').checked = ! value;
 	});
 
-	$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
-	$('#btnEnableInstallUpdates').click(function() {
+	$one('#btnEnableInstallUpdates').checked = settings_get_install_updates_enabled();
+	$one('#btnEnableInstallUpdates').addEventListener('click', function() {
 		var value = settings_get_install_updates_enabled();
 		settings_set_install_updates_enabled(! value);
-		$('#btnEnableInstallUpdates').prop('checked', ! value);
+		$one('#btnEnableInstallUpdates').checked = ! value;
 	});
 
-	$('#btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
-	$('#btnUseHigherQualityPreviews').click(function() {
+	$one('#btnUseHigherQualityPreviews').checked = settings_get_use_higher_quality_previews();
+	$one('#btnUseHigherQualityPreviews').addEventListener('click', function() {
 		var value = settings_get_use_higher_quality_previews();
 		settings_set_use_higher_quality_previews(! value);
-		$('#btnUseHigherQualityPreviews').prop('checked', ! value);
+		$one('#btnUseHigherQualityPreviews').checked = ! value;
 	});
 
 	// Delete indexedDB and localStorage data
-	$('#btnClearAllData').click(function() {
+	$one('#btnClearAllData').addEventListener('click', function() {
 		var db_names = settings_get_db_names();
 
 		clearComicData();
@@ -1034,13 +1026,13 @@ function main() {
 				});
 			} else {
 				settings_delete_all();
-				$('#btnDisableRightClick').prop('checked', settings_get_right_click_enabled());
-				$('#btnEnableInstallUpdates').prop('checked', settings_get_install_updates_enabled());
-				$('#btnUseHigherQualityPreviews').prop('checked', settings_get_use_higher_quality_previews());
+				$one('#btnDisableRightClick').checked = settings_get_right_click_enabled();
+				$one('#btnEnableInstallUpdates').checked = settings_get_install_updates_enabled();
+				$one('#btnUseHigherQualityPreviews').checked = settings_get_use_higher_quality_previews();
 
-				$('#totalDBSize').text('. . .');
+				$one('#totalDBSize').textContent = '. . .';
 				getTotalSize(function(length) {
-					$('#totalDBSize').text(toFriendlySize(length));
+					$one('#totalDBSize').textContent = toFriendlySize(length);
 					alert('Done clearing all data');
 				});
 			}
@@ -1048,49 +1040,50 @@ function main() {
 		deleteNextDB();
 	});
 
-	$('#btnCheckForUpdatesNow').click(function() {
+	$one('#btnCheckForUpdatesNow').addEventListener('click', function() {
 		manuallyUpdateApplicationCache();
 	});
 
-	$('#btnLibrary').click(function() {
+	$one('#btnLibrary').addEventListener('click', function() {
 		showLibrary();
 	});
 
 	// Open the file selection box
-	$('#btnFileLoad').click(function() {
-		$('#fileInput').click();
+	$one('#btnFileLoad').addEventListener('click', function() {
+		$one('#fileInput').click();
 	});
 
 	// Load the selected file
-	$('#fileInput').change(function() {
+	$one('#fileInput').addEventListener('change', function() {
 		loadComic();
 	});
 
 	// Hide the sliders if not in touch mode
-	$('#topMenuSlider').hide();
-	$('#bottomMenuSlider').hide();
+	hide('#topMenuSlider');
+	hide('#bottomMenuSlider');
 /*
-	var comicPanel = $('#comicPanel')[0];
+	var comicPanel = $one('#comicPanel');
 
 	// Key press events
-	$(document).keydown(onKeyPress);
+	document.addEventListener('keydown', onKeyPress);
 
 	// Mouse wheel events
 	comicPanel.addEventListener('mousewheel', onMouseWheel, false);
 	comicPanel.addEventListener('DOMMouseScroll', onMouseWheel, false);
 */
 	// Mouse events for the page container
-	var comic_panel = document.querySelector('#comicPanel');
+	var comic_panel = $one('#comicPanel');
 	comic_panel.addEventListener('click', onMouseClick, false);
 	comic_panel.addEventListener('scroll', onScroll, false);
 
 	// Reset everything
-	$('#comicPanel').hide();
-	$(window).trigger('resize');
+	hide('#comicPanel');
+	window.dispatchEvent(new Event('resize'));
+
 	clearComicData();
-	$('#btnFileLoad').prop('disabled', false);
-	$('#btnLibrary').prop('disabled', false);
-	$('#btnSettings').prop('disabled', false);
+	$one('#btnFileLoad').disabled = false;
+	$one('#btnLibrary').disabled = false;
+	$one('#btnSettings').disabled = false;
 
 	// Warn the user if indexedDB is full
 	var storage_is_full = localStorage.getItem('storage_is_full');
@@ -1102,15 +1095,15 @@ function main() {
 	// FIXME: Check if indexedDB is full
 
 	startWorker();
-	$('#versionDate').text(getVersionDate());
+	$one('#versionDate').textContent = getVersionDate();
 	monitorTotalUsersOnline();
 	monitorApplicationCacheUpdates();
 }
 
-$(document).ready(function() {
-	$('#welcomeScreen').hide();
-	$('#settingsMenu').hide();
-	$('#libraryMenu').hide();
+documentOnReady(function() {
+	hide('#welcomeScreen');
+	hide('#settingsMenu');
+	hide('#libraryMenu');
 
 	// Show an error message if any required browser features are missing
 	requireBrowserFeatures(function() {
