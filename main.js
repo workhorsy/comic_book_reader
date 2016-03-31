@@ -19,11 +19,6 @@ var g_screen_width = 0;
 var g_screen_height = 0;
 var g_top_menu_visible = 1.0;
 var g_bottom_menu_visible = 0.0;
-var g_top_menu_slider_mouse_down = false;
-var g_top_menu_slider_start_y = 0;
-var g_bottom_menu_slider_mouse_down = false;
-var g_bottom_menu_slider_start_y = 0;
-var g_has_touch_support = false;
 
 function hasTouchSupport() {
 	return 'ontouchstart' in window || navigator.MaxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
@@ -702,14 +697,6 @@ function monitorImageQualitySwapping() {
 				'alternate'
 			);
 			*/
-			if (g_has_touch_support) {
-				animateValue(function(trans_value) {
-					comic_panel.scrollLeft = trans_value;
-					if (trans_value === new_left) {
-						overlayShow();
-					}
-				}, comic_panel.scrollLeft, new_left, 300);
-			}
 
 			setTimeout(function() {
 				g_is_busy_loading = true;
@@ -1031,286 +1018,58 @@ function onScroll(e) {
 }
 
 function onMouseClick(e) {
-	// Detect right clicks only
-	if ( ! g_has_touch_support) {
-		if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
-			hideAllMenus(false);
-			return;
-		}
-
-		var comic_panel = document.querySelector('#comicPanel');
-		// Get the current page
-		var i = Math.round(comic_panel.scrollLeft / g_screen_width);
-		var x = e.clientX;
-		var y = e.clientY;
-
-		// Open top menu
-		if (y < 200) {
-			showTopMenu(1.0, false);
-		// Open bottom menu
-		} else if (y > (g_screen_height - 200)) {
-			// FIXME: Make this a showBottomMenu function
-			var bottom = document.querySelector('#bottomMenu');
-			bottom.style.transitionDuration = '0.3s';
-			bottom.style.transform = 'translate3d(0px, ' + 200 + 'px, 0px)';
-			g_bottom_menu_visible = 1.0;
-			setWallPaperOpacity();
-			$('#bottomMenuPanel').addClass('menuWithGlow');
-			loadPagePreview();
-		// Move page right or left
-		} else {
-			// Figure out if the click was on the right or left
-			var is_right = (x > (g_screen_width / 2));
-
-			// Next page
-			if (is_right) {
-				if (i < g_image_count - 1) i++;
-			// Prev page
-			} else {
-				if (i > 0) i--;
-			}
-			var new_left = i * g_screen_width;
-			g_image_index = i;
-			overlayShow();
-
-			g_is_busy_loading = true;
-			animateValue(function(trans_value) {
-				comic_panel.scrollLeft = trans_value;
-				if (trans_value === new_left) {
-					g_is_busy_loading = false;
-				}
-			}, comic_panel.scrollLeft, new_left, 600);
-		}
-	}
-}
-
-function onBottomMenuSliderMouseDown(e) {
-	//console.log('@@@@@@ onBottomMenuSliderMouseDown');
-	onBottomMenuSliderInputDown(e.clientX, e.clientY);
-}
-
-function onBottomMenuSliderMouseUp(e) {
-	//console.log('@@@@@@ onBottomMenuSliderMouseUp');
-	onBottomMenuSliderInputUp();
-}
-
-function onBottomMenuSliderMouseMove(e) {
-	//console.log('@@@@@@ onBottomMenuSliderMouseMove');
-	onBottomMenuSliderInputMove(e.clientX, e.clientY);
-}
-
-function onBottomMenuSliderTouchStart(e) {
-	//console.log('@@@@@@ onBottomMenuSliderTouchStart');
-	//e.preventDefault();
-	//e.stopPropagation();
-	onBottomMenuSliderInputDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-}
-
-function onBottomMenuSliderTouchEnd(e) {
-	//console.log('@@@@@@ onBottomMenuSliderTouchEnd');
-	//e.preventDefault();
-	//e.stopPropagation();
-	onBottomMenuSliderInputUp();
-}
-
-function onBottomMenuSliderTouchMove(e) {
-	//console.log('@@@@@@ onBottomMenuSliderTouchMove');
-	e.preventDefault();
-	e.stopPropagation();
-	onBottomMenuSliderInputMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-}
-
-function onBottomMenuSliderIgnoreEvent(e) {
-	//console.info(e.type);
-	e.preventDefault();
-	e.stopPropagation();
-}
-
-function onBottomMenuSliderInputDown(x, y) {
-	if (g_file_name === null || g_file_name === '') return;
-	//console.info('mousedown');
-
-	g_bottom_menu_slider_start_y = y;
-	g_bottom_menu_slider_mouse_down = true;
-	$('#bottomMenuPanel').addClass('menuWithGlow');
-
+	// Detect left clicks only
 	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
 		hideAllMenus(false);
-	}
-}
-
-function onBottomMenuSliderInputUp() {
-	if (g_file_name === null || g_file_name === '') return;
-	//console.info('mouseup');
-
-	g_bottom_menu_slider_start_y = 0;
-	g_bottom_menu_slider_mouse_down = false;
-	//var bottom = document.querySelector('#bottomMenu');
-	//bottom.style.transitionDuration = '0.0s';
-	//bottom.style.transform = 'translate3d(0px, ' + g_bottom_menu_slider_start_y + 'px, 0px)';
-
-	if (g_bottom_menu_visible !== 1.0) {
-		g_bottom_menu_visible = 0.0;
-		// Remove glow from top and bottom menu
-		$('#bottomMenuPanel').removeClass('menuWithGlow');
-		$('#bottomMenuPanel').empty();
-		setWallPaperOpacity();
-		g_are_page_previews_loading = false;
+		return;
 	}
 
-	var height = $('#bottomMenuPanel').outerHeight();
-	var new_y = height - (g_bottom_menu_visible * height);
+	var comic_panel = document.querySelector('#comicPanel');
+	// Get the current page
+	var i = Math.round(comic_panel.scrollLeft / g_screen_width);
+	var x = e.clientX;
+	var y = e.clientY;
 
-	var bottom = document.querySelector('#bottomMenu');
-	bottom.style.transitionDuration = '0.3s';
-	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
-}
-
-function onBottomMenuSliderInputMove(x, y) {
-	if (g_file_name === null || g_file_name === '') return;
-	//console.info('mousemove');
-
-	if (g_bottom_menu_slider_mouse_down) {
-		var bottom_menu_panel = $('#bottomMenuPanel');
-		var height = bottom_menu_panel.outerHeight();
-		var offset = diff(Math.abs(g_bottom_menu_slider_start_y), Math.abs(y));
-		g_bottom_menu_visible = offset / height;
-
-		//console.info(offset);
-		//console.info(g_bottom_menu_slider_start_y + ', ' + y + ', ' + offset + ', ' + g_bottom_menu_visible);
-		if (g_bottom_menu_visible > 1) {
-			g_bottom_menu_visible = 1;
-		} else if (g_bottom_menu_visible < 0) {
-			g_bottom_menu_visible = 0;
-		}
-
-		//console.info(offset + ', ' + (offset - height) + ', ' + g_bottom_menu_visible);
-		var new_y = height - (g_bottom_menu_visible * height);
-		//console.info(new_y + ', ' + g_bottom_menu_visible);
-		//new_y = -offset;
-		//console.info(new_y + ', ' + offset + ', ' + (offset - height));
-
+	// Open top menu
+	if (y < 200) {
+		showTopMenu(1.0, false);
+	// Open bottom menu
+	} else if (y > (g_screen_height - 200)) {
+		// FIXME: Make this a showBottomMenu function
 		var bottom = document.querySelector('#bottomMenu');
-		bottom.style.transitionDuration = '0.0s';
-		bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+		bottom.style.transitionDuration = '0.3s';
+		bottom.style.transform = 'translate3d(0px, ' + 200 + 'px, 0px)';
+		g_bottom_menu_visible = 1.0;
 		setWallPaperOpacity();
+		$('#bottomMenuPanel').addClass('menuWithGlow');
+		loadPagePreview();
+	// Move page right or left
+	} else {
+		// Figure out if the click was on the right or left
+		var is_right = (x > (g_screen_width / 2));
 
-		if (g_bottom_menu_visible === 1.0) {
-			loadPagePreview();
+		// Next page
+		if (is_right) {
+			if (i < g_image_count - 1) i++;
+		// Prev page
+		} else {
+			if (i > 0) i--;
 		}
-	}
-}
+		var new_left = i * g_screen_width;
+		g_image_index = i;
+		overlayShow();
 
-function onTopMenuSliderMouseDown(e) {
-	//console.log('@@@@@@ onTopMenuSliderMouseDown');
-	onTopMenuSliderInputDown(e.clientX, e.clientY);
-}
-
-function onTopMenuSliderMouseUp(e) {
-	//console.log('@@@@@@ onTopMenuSliderMouseUp');
-	onTopMenuSliderInputUp();
-}
-
-function onTopMenuSliderMouseMove(e) {
-	//console.log('@@@@@@ onTopMenuSliderMouseMove');
-	onTopMenuSliderInputMove(e.clientX, e.clientY);
-}
-
-function onTopMenuSliderTouchStart(e) {
-	//console.log('@@@@@@ onTopMenuSliderTouchStart');
-	//e.preventDefault();
-	//e.stopPropagation();
-	onTopMenuSliderInputDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-}
-
-function onTopMenuSliderTouchEnd(e) {
-	//console.log('@@@@@@ onTopMenuSliderTouchEnd');
-	//e.preventDefault();
-	//e.stopPropagation();
-	onTopMenuSliderInputUp();
-}
-
-function onTopMenuSliderTouchMove(e) {
-	//console.log('@@@@@@ onTopMenuSliderTouchMove');
-	e.preventDefault();
-	e.stopPropagation();
-	onTopMenuSliderInputMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-}
-
-function onTopMenuSliderIgnoreEvent(e) {
-	//console.info(e.type);
-	e.preventDefault();
-	e.stopPropagation();
-}
-
-function onTopMenuSliderInputDown(x, y) {
-	if (g_file_name === null || g_file_name === '') return;
-	//console.info('mousedown');
-
-	g_top_menu_slider_start_y = y;
-	g_top_menu_slider_mouse_down = true;
-	$('#topMenuPanel').addClass('menuWithGlow');
-
-	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
-		hideAllMenus(false);
-	}
-}
-
-function onTopMenuSliderInputUp() {
-	if (g_file_name === null || g_file_name === '') return;
-	//console.info('mouseup');
-
-	g_top_menu_slider_start_y = 0;
-	g_top_menu_slider_mouse_down = false;
-	//var top = document.querySelector('#topMenu');
-	//top.style.transitionDuration = '0.0s';
-	//top.style.transform = 'translate3d(0px, ' + g_top_menu_slider_start_y + 'px, 0px)';
-
-	if (g_top_menu_visible !== 1.0) {
-		g_top_menu_visible = 0.0;
-		// Remove glow from top and bottom menu
-		$('#topMenuPanel').removeClass('menuWithGlow');
-		setWallPaperOpacity();
-	}
-
-	var height = $('#topMenuPanel').outerHeight();
-	var new_y = - (height - (g_top_menu_visible * height));
-
-	var top = document.querySelector('#topMenu');
-	top.style.transitionDuration = '0.3s';
-	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
-}
-
-function onTopMenuSliderInputMove(x, y) {
-	if (g_file_name === null || g_file_name === '') return;
-	//console.info('mousemove');
-
-	if (g_top_menu_slider_mouse_down) {
-		var top_menu_panel = $('#topMenuPanel');
-		var height = top_menu_panel.outerHeight();
-		var offset = diff(Math.abs(g_top_menu_slider_start_y), Math.abs(y));
-		g_top_menu_visible = offset / height;
-		//console.info(g_top_menu_slider_start_y + ', ' + y + ', ' + offset + ', ' + g_top_menu_visible);
-		if (g_top_menu_visible > 1) {
-			g_top_menu_visible = 1;
-		} else if (g_top_menu_visible < 0) {
-			g_top_menu_visible = 0;
-		}
-
-		//console.info((offset - height) + ', ' + g_top_menu_visible);
-		var new_y = - (height - (g_top_menu_visible * height));
-		//console.info(new_y + ', ' + (offset - height));
-
-		var top = document.querySelector('#topMenu');
-		top.style.transitionDuration = '0.0s';
-		top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
-		setWallPaperOpacity();
+		g_is_busy_loading = true;
+		animateValue(function(trans_value) {
+			comic_panel.scrollLeft = trans_value;
+			if (trans_value === new_left) {
+				g_is_busy_loading = false;
+			}
+		}, comic_panel.scrollLeft, new_left, 600);
 	}
 }
 
 function main() {
-	g_has_touch_support = hasTouchSupport();
-
 	// Show the welcome screen if this is the first run
 	if (settings_get_is_first_run()) {
 		$('#welcomeScreen').show();
@@ -1444,24 +1203,9 @@ function main() {
 		loadComic();
 	});
 
-	// Add top and bottom menu mouse and touch events
-	var top_slider = document.querySelector('#topMenuSlider');
-	var bottom_slider = document.querySelector('#bottomMenuSlider');
-	if (g_has_touch_support) {
-		top_slider.addEventListener('touchstart', onTopMenuSliderTouchStart, false);
-		top_slider.addEventListener('touchend', onTopMenuSliderTouchEnd, false);
-		top_slider.addEventListener('touchcancel', onTopMenuSliderIgnoreEvent, false);
-		top_slider.addEventListener('touchmove', onTopMenuSliderTouchMove, false);
-
-		bottom_slider.addEventListener('touchstart', onBottomMenuSliderTouchStart, false);
-		bottom_slider.addEventListener('touchend', onBottomMenuSliderTouchEnd, false);
-		bottom_slider.addEventListener('touchcancel', onBottomMenuSliderIgnoreEvent, false);
-		bottom_slider.addEventListener('touchmove', onBottomMenuSliderTouchMove, false);
 	// Hide the sliders if not in touch mode
-	} else {
-		$('#topMenuSlider').hide();
-		$('#bottomMenuSlider').hide();
-	}
+	$('#topMenuSlider').hide();
+	$('#bottomMenuSlider').hide();
 /*
 	var comicPanel = $('#comicPanel')[0];
 
