@@ -11,10 +11,6 @@ var g_image_count = 0;
 var g_titles = {};
 var g_are_page_previews_loading = false;
 var g_use_higher_quality_previews = false;
-var g_is_busy_loading = false;
-
-var g_has_scrolled = false;
-
 var g_screen_width = 0;
 var g_screen_height = 0;
 var g_top_menu_visible = 1.0;
@@ -401,19 +397,17 @@ function loadImage(page, index, cb) {
 
 	getCachedFile('big', filename, function(blob) {
 		if (blob) {
-			img.src_high = URL.createObjectURL(blob);
-			console.info('    ' + img.src_high);
+			img.src_big = URL.createObjectURL(blob);
+			console.info('    ' + img.src_big);
 		}
 		getCachedFile('small', filename, function(blob) {
 			if (blob) {
-				img.src_low = URL.createObjectURL(blob);
-				console.info('    ' + img.src_low);
+				img.src_small = URL.createObjectURL(blob);
+				console.info('    ' + img.src_small);
 			}
 
-			if (index < 2) {
-				img.src = img.src_high;
-			} else {
-				img.src = img.src_low;
+			if (index === 0) {
+				img.src = img.src_big;
 			}
 			page.appendChild(img);
 		});
@@ -571,81 +565,6 @@ function getApplicationCacheStatusText(status) {
 	}
 }
 
-function monitorImageQualitySwapping() {
-	var comic_panel = $one('#comicPanel');
-	var old_left = comic_panel.scrollLeft;
-
-	setInterval(function() {
-		var new_left = comic_panel.scrollLeft;
-
-		//console.info((! g_is_busy_loading) + ', ' + g_has_scrolled + ', ' + (! g_is_mouse_down) + ', ' + old_left + ', ' + new_left);
-		if (! g_is_busy_loading && g_has_scrolled && old_left === new_left) {
-			g_has_scrolled = false;
-
-			//console.info('reset scroll ....................' + scroll_left);
-			var new_page = Math.round(new_left / g_screen_width);
-			new_left = new_page * g_screen_width;
-			//console.info(new_page + ', ' + new_left);
-			//$('#comicPanel').animate({scrollLeft: new_left}, 300);
-			var scroller = $one('#horizontalScroller');
-
-			setTimeout(function() {
-				g_is_busy_loading = true;
-				console.info(g_image_index + ', ' + new_page);
-
-				// Get all the images to swap out the quality
-				var imagesToSwap = [];
-				for (var i=0; i<g_image_count; ++i) {
-					var page = $one('#page_' + i);
-					if (! page) continue;
-					if (i === new_page-1 || i === new_page || i === new_page+1) {
-						if (! page.src.endsWith(page.src_high)) {
-							imagesToSwap.push({page: page, src: page.src_high});
-						}
-					} else {
-						if (! page.src.endsWith(page.src_low)) {
-							imagesToSwap.push({page: page, src: page.src_low});
-						}
-					}
-				}
-
-				// Swap out the images in serial
-				var loadNextPage = function(i) {
-					if (i >= imagesToSwap.length) {
-						g_is_busy_loading = false;
-						return;
-					}
-
-					var item = imagesToSwap[i];
-					var page = item.page;
-					var src = item.src;
-
-					page.onload = function() {
-						this.onload = null;
-						this.onerror = null;
-						console.info(this.src);
-						loadNextPage(i + 1);
-					};
-					page.onerror = function() {
-						this.onload = null;
-						this.onerror = null;
-						this.title = '';
-						this.alt = 'Invalid Image';
-						this.src = 'invalid_image.png';
-						console.info(this.src);
-						loadNextPage(i + 1);
-					};
-					page.src = src;
-				};
-				loadNextPage(0);
-				g_image_index = new_page;
-			}, 300);
-		}
-
-		old_left = new_left;
-	}, 100);
-}
-
 function monitorApplicationCacheUpdates() {
 	// When an app cache update is available, prompt the user to reload the page
 	window.applicationCache.addEventListener('updateready', function(e) {
@@ -731,9 +650,7 @@ function startWorker() {
 				show('#loadingProgress');
 				break;
 			case 'uncompressed_done':
-				console.info('!!!!!!!!!!!!!!!!!! monitorImageQualitySwapping');
 				$one('#comicPanel').scrollLeft = 0;
-				monitorImageQualitySwapping();
 				overlayShow();
 				break;
 			case 'uncompressed_each':
@@ -861,10 +778,6 @@ function makePagePreview(filename, is_cached, cb) {
 	}
 }
 
-function onScroll(e) {
-	g_has_scrolled = true;
-}
-
 function onMouseClick(e) {
 	// Detect left clicks only
 	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
@@ -897,21 +810,30 @@ function onMouseClick(e) {
 		var is_right = (x > (g_screen_width / 2));
 
 		// Next page
+		var old_i = i;
 		if (is_right) {
 			if (i < g_image_count - 1) i++;
 		// Prev page
 		} else {
 			if (i > 0) i--;
 		}
+
+		// Load the big page image
+		var img = document.querySelector('#page_' + i);
+		img.src = img.src_big;
+
+		// Scroll the page into position
 		var new_left = i * g_screen_width;
 		g_image_index = i;
 		overlayShow();
 
-		g_is_busy_loading = true;
+		// Animate the scroll bar
 		animateValue(function(trans_value) {
 			comic_panel.scrollLeft = trans_value;
+			// Unload the previous image
 			if (trans_value === new_left) {
-				g_is_busy_loading = false;
+				var img = document.querySelector('#page_' + old_i);
+				img.src = '';
 			}
 		}, comic_panel.scrollLeft, new_left, 600);
 	}
@@ -1067,7 +989,6 @@ function main() {
 	// Mouse events for the page container
 	var comic_panel = $one('#comicPanel');
 	comic_panel.addEventListener('click', onMouseClick, false);
-	comic_panel.addEventListener('scroll', onScroll, false);
 
 	// Reset everything
 	hide('#comicPanel');

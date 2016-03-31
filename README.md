@@ -10,8 +10,8 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # TODO NOW:
+* Hide the bottom scroll bar
 * CSS animations stack on the page number overlay
-* Remove timer that loads high quality images
 * The page selector often cuts off the bottom row of pages.
 
 # Bugs:
@@ -19,7 +19,6 @@ Comic Book Reader
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
 * Thumb nails are too small on a high dpi screen
-* cant touch scroll the page selector (chrome)
 
 # TODO Small:
 * Add an option to disable user counter
