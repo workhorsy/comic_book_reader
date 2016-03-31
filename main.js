@@ -460,6 +460,7 @@ function setComicData(name) {
 
 function clearComicData() {
 	// Reset the UI
+	document.title = 'Comic Book Reader';
 	$('#loadError').hide();
 	setComicData('');
 	$('#bottomMenuPanel').empty();

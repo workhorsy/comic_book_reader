@@ -12,7 +12,6 @@ Comic Book Reader
 # TODO NOW:
 * Remove touch scrolling
 * Remove timer that loads high quality images
-* page number if blank when loading from library
 * Make page number overlay faster
 * Remove JQuery
 * The page selector often cuts off the bottom row of pages.
