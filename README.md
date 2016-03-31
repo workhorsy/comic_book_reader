@@ -11,8 +11,6 @@ Comic Book Reader
 
 # TODO NOW:
 * CSS animations stack on the page number overlay
-* page selector is missing the padding
-* settings panel is missing the padding
 * Remove timer that loads high quality images
 * The page selector often cuts off the bottom row of pages.
 

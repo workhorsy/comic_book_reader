@@ -33,7 +33,7 @@ function show(selector) {
 	for (var i=0; i<elements.length; ++i) {
     //console.error('show: ', elements[i].id);
 		//elements[i].classList.remove('hidden');
-    elements[i].style.display = 'block';
+    elements[i].style.display = '';
 	}
 }
 
