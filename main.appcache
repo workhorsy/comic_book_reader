@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v1 Wed Mar 30 23:49:53 PDT 2016
+# v1 Thu Mar 31 00:27:22 PDT 2016
 
 CACHE:
 favicon.ico
@@ -15,6 +15,7 @@ js/pica.js
 js/screenfull.js/screenfull.js
 js/jquery-1.11.3.min.js
 js/uncompress.js
+js/utility.js
 js/jszip.js
 js/libuntar.js
 js/libunrar.js
