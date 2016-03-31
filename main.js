@@ -131,7 +131,7 @@ function hideTopMenu(is_instant) {
 	hide('#settingsMenu');
 	hide('#libraryMenu');
 	$one('#libraryMenu').innerHTML = '';
-	hide('#bottomMenu');
+	show('#bottomMenu');
 
 	// Remove glow from top and bottom menu
 	$one('#topMenuPanel').classList.remove('menuWithGlow');
