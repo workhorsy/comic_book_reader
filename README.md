@@ -10,8 +10,8 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # TODO NOW:
+* CSS animations stack on the page number overlay
 * Remove timer that loads high quality images
-* Remove JQuery
 * The page selector often cuts off the bottom row of pages.
 
 # Bugs:
