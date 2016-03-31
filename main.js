@@ -861,6 +861,7 @@ function startWorker() {
 				console.info('!!!!!!!!!!!!!!!!!! monitorImageQualitySwapping');
 				$('#comicPanel')[0].scrollLeft = 0;
 				monitorImageQualitySwapping();
+				updatePageNumber();
 				break;
 			case 'uncompressed_each':
 				var filename = e.data.filename;
