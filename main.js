@@ -588,16 +588,6 @@ function monitorImageQualitySwapping() {
 			//console.info(new_page + ', ' + new_left);
 			//$('#comicPanel').animate({scrollLeft: new_left}, 300);
 			var scroller = $one('#horizontalScroller');
-			/*
-			animateCSS(
-				scroller,
-				'opacity: 1;',
-				'opacity: 0;',
-				'3s',
-				9,
-				'alternate'
-			);
-			*/
 
 			setTimeout(function() {
 				g_is_busy_loading = true;
