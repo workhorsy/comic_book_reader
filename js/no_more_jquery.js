@@ -71,6 +71,7 @@ function httpRequest(url, method, cb, timeout) {
 	xhr.send(null);
 }
 
+// FIXME: This stacks a new set of events for each animation call
 // FIXME: Use a unique random number, rather than this global
 var g_anim_counter = 0;
 function animateCSS(element, start_fields, end_fields, duration, cb_on_end, iteration_count, direction) {
@@ -100,15 +101,17 @@ function animateCSS(element, start_fields, end_fields, duration, cb_on_end, iter
 	document.getElementsByTagName('head')[0].appendChild(style);
 
 	element.addEventListener('animationstart', function() {
-		console.error('animationstart', anim_name);
+		console.info('animationstart', anim_name);
 	}, false);
 	element.addEventListener('animationend', function() {
-		console.error('animationend', anim_name);
-		document.getElementsByTagName('head')[0].removeChild(style);
+		console.info('animationend', anim_name);
+		if (style)
+			document.getElementsByTagName('head')[0].removeChild(style);
+		style = null;
 		if (cb_on_end) cb_on_end();
 	}, false);
 	element.addEventListener('animationiteration', function() {
-		console.error('animationiteration', anim_name);
+		console.info('animationiteration', anim_name);
 	}, false);
 	element.className = anim_name;
 }
