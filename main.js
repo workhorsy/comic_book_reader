@@ -518,7 +518,7 @@ function onResize() {
 	top.style.transitionDuration = '0.0s';
 	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 
-	if (g_file_name) {
+	if (g_bottom_menu_visible > 0) {
 		var bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.0s';
 		bottom.style.transform = 'translate3d(0px, 200px, 0px)';
