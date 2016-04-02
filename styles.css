@@ -340,7 +340,6 @@ input:checked + .touchLabel::after {
 #comicPanel {
 	box-sizing: border-box;
 	overflow: hidden;
-	overflow-x: scroll;
 	position: absolute;
 	top: 0;
 	bottom: 0;

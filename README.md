@@ -10,7 +10,6 @@ Comic Book Reader
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 # TODO NOW:
-* Hide the bottom scroll bar
 * CSS animations stack on the page number overlay
 * The page selector often cuts off the bottom row of pages.
 
