@@ -223,6 +223,7 @@ function loadPagePreview() {
 					overlayShow();
 
 					// Load the big page image
+					console.info('load', i);
 					var img = $('#page_' + i);
 					img.src = img.src_big;
 
@@ -417,7 +418,8 @@ function loadImage(page, index, cb) {
 				console.info('    ' + img.src_small);
 			}
 
-			if (index === 0) {
+			if (index <= 1) {
+				console.info('load', index);
 				img.src = img.src_big;
 			}
 			page.appendChild(img);
@@ -827,17 +829,15 @@ function onMouseClick(e) {
 		var is_right = (x > (g_screen_width / 2));
 
 		// Next page
-		var old_i = i;
+		var old_i = -1;
 		if (is_right) {
 			if (i < g_image_count - 1) i++;
+			if (i >= 2) old_i = i - 2;
 		// Prev page
 		} else {
 			if (i > 0) i--;
+			if (i <= g_image_count - 2) old_i = i + 2;
 		}
-
-		// Load the big page image
-		var img = $('#page_' + i);
-		img.src = img.src_big;
 
 		// Scroll the page into position
 		var new_left = i * g_screen_width;
@@ -847,10 +847,27 @@ function onMouseClick(e) {
 		// Animate the scroll bar
 		animateValue(function(trans_value) {
 			comic_panel.scrollLeft = trans_value;
-			// Unload the previous image
-			if (trans_value === new_left && i !== old_i) {
-				var img = $('#page_' + old_i);
-				img.src = '';
+
+			// The scroll bar is done moving
+			if (trans_value === new_left) {
+				// Unload the previous image
+				if (old_i !== -1 && i !== old_i) {
+					console.info('unload', old_i);
+					var img = $('#page_' + old_i);
+					img.src = '';
+				}
+				// Load the right page
+				if (i < g_image_count - 1) {
+					console.info('load', i+1);
+					var img = $('#page_' + (i+1));
+					img.src = img.src_big;
+				}
+				// Load the left page
+				if (i > 0) {
+					console.info('load', i-1);
+					var img = $('#page_' + (i-1));
+					img.src = img.src_big;
+				}
 			}
 		}, comic_panel.scrollLeft, new_left, 600);
 	}
