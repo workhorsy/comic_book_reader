@@ -229,11 +229,6 @@ input:checked + .touchLabel::after {
 	text-align: center;
 }
 
-#topMenuSlider {
-	pointer-events: all;
-	height: 200px;
-}
-
 #topMenuButtons {
 	box-sizing: border-box;
 	overflow: hidden;
@@ -325,12 +320,6 @@ input:checked + .touchLabel::after {
 	padding: 0px;
 	background-color: rgba(0, 0, 0, 0.6);
 	text-align: center;
-}
-
-#bottomMenuSlider {
-	pointer-events: all;
-	height: 200px;
-	flex: none;
 }
 
 #fileInput {

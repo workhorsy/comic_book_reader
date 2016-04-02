@@ -9,11 +9,9 @@ Comic Book Reader
 * Works when offline
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
-# TODO NOW:
-* CSS animations stack on the page number overlay
-* The page selector often cuts off the bottom row of pages.
 
 # Bugs:
+* CSS animations stack on the page number overlay
 * Sometimes pages are not loaded in the correct order (Chrome mostly)
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)

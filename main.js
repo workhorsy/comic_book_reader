@@ -518,11 +518,17 @@ function onResize() {
 	top.style.transitionDuration = '0.0s';
 	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 
-	var height = $one('#bottomMenuPanel').offsetHeight;
-	var new_y = height - (g_bottom_menu_visible * height);
-	var bottom = $one('#bottomMenu');
-	bottom.style.transitionDuration = '0.0s';
-	bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+	if (g_file_name) {
+		var bottom = $one('#bottomMenu');
+		bottom.style.transitionDuration = '0.0s';
+		bottom.style.transform = 'translate3d(0px, 200px, 0px)';
+	} else {
+		var height = $one('#bottomMenuPanel').offsetHeight;
+		var new_y = height - (g_bottom_menu_visible * height);
+		var bottom = $one('#bottomMenu');
+		bottom.style.transitionDuration = '0.0s';
+		bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
+	}
 }
 
 function overlayShow() {
@@ -1011,9 +1017,6 @@ function main() {
 		loadComic();
 	});
 
-	// Hide the sliders if not in touch mode
-	hide('#topMenuSlider');
-	hide('#bottomMenuSlider');
 /*
 	var comicPanel = $one('#comicPanel');
 
