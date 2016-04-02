@@ -126,41 +126,41 @@ function hideTopMenu(is_instant) {
 	// Hide the top menus
 	hide('#settingsMenu');
 	hide('#libraryMenu');
-	$one('#libraryMenu').innerHTML = '';
+	$('#libraryMenu').innerHTML = '';
 	show('#bottomMenu');
 
 	// Remove glow from top and bottom menu
-	$one('#topMenuPanel').classList.remove('menuWithGlow');
+	$('#topMenuPanel').classList.remove('menuWithGlow');
 
 	// Hide the top menu
-	var top_menu_panel = $one('#topMenuPanel');
-	var top_menu = $one('#topMenu');
+	var top_menu_panel = $('#topMenuPanel');
+	var top_menu = $('#topMenu');
 	var style = top_menu.style;
 	var height = top_menu_panel.offsetHeight + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 
 	g_top_menu_visible = 0.0;
-	$one('#wallPaper').style.opacity = 1.0;
+	$('#wallPaper').style.opacity = 1.0;
 }
 
 function hideBottomMenu(is_instant) {
 	var speed = is_instant ? '0.0s' : '0.3s';
 
 	// Remove glow from top and bottom menu
-	var bottom_menu_panel = $one('#bottomMenuPanel');
+	var bottom_menu_panel = $('#bottomMenuPanel');
 	bottom_menu_panel.classList.remove('menuWithGlow');
 
 	// Hide the bottom menu
 	bottom_menu_panel.innerHTML = '';
 	var height = bottom_menu_panel.offsetHeight;
-	var bottom = $one('#bottomMenu');
+	var bottom = $('#bottomMenu');
 	bottom.style.transitionDuration = speed;
 	bottom.style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
 
 	g_are_page_previews_loading = false;
 	g_bottom_menu_visible = 0.0;
-	$one('#wallPaper').style.opacity = 1.0;
+	$('#wallPaper').style.opacity = 1.0;
 }
 
 function setWallPaperOpacity() {
@@ -170,29 +170,29 @@ function setWallPaperOpacity() {
 	} else {
 		visible = g_bottom_menu_visible;
 	}
-	$one('#wallPaper').style.opacity = 1.0 - (0.9 * visible);
+	$('#wallPaper').style.opacity = 1.0 - (0.9 * visible);
 }
 
 function showTopMenu(y_offset, is_instant) {
 	// Move the top menu
 	var speed = is_instant ? '0.0s' : '0.1s';
-	var height = $one('#topMenu').offsetHeight * 1.0;
+	var height = $('#topMenu').offsetHeight * 1.0;
 	var offset = (-height + (height * y_offset)) - 15;
-	var style = $one('#topMenu').style;
+	var style = $('#topMenu').style;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_top_menu_visible = y_offset;
 
 	// Show the wall paper
 	setWallPaperOpacity();
-	$one('#topMenuPanel').classList.add('menuWithGlow');
+	$('#topMenuPanel').classList.add('menuWithGlow');
 }
 
 function loadPagePreview() {
 	if (! g_are_page_previews_loading && g_bottom_menu_visible === 1.0) {
 		console.info('Loading page previews .....................');
 		g_are_page_previews_loading = true;
-		var menu = $one('#bottomMenuPanel');
+		var menu = $('#bottomMenuPanel');
 		menu.innerHTML = '';
 
 		var curr_image_index = g_image_index;
@@ -216,19 +216,19 @@ function loadPagePreview() {
 				img.title = g_titles[i];
 				img.onclick = function(e) {
 					console.info(i * g_screen_width);
-					$one('#comicPanel').scrollLeft = i * g_screen_width;
+					$('#comicPanel').scrollLeft = i * g_screen_width;
 					hideAllMenus(false);
 					var old_i = g_image_index;
 					g_image_index = i;
 					overlayShow();
 
 					// Load the big page image
-					var img = document.querySelector('#page_' + i);
+					var img = $('#page_' + i);
 					img.src = img.src_big;
 
 					// Unload the previous image
 					if (old_i !== i) {
-						img = document.querySelector('#page_' + old_i);
+						img = $('#page_' + old_i);
 						img.src = '';
 					}
 				};
@@ -289,7 +289,7 @@ function showLibrary() {
 	hide('#settingsMenu');
 	hide('#bottomMenu');
 
-	var libraryMenu = $one('#libraryMenu');
+	var libraryMenu = $('#libraryMenu');
 	libraryMenu.innerHTML = '';
 	var is_visible = libraryMenu.style.display != 'none';
 	if (is_visible) {
@@ -355,7 +355,7 @@ function showLibrary() {
 
 function loadComic() {
 	// Just return if there is no file selected
-	var file_input = $one('#fileInput');
+	var file_input = $('#fileInput');
 	if (file_input.files.length === 0) {
 		return;
 	}
@@ -427,7 +427,7 @@ function loadImage(page, index, cb) {
 
 function setComicData(name) {
 	g_file_name = name;
-	$one('#nameValue').textContent = name;
+	$('#nameValue').textContent = name;
 }
 
 function clearComicData() {
@@ -435,9 +435,9 @@ function clearComicData() {
 	document.title = 'Comic Book Reader';
 	hide('#loadError');
 	setComicData('');
-	$one('#bottomMenuPanel').innerHTML = '';
-	$one('#horizontalScroller').innerHTML = '';
-	$one('#comicPanel').scrollLeft = 0;
+	$('#bottomMenuPanel').innerHTML = '';
+	$('#horizontalScroller').innerHTML = '';
+	$('#comicPanel').scrollLeft = 0;
 
 	// Close the connection to indexedDB
 	dbClose();
@@ -454,9 +454,9 @@ function onLoaded(blob, filename, filesize, filetype) {
 	document.body.style.backgroundColor = 'black';
 
 	// Clear everything
-	$one('#btnFileLoad').disabled = true;
-	$one('#btnLibrary').disabled = true;
-	$one('#btnSettings').disabled = true;
+	$('#btnFileLoad').disabled = true;
+	$('#btnLibrary').disabled = true;
+	$('#btnSettings').disabled = true;
 	hideAllMenus(false);
 	clearComicData();
 	setComicData(filename);
@@ -495,13 +495,13 @@ function onLoaded(blob, filename, filesize, filetype) {
 function onError(msg) {
 	hide('#comicPanel');
 	setComicData('');
-	$one('#loadError').textContent = 'Error: ' + msg;
+	$('#loadError').textContent = 'Error: ' + msg;
 	show('#loadError');
 	showTopMenu(1.0, true);
 
-	$one('#btnFileLoad').disabled = false;
-	$one('#btnLibrary').disabled = false;
-	$one('#btnSettings').disabled = false;
+	$('#btnFileLoad').disabled = false;
+	$('#btnLibrary').disabled = false;
+	$('#btnSettings').disabled = false;
 }
 
 function onResize() {
@@ -510,22 +510,22 @@ function onResize() {
 	//console.info(g_screen_width);
 
 	var new_left = g_image_index * g_screen_width;
-	$one('#comicPanel').scrollLeft = new_left;
+	$('#comicPanel').scrollLeft = new_left;
 
-	var height = $one('#topMenuPanel').offsetHeight;
+	var height = $('#topMenuPanel').offsetHeight;
 	var new_y = - (height - (g_top_menu_visible * height));
-	var top = $one('#topMenu');
+	var top = $('#topMenu');
 	top.style.transitionDuration = '0.0s';
 	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 
 	if (g_file_name) {
-		var bottom = $one('#bottomMenu');
+		var bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.0s';
 		bottom.style.transform = 'translate3d(0px, 200px, 0px)';
 	} else {
-		var height = $one('#bottomMenuPanel').offsetHeight;
+		var height = $('#bottomMenuPanel').offsetHeight;
 		var new_y = height - (g_bottom_menu_visible * height);
-		var bottom = $one('#bottomMenu');
+		var bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.0s';
 		bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 	}
@@ -534,11 +534,11 @@ function onResize() {
 function overlayShow() {
 	// Update the page number
 	var number = friendlyPageNumber();
-	$one('#overlayPageNumber').innerHTML = number;
+	$('#overlayPageNumber').innerHTML = number;
 	document.title = number + ' "' + g_file_name + '"';
 
 	// Restart the animation
-	var overlay = $one('#overlayPageNumber');
+	var overlay = $('#overlayPageNumber');
 	overlay.style.display = '';
 	animateCSS(overlay, "opacity: 0.5", "opacity: 0.0", "5000ms",
 	function() {
@@ -554,7 +554,7 @@ function monitorTotalUsersOnline() {
 
 	httpGet(url, function(data, status) {
 		if (data && status === 200) {
-			$one('#totalUsersOnline').textContent = "Total users online: " + parseInt(data);
+			$('#totalUsersOnline').textContent = "Total users online: " + parseInt(data);
 		} else {
 			console.info(data);
 			console.info(status);
@@ -663,11 +663,11 @@ function startWorker() {
 			case 'uncompressed_start':
 				// Update the progress
 				g_image_count =  e.data.count;
-				$one('#loadingProgress').innerHTML = 'Loading 0.0% ...';
+				$('#loadingProgress').innerHTML = 'Loading 0.0% ...';
 				show('#loadingProgress');
 				break;
 			case 'uncompressed_done':
-				$one('#comicPanel').scrollLeft = 0;
+				$('#comicPanel').scrollLeft = 0;
 				overlayShow();
 				break;
 			case 'uncompressed_each':
@@ -678,10 +678,10 @@ function startWorker() {
 
 				g_titles[index] = filename;
 
-				$one('#loadingProgress').innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
+				$('#loadingProgress').innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
 
 				makePagePreview(filename, is_cached, function() {
-					var container = $one('#horizontalScroller');
+					var container = $('#horizontalScroller');
 					var page = document.createElement('div');
 					page.className = 'verticalScroller unselectable';
 					container.appendChild(page);
@@ -694,10 +694,10 @@ function startWorker() {
 						stopWorker();
 
 						hide('#loadingProgress');
-						$one('#loadingProgress').innerHTML = '';
-						$one('#btnFileLoad').disabled = false;
-						$one('#btnLibrary').disabled = false;
-						$one('#btnSettings').disabled = false;
+						$('#loadingProgress').innerHTML = '';
+						$('#btnFileLoad').disabled = false;
+						$('#btnLibrary').disabled = false;
+						$('#btnSettings').disabled = false;
 
 						startWorker();
 					}
@@ -802,7 +802,7 @@ function onMouseClick(e) {
 		return;
 	}
 
-	var comic_panel = $one('#comicPanel');
+	var comic_panel = $('#comicPanel');
 	// Get the current page
 	var i = Math.round(comic_panel.scrollLeft / g_screen_width);
 	var x = e.clientX;
@@ -814,12 +814,12 @@ function onMouseClick(e) {
 	// Open bottom menu
 	} else if (y > (g_screen_height - 200)) {
 		// FIXME: Make this a showBottomMenu function
-		var bottom = $one('#bottomMenu');
+		var bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.3s';
 		bottom.style.transform = 'translate3d(0px, ' + 200 + 'px, 0px)';
 		g_bottom_menu_visible = 1.0;
 		setWallPaperOpacity();
-		$one('#bottomMenuPanel').classList.add('menuWithGlow');
+		$('#bottomMenuPanel').classList.add('menuWithGlow');
 		loadPagePreview();
 	// Move page right or left
 	} else {
@@ -836,7 +836,7 @@ function onMouseClick(e) {
 		}
 
 		// Load the big page image
-		var img = document.querySelector('#page_' + i);
+		var img = $('#page_' + i);
 		img.src = img.src_big;
 
 		// Scroll the page into position
@@ -849,7 +849,7 @@ function onMouseClick(e) {
 			comic_panel.scrollLeft = trans_value;
 			// Unload the previous image
 			if (trans_value === new_left && i !== old_i) {
-				var img = document.querySelector('#page_' + old_i);
+				var img = $('#page_' + old_i);
 				img.src = '';
 			}
 		}, comic_panel.scrollLeft, new_left, 600);
@@ -867,7 +867,7 @@ function main() {
 		showTopMenu(true);
 	}
 
-	$one('#btnInputTouch').addEventListener('click', function () {
+	$('#btnInputTouch').addEventListener('click', function () {
 		hide('#welcomeScreen');
 		show('#mainUI');
 		hideBottomMenu(true);
@@ -890,30 +890,30 @@ function main() {
 	});
 
 	// Toggle full screen
-	$one('#btnFullScreen').addEventListener('click', function () {
+	$('#btnFullScreen').addEventListener('click', function () {
 		toggleFullScreen();
 	});
 
 	// Open github in a new tab
-	$one('#btnHomepage').addEventListener('click', function () {
+	$('#btnHomepage').addEventListener('click', function () {
 		var url = "https://github.com/workhorsy/comic_book_reader";
 		window.open(url, '_blank');
 	});
 
 	// Show the settings menu
-	$one('#btnSettings').addEventListener('click', function () {
+	$('#btnSettings').addEventListener('click', function () {
 		hide('#libraryMenu');
-		$one('#libraryMenu').innerHTML = '';
+		$('#libraryMenu').innerHTML = '';
 
-		var is_visible = $one('#settingsMenu').style.display != 'none';
+		var is_visible = $('#settingsMenu').style.display != 'none';
 		if (is_visible) {
 			hide('#settingsMenu');
 			show('#bottomMenu');
 		} else {
 			// Update the DB size
-			$one('#totalDBSize').textContent = '. . .';
+			$('#totalDBSize').textContent = '. . .';
 			getTotalSize(function(length) {
-				$one('#totalDBSize').textContent = toFriendlySize(length);
+				$('#totalDBSize').textContent = toFriendlySize(length);
 			});
 
 			// Show the menu
@@ -923,30 +923,30 @@ function main() {
 	});
 
 	// Right click toggle
-	$one('#btnDisableRightClick').checked = settings_get_right_click_enabled();
-	$one('#btnDisableRightClick').addEventListener('click', function() {
+	$('#btnDisableRightClick').checked = settings_get_right_click_enabled();
+	$('#btnDisableRightClick').addEventListener('click', function() {
 		var value = settings_get_right_click_enabled();
 		settings_set_right_click_enabled(! value);
-		$one('#btnDisableRightClick').checked = ! value;
+		$('#btnDisableRightClick').checked = ! value;
 	});
 
-	$one('#btnEnableInstallUpdates').checked = settings_get_install_updates_enabled();
-	$one('#btnEnableInstallUpdates').addEventListener('click', function() {
+	$('#btnEnableInstallUpdates').checked = settings_get_install_updates_enabled();
+	$('#btnEnableInstallUpdates').addEventListener('click', function() {
 		var value = settings_get_install_updates_enabled();
 		settings_set_install_updates_enabled(! value);
-		$one('#btnEnableInstallUpdates').checked = ! value;
+		$('#btnEnableInstallUpdates').checked = ! value;
 	});
 
-	$one('#btnUseHigherQualityPreviews').checked = settings_get_use_higher_quality_previews();
-	$one('#btnUseHigherQualityPreviews').addEventListener('click', function() {
+	$('#btnUseHigherQualityPreviews').checked = settings_get_use_higher_quality_previews();
+	$('#btnUseHigherQualityPreviews').addEventListener('click', function() {
 		var value = settings_get_use_higher_quality_previews();
 		settings_set_use_higher_quality_previews(! value);
-		$one('#btnUseHigherQualityPreviews').checked = ! value;
+		$('#btnUseHigherQualityPreviews').checked = ! value;
 	});
 
 	var g_image_smooth_style = null;
-	$one('#btnUseSmoothingWhenResizingImages').checked = settings_get_use_smoothing_when_resizing_images();
-	$one('#btnUseSmoothingWhenResizingImages').addEventListener('click', function() {
+	$('#btnUseSmoothingWhenResizingImages').checked = settings_get_use_smoothing_when_resizing_images();
+	$('#btnUseSmoothingWhenResizingImages').addEventListener('click', function() {
 		var value = settings_get_use_smoothing_when_resizing_images();
 		settings_get_use_smoothing_when_resizing_images(! value);
 
@@ -963,15 +963,15 @@ function main() {
 				image-rendering: optimize-contrast;\r\n\
 				-ms-interpolation-mode: nearest-neighbor;\r\n\
 			}";
-			document.getElementsByTagName('head')[0].appendChild(g_image_smooth_style);
+			$('head')[0].appendChild(g_image_smooth_style);
 		} else {
-			document.getElementsByTagName('head')[0].removeChild(g_image_smooth_style);
+			$('head')[0].removeChild(g_image_smooth_style);
 			g_image_smooth_style = null;
 		}
 	});
 
 	// Delete indexedDB and localStorage data
-	$one('#btnClearAllData').addEventListener('click', function() {
+	$('#btnClearAllData').addEventListener('click', function() {
 		var db_names = settings_get_db_names();
 
 		clearComicData();
@@ -984,14 +984,14 @@ function main() {
 				});
 			} else {
 				settings_delete_all();
-				$one('#btnDisableRightClick').checked = settings_get_right_click_enabled();
-				$one('#btnEnableInstallUpdates').checked = settings_get_install_updates_enabled();
-				$one('#btnUseHigherQualityPreviews').checked = settings_get_use_higher_quality_previews();
-				$one('#btnUseSmoothingWhenResizingImages').checked = settings_get_use_smoothing_when_resizing_images();
+				$('#btnDisableRightClick').checked = settings_get_right_click_enabled();
+				$('#btnEnableInstallUpdates').checked = settings_get_install_updates_enabled();
+				$('#btnUseHigherQualityPreviews').checked = settings_get_use_higher_quality_previews();
+				$('#btnUseSmoothingWhenResizingImages').checked = settings_get_use_smoothing_when_resizing_images();
 
-				$one('#totalDBSize').textContent = '. . .';
+				$('#totalDBSize').textContent = '. . .';
 				getTotalSize(function(length) {
-					$one('#totalDBSize').textContent = toFriendlySize(length);
+					$('#totalDBSize').textContent = toFriendlySize(length);
 					alert('Done clearing all data');
 				});
 			}
@@ -999,26 +999,26 @@ function main() {
 		deleteNextDB();
 	});
 
-	$one('#btnCheckForUpdatesNow').addEventListener('click', function() {
+	$('#btnCheckForUpdatesNow').addEventListener('click', function() {
 		manuallyUpdateApplicationCache();
 	});
 
-	$one('#btnLibrary').addEventListener('click', function() {
+	$('#btnLibrary').addEventListener('click', function() {
 		showLibrary();
 	});
 
 	// Open the file selection box
-	$one('#btnFileLoad').addEventListener('click', function() {
-		$one('#fileInput').click();
+	$('#btnFileLoad').addEventListener('click', function() {
+		$('#fileInput').click();
 	});
 
 	// Load the selected file
-	$one('#fileInput').addEventListener('change', function() {
+	$('#fileInput').addEventListener('change', function() {
 		loadComic();
 	});
 
 /*
-	var comicPanel = $one('#comicPanel');
+	var comicPanel = $('#comicPanel');
 
 	// Key press events
 	document.addEventListener('keydown', onKeyPress);
@@ -1028,7 +1028,7 @@ function main() {
 	comicPanel.addEventListener('DOMMouseScroll', onMouseWheel, false);
 */
 	// Mouse events for the page container
-	var comic_panel = $one('#comicPanel');
+	var comic_panel = $('#comicPanel');
 	comic_panel.addEventListener('click', onMouseClick, false);
 
 	// Reset everything
@@ -1036,9 +1036,9 @@ function main() {
 	window.dispatchEvent(new Event('resize'));
 
 	clearComicData();
-	$one('#btnFileLoad').disabled = false;
-	$one('#btnLibrary').disabled = false;
-	$one('#btnSettings').disabled = false;
+	$('#btnFileLoad').disabled = false;
+	$('#btnLibrary').disabled = false;
+	$('#btnSettings').disabled = false;
 
 	// Warn the user if indexedDB is full
 	var storage_is_full = localStorage.getItem('storage_is_full');
@@ -1050,7 +1050,7 @@ function main() {
 	// FIXME: Check if indexedDB is full
 
 	startWorker();
-	$one('#versionDate').textContent = getVersionDate();
+	$('#versionDate').textContent = getVersionDate();
 	monitorTotalUsersOnline();
 	monitorApplicationCacheUpdates();
 }

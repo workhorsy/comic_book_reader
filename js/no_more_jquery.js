@@ -11,12 +11,18 @@ style.type = 'text/css';
 style.innerHTML = '.hidden { display: none !important; }';
 document.getElementsByTagName('head')[0].appendChild(style);
 
-function $one(selector) {
-	return document.querySelector(selector);
-}
+function $(selector) {
+	if(! selector || selector.length === 0) {
+		return null;
+	} else if (selector[0] === '#') {
+		return document.querySelector(selector);
+	} else if(selector[0] === '.') {
+		return document.querySelectorAll(selector);
+	} else {
+		return document.getElementsByTagName(selector);
+	}
 
-function $all(selector) {
-	return document.querySelectorAll(selector);
+	return null;
 }
 
 function hide(selector) {
