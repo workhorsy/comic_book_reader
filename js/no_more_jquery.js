@@ -6,10 +6,6 @@
 // Great website for reasons not to use jquery:
 // http://youmightnotneedjquery.com
 
-var style = document.createElement('style');
-style.type = 'text/css';
-style.innerHTML = '.hidden { display: none !important; }';
-document.getElementsByTagName('head')[0].appendChild(style);
 
 function $(selector) {
 	if(! selector || selector.length === 0) {
@@ -28,18 +24,14 @@ function $(selector) {
 function hide(selector) {
 	var elements = document.querySelectorAll(selector);
 	for (var i=0; i<elements.length; ++i) {
-    //console.error('hide: ', elements[i].id);
-		//elements[i].classList.add('hidden');
-    elements[i].style.display = 'none';
+		elements[i].style.display = 'none';
 	}
 }
 
 function show(selector) {
 	var elements = document.querySelectorAll(selector);
 	for (var i=0; i<elements.length; ++i) {
-    //console.error('show: ', elements[i].id);
-		//elements[i].classList.remove('hidden');
-    elements[i].style.display = '';
+		elements[i].style.display = '';
 	}
 }
 
@@ -107,17 +99,14 @@ function animateCSS(element, start_fields, end_fields, duration, cb_on_end, iter
 	document.getElementsByTagName('head')[0].appendChild(style);
 
 	element.addEventListener('animationstart', function() {
-		console.info('animationstart', anim_name);
+		//console.info('animationstart', anim_name);
 	}, false);
 	element.addEventListener('animationend', function() {
-		console.info('animationend', anim_name);
+		//console.info('animationend', anim_name);
 		if (style)
 			document.getElementsByTagName('head')[0].removeChild(style);
 		style = null;
 		if (cb_on_end) cb_on_end();
-	}, false);
-	element.addEventListener('animationiteration', function() {
-		console.info('animationiteration', anim_name);
 	}, false);
 	element.className = anim_name;
 }
