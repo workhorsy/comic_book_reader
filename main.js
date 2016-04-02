@@ -938,6 +938,32 @@ function main() {
 		$one('#btnUseHigherQualityPreviews').checked = ! value;
 	});
 
+	var g_image_smooth_style = null;
+	$one('#btnUseSmoothingWhenResizingImages').checked = settings_get_use_smoothing_when_resizing_images();
+	$one('#btnUseSmoothingWhenResizingImages').addEventListener('click', function() {
+		var value = settings_get_use_smoothing_when_resizing_images();
+		settings_get_use_smoothing_when_resizing_images(! value);
+
+		if (g_image_smooth_style == null) {
+			g_image_smooth_style = document.createElement('style');
+			g_image_smooth_style.type = 'text/css';
+			g_image_smooth_style.innerHTML = "\
+			img {\r\n\
+				image-rendering: optimizeSpeed;\r\n\
+				image-rendering: -moz-crisp-edges;\r\n\
+				image-rendering: -o-crisp-edges;\r\n\
+				image-rendering: -webkit-optimize-contrast;\r\n\
+				image-rendering: pixelated;\r\n\
+				image-rendering: optimize-contrast;\r\n\
+				-ms-interpolation-mode: nearest-neighbor;\r\n\
+			}";
+			document.getElementsByTagName('head')[0].appendChild(g_image_smooth_style);
+		} else {
+			document.getElementsByTagName('head')[0].removeChild(g_image_smooth_style);
+			g_image_smooth_style = null;
+		}
+	});
+
 	// Delete indexedDB and localStorage data
 	$one('#btnClearAllData').addEventListener('click', function() {
 		var db_names = settings_get_db_names();
@@ -955,6 +981,7 @@ function main() {
 				$one('#btnDisableRightClick').checked = settings_get_right_click_enabled();
 				$one('#btnEnableInstallUpdates').checked = settings_get_install_updates_enabled();
 				$one('#btnUseHigherQualityPreviews').checked = settings_get_use_higher_quality_previews();
+				$one('#btnUseSmoothingWhenResizingImages').checked = settings_get_use_smoothing_when_resizing_images();
 
 				$one('#totalDBSize').textContent = '. . .';
 				getTotalSize(function(length) {

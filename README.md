@@ -15,6 +15,7 @@ Comic Book Reader
 * The page selector often cuts off the bottom row of pages.
 
 # Bugs:
+* Blue buttons have correct font in chrome, and wrong in firefox
 * Sometimes pages are not loaded in the correct order (Chrome mostly)
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)

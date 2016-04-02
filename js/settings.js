@@ -21,6 +21,7 @@ function generate_random_user_id() {
 function settings_delete_all() {
 	localStorage.removeItem('is_first_run');
 	localStorage.removeItem('use_higher_quality_previews');
+	localStorage.removeItem('use_smoothing_when_resizing_images');
 	localStorage.removeItem('install_updates_enabled');
 	localStorage.removeItem('right_click_enabled');
 	localStorage.removeItem('db_names');
@@ -62,6 +63,14 @@ function settings_get_use_higher_quality_previews() {
 
 function settings_set_use_higher_quality_previews(value) {
 	settings_set('use_higher_quality_previews', value);
+}
+
+function settings_get_use_smoothing_when_resizing_images() {
+	return settings_get('use_smoothing_when_resizing_images', true);
+}
+
+function settings_set_use_smoothing_when_resizing_images(value) {
+	settings_set('use_smoothing_when_resizing_images', value);
 }
 
 function settings_get_install_updates_enabled() {
