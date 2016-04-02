@@ -965,7 +965,7 @@ function main() {
 	$('#btnUseSmoothingWhenResizingImages').checked = settings_get_use_smoothing_when_resizing_images();
 	$('#btnUseSmoothingWhenResizingImages').addEventListener('click', function() {
 		var value = settings_get_use_smoothing_when_resizing_images();
-		settings_get_use_smoothing_when_resizing_images(! value);
+		settings_set_use_smoothing_when_resizing_images(! value);
 
 		if (g_image_smooth_style == null) {
 			g_image_smooth_style = document.createElement('style');
