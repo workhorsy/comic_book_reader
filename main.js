@@ -224,15 +224,22 @@ function loadPagePreview() {
 					g_image_index = i;
 					overlayShow();
 
-					// Load the big page image
+					// Unload the previous images
+					$('#page_' + old_i).src = '';
+					if (old_i < g_image_count - 1) $('#page_' + (old_i+1)).src = '';
+					if (old_i > 0) $('#page_' + (old_i-1)).src = '';
+
+					// Load the big page images
 					console.info('load', i);
 					var img = $('#page_' + i);
 					img.src = img.src_big;
-
-					// Unload the previous image
-					if (old_i !== i) {
-						img = $('#page_' + old_i);
-						img.src = '';
+					if (i < g_image_count - 1) {
+						img = $('#page_' + (i+1));
+						img.src = img.src_big;
+					}
+					if (i > 0) {
+						img = $('#page_' + (i-1));
+						img.src = img.src_big;
 					}
 				};
 
