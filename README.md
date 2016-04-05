@@ -11,13 +11,9 @@ Comic Book Reader
 
 
 # Bugs:
-* Preload the next and previous pages
-* The bottom of the page selector gets cut off
 * CSS animations stack on the page number overlay
-* Sometimes pages are not loaded in the correct order (Chrome mostly)
 * Checking for App Cache updates does not work (firefox only)
 * Object URLS are silently corrupted after many pages are created (chrome only)
-* Thumb nails are too small on a high dpi screen
 
 # TODO Small:
 * Add an overlay with directions for where to tap
