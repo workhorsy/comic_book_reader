@@ -73,10 +73,12 @@ function requireBrowserFeatures(cb) {
 
 	function hasErrors(errors) {
 		if (errors.length > 0) {
-			var message = '<h1>Your browser is missing features required to run this program:</h1>';
+			var message = '<div class="errors">';
+			message += '<h1>Your browser is missing features required to run this program:</h1>';
 			for (var i=0; i<errors.length; ++i) {
 				message += (errors[i] + ' is not supported!<br/>');
 			}
+			message += '</div>';
 			document.body.innerHTML = message;
 			return true;
 		}

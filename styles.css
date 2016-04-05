@@ -22,6 +22,11 @@ body {
 	min-height: 100%;
 }
 
+.errors {
+	color: black;
+	background: white;
+}
+
 /* Make scroll bars small and blue on Chrome */
 ::-webkit-scrollbar {
 	height: 5px;
