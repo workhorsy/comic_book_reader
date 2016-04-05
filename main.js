@@ -542,7 +542,7 @@ function overlayShow() {
 	// Restart the animation
 	var overlay = $('#overlayPageNumber');
 	overlay.style.display = '';
-	animateCSS(overlay, "opacity: 0.5", "opacity: 0.0", "5000ms",
+	animateCSS(overlay, "opacity: 0.5", "opacity: 0.0", "5600ms",
 	function() {
 		overlay.style.display = 'none';
 	});
