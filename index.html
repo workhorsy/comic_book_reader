@@ -7,6 +7,19 @@
 		<link type="image/x-icon" href="favicon.ico" rel="shortcut icon" />
 		<link type="text/css" href="styles.css" media="screen" rel="Stylesheet" />
 		<script src="js/polyfill/polyfill.js"></script>
+		<script>
+			// Remove the WWW from the url if present.
+			// We do this because localStorage and indexedDB will treat
+			// the domains as different.
+			var pair = window.location.href.split('://');
+			var protocol = pair[0];
+			var host = pair[1];
+			if (host.startsWith('www.')) {
+				host = host.split('www.')[1];
+				var new_url = protocol + '://' + host;
+				window.location = new_url;
+			}
+		</script>
 		<script src="js/settings.js"></script>
 		<script src="js/utility.js"></script>
 		<script src="js/no_more_jquery.js"></script>
