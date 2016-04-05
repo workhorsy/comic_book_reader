@@ -525,7 +525,7 @@ function onResize() {
 	if (g_bottom_menu_visible > 0) {
 		var bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.0s';
-		bottom.style.transform = 'translate3d(0px, 200px, 0px)';
+		bottom.style.transform = 'translate3d(0px, 0px, 0px)';
 	} else {
 		var height = $('#bottomMenuPanel').offsetHeight;
 		var new_y = height - (g_bottom_menu_visible * height);
@@ -820,7 +820,7 @@ function onMouseClick(e) {
 		// FIXME: Make this a showBottomMenu function
 		var bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.3s';
-		bottom.style.transform = 'translate3d(0px, ' + 200 + 'px, 0px)';
+		bottom.style.transform = 'translate3d(0px, 0px, 0px)';
 		g_bottom_menu_visible = 1.0;
 		setWallPaperOpacity();
 		$('#bottomMenuPanel').classList.add('menuWithGlow');
