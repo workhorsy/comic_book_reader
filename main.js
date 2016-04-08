@@ -391,8 +391,8 @@ function loadImage(page, index, cb) {
 
 	var img = document.createElement('img');
 	img.id = 'page_' + index;
-	img.title = "FIXME";
 	img.className = 'comicPage unselectable';
+	img.alt = '';
 	img.ondragstart = function() { return false; };
 	img.draggable = false;
 	img.onload = function() {
@@ -405,7 +405,6 @@ function loadImage(page, index, cb) {
 		img.onload = null;
 		img.onerror = null;
 
-		img.title = '';
 		img.alt = 'Invalid Image';
 		img.src = 'invalid_image.png';
 		cb(index);
