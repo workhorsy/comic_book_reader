@@ -3,7 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
-importScripts('polyfill/polyfill.js');
+importScripts('polyfill.js');
 importScripts('uncompress.js');
 importScripts('settings.js');
 importScripts('db.js');

@@ -17,7 +17,7 @@ js/no_more_jquery.js\r\n\
 js/settings.js\r\n\
 js/db.js\r\n\
 js/version_date.js\r\n\
-js/polyfill/polyfill.js\r\n\
+js/polyfill.js\r\n\
 js/pica.js\r\n\
 js/uncompress.js\r\n\
 js/utility.js\r\n\
