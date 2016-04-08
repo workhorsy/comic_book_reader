@@ -309,9 +309,6 @@ function showLibrary() {
 		libraryMenu.style.display = '';
 	}
 
-	var filesize = 0; // FIXME: Get the zip file size
-	var filetype = ''; // FIXME: Get the zip file type
-
 	var onStart = function(count) {
 		if (count === 0) {
 			libraryMenu.innerHTML = 'Library is empty';
@@ -331,7 +328,7 @@ function showLibrary() {
 				libraryMenu.innerHTML = '';
 				show('#bottomMenu');
 
-				onLoaded(null, filename, filesize, filetype);
+				onLoaded(null, filename);
 			};
 			img.onload = function() {
 				URL.revokeObjectURL(this.src);
@@ -353,7 +350,7 @@ function showLibrary() {
 				libraryMenu.innerHTML = '';
 				show('#bottomMenu');
 
-				onLoaded(null, filename, filesize, filetype);
+				onLoaded(null, filename);
 			};
 			img.src = 'invalid_image.png';
 		}
@@ -373,10 +370,8 @@ function loadComic() {
 	// Get the file's info
 	var file = file_input.files[0];
 	var filename = file.name;
-	var filesize = file.size;
-	var filetype = file.type;
 
-	onLoaded(file, filename, filesize, filetype);
+	onLoaded(file, filename);
 }
 
 function friendlyPageNumber() {
@@ -460,8 +455,7 @@ function clearComicData() {
 	g_are_page_previews_loading = false;
 }
 
-// FIXME: Remove the size and type parameters, as they are not used
-function onLoaded(blob, filename, filesize, filetype) {
+function onLoaded(blob, filename) {
 	document.body.style.backgroundColor = 'black';
 
 	// Clear everything
