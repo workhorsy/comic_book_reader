@@ -1036,6 +1036,15 @@ function main() {
 		loadComic();
 	});
 
+	// Make F11 toggle full screen
+	window.addEventListener('keypress', function(event) {
+		var code = event.keyCode || event.which;
+		if (code === 122) {
+			event.preventDefault();
+			toggleFullScreen();
+		}
+	});
+
 /*
 	var comicPanel = $('#comicPanel');
 
