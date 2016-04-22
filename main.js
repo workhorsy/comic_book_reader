@@ -1036,25 +1036,19 @@ function main() {
 		loadComic();
 	});
 
-	// Make F11 toggle full screen
+	// Keypress events
 	window.addEventListener('keypress', function(event) {
 		var code = event.keyCode || event.which;
-		if (code === 122) {
-			event.preventDefault();
-			toggleFullScreen();
+
+		// Make F11 toggle full screen
+		switch (code) {
+			case 122:
+				event.preventDefault();
+				toggleFullScreen();
+				break;
 		}
 	});
 
-/*
-	var comicPanel = $('#comicPanel');
-
-	// Key press events
-	document.addEventListener('keydown', onKeyPress);
-
-	// Mouse wheel events
-	comicPanel.addEventListener('mousewheel', onMouseWheel, false);
-	comicPanel.addEventListener('DOMMouseScroll', onMouseWheel, false);
-*/
 	// Mouse events for the page container
 	var comic_panel = $('#comicPanel');
 	comic_panel.addEventListener('click', onMouseClick, false);
