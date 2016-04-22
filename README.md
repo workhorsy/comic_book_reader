@@ -20,7 +20,6 @@ Comic Book Reader
 * Add an option to disable user counter
 * Stop browser navigation when loading
 * Make esc un full screen and bring down the top menu
-* Have the right and left keys work like swiping right and left to turn pages
 * Manga (left to right) support
 * Remember previous page number when reloading files
 

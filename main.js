@@ -799,6 +799,33 @@ function makePagePreview(filename, is_cached, cb) {
 	}
 }
 
+function onKeyPress(event) {
+	var code = event.keyCode || event.which;
+	//console.info(code);
+
+	switch (code) {
+		// Make F11 toggle full screen
+		case 122:
+			event.preventDefault();
+			toggleFullScreen();
+			break;
+		// Left
+		case 37:
+			onChangePage(false);
+			break;
+		// Right
+		case 39:
+			onChangePage(true);
+			break;
+		// Up
+		case 38:
+			break;
+		// Down
+		case 40:
+			break;
+	}
+}
+
 function onMouseClick(e) {
 	// Detect left clicks only
 	if (g_top_menu_visible === 1.0 || g_bottom_menu_visible === 1.0) {
@@ -808,7 +835,6 @@ function onMouseClick(e) {
 
 	var comic_panel = $('#comicPanel');
 	// Get the current page
-	var i = Math.round(comic_panel.scrollLeft / g_screen_width);
 	var x = e.clientX;
 	var y = e.clientY;
 
@@ -829,50 +855,56 @@ function onMouseClick(e) {
 	} else {
 		// Figure out if the click was on the right or left
 		var is_right = (x > (g_screen_width / 2));
-
-		// Next page
-		var old_i = -1;
-		if (is_right) {
-			if (i < g_image_count - 1) i++;
-			if (i >= 2) old_i = i - 2;
-		// Prev page
-		} else {
-			if (i > 0) i--;
-			if (i <= g_image_count - 2) old_i = i + 2;
-		}
-
-		// Scroll the page into position
-		var new_left = i * g_screen_width;
-		g_image_index = i;
-		overlayShow();
-
-		// Animate the scroll bar
-		animateValue(function(trans_value) {
-			comic_panel.scrollLeft = trans_value;
-
-			// The scroll bar is done moving
-			if (trans_value === new_left) {
-				// Unload the previous image
-				if (old_i !== -1 && i !== old_i) {
-					console.info('unload', old_i);
-					var img = $('#page_' + old_i);
-					img.src = '';
-				}
-				// Load the right page
-				if (i < g_image_count - 1) {
-					console.info('load', i+1);
-					var img = $('#page_' + (i+1));
-					img.src = img.src_big;
-				}
-				// Load the left page
-				if (i > 0) {
-					console.info('load', i-1);
-					var img = $('#page_' + (i-1));
-					img.src = img.src_big;
-				}
-			}
-		}, comic_panel.scrollLeft, new_left, 600);
+		onChangePage(is_right);
 	}
+}
+
+function onChangePage(is_right) {
+	var comic_panel = $('#comicPanel');
+	var i = Math.round(comic_panel.scrollLeft / g_screen_width);
+
+	// Next page
+	var old_i = -1;
+	if (is_right) {
+		if (i < g_image_count - 1) i++;
+		if (i >= 2) old_i = i - 2;
+	// Prev page
+	} else {
+		if (i > 0) i--;
+		if (i <= g_image_count - 2) old_i = i + 2;
+	}
+
+	// Scroll the page into position
+	var new_left = i * g_screen_width;
+	g_image_index = i;
+	overlayShow();
+
+	// Animate the scroll bar
+	animateValue(function(trans_value) {
+		comic_panel.scrollLeft = trans_value;
+
+		// The scroll bar is done moving
+		if (trans_value === new_left) {
+			// Unload the previous image
+			if (old_i !== -1 && i !== old_i) {
+				console.info('unload', old_i);
+				var img = $('#page_' + old_i);
+				img.src = '';
+			}
+			// Load the right page
+			if (i < g_image_count - 1) {
+				console.info('load', i+1);
+				var img = $('#page_' + (i+1));
+				img.src = img.src_big;
+			}
+			// Load the left page
+			if (i > 0) {
+				console.info('load', i-1);
+				var img = $('#page_' + (i-1));
+				img.src = img.src_big;
+			}
+		}
+	}, comic_panel.scrollLeft, new_left, 600);
 }
 
 function main() {
@@ -1037,17 +1069,7 @@ function main() {
 	});
 
 	// Keypress events
-	window.addEventListener('keypress', function(event) {
-		var code = event.keyCode || event.which;
-
-		// Make F11 toggle full screen
-		switch (code) {
-			case 122:
-				event.preventDefault();
-				toggleFullScreen();
-				break;
-		}
-	});
+	window.addEventListener('keypress', onKeyPress, false);
 
 	// Mouse events for the page container
 	var comic_panel = $('#comicPanel');
