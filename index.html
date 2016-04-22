@@ -11,6 +11,8 @@
 			// Remove the WWW from the url if present.
 			// We do this because localStorage and indexedDB will treat
 			// the domains as different.
+			// If we do this using the webserver, it creates
+			// a redirect loop from the AppCache for some reason.
 			var pair = window.location.href.split('://');
 			var protocol = pair[0];
 			var host = pair[1];
