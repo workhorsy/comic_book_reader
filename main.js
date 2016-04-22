@@ -799,7 +799,7 @@ function makePagePreview(filename, is_cached, cb) {
 	}
 }
 
-function onKeyPress(event) {
+function onKeyDown(event) {
 	var code = event.keyCode || event.which;
 	//console.info(code);
 
@@ -1076,8 +1076,8 @@ function main() {
 		loadComic();
 	});
 
-	// Keypress events
-	window.addEventListener('keypress', onKeyPress, false);
+	// Key events
+	document.addEventListener('keydown', onKeyDown, false);
 
 	// Mouse events for the page container
 	var comic_panel = $('#comicPanel');
