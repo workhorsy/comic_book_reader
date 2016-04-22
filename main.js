@@ -804,24 +804,32 @@ function onKeyPress(event) {
 	//console.info(code);
 
 	switch (code) {
-		// Make F11 toggle full screen
+		// F11: Toggle full screen
 		case 122:
 			event.preventDefault();
 			toggleFullScreen();
 			break;
-		// Left
+		// Left: Move to previous page
 		case 37:
 			onChangePage(false);
 			break;
-		// Right
+		// Right: Move to next page
 		case 39:
 			onChangePage(true);
 			break;
-		// Up
+		// Up: Scroll up
 		case 38:
+			var comic_panel = $('#comicPanel');
+			var i = Math.round(comic_panel.scrollLeft / g_screen_width);
+			var vertical_scroller = $('#horizontalScroller').children[i];
+			vertical_scroller.scrollTop -= 20;
 			break;
-		// Down
+		// Down: Scroll down
 		case 40:
+			var comic_panel = $('#comicPanel');
+			var i = Math.round(comic_panel.scrollLeft / g_screen_width);
+			var vertical_scroller = $('#horizontalScroller').children[i];
+			vertical_scroller.scrollTop += 20;
 			break;
 	}
 }
