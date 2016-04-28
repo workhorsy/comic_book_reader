@@ -1057,11 +1057,11 @@ function main() {
 		}
 		deleteNextDB();
 	});
-
+/*
 	$('#btnCheckForUpdatesNow').addEventListener('click', function() {
 		manuallyUpdateApplicationCache();
 	});
-
+*/
 	$('#btnLibrary').addEventListener('click', function() {
 		showLibrary();
 	});
