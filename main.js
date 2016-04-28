@@ -46,9 +46,6 @@ function requireBrowserFeatures(cb) {
 	if (typeof Worker === 'undefined') {
 		errors.push('Web Worker');
 	}
-	if (typeof applicationCache === 'undefined') {
-		errors.push('Application Cache');
-	}
 	if (typeof URL === 'undefined' || typeof URL.createObjectURL === 'undefined') {
 		errors.push('Create Object URL');
 	}
@@ -567,70 +564,6 @@ function monitorTotalUsersOnline() {
 	setTimeout(monitorTotalUsersOnline, update_timeout);
 }
 
-function getApplicationCacheStatusText(status) {
-	switch (status) {
-		case window.applicationCache.UNCACHED:
-			return 'UNCACHED';
-		case window.applicationCache.IDLE:
-			return 'IDLE';
-		case window.applicationCache.CHECKING:
-			return 'CHECKING';
-		case window.applicationCache.DOWNLOADING:
-			return 'DOWNLOADING';
-		case window.applicationCache.UPDATEREADY:
-			return 'UPDATE READY';
-		case window.applicationCache.OBSOLETE:
-			return 'OBSOLETE';
-		default:
-			return 'UNKNOWN';
-	}
-}
-
-function monitorApplicationCacheUpdates() {
-	// When an app cache update is available, prompt the user to reload the page
-	window.applicationCache.addEventListener('updateready', function(e) {
-		var is_updatable = settings_get_install_updates_enabled();
-		if (is_updatable && window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-			if (confirm('Comic Book Reader has an update. Reload now?')) {
-				window.location.reload();
-			}
-		}
-	}, false);
-
-	// Run the actual check
-	var checkForUpdate = function() {
-		var update_timeout = 1000 * 60 * 30; // 30 minutes
-		var is_updatable = settings_get_install_updates_enabled();
-		if (is_updatable) {
-			var status = window.applicationCache.status;
-			console.info('Checking for Application Cache update. Current status: ' + getApplicationCacheStatusText(status) + ' (' + status + ')');
-			if (status !== window.applicationCache.UNCACHED) {
-				try {
-					window.applicationCache.update();
-				} catch (e) {
-					//
-				}
-			}
-		}
-
-		setTimeout(checkForUpdate, update_timeout);
-	};
-
-	setTimeout(checkForUpdate, 1000 * 10); // 10 seconds
-}
-
-function manuallyUpdateApplicationCache() {
-	var status = window.applicationCache.status;
-	console.info('Checking for Application Cache update. Current status: ' + getApplicationCacheStatusText(status) + ' (' + status + ')');
-	if (status !== window.applicationCache.UNCACHED) {
-		try {
-			window.applicationCache.update();
-		} catch (e) {
-			console.log(e);
-		}
-	}
-}
-
 function onStorageFull(filename) {
 	if (g_is_terminated) {
 		return;
@@ -1059,7 +992,6 @@ function main() {
 	});
 /*
 	$('#btnCheckForUpdatesNow').addEventListener('click', function() {
-		manuallyUpdateApplicationCache();
 	});
 */
 	$('#btnLibrary').addEventListener('click', function() {
@@ -1104,7 +1036,6 @@ function main() {
 	startWorker();
 	$('#versionDate').textContent = getVersionDate();
 	monitorTotalUsersOnline();
-	monitorApplicationCacheUpdates();
 }
 
 documentOnReady(function() {

@@ -2,32 +2,3 @@
 
 printf "function getVersionDate() { return \"`date +"%B %d, %Y - %T"`\"; }\r\n" > js/version_date.js
 git add js/version_date.js
-
-printf \
-"CACHE MANIFEST\r\n\
-# v1 `date`\r\n\
-\r\n\
-CACHE:\r\n\
-favicon.ico\r\n\
-index.html\r\n\
-styles.css\r\n\
-main.js\r\n\
-invalid_image.png\r\n\
-js/no_more_jquery.js\r\n\
-js/settings.js\r\n\
-js/db.js\r\n\
-js/version_date.js\r\n\
-js/polyfill.js\r\n\
-js/pica.js\r\n\
-js/uncompress.js\r\n\
-js/utility.js\r\n\
-js/jszip.js\r\n\
-js/libuntar.js\r\n\
-js/libunrar.js\r\n\
-js/libunrar.js.mem\r\n\
-js/worker.js\r\n\
-js/test_requirements_worker.js\r\n\
-\r\n\
-NETWORK:\r\n\
-*\r\n" > main.appcache
-git add main.appcache
