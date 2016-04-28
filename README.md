@@ -6,7 +6,7 @@ Comic Book Reader
 * Runs in the browser as a JavaScript and HTML web page
 * Works well on a touch device or desktop
 * Saves opened comics in the browser
-* Works when offline
+* ~~Works when offline~~. This has been temporarily tuned off, because AppCache is broken on Firefox.
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
 
