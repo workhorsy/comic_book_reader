@@ -124,6 +124,7 @@ function hideTopMenu(is_instant) {
 
 	// Hide the top menus
 	hide('#settingsMenu');
+	hide('#tutorialMenu');
 	hide('#libraryMenu');
 	$('#libraryMenu').innerHTML = '';
 	show('#bottomMenu');
@@ -294,6 +295,7 @@ function loadPagePreview() {
 
 function showLibrary() {
 	hide('#settingsMenu');
+	hide('#tutorialMenu');
 	hide('#bottomMenu');
 
 	var libraryMenu = $('#libraryMenu');
@@ -355,6 +357,22 @@ function showLibrary() {
 		libraryMenu.appendChild(img);
 	};
 	getAllCachedFirstPages(onStart, onEach);
+}
+
+function showTutorial() {
+	hide('#settingsMenu');
+	hide('#libraryMenu');
+	$('#libraryMenu').innerHTML = '';
+	hide('#bottomMenu');
+
+	var tutorialMenu = $('#tutorialMenu');
+	var is_visible = tutorialMenu.style.display != 'none';
+	if (is_visible) {
+		tutorialMenu.style.display = 'none';
+		return;
+	} else {
+		tutorialMenu.style.display = '';
+	}
 }
 
 function loadComic() {
@@ -900,6 +918,7 @@ function main() {
 		var is_visible = $('#settingsMenu').style.display != 'none';
 		if (is_visible) {
 			hide('#settingsMenu');
+			hide('#tutorialMenu');
 			show('#bottomMenu');
 		} else {
 			// Update the DB size
@@ -910,6 +929,7 @@ function main() {
 
 			// Show the menu
 			show('#settingsMenu');
+			hide('#tutorialMenu');
 			hide('#bottomMenu');
 		}
 	});
@@ -998,6 +1018,62 @@ function main() {
 		showLibrary();
 	});
 
+	$('#btnTutorial').addEventListener('click', function() {
+		showTutorial();
+	});
+
+	$('#btnTutorialNext').addEventListener('click', function() {
+		// Get all the tutorial divs
+		var tuts = [
+			$('#tutorial_0'),
+			$('#tutorial_1'),
+			$('#tutorial_2'),
+		];
+
+		// Get the visible tutorial
+		var j = 0;
+		for (var i=0; i<tuts.length; ++i) {
+			if (tuts[i].style.display !== 'none') {
+				j = i;
+				break;
+			}
+		}
+
+		// Hide the old tutorial, and show the new tutorial
+		tuts[j].style.display = 'none';
+		j++;
+		if (j >= tuts.length) {
+			j = 0;
+		}
+		tuts[j].style.display = 'inline';
+	});
+
+	$('#btnTutorialPrev').addEventListener('click', function() {
+		// Get all the tutorial divs
+		var tuts = [
+			$('#tutorial_0'),
+			$('#tutorial_1'),
+			$('#tutorial_2'),
+		];
+
+		// Get the visible tutorial
+		var j = 0;
+		for (var i=0; i<tuts.length; ++i) {
+			if (tuts[i].style.display !== 'none') {
+				j = i;
+				break;
+			}
+		}
+
+		// Hide the old tutorial, and show the new tutorial
+		tuts[j].style.display = 'none';
+		j--
+		if (j < 0) {
+			j = tuts.length - 1;
+		}
+		tuts[j].style.display = 'inline';
+	});
+
 	// Open the file selection box
 	$('#btnFileLoad').addEventListener('click', function() {
 		$('#fileInput').click();
@@ -1041,6 +1117,7 @@ function main() {
 documentOnReady(function() {
 	hide('#welcomeScreen');
 	hide('#settingsMenu');
+	hide('#tutorialMenu');
 	hide('#libraryMenu');
 
 	// Show an error message if any required browser features are missing

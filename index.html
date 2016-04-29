@@ -58,6 +58,7 @@
 						<button id="btnFileLoad" class="touchButton">Open comic file</button>
 						<button id="btnLibrary" class="touchButton">Library</button>
 						<button id="btnFullScreen" class="touchButton">Full Screen</button>
+						<button id="btnTutorial" class="touchButton">Tutorial</button>
 						<button id="btnSettings" class="touchButton">Settings</button>
 					</div>
 
@@ -68,6 +69,24 @@
 
 					<div>
 						<span id="totalUsersOnline"></span>
+					</div>
+
+					<div id="tutorialMenu">
+							<button id="btnTutorialNext" class="touchButton" style="float: right">Next</button>
+							<button id="btnTutorialPrev" class="touchButton" style="float: left">Prev</button>
+
+							<div id="tutorial_0">
+								Tap the top of the screen to open the menu:<br />
+								<video src="top_menu.mp4" autoplay="true" loop="true" />
+							</div>
+							<div id="tutorial_1" style="display: none">
+								Tap the sides of the screen to go to the next and previous pages:<br />
+								<video src="prev_and_next.mp4" autoplay="true" loop="true" />
+							</div>
+							<div id="tutorial_2" style="display: none">
+								Tap the bottom of the screen to open the page selector:<br />
+								<video src="page_selector.mp4" autoplay="true" loop="true" />
+							</div>
 					</div>
 
 					<div id="settingsMenu">

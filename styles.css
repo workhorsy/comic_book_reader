@@ -265,6 +265,19 @@ input:checked + .touchLabel::after {
 	}
 }
 
+#tutorialMenu {
+	border: 1px solid #ABB2BF;
+}
+
+#tutorialMenu video {
+	width: 50%;
+	min-width: 400px;
+}
+
+#tutorialMenu button {
+	margin: 20px;
+}
+
 #settingsMenu {
 	text-align: left;
 	display: flex;
