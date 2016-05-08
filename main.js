@@ -602,6 +602,14 @@ function startWorker() {
 				g_image_count =  e.data.count;
 				$('#loadingProgress').innerHTML = 'Loading 0.0% ...';
 				show('#loadingProgress');
+
+				// Create empty pages to hold all the images
+				var container = $('#horizontalScroller');
+				for (var i = 0; i < g_image_count; ++i) {
+					var page = document.createElement('div');
+					page.className = 'verticalScroller unselectable';
+					container.appendChild(page);
+				}
 				break;
 			case 'uncompressed_done':
 				$('#comicPanel').scrollLeft = 0;
@@ -618,11 +626,9 @@ function startWorker() {
 				$('#loadingProgress').innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
 
 				makePagePreview(filename, is_cached, function() {
+					// Load the image into the page
 					var container = $('#horizontalScroller');
-					var page = document.createElement('div');
-					page.className = 'verticalScroller unselectable';
-					container.appendChild(page);
-
+					var page = container.children[index];
 					loadImage(page, index, function() {
 						//
 					});
