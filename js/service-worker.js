@@ -4,27 +4,27 @@
 //"use strict";
 
 
-const PRECACHE = 'precache-v1';
+const PRECACHE = 'precache-v2';
 const RUNTIME = 'runtime';
 
 const PRECACHE_URLS = [
-	'index.html',
-	'styles.css',
-	'js/db.js',
-	'js/libunrar.js',
-	'js/libuntar.js',
-	'js/pica.js',
+	'../index.html',
+	'../styles.css',
+	'db.js',
+	'libunrar.js',
+	'libuntar.js',
+	'pica.js',
 	'service-worker.js',
-	'js/test_requirements_worker.js',
-	'js/utility.js',
-	'js/worker.js',
-	'js/jszip.js',
-	'js/libunrar.js.mem',
-	'js/no_more_jquery.js',
-	'js/polyfill.js',
-	'js/settings.js',
-	'js/uncompress.js',
-	'js/version_date.js',
+	'test_requirements_worker.js',
+	'utility.js',
+	'worker.js',
+	'jszip.js',
+	'libunrar.js.mem',
+	'no_more_jquery.js',
+	'polyfill.js',
+	'settings.js',
+	'uncompress.js',
+	'version_date.js',
 ];
 
 // The install handler takes care of precaching the resources we always need.
