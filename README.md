@@ -9,6 +9,10 @@ Comic Book Reader
 * ~~Works when offline~~. This has been temporarily tuned off, because AppCache is broken on Firefox.
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
+# Run for development
+```bash
+python3 -m http.server 8000
+```
 
 # Bugs:
 * CSS animations stack on the page number overlay
