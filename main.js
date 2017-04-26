@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
+// Copyright (c) 2017 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software is licensed under AGPL v3 or later
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
@@ -1051,6 +1051,17 @@ documentOnReady(function() {
 
 	// Show an error message if any required browser features are missing
 	requireBrowserFeatures(function() {
-		main();
+		// Start the service worker
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('js/service-worker.js').then(function() {
+				console.info('Service worker registered ...');
+				main();
+			}, function() {
+				console.error('Failed to register service worker.');
+			});
+		} else {
+			console.info('Service workers are not supported ...');
+			main();
+		}
 	});
 });
