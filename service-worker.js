@@ -9,8 +9,7 @@ const RUNTIME = 'runtime';
 
 const PRECACHE_URLS = [
   'index.html',
-  'css/global.css',
-  'js/global.js',
+  'styles.css',
   'js/db.js',
   'js/libunrar.js',
   'js/libuntar.js',
