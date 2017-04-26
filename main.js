@@ -1051,14 +1051,14 @@ documentOnReady(function() {
 
 	// ServiceWorker is a progressive technology. Ignore unsupported browsers
 	if ('serviceWorker' in navigator) {
-	  console.log('CLIENT: service worker registration in progress.');
-	  navigator.serviceWorker.register('js/service-worker.js').then(function() {
-	    console.log('CLIENT: service worker registration complete.');
-	  }, function() {
-	    console.log('CLIENT: service worker registration failure.');
-	  });
+		console.log('CLIENT: service worker registration in progress.');
+		navigator.serviceWorker.register('js/service-worker.js').then(function() {
+			console.log('CLIENT: service worker registration complete.');
+		}, function() {
+			console.log('CLIENT: service worker registration failure.');
+		});
 	} else {
-	  console.log('CLIENT: service worker is not supported.');
+		console.log('CLIENT: service worker is not supported.');
 	}
 
 	// Show an error message if any required browser features are missing
