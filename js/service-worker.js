@@ -4,12 +4,15 @@
 "use strict";
 
 
-const PRECACHE = 'precache-v2';
+const PRECACHE = 'precache-v3';
 const RUNTIME = 'runtime';
 
 const PRECACHE_URLS = [
 	'../index.html',
 	'../styles.css',
+	'../favicon.ico',
+	'../invalid_image.png',
+	'../main.js',
 	'db.js',
 	'jszip.js',
 	'libunrar.js',
