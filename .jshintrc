@@ -1,0 +1,15 @@
+{
+	"esversion": 6,
+	"globals": {
+		"THREE": true
+	},
+	"devel": true,
+	"browser": true,
+	"eqeqeq": true,
+	"nonbsp": true,
+	"undef": true,
+	"unused": true,
+	"varstmt": true,
+	"shadow": false,
+	"notypeof": true
+}
