@@ -14,6 +14,9 @@ Comic Book Reader
 python3 -m http.server 8000
 ```
 
+# Install git hooks to automatically generate js/version_date.js file on commit
+./bin/install_hooks.sh
+
 # Bugs:
 * CSS animations stack on the page number overlay
 
