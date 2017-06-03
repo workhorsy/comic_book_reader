@@ -1053,11 +1053,11 @@ documentOnReady(function() {
 	requireBrowserFeatures(function() {
 		// Start the service worker
 		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('js/service-worker.js').then(function() {
+			navigator.serviceWorker.register('service-worker.js', { scope: '/' }).then(function() {
 				console.info('Service worker registered ...');
 				main();
-			}, function() {
-				console.error('Failed to register service worker.');
+			}).catch(function(error) {
+				console.error('Failed to register service worker: ' + error);
 			});
 		} else {
 			console.info('Service workers are not supported ...');

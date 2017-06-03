@@ -4,7 +4,7 @@
 "use strict";
 
 
-const PRECACHE = 'precache-v3';
+const PRECACHE = 'precache-v4';
 const RUNTIME = 'runtime';
 
 const PRECACHE_URLS = [
