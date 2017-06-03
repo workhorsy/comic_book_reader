@@ -3,22 +3,22 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
-var g_db = null;
+let g_db = null;
 
 // FIXME: All the functions in this file are named inconsistently
 function getAllCachedFirstPages(onStart, onEach) {
-	var db_names = settings_get_db_names();
+	let db_names = settings_get_db_names();
 	onStart(db_names.length);
 
-	var nextElement = function() {
+	let nextElement = function() {
 		if (db_names.length <= 0) {
 			return;
 		}
 
-		var m_db = null;
-		var filename = db_names.shift();
+		let m_db = null;
+		let filename = db_names.shift();
 		//console.info('!!!!!!!' + filename);
-		var request = indexedDB.open(filename, 1);
+		let request = indexedDB.open(filename, 1);
 		request.onerror = function(event) {
 			console.error('Failed to open database for "'  + filename + '", :' + event.target.errorCode);
 		};
@@ -35,18 +35,18 @@ function getAllCachedFirstPages(onStart, onEach) {
 			console.info('Opening "'  + filename + '" database');
 			m_db = event.target.result;
 
-			var trans = m_db.transaction('small', IDBTransaction.READ_ONLY);
-			var store = trans.objectStore('small');
+			let trans = m_db.transaction('small', IDBTransaction.READ_ONLY);
+			let store = trans.objectStore('small');
 
-			var countRequest = store.count();
+			let countRequest = store.count();
 			countRequest.onsuccess = function() {
-				var count = countRequest.result;
+				let count = countRequest.result;
 
 				trans.oncomplete = function(evt) {
 					m_db.close();
 				};
 
-				var cursorRequest = store.openCursor();
+				let cursorRequest = store.openCursor();
 
 				cursorRequest.onerror = function(error) {
 					console.error(error);
@@ -54,7 +54,7 @@ function getAllCachedFirstPages(onStart, onEach) {
 				};
 
 				cursorRequest.onsuccess = function(evt) {
-					var cursor = evt.target.result;
+					let cursor = evt.target.result;
 
 					// DB has files
 					if (cursor) {
@@ -79,19 +79,19 @@ function getAllCachedFirstPages(onStart, onEach) {
 // FIXME: This only gets the size of the big pages.
 // It needs to get the size of the small pages too.
 function getTotalSize(onEnd) {
-	var db_names = settings_get_db_names();
-	var total_comics = db_names.length;
-	var total_size = 0;
-	var m_db = null;
+	let db_names = settings_get_db_names();
+	let total_comics = db_names.length;
+	let total_size = 0;
+	let m_db = null;
 
-	var nextElement = function() {
+	let nextElement = function() {
 		if (db_names.length <= 0) {
 			onEnd(total_size);
 			return;
 		}
 
-		var filename = db_names.shift();
-		var request = indexedDB.open(filename, 1);
+		let filename = db_names.shift();
+		let request = indexedDB.open(filename, 1);
 		request.onerror = function(event) {
 			console.error('Failed to open database for "'  + filename + '", :' + event.target.errorCode);
 		};
@@ -108,19 +108,19 @@ function getTotalSize(onEnd) {
 			m_db = event.target.result;
 			total_size += filename.length;
 
-			var trans = m_db.transaction('big', IDBTransaction.READ_ONLY);
-			var store = trans.objectStore('big');
+			let trans = m_db.transaction('big', IDBTransaction.READ_ONLY);
+			let store = trans.objectStore('big');
 
-			var countRequest = store.count();
+			let countRequest = store.count();
 			countRequest.onsuccess = function() {
-				var count = countRequest.result;
+				let count = countRequest.result;
 
 				trans.oncomplete = function(evt) {
 					m_db.close();
 					nextElement();
 				};
 
-				var cursorRequest = store.openCursor();
+				let cursorRequest = store.openCursor();
 
 				cursorRequest.onerror = function(error) {
 					console.error(error);
@@ -128,7 +128,7 @@ function getTotalSize(onEnd) {
 				};
 
 				cursorRequest.onsuccess = function(evt) {
-					var cursor = evt.target.result;
+					let cursor = evt.target.result;
 					if (cursor) {
 						total_size += cursor.key.length;
 						total_size += cursor.value.size;
@@ -142,8 +142,8 @@ function getTotalSize(onEnd) {
 }
 
 function getAllCachedPages(filename, onStart, onEach, onEnd) {
-	var m_db = null;
-	var request = indexedDB.open(filename, 1);
+	let m_db = null;
+	let request = indexedDB.open(filename, 1);
 	request.onerror = function(event) {
 		console.error('Failed to open database for "'  + filename + '", :' + event.target.errorCode);
 	};
@@ -151,12 +151,12 @@ function getAllCachedPages(filename, onStart, onEach, onEnd) {
 		console.info('Opening "'  + filename + '" database');
 		m_db = event.target.result;
 
-		var trans = m_db.transaction('big', IDBTransaction.READ_ONLY);
-		var store = trans.objectStore('big');
+		let trans = m_db.transaction('big', IDBTransaction.READ_ONLY);
+		let store = trans.objectStore('big');
 
-		var countRequest = store.count();
+		let countRequest = store.count();
 		countRequest.onsuccess = function() {
-			var count = countRequest.result;
+			let count = countRequest.result;
 			onStart(count);
 
 			trans.oncomplete = function(evt) {
@@ -164,7 +164,7 @@ function getAllCachedPages(filename, onStart, onEach, onEnd) {
 				m_db.close();
 			};
 
-			var cursorRequest = store.openCursor();
+			let cursorRequest = store.openCursor();
 
 			cursorRequest.onerror = function(error) {
 				console.error(error);
@@ -172,7 +172,7 @@ function getAllCachedPages(filename, onStart, onEach, onEnd) {
 			};
 
 			cursorRequest.onsuccess = function(evt) {
-				var cursor = evt.target.result;
+				let cursor = evt.target.result;
 				if (cursor) {
 	//				console.info(cursor.key);
 	//				console.info(cursor.value);
@@ -192,7 +192,7 @@ function initCachedFileStorage(db_name, cb) {
 		return;
 	}
 
-	var request = indexedDB.open(db_name, 1);
+	let request = indexedDB.open(db_name, 1);
 	request.onerror = function(event) {
 		console.error('Failed to create database for "'  + db_name + '", :' + event.target.errorCode);
 	};
@@ -203,14 +203,14 @@ function initCachedFileStorage(db_name, cb) {
 	};
 	request.onupgradeneeded = function(event) {
 		console.info('Creating/Upgrading "'  + db_name + '" database');
-		var db = event.target.result;
-		var objectStore = db.createObjectStore('big', { autoIncrement : true });
+		let db = event.target.result;
+		let objectStore = db.createObjectStore('big', { autoIncrement : true });
 		objectStore = db.createObjectStore('small', { autoIncrement : true });
 	};
 }
 
 function deleteCachedFileStorage(db_name, cb) {
-	var req = indexedDB.deleteDatabase(db_name);
+	let req = indexedDB.deleteDatabase(db_name);
 	req.onsuccess = function() {
 		console.info('Deleted "' + db_name + '" database');
 		cb();
@@ -229,22 +229,22 @@ function dbClose() {
 }
 
 function getCachedFile(name, file_name, cb) {
-	var store = g_db.transaction(name, 'readwrite').objectStore(name);
-	var request = store.get(file_name);
+	let store = g_db.transaction(name, 'readwrite').objectStore(name);
+	let request = store.get(file_name);
 	request.onerror = function(event) {
 		console.warn(event);
 	};
 	request.onsuccess = function(event) {
 		//console.info('????????? Get worked: ' + name + ', ' + file_name);
-		var blob = event.target.result;
+		let blob = event.target.result;
 		cb(blob);
 	};
 }
 
 function setCachedFile(name, file_name, blob, cb) {
-	var store = g_db.transaction(name, 'readwrite').objectStore(name);
+	let store = g_db.transaction(name, 'readwrite').objectStore(name);
 
-	var request = null;
+	let request = null;
 	try {
 		request = store.put(blob, file_name);
 	} catch (e) {

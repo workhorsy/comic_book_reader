@@ -29,10 +29,10 @@ function toFriendlySize(size) {
 }
 
 function imageToCanvas(img, width, height) {
-	var canvas = document.createElement('canvas');
+	let canvas = document.createElement('canvas');
 	canvas.width = width;
 	canvas.height = height;
-	var ctx = canvas.getContext('2d');
+	let ctx = canvas.getContext('2d');
 	ctx.mozImageSmoothingEnabled = false;
 	ctx.webkitImageSmoothingEnabled = false;
 	ctx.msImageSmoothingEnabled = false;
@@ -43,14 +43,14 @@ function imageToCanvas(img, width, height) {
 
 function resizeImage(img, width, height, use_higher_quality, cb) {
 	if (! use_higher_quality) {
-		var source = imageToCanvas(img, width, height);
+		let source = imageToCanvas(img, width, height);
 		source.toBlob(function(small_blob) {
 			cb(small_blob);
 		});
 	} else {
-		var source = imageToCanvas(img, img.width, img.height);
+		let source = imageToCanvas(img, img.width, img.height);
 
-		var dest = document.createElement('canvas');
+		let dest = document.createElement('canvas');
 		dest.width = width;
 		dest.height = height;
 

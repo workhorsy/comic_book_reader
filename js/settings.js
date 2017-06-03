@@ -5,11 +5,11 @@
 
 function generate_random_user_id() {
 	// Get a 18 character user id
-	var code_table = "0123456789";
-	var user_id = "";
-	for (var i = 0; i < 18; ++i) {
+	const code_table = "0123456789";
+	let user_id = "";
+	for (let i = 0; i < 18; ++i) {
 		// Get a random number between 0 and 10
-		var num = Math.floor((Math.random() * code_table.length));
+		const num = Math.floor((Math.random() * code_table.length));
 
 		// Get the character that corresponds to the number
 		user_id += code_table[num];
@@ -32,7 +32,7 @@ function settings_set(name, value) {
 }
 
 function settings_get(name, default_value) {
-	var value = localStorage.getItem(name);
+	let value = localStorage.getItem(name);
 	if (value) {
 		return JSON.parse(value);
 	} else {
@@ -41,7 +41,7 @@ function settings_get(name, default_value) {
 }
 
 function settings_has(name) {
-	var value = localStorage.getItem(name);
+	let value = localStorage.getItem(name);
 	if (value) {
 		return true;
 	} else {
@@ -100,8 +100,9 @@ function settings_set_db_names(value) {
 
 function settings_get_user_id() {
 	// Get or create the user id
+	let user_id = null;
 	if (! settings_has('user_id')) {
-		var user_id = generate_random_user_id();
+		user_id = generate_random_user_id();
 		settings_set('user_id', user_id);
 	}
 	user_id = settings_get('user_id');

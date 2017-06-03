@@ -4,7 +4,7 @@
 "use strict";
 
 function test_requirments() {
-	var errors = [];
+	let errors = [];
 	if (typeof console === 'undefined') {
 		errors.push('Web Worker Console');
 	}
@@ -39,7 +39,7 @@ function test_requirments() {
 		errors.push('Web Worker File Reader Sync');
 	}
 
-	var message = {
+	let message = {
 		action: 'test_requirements',
 		errors: errors
 	};

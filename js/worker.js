@@ -37,7 +37,7 @@ function getFileMimeType(file_name) {
 
 function onUncompress(archive) {
 	// Get only the entries that are images
-	var entries = [];
+	let entries = [];
 	archive.entries.forEach(function(entry) {
 		if (isValidImageType(entry.name)) {
 			entries.push(entry);
@@ -46,8 +46,8 @@ function onUncompress(archive) {
 
 	// Show an error if there are no images
 	if (entries.length === 0) {
-		var error = 'Archive contains no images.';
-		var message = {
+		let error = 'Archive contains no images.';
+		let message = {
 			action: 'invalid_file',
 			error: error,
 			filename: archive.file_name
@@ -57,8 +57,8 @@ function onUncompress(archive) {
 	}
 
 	// Tell the client that we are starting to uncompress
-	var onStart = function(entries) {
-		var message = {
+	let onStart = function(entries) {
+		let message = {
 			action: 'uncompressed_start',
 			count: entries.length
 		};
@@ -66,15 +66,15 @@ function onUncompress(archive) {
 	};
 
 	// Tell the client that we are done uncompressing
-	var onEnd = function() {
-		var message = {
+	let onEnd = function() {
+		let message = {
 			action: 'uncompressed_done'
 		};
 		self.postMessage(message);
 	};
 
 	// Uncompress each entry and send it to the client
-	var onEach = function(i) {
+	let onEach = function(i) {
 		if (i === 0) {
 			onStart(entries);
 		}
@@ -83,20 +83,20 @@ function onUncompress(archive) {
 			return;
 		}
 
-		var entry = entries[i];
+		let entry = entries[i];
 		entry.readData(function(data, err) {
-			var blob = new Blob([data], {type: getFileMimeType(entry.name)});
+			let blob = new Blob([data], {type: getFileMimeType(entry.name)});
 
 			setCachedFile('big', entry.name, blob, function(is_success) {
 				if (! is_success) {
 					dbClose();
-					var message = {
+					let message = {
 						action: 'storage_full',
 						filename: entry.name
 					};
 					self.postMessage(message);
 				} else {
-					var message = {
+					let message = {
 						action: 'uncompressed_each',
 						filename: entry.name,
 						index: i,
@@ -120,19 +120,21 @@ self.addEventListener('message', function(e) {
 		e.data.action = 'uncompress';
 	}
 
+	let filename = '';
+
 	switch (e.data.action) {
 		case 'uncompress':
 			dbClose();
 
 			// Convert the file data into an array buffer
-			var reader = new FileReaderSync();
-			var filename = e.data.name;
-			var array_buffer = reader.readAsArrayBuffer(e.data);
+			let reader = new FileReaderSync();
+			filename = e.data.name;
+			let array_buffer = reader.readAsArrayBuffer(e.data);
 			delete e.data;
 
 			// Open the file as an archive
 			try {
-				var archive = archiveOpenArrayBuffer(filename, array_buffer);
+				let archive = archiveOpenArrayBuffer(filename, array_buffer);
 				initCachedFileStorage(filename, function() {
 					console.info('Uncompressing ' + archive.archive_type + ' ...');
 					onUncompress(archive);
@@ -140,7 +142,7 @@ self.addEventListener('message', function(e) {
 			// Otherwise show an error
 			} catch (e) {
 				console.info(e);
-				var message = {
+				let message = {
 					action: 'invalid_file',
 					error: e.message,
 					filename: filename
@@ -152,29 +154,29 @@ self.addEventListener('message', function(e) {
 		// FIXME: Move this into a function called onLoadFromCache
 		case 'load_from_cache':
 			dbClose();
-			var filename = e.data.filename;
-			var length = 0;
-			var onStart = function(count) {
+			filename = e.data.filename;
+			let length = 0;
+			let onStart = function(count) {
 				length = count;
-				var message = {
+				let message = {
 					action: 'uncompressed_start',
 					count: count
 				};
 				self.postMessage(message);
 			};
 
-			var onEnd = function() {
-				var message = {
+			let onEnd = function() {
+				let message = {
 					action: 'uncompressed_done'
 				};
 				self.postMessage(message);
 			};
 
-			var i = 0;
-			var onEach = function(name, blob) {
+			let i = 0;
+			let onEach = function(name, blob) {
 				//console.info(name);
 
-				var message = {
+				let message = {
 					action: 'uncompressed_each',
 					filename: name,
 					index: i,

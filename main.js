@@ -3,21 +3,21 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
-var g_is_terminated = false;
-var g_worker = null;
-var g_file_name = null;
-var g_image_index = 0;
-var g_image_count = 0;
-var g_titles = {};
-var g_are_page_previews_loading = false;
-var g_use_higher_quality_previews = false;
-var g_screen_width = 0;
-var g_screen_height = 0;
-var g_top_menu_visible = 1.0;
-var g_bottom_menu_visible = 0.0;
+let g_is_terminated = false;
+let g_worker = null;
+let g_file_name = null;
+let g_image_index = 0;
+let g_image_count = 0;
+let g_titles = {};
+let g_are_page_previews_loading = false;
+let g_use_higher_quality_previews = false;
+let g_screen_width = 0;
+let g_screen_height = 0;
+let g_top_menu_visible = 1.0;
+let g_bottom_menu_visible = 0.0;
 
 function requireBrowserFeatures(cb) {
-	var errors = [];
+	let errors = [];
 	if ( !('transform' in document.body.style)) {
 		errors.push('CSS transform');
 	}
@@ -70,9 +70,9 @@ function requireBrowserFeatures(cb) {
 
 	function hasErrors(errors) {
 		if (errors.length > 0) {
-			var message = '<div class="errors">';
+			let message = '<div class="errors">';
 			message += '<h1>Your browser is missing features required to run this program:</h1>';
-			for (var i=0; i<errors.length; ++i) {
+			for (let i=0; i<errors.length; ++i) {
 				message += (errors[i] + ' is not supported!<br/>');
 			}
 			message += '</div>';
@@ -85,14 +85,14 @@ function requireBrowserFeatures(cb) {
 
 	if (! hasErrors(errors)) {
 		// Test the Web Workers requirements
-		var worker = new Worker('js/test_requirements_worker.js');
+		let worker = new Worker('js/test_requirements_worker.js');
 		worker.onmessage = function(e) {
 			if (e.data.action === 'test_requirements') {
-				var errors = e.data.errors;
+				let errors = e.data.errors;
 				if (! hasErrors(errors)) {
 					// Test Web Workers for transferable objects
-					var array_buffer = new ArrayBuffer(1);
-					var message = {
+					let array_buffer = new ArrayBuffer(1);
+					let message = {
 						action: 'test_transferable_objects',
 						array_buffer: array_buffer
 					};
@@ -105,7 +105,7 @@ function requireBrowserFeatures(cb) {
 			}
 		};
 
-		var message = {
+		let message = {
 			action: 'test_requirements'
 		};
 		worker.postMessage(message);
@@ -120,7 +120,7 @@ function hideAllMenus(is_instant) {
 }
 
 function hideTopMenu(is_instant) {
-	var speed = is_instant ? '0.0s' : '0.3s';
+	let speed = is_instant ? '0.0s' : '0.3s';
 
 	// Hide the top menus
 	hide('#settingsMenu');
@@ -132,10 +132,10 @@ function hideTopMenu(is_instant) {
 	$('#topMenuPanel').classList.remove('menuWithGlow');
 
 	// Hide the top menu
-	var top_menu_panel = $('#topMenuPanel');
-	var top_menu = $('#topMenu');
-	var style = top_menu.style;
-	var height = top_menu_panel.offsetHeight + 15;
+	let top_menu_panel = $('#topMenuPanel');
+	let top_menu = $('#topMenu');
+	let style = top_menu.style;
+	let height = top_menu_panel.offsetHeight + 15;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, -' + height + 'px, 0px)';
 
@@ -144,16 +144,16 @@ function hideTopMenu(is_instant) {
 }
 
 function hideBottomMenu(is_instant) {
-	var speed = is_instant ? '0.0s' : '0.3s';
+	let speed = is_instant ? '0.0s' : '0.3s';
 
 	// Remove glow from top and bottom menu
-	var bottom_menu_panel = $('#bottomMenuPanel');
+	let bottom_menu_panel = $('#bottomMenuPanel');
 	bottom_menu_panel.classList.remove('menuWithGlow');
 
 	// Hide the bottom menu
 	bottom_menu_panel.innerHTML = '';
-	var height = bottom_menu_panel.offsetHeight;
-	var bottom = $('#bottomMenu');
+	let height = bottom_menu_panel.offsetHeight;
+	let bottom = $('#bottomMenu');
 	bottom.style.transitionDuration = speed;
 	bottom.style.transform = 'translate3d(0px, ' + height + 'px, 0px)';
 
@@ -163,7 +163,7 @@ function hideBottomMenu(is_instant) {
 }
 
 function setWallPaperOpacity() {
-	var visible = 0;
+	let visible = 0;
 	if (g_top_menu_visible > g_bottom_menu_visible) {
 		visible = g_top_menu_visible;
 	} else {
@@ -174,10 +174,10 @@ function setWallPaperOpacity() {
 
 function showTopMenu(y_offset, is_instant) {
 	// Move the top menu
-	var speed = is_instant ? '0.0s' : '0.1s';
-	var height = $('#topMenu').offsetHeight * 1.0;
-	var offset = (-height + (height * y_offset)) - 15;
-	var style = $('#topMenu').style;
+	let speed = is_instant ? '0.0s' : '0.1s';
+	let height = $('#topMenu').offsetHeight * 1.0;
+	let offset = (-height + (height * y_offset)) - 15;
+	let style = $('#topMenu').style;
 	style.transitionDuration = speed;
 	style.transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 	g_top_menu_visible = y_offset;
@@ -191,33 +191,33 @@ function loadPagePreview() {
 	if (! g_are_page_previews_loading && g_bottom_menu_visible === 1.0) {
 		console.info('Loading page previews .....................');
 		g_are_page_previews_loading = true;
-		var menu = $('#bottomMenuPanel');
+		let menu = $('#bottomMenuPanel');
 		menu.innerHTML = '';
 
-		var curr_image_index = g_image_index;
-		var length = Object.keys(g_titles).length;
-		var loadNextPagePreview = function(i) {
+		let curr_image_index = g_image_index;
+		let length = Object.keys(g_titles).length;
+		let loadNextPagePreview = function(i) {
 			if (i >= length) {
 				return;
 			}
 
-			var file_name = g_titles[i];
+			let file_name = g_titles[i];
 			getCachedFile('small', file_name, function(blob) {
 				//console.info('Loading page preview #' + (i + 1));
-				var url = null;
+				let url = null;
 				if (blob) {
 					url = URL.createObjectURL(blob);
 					//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 				}
 
-				var img = document.createElement('img');
+				let img = document.createElement('img');
 				img.className = 'comicPreviewPortrait';
 				img.title = g_titles[i];
 				img.onclick = function(e) {
 					console.info(i * g_screen_width);
 					$('#comicPanel').scrollLeft = i * g_screen_width;
 					hideAllMenus(false);
-					var old_i = g_image_index;
+					let old_i = g_image_index;
 					g_image_index = i;
 					overlayShow();
 
@@ -228,7 +228,7 @@ function loadPagePreview() {
 
 					// Load the big page images
 					console.info('load', i);
-					var img = $('#page_' + i);
+					let img = $('#page_' + i);
 					img.src = img.src_big;
 					if (i < g_image_count - 1) {
 						img = $('#page_' + (i+1));
@@ -273,13 +273,13 @@ function loadPagePreview() {
 					img.src ='invalid_image.png'
 				}
 
-				var container = document.createElement('div');
+				let container = document.createElement('div');
 				if (i === curr_image_index) {
 					container.className = 'comicPreviewBox comicPreviewBoxSelected';
 				} else {
 					container.className = 'comicPreviewBox';
 				}
-				var caption = document.createElement('span');
+				let caption = document.createElement('span');
 				caption.innerHTML = i + 1;
 				container.appendChild(img);
 				container.appendChild(document.createElement('br'));
@@ -296,9 +296,9 @@ function showLibrary() {
 	hide('#settingsMenu');
 	hide('#bottomMenu');
 
-	var libraryMenu = $('#libraryMenu');
+	let libraryMenu = $('#libraryMenu');
 	libraryMenu.innerHTML = '';
-	var is_visible = libraryMenu.style.display !== 'none';
+	let is_visible = libraryMenu.style.display !== 'none';
 	if (is_visible) {
 		libraryMenu.style.display = 'none';
 		return;
@@ -306,18 +306,18 @@ function showLibrary() {
 		libraryMenu.style.display = '';
 	}
 
-	var onStart = function(count) {
+	let onStart = function(count) {
 		if (count === 0) {
 			libraryMenu.innerHTML = 'Library is empty';
 		}
 	};
-	var onEach = function(filename, pagename, blob) {
-		var img = new Image();
+	let onEach = function(filename, pagename, blob) {
+		let img = new Image();
 		img.title = filename;
 		img.className = 'comicPreviewPortrait';
 
 		if (pagename && blob) {
-			var url = URL.createObjectURL(blob);
+			let url = URL.createObjectURL(blob);
 			//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 			//console.info(pagename);
 			img.onclick = function(e) {
@@ -359,14 +359,14 @@ function showLibrary() {
 
 function loadComic() {
 	// Just return if there is no file selected
-	var file_input = $('#fileInput');
+	let file_input = $('#fileInput');
 	if (file_input.files.length === 0) {
 		return;
 	}
 
 	// Get the file's info
-	var file = file_input.files[0];
-	var filename = file.name;
+	let file = file_input.files[0];
+	let filename = file.name;
 
 	onLoaded(file, filename);
 }
@@ -376,7 +376,7 @@ function friendlyPageNumber() {
 }
 
 function loadImage(page, index, cb) {
-	var filename = g_titles[index];
+	let filename = g_titles[index];
 
 	// Just return if there is no index
 	if (! filename) {
@@ -386,7 +386,7 @@ function loadImage(page, index, cb) {
 
 	page.innerHTML = '';
 
-	var img = document.createElement('img');
+	let img = document.createElement('img');
 	img.id = 'page_' + index;
 	img.className = 'comicPage unselectable';
 	img.alt = '';
@@ -467,13 +467,13 @@ function onLoaded(blob, filename) {
 
 	// Get the names of all the cached comics
 	g_use_higher_quality_previews = settings_get_use_higher_quality_previews();
-	var db_names = settings_get_db_names();
-	var has_file = db_names.includes(filename);
+	let db_names = settings_get_db_names();
+	let has_file = db_names.includes(filename);
 
 	// If the file is cached, load it from the cache
 	if (has_file) {
 		initCachedFileStorage(filename, function() {
-			var message = {
+			let message = {
 				action: 'load_from_cache',
 				filename: filename
 			};
@@ -483,7 +483,7 @@ function onLoaded(blob, filename) {
 	} else {
 		// Save the name of the comic to the cache
 		initCachedFileStorage(filename, function() {
-			var db_names = settings_get_db_names();
+			let db_names = settings_get_db_names();
 			if (! db_names.includes(filename)) {
 				db_names.push(filename);
 				settings_set_db_names(db_names);
@@ -510,23 +510,23 @@ function onResize() {
 	g_screen_height = window.innerHeight;
 	//console.info(g_screen_width);
 
-	var new_left = g_image_index * g_screen_width;
+	let new_left = g_image_index * g_screen_width;
 	$('#comicPanel').scrollLeft = new_left;
 
-	var height = $('#topMenuPanel').offsetHeight;
-	var new_y = - (height - (g_top_menu_visible * height));
-	var top = $('#topMenu');
+	let height = $('#topMenuPanel').offsetHeight;
+	let new_y = - (height - (g_top_menu_visible * height));
+	let top = $('#topMenu');
 	top.style.transitionDuration = '0.0s';
 	top.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 
 	if (g_bottom_menu_visible > 0) {
-		var bottom = $('#bottomMenu');
+		let bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.0s';
 		bottom.style.transform = 'translate3d(0px, 0px, 0px)';
 	} else {
-		var height = $('#bottomMenuPanel').offsetHeight;
-		var new_y = height - (g_bottom_menu_visible * height);
-		var bottom = $('#bottomMenu');
+		let height = $('#bottomMenuPanel').offsetHeight;
+		let new_y = height - (g_bottom_menu_visible * height);
+		let bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.0s';
 		bottom.style.transform = 'translate3d(0px, ' + new_y + 'px, 0px)';
 	}
@@ -534,12 +534,12 @@ function onResize() {
 
 function overlayShow() {
 	// Update the page number
-	var number = friendlyPageNumber();
+	let number = friendlyPageNumber();
 	$('#overlayPageNumber').innerHTML = number;
 	document.title = number + ' "' + g_file_name + '"';
 
 	// Restart the animation
-	var overlay = $('#overlayPageNumber');
+	let overlay = $('#overlayPageNumber');
 	overlay.style.display = '';
 	animateCSS(overlay, "opacity: 0.5", "opacity: 0.0", "5600ms",
 	function() {
@@ -549,9 +549,9 @@ function overlayShow() {
 
 function monitorTotalUsersOnline() {
 	console.info("Getting total users online ...");
-	var update_timeout = 1000 * 60 * 5; // 5 minutes
-	var user_id = settings_get_user_id();
-	var url = "//comic-book-reader.com/server/count.php?id=" + user_id;
+	let update_timeout = 1000 * 60 * 5; // 5 minutes
+	let user_id = settings_get_user_id();
+	let url = "//comic-book-reader.com/server/count.php?id=" + user_id;
 
 	httpGet(url, function(data, status) {
 		if (data && status === 200) {
@@ -592,9 +592,12 @@ function startWorker() {
 			return;
 		}
 
+		let filename = "";
+		let index = -1;
+
 		switch (e.data.action) {
 			case 'storage_full':
-				var filename = e.data.filename;
+				filename = e.data.filename;
 				onStorageFull(filename);
 				break;
 			case 'uncompressed_start':
@@ -604,9 +607,9 @@ function startWorker() {
 				show('#loadingProgress');
 
 				// Create empty pages to hold all the images
-				var container = $('#horizontalScroller');
-				for (var i = 0; i < g_image_count; ++i) {
-					var page = document.createElement('div');
+				let container = $('#horizontalScroller');
+				for (let i = 0; i < g_image_count; ++i) {
+					let page = document.createElement('div');
 					page.className = 'verticalScroller unselectable';
 					container.appendChild(page);
 				}
@@ -616,10 +619,10 @@ function startWorker() {
 				overlayShow();
 				break;
 			case 'uncompressed_each':
-				var filename = e.data.filename;
-				var index = e.data.index;
-				var is_cached = e.data.is_cached;
-				var is_last = e.data.is_last;
+				filename = e.data.filename;
+				index = e.data.index;
+				let is_cached = e.data.is_cached;
+				let is_last = e.data.is_last;
 
 				g_titles[index] = filename;
 
@@ -627,8 +630,8 @@ function startWorker() {
 
 				makePagePreview(filename, is_cached, function() {
 					// Load the image into the page
-					var container = $('#horizontalScroller');
-					var page = container.children[index];
+					let container = $('#horizontalScroller');
+					let page = container.children[index];
 					loadImage(page, index, function() {
 						//
 					});
@@ -647,7 +650,7 @@ function startWorker() {
 				});
 				break;
 			case 'invalid_file':
-				var filename = e.data.filename;
+				filename = e.data.filename;
 
 				dbClose();
 
@@ -657,8 +660,8 @@ function startWorker() {
 				});
 
 				// Remove the file name from list of dbs
-				var db_names = settings_get_db_names();
-				var index = db_names.indexOf(filename);
+				let db_names = settings_get_db_names();
+				index = db_names.indexOf(filename);
 				if (index !== -1) {
 					db_names.splice(index, 1);
 					settings_set_db_names(db_names);
@@ -670,7 +673,7 @@ function startWorker() {
 	};
 
 	// Start the worker
-	var message = {
+	let message = {
 		action: 'start'
 	};
 	g_worker.postMessage(message);
@@ -678,7 +681,7 @@ function startWorker() {
 }
 
 function stopWorker() {
-	var message = {
+	let message = {
 		action: 'stop'
 	};
 	g_worker.postMessage(message);
@@ -688,10 +691,10 @@ function stopWorker() {
 function makePagePreview(filename, is_cached, cb) {
 	if (! is_cached) {
 		getCachedFile('big', filename, function(blob) {
-			var url = URL.createObjectURL(blob);
+			let url = URL.createObjectURL(blob);
 			//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url + ', ' + filename);
 
-			var img = new Image();
+			let img = new Image();
 			img.onload = function() {
 				if (url) {
 					URL.revokeObjectURL(url);
@@ -699,9 +702,9 @@ function makePagePreview(filename, is_cached, cb) {
 					url = null;
 				}
 
-				var ratio = 400.0 / img.width;
-				var width = img.width * ratio;
-				var height = img.height * ratio;
+				let ratio = 400.0 / img.width;
+				let width = img.width * ratio;
+				let height = img.height * ratio;
 
 				resizeImage(img, width, height, g_use_higher_quality_previews, function(small_blob) {
 					img.src = '';
@@ -739,8 +742,12 @@ function makePagePreview(filename, is_cached, cb) {
 }
 
 function onKeyDown(event) {
-	var code = event.keyCode || event.which;
+	let code = event.keyCode || event.which;
 	//console.info(code);
+
+	let comic_panel = null;
+	let i = -1;
+	let vertical_scroller = null;
 
 	switch (code) {
 		// F11: Toggle full screen
@@ -758,16 +765,16 @@ function onKeyDown(event) {
 			break;
 		// Up: Scroll up
 		case 38:
-			var comic_panel = $('#comicPanel');
-			var i = Math.round(comic_panel.scrollLeft / g_screen_width);
-			var vertical_scroller = $('#horizontalScroller').children[i];
+			comic_panel = $('#comicPanel');
+			i = Math.round(comic_panel.scrollLeft / g_screen_width);
+			vertical_scroller = $('#horizontalScroller').children[i];
 			vertical_scroller.scrollTop -= 20;
 			break;
 		// Down: Scroll down
 		case 40:
-			var comic_panel = $('#comicPanel');
-			var i = Math.round(comic_panel.scrollLeft / g_screen_width);
-			var vertical_scroller = $('#horizontalScroller').children[i];
+			comic_panel = $('#comicPanel');
+			i = Math.round(comic_panel.scrollLeft / g_screen_width);
+			vertical_scroller = $('#horizontalScroller').children[i];
 			vertical_scroller.scrollTop += 20;
 			break;
 	}
@@ -780,10 +787,10 @@ function onMouseClick(e) {
 		return;
 	}
 
-	var comic_panel = $('#comicPanel');
+	let comic_panel = $('#comicPanel');
 	// Get the current page
-	var x = e.clientX;
-	var y = e.clientY;
+	let x = e.clientX;
+	let y = e.clientY;
 
 	// Open top menu
 	if (y < 200) {
@@ -791,7 +798,7 @@ function onMouseClick(e) {
 	// Open bottom menu
 	} else if (y > (g_screen_height - 200)) {
 		// FIXME: Make this a showBottomMenu function
-		var bottom = $('#bottomMenu');
+		let bottom = $('#bottomMenu');
 		bottom.style.transitionDuration = '0.3s';
 		bottom.style.transform = 'translate3d(0px, 0px, 0px)';
 		g_bottom_menu_visible = 1.0;
@@ -801,17 +808,17 @@ function onMouseClick(e) {
 	// Move page right or left
 	} else {
 		// Figure out if the click was on the right or left
-		var is_right = (x > (g_screen_width / 2));
+		let is_right = (x > (g_screen_width / 2));
 		onChangePage(is_right);
 	}
 }
 
 function onChangePage(is_right) {
-	var comic_panel = $('#comicPanel');
-	var i = Math.round(comic_panel.scrollLeft / g_screen_width);
+	let comic_panel = $('#comicPanel');
+	let i = Math.round(comic_panel.scrollLeft / g_screen_width);
 
 	// Next page
-	var old_i = -1;
+	let old_i = -1;
 	if (is_right) {
 		if (i < g_image_count - 1) i++;
 		if (i >= 2) old_i = i - 2;
@@ -822,7 +829,7 @@ function onChangePage(is_right) {
 	}
 
 	// Scroll the page into position
-	var new_left = i * g_screen_width;
+	let new_left = i * g_screen_width;
 	g_image_index = i;
 	overlayShow();
 
@@ -835,19 +842,19 @@ function onChangePage(is_right) {
 			// Unload the previous image
 			if (old_i !== -1 && i !== old_i) {
 				console.info('unload', old_i);
-				var img = $('#page_' + old_i);
+				let img = $('#page_' + old_i);
 				img.src = '';
 			}
 			// Load the right page
 			if (i < g_image_count - 1) {
 				console.info('load', i+1);
-				var img = $('#page_' + (i+1));
+				let img = $('#page_' + (i+1));
 				img.src = img.src_big;
 			}
 			// Load the left page
 			if (i > 0) {
 				console.info('load', i-1);
-				var img = $('#page_' + (i-1));
+				let img = $('#page_' + (i-1));
 				img.src = img.src_big;
 			}
 		}
@@ -882,8 +889,8 @@ function main() {
 
 	// Resize everything when the browser resizes
 	window.addEventListener('resize', function() {
-		var width = window.innerWidth;
-		var height = window.innerHeight;
+		let width = window.innerWidth;
+		let height = window.innerHeight;
 		onResize(width, height);
 	});
 
@@ -894,7 +901,7 @@ function main() {
 
 	// Open github in a new tab
 	$('#btnHomepage').addEventListener('click', function () {
-		var url = "https://github.com/workhorsy/comic_book_reader";
+		let url = "https://github.com/workhorsy/comic_book_reader";
 		window.open(url, '_blank');
 	});
 
@@ -903,7 +910,7 @@ function main() {
 		hide('#libraryMenu');
 		$('#libraryMenu').innerHTML = '';
 
-		var is_visible = $('#settingsMenu').style.display !== 'none';
+		let is_visible = $('#settingsMenu').style.display !== 'none';
 		if (is_visible) {
 			hide('#settingsMenu');
 			show('#bottomMenu');
@@ -923,29 +930,29 @@ function main() {
 	// Right click toggle
 	$('#btnDisableRightClick').checked = settings_get_right_click_enabled();
 	$('#btnDisableRightClick').addEventListener('click', function() {
-		var value = settings_get_right_click_enabled();
+		let value = settings_get_right_click_enabled();
 		settings_set_right_click_enabled(! value);
 		$('#btnDisableRightClick').checked = ! value;
 	});
 
 	$('#btnEnableInstallUpdates').checked = settings_get_install_updates_enabled();
 	$('#btnEnableInstallUpdates').addEventListener('click', function() {
-		var value = settings_get_install_updates_enabled();
+		let value = settings_get_install_updates_enabled();
 		settings_set_install_updates_enabled(! value);
 		$('#btnEnableInstallUpdates').checked = ! value;
 	});
 
 	$('#btnUseHigherQualityPreviews').checked = settings_get_use_higher_quality_previews();
 	$('#btnUseHigherQualityPreviews').addEventListener('click', function() {
-		var value = settings_get_use_higher_quality_previews();
+		let value = settings_get_use_higher_quality_previews();
 		settings_set_use_higher_quality_previews(! value);
 		$('#btnUseHigherQualityPreviews').checked = ! value;
 	});
 
-	var g_image_smooth_style = null;
+	let g_image_smooth_style = null;
 	$('#btnUseSmoothingWhenResizingImages').checked = settings_get_use_smoothing_when_resizing_images();
 	$('#btnUseSmoothingWhenResizingImages').addEventListener('click', function() {
-		var value = settings_get_use_smoothing_when_resizing_images();
+		let value = settings_get_use_smoothing_when_resizing_images();
 		settings_set_use_smoothing_when_resizing_images(! value);
 
 		if (g_image_smooth_style === null) {
@@ -970,13 +977,13 @@ function main() {
 
 	// Delete indexedDB and localStorage data
 	$('#btnClearAllData').addEventListener('click', function() {
-		var db_names = settings_get_db_names();
+		let db_names = settings_get_db_names();
 
 		clearComicData();
 
 		function deleteNextDB() {
 			if (db_names.length > 0) {
-				var db_name = db_names.pop();
+				let db_name = db_names.pop();
 				deleteCachedFileStorage(db_name, function() {
 					deleteNextDB();
 				});
@@ -1018,7 +1025,7 @@ function main() {
 	document.addEventListener('keydown', onKeyDown, false);
 
 	// Mouse events for the page container
-	var comic_panel = $('#comicPanel');
+	let comic_panel = $('#comicPanel');
 	comic_panel.addEventListener('click', onMouseClick, false);
 
 	// Reset everything
@@ -1031,7 +1038,7 @@ function main() {
 	$('#btnSettings').disabled = false;
 
 	// Warn the user if indexedDB is full
-	var storage_is_full = localStorage.getItem('storage_is_full');
+	let storage_is_full = localStorage.getItem('storage_is_full');
 	if (storage_is_full && JSON.parse(storage_is_full)) {
 		localStorage.removeItem('storage_is_full');
 		alert('Storage is full! Remove data from indexedDB, or free up disk space.');
