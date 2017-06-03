@@ -4,7 +4,9 @@
 		"THREE": true
 	},
 	"devel": true,
+	"node": true,
 	"browser": true,
+	"worker": true,
 	"eqeqeq": true,
 	"nonbsp": true,
 	"undef": true,
