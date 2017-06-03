@@ -298,7 +298,7 @@ function showLibrary() {
 
 	var libraryMenu = $('#libraryMenu');
 	libraryMenu.innerHTML = '';
-	var is_visible = libraryMenu.style.display != 'none';
+	var is_visible = libraryMenu.style.display !== 'none';
 	if (is_visible) {
 		libraryMenu.style.display = 'none';
 		return;
@@ -903,7 +903,7 @@ function main() {
 		hide('#libraryMenu');
 		$('#libraryMenu').innerHTML = '';
 
-		var is_visible = $('#settingsMenu').style.display != 'none';
+		var is_visible = $('#settingsMenu').style.display !== 'none';
 		if (is_visible) {
 			hide('#settingsMenu');
 			show('#bottomMenu');
@@ -948,7 +948,7 @@ function main() {
 		var value = settings_get_use_smoothing_when_resizing_images();
 		settings_set_use_smoothing_when_resizing_images(! value);
 
-		if (g_image_smooth_style == null) {
+		if (g_image_smooth_style === null) {
 			g_image_smooth_style = document.createElement('style');
 			g_image_smooth_style.type = 'text/css';
 			g_image_smooth_style.innerHTML = "\

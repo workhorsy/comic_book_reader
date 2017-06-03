@@ -15,5 +15,6 @@
 	"unused": true,
 	"varstmt": false,
 	"shadow": false,
-	"notypeof": true
+	"notypeof": true,
+	"maxerr" : 999
 }
