@@ -1,7 +1,9 @@
 {
 	"esversion": 6,
 	"globals": {
-		"THREE": true
+		"$" : true,
+		"show": true,
+		"hide" : true
 	},
 	"devel": true,
 	"node": true,
@@ -11,7 +13,7 @@
 	"nonbsp": true,
 	"undef": true,
 	"unused": true,
-	"varstmt": true,
+	"varstmt": false,
 	"shadow": false,
 	"notypeof": true
 }
