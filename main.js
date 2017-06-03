@@ -270,7 +270,7 @@ function loadPagePreview() {
 				if (url) {
 					img.src = url;
 				} else {
-					img.src ='invalid_image.png'
+					img.src ='invalid_image.png';
 				}
 
 				let container = document.createElement('div');

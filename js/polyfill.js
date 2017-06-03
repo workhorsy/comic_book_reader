@@ -24,7 +24,6 @@ if (!String.prototype.endsWith) {
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
 if (!Array.prototype.includes) {
   Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
-    'use strict';
     var O = Object(this);
     var len = parseInt(O.length) || 0;
     if (len === 0) {
@@ -61,7 +60,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
         len = binStr.length,
         arr = new Uint8Array(len);
 
-    for (var i=0; i<len; i++ ) {
+    for (var i=0; i<len; ++i ) {
      arr[i] = binStr.charCodeAt(i);
     }
 
