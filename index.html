@@ -8,17 +8,25 @@
 		<link type="text/css" href="styles.css" media="screen" rel="Stylesheet" />
 		<script src="js/polyfill.js"></script>
 		<script>
-			// Remove the WWW from the url if present.
-			// We do this because localStorage and indexedDB will treat
-			// the domains as different.
-			// If we do this using the webserver, it creates
-			// a redirect loop from the AppCache for some reason.
-			var pair = window.location.href.split('://');
-			var protocol = pair[0];
-			var host = pair[1];
+			// Remove WWW from the URL start if present
+			var is_bad_url = false;
+			var [protocol, host] = window.location.href.split('://');
 			if (host.startsWith('www.')) {
 				host = host.split('www.')[1];
-				var new_url = protocol + '://' + host;
+				is_bad_url = true;
+			}
+
+			// Change URL from http to https
+			if (protocol === 'http' && ! host.startsWith('localhost')) {
+				protocol = 'https';
+				is_bad_url = true;
+			}
+
+			// Redirect to the proper URL.
+			// We do this because localStorage and indexedDB will treat
+			// the domains as different.
+			if (is_bad_url) {
+				const new_url = protocol + '://' + host;
 				window.location = new_url;
 			}
 		</script>
