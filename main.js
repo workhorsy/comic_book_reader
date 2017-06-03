@@ -551,7 +551,7 @@ function monitorTotalUsersOnline() {
 	console.info("Getting total users online ...");
 	var update_timeout = 1000 * 60 * 5; // 5 minutes
 	var user_id = settings_get_user_id();
-	var url = "http://comic-book-reader.com/server/count.php?id=" + user_id;
+	var url = "//comic-book-reader.com/server/count.php?id=" + user_id;
 
 	httpGet(url, function(data, status) {
 		if (data && status === 200) {
