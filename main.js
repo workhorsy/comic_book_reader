@@ -880,7 +880,14 @@ function main() {
 		showTopMenu(true);
 		settings_set_is_first_run(false);
 	});
-
+/*
+	window.onerror = function(messageOrEvent, source, lineno, colno, error) {
+		console.error('Error!');
+		console.error(messageOrEvent);
+		console.error(source + ' (' + lineno + ', ' + colno + ')');
+		console.error(error);
+	};
+*/
 	// Stop the right click menu from popping up
 	document.addEventListener('contextmenu', function(e) {
 		if (! settings_get_right_click_enabled()) {
