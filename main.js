@@ -3,6 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
+const g_use_service_worker = true;
 let g_is_terminated = false;
 let g_worker = null;
 let g_file_name = null;
@@ -1070,7 +1071,7 @@ documentOnReady(function() {
 	// Show an error message if any required browser features are missing
 	requireBrowserFeatures(function() {
 		// Start the service worker
-		if ('serviceWorker' in navigator) {
+		if (g_use_service_worker && 'serviceWorker' in navigator) {
 			navigator.serviceWorker.register('service_worker.js', { scope: '/' }).then(function(reg) {
 				if (reg.installing) {
 					console.log('Service worker installing');
