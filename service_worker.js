@@ -13,7 +13,7 @@ const PRECACHE_URLS = [
 	'favicon.ico',
 	'invalid_image.png',
 	'main.js',
-	'service-worker.js',
+	'service_worker.js',
 	'js/db.js',
 	'js/jszip.js',
 	'js/libunrar.js',
