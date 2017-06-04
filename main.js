@@ -1030,7 +1030,18 @@ function main() {
 
 	// Reset everything
 	hide('#comicPanel');
-	window.dispatchEvent(new Event('resize'));
+
+	// Fire the resize event
+	try {
+		// Firefox/Chrome
+		let event = new Event('resize');
+		window.dispatchEvent(event);
+	} catch (e) {
+		// IE 11
+		let event = document.createEvent('HTMLEvents');
+		event.initEvent('resize', false, true);
+		window.dispatchEvent(event);
+	}
 
 	clearComicData();
 	$('#btnFileLoad').disabled = false;

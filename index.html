@@ -10,7 +10,9 @@
 		<script>
 			// Remove WWW from the URL start if present
 			var is_bad_url = false;
-			var [protocol, host] = window.location.href.split('://');
+			var pair = window.location.href.split('://');
+			var protocol = pair[0];
+			var host = pair[1];
 			if (host.startsWith('www.')) {
 				host = host.split('www.')[1];
 				is_bad_url = true;
