@@ -27,7 +27,7 @@ const PRECACHE_URLS = [
 	'js/uncompress.js',
 	'js/utility.js',
 	'js/version_date.js',
-	'js/worker.js',
+	'js/web_worker.js',
 ];
 
 // The install handler takes care of precaching the resources we always need.

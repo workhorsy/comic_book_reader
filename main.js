@@ -585,7 +585,7 @@ function onStorageFull(filename) {
 }
 
 function startWorker() {
-	g_worker = new Worker('js/worker.js');
+	g_worker = new Worker('js/web_worker.js');
 
 	g_worker.onmessage = function(e) {
 		if (g_is_terminated) {
