@@ -191,10 +191,10 @@ self.addEventListener('message', function(e) {
 			getAllCachedPages(filename, onStart, onEach, onEnd);
 			break;
 		case 'start':
-			console.info('Worker started ...');
+			console.info('Web Worker started ...');
 			break;
 		case 'stop':
-			console.info('Worker stopped ...');
+			console.info('Web Worker stopped ...');
 			self.close();
 			break;
 	}
