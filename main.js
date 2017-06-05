@@ -3,7 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
-const g_use_service_worker = true;
+const g_use_service_worker = false;
 let g_is_terminated = false;
 let g_worker = null;
 let g_file_name = null;
@@ -199,6 +199,9 @@ function loadPagePreview() {
 		let length = Object.keys(g_titles).length;
 		let loadNextPagePreview = function(i) {
 			if (i >= length) {
+				// Scroll to the current page
+				let selected = document.querySelector('.comicPreviewBoxSelected');
+				selected.scrollIntoView({block: "start", behavior: "smooth"});
 				return;
 			}
 
@@ -290,6 +293,10 @@ function loadPagePreview() {
 		};
 
 		loadNextPagePreview(0);
+	} else {
+		// Scroll to the current page
+		let selected = document.querySelector('.comicPreviewBoxSelected');
+		selected.scrollIntoView({block: "start", behavior: "smooth"});
 	}
 }
 
