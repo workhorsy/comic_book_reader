@@ -190,7 +190,7 @@ function showTopMenu(y_offset, is_instant) {
 
 function loadPagePreview() {
 	if (! g_are_page_previews_loading && g_bottom_menu_visible === 1.0) {
-		console.info('Loading page previews .....................');
+		//console.info('Loading page previews .....................');
 		g_are_page_previews_loading = true;
 		let menu = $('#bottomMenuPanel');
 		menu.innerHTML = '';
@@ -218,7 +218,6 @@ function loadPagePreview() {
 				img.className = 'comicPreviewPortrait';
 				img.title = g_titles[i];
 				img.onclick = function(e) {
-					console.info(i * g_screen_width);
 					$('#comicPanel').scrollLeft = i * g_screen_width;
 					hideAllMenus(false);
 					let old_i = g_image_index;
@@ -231,7 +230,7 @@ function loadPagePreview() {
 					if (old_i > 0) $('#page_' + (old_i-1)).src = '';
 
 					// Load the big page images
-					console.info('load', i);
+					//console.info('load', i);
 					let img = $('#page_' + i);
 					img.src = img.src_big;
 					if (i < g_image_count - 1) {
