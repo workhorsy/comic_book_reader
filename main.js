@@ -320,6 +320,9 @@ function showLibrary() {
 		}
 	};
 	let onEach = function(filename, pagename, blob) {
+		let container = document.createElement('div');
+		container.className = 'comicPreviewBox';
+
 		let img = new Image();
 		img.title = filename;
 		img.className = 'comicPreviewPortrait';
@@ -328,7 +331,8 @@ function showLibrary() {
 			let url = URL.createObjectURL(blob);
 			//console.log('>>>>>>>>>>>>>>>>>>> createObjectURL: ' + url);
 			//console.info(pagename);
-			img.onclick = function(e) {
+			container.onclick = function(e) {
+				this.classList.add('comicPreviewBoxSelected');
 				libraryMenu.style.display = 'none';
 				libraryMenu.innerHTML = '';
 				show('#bottomMenu');
@@ -350,7 +354,8 @@ function showLibrary() {
 			};
 			img.src = url;
 		} else {
-			img.onclick = function(e) {
+			container.onclick = function(e) {
+				this.classList.add('comicPreviewBoxSelected');
 				libraryMenu.style.display = 'none';
 				libraryMenu.innerHTML = '';
 				show('#bottomMenu');
@@ -360,7 +365,13 @@ function showLibrary() {
 			img.src = 'invalid_image.png';
 		}
 
-		libraryMenu.appendChild(img);
+		container.appendChild(img);
+		libraryMenu.appendChild(container);
+
+		if (filename === g_file_name) {
+			container.classList.add('comicPreviewBoxSelected');
+			container.scrollIntoView({block: "start", behavior: "smooth"});
+		}
 	};
 	getAllCachedFirstPages(onStart, onEach);
 }
