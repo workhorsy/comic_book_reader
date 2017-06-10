@@ -1,7 +1,7 @@
 // Copyright (c) 2016 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This software uses a MIT style license
 // https://github.com/SoftwareAddictionShow/no-more-jquery
-//"use strict";
+"use strict";
 
 // Great website for reasons not to use jquery:
 // http://youmightnotneedjquery.com
