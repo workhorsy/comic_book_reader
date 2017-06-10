@@ -9,10 +9,10 @@
 		<script src="js/polyfill.js"></script>
 		<script>
 			// Remove WWW from the URL start if present
-			var is_bad_url = false;
-			var pair = window.location.href.split('://');
-			var protocol = pair[0];
-			var host = pair[1];
+			let is_bad_url = false;
+			let pair = window.location.href.split('://');
+			let protocol = pair[0];
+			let host = pair[1];
 			if (host.startsWith('www.')) {
 				host = host.split('www.')[1];
 				is_bad_url = true;

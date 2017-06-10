@@ -22,15 +22,15 @@ function $(selector) {
 }
 
 function hide(selector) {
-	var elements = document.querySelectorAll(selector);
-	for (var i=0; i<elements.length; ++i) {
+	let elements = document.querySelectorAll(selector);
+	for (let i=0; i<elements.length; ++i) {
 		elements[i].style.display = 'none';
 	}
 }
 
 function show(selector) {
-	var elements = document.querySelectorAll(selector);
-	for (var i=0; i<elements.length; ++i) {
+	let elements = document.querySelectorAll(selector);
+	for (let i=0; i<elements.length; ++i) {
 		elements[i].style.display = '';
 	}
 }
@@ -53,7 +53,7 @@ function httpPost(url, cb, timeout) {
 
 function httpRequest(url, method, cb, timeout) {
 	timeout = timeout || 3000;
-	var xhr = new XMLHttpRequest();
+	let xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (this.readyState === 4) {
 			cb(this.response, this.status);
@@ -71,13 +71,13 @@ function httpRequest(url, method, cb, timeout) {
 
 // FIXME: This stacks a new set of events for each animation call
 // FIXME: Use a unique random number, rather than this global
-var g_anim_counter = 0;
+let g_anim_counter = 0;
 function animateCSS(element, start_fields, end_fields, duration, cb_on_end, iteration_count, direction) {
 	iteration_count = iteration_count || 1;
 	direction = direction || 'normal';
-	var anim_name = 'anim_' + (++g_anim_counter);
+	let anim_name = 'anim_' + (++g_anim_counter);
 
-	var style = document.createElement('style');
+	let style = document.createElement('style');
 	style.type = 'text/css';
 	style.innerHTML = "\
 	." + anim_name + " {\
@@ -112,21 +112,21 @@ function animateCSS(element, start_fields, end_fields, duration, cb_on_end, iter
 }
 
 function animateValue(cb, old_value, new_value, target_time) {
-	var is_bigger = old_value > new_value;
-	var diff_value = is_bigger ? old_value - new_value : new_value - old_value;
-	var start_time = null;
+	let is_bigger = old_value > new_value;
+	let diff_value = is_bigger ? old_value - new_value : new_value - old_value;
+	let start_time = null;
 
-	var stepTime = function(timestamp) {
+	let stepTime = function(timestamp) {
 		if (start_time === null) {
 			start_time = timestamp;
 		}
-		var elapsed_time = timestamp - start_time;
-		var percent = elapsed_time / target_time;
+		let elapsed_time = timestamp - start_time;
+		let percent = elapsed_time / target_time;
 		if (percent >= 1.0) {
 			percent = 1.0;
 		}
 
-		var trans_value = 0;
+		let trans_value = 0;
 		if (is_bigger) {
 			trans_value = old_value - (diff_value * percent);
 		} else {
