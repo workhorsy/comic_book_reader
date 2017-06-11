@@ -19,6 +19,20 @@ function isValidImageType(file_name) {
 			file_name.endsWith('.gif');
 }
 
+function isPdfFile(array_buffer) {
+	// The PDF header
+	var pdf_header = saneJoin([0x25, 0x50, 0x44, 0x46], ', ');
+
+	// Just return false if the file is smaller than the header
+	if (array_buffer.byteLength < 4) {
+		return false;
+	}
+
+	// Return true if the header matches the PDF header
+	var header = saneJoin(new Uint8Array(array_buffer).slice(0, 4), ', ');
+	return (header === pdf_header);
+}
+
 function getFileMimeType(file_name) {
 	file_name = file_name.toLowerCase();
 	if (file_name.endsWith('.jpeg') || file_name.endsWith('.jpg')) {
@@ -131,6 +145,40 @@ self.addEventListener('message', function(e) {
 			filename = e.data.name;
 			let array_buffer = reader.readAsArrayBuffer(e.data);
 			delete e.data;
+
+			if (isPdfFile(array_buffer)) {
+				console.info("Is PDF!!!!");
+
+				let data = new Uint8Array(array_buffer);
+
+				PDFJS.getDocument(data).then(function(pdf_doc) {
+					console.log(pdf_doc);
+					pdf_doc.getPage(3).then(function(page) {
+						console.log(page);
+						let viewport = page.getViewport(1);
+
+						let canvas = document.createElement('canvas');
+						canvas.style.border = "2px solid red";
+						canvas.width = viewport.width;
+						canvas.height = viewport.height;
+						//document.body.appendChild(canvas);
+
+						let renderContext = {
+							canvasContext: canvas.getContext('2d'),
+							viewport: viewport
+						};
+						page.render(renderContext).then(function() {
+							console.log("Render ...................");
+							let image = new Image();
+							image.src = canvas.toDataURL("image/png");
+							document.body.appendChild(image);
+						});
+					});
+				});
+
+			} else {
+				console.info("Is not PDF!!!!!!!!!!!!!!!!!");
+			}
 
 			// Open the file as an archive
 			try {
