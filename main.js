@@ -891,11 +891,38 @@ function main() {
 	}
 
 	$('#btnInputTouch').addEventListener('click', function () {
+		document.body.innerHTML = '';
+
+		PDFJS.getDocument({ url: "portfolio.pdf" }).then(function(pdf_doc) {
+			//console.log(pdf_doc);
+			pdf_doc.getPage(3).then(function(page) {
+				//console.log(page);
+				let viewport = page.getViewport(1);
+
+				let canvas = document.createElement('canvas');
+				canvas.style.border = "2px solid red";
+				canvas.width = viewport.width;
+				canvas.height = viewport.height;
+				//document.body.appendChild(canvas);
+
+				let renderContext = {
+				    canvasContext: canvas.getContext('2d'),
+				    viewport: viewport
+				};
+				page.render(renderContext).then(function() {
+					let image = new Image();
+					image.src = canvas.toDataURL("image/png");
+					document.body.appendChild(image);
+				});
+			});
+		});
+/*
 		hide('#welcomeScreen');
 		show('#mainUI');
 		hideBottomMenu(true);
 		showTopMenu(true);
 		settings_set_is_first_run(false);
+*/
 	});
 /*
 	window.onerror = function(messageOrEvent, source, lineno, colno, error) {
@@ -1040,7 +1067,7 @@ function main() {
 
 	// Load the selected file
 	$('#fileInput').addEventListener('change', function() {
-		loadComic();
+		loadComic();		
 	});
 
 	// Key events
