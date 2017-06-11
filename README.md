@@ -2,7 +2,7 @@ http://comic-book-reader.com
 
 Comic Book Reader
 ===================
-* Can read CBR, CBZ, and CBT files
+* Can read CBR, CBZ, CBT, and PDF files
 * Runs in the browser as a JavaScript and HTML web page
 * Works well on a touch device or desktop
 * Saves opened comics in the browser
