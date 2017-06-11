@@ -1028,10 +1028,7 @@ function main() {
 		}
 		deleteNextDB();
 	});
-/*
-	$('#btnCheckForUpdatesNow').addEventListener('click', function() {
-	});
-*/
+
 	$('#btnLibrary').addEventListener('click', function() {
 		showLibrary();
 	});
@@ -1104,6 +1101,24 @@ documentOnReady(function() {
 				} else if (reg.active) {
 					console.log('Service worker active');
 				}
+
+				show('#btnCheckForUpdatesNow');
+				$('#btnCheckForUpdatesNow').addEventListener('click', function() {
+					reg.update();
+
+					window.caches.keys().then(function(cacheNames) {
+						return Promise.all(
+							cacheNames.map(function(cacheName) {
+								console.log('Deleting cache:', cacheName);
+								return window.caches.delete(cacheName);
+							})
+						).then(function() {
+							console.log('Caches deleted.');
+							location.reload();
+						});
+					});
+				});
+
 				main();
 			}).catch(function(error) {
 				console.error('Failed to register service worker: ' + error);
