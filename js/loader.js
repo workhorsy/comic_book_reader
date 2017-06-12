@@ -41,6 +41,7 @@ function onUncompressedDone() {
 }
 
 function onUncompressedEach(filename, index, is_cached, is_last) {
+	//console.log(filename, index, is_cached, is_last);
 	g_titles[index] = filename;
 
 	$('#loadingProgress').innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
@@ -217,20 +218,23 @@ function onPDF(blob) {
 
 	PDFJS.getDocument(blob).then(function(pdf_doc) {
 		let len = pdf_doc.pdfInfo.numPages;
-		console.log(pdf_doc);
-		console.log(len);
-		onUncompressedStart(len);
+		//console.log(pdf_doc);
+		let onEach = function(i) {
+			if (i === 0) {
+				onUncompressedStart(len);
+			}
+			if (i >= len) {
+				onUncompressedDone();
+				return;
+			}
 
-		for (let i=0; i<len; ++i) {
 			pdf_doc.getPage(i+1).then(function(page) {
-				//console.log(i);
 				let filename = "page_" + i + ".png";
-				let is_last = false;//(i === len - 1); // FIXME
+				let is_last = (i === len - 1);
 				//console.log(page);
 				let viewport = page.getViewport(1);
 
 				let canvas = document.createElement('canvas');
-				canvas.style.border = "2px solid red";
 				canvas.width = viewport.width;
 				canvas.height = viewport.height;
 				//document.body.appendChild(canvas);
@@ -241,16 +245,19 @@ function onPDF(blob) {
 				};
 				page.render(renderContext).then(function() {
 					canvas.toBlob(function(blob) {
-						let url = URL.createObjectURL(blob);
-						//console.log(filename, i, true, is_last);
-						console.log(url);
-						onUncompressedEach(url, i, true, is_last);
+						setCachedFile('big', filename, blob, function(is_success) {
+							if (! is_success) {
+								onStorageFull(filename);
+							} else {
+								onUncompressedEach(filename, i, true, is_last);
+								onEach(i + 1);
+							}
+						});
 					});
 				});
 			});
-		}
-
-		onUncompressedDone();
+		};
+		onEach(0);
 	});	
 }
 
