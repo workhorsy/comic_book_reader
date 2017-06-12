@@ -484,7 +484,7 @@ function onLoaded(blob, filename) {
 
 	// Get the names of all the cached comics
 	g_use_higher_quality_previews = settings_get_use_higher_quality_previews();
-	loader_load_file(blob, filename);
+	loaderLoadFile(blob, filename);
 }
 
 function onError(msg) {

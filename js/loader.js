@@ -176,7 +176,7 @@ function makePagePreview(filename, is_cached, cb) {
 	}
 }
 
-function loader_load_file(blob, filename) {
+function loaderLoadFile(blob, filename) {
 	let db_names = settings_get_db_names();
 	let has_file = db_names.includes(filename);
 
