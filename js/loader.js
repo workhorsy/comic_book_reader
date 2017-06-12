@@ -213,8 +213,7 @@ function loader_load_file(blob, filename) {
 }
 
 function onPDF(blob) {
-	dbClose();
-	let filename = '';
+	//dbClose();
 
 	PDFJS.getDocument(blob).then(function(pdf_doc) {
 		let len = pdf_doc.pdfInfo.numPages;
@@ -226,7 +225,7 @@ function onPDF(blob) {
 			pdf_doc.getPage(i+1).then(function(page) {
 				//console.log(i);
 				let filename = "page_" + i + ".png";
-				let is_last = (i === len - 1);
+				let is_last = false;//(i === len - 1); // FIXME
 				//console.log(page);
 				let viewport = page.getViewport(1);
 
@@ -241,11 +240,12 @@ function onPDF(blob) {
 					viewport: viewport
 				};
 				page.render(renderContext).then(function() {
-					let image = new Image();
-					image.src = canvas.toDataURL("image/png");
-					//document.body.appendChild(image);
-					//console.log(filename, i, true, is_last);
-					onUncompressedEach(filename, i, true, is_last);
+					canvas.toBlob(function(blob) {
+						let url = URL.createObjectURL(blob);
+						//console.log(filename, i, true, is_last);
+						console.log(url);
+						onUncompressedEach(url, i, true, is_last);
+					});
 				});
 			});
 		}
