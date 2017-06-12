@@ -69,3 +69,24 @@ if (!HTMLCanvasElement.prototype.toBlob) {
  });
 }
 }
+
+// FIXME: This function is super inefficient
+function saneJoin(array, separator) {
+	let retval = '';
+	for (let i=0; i<array.length; ++i) {
+		if (i === 0) {
+			retval += array[i];
+		} else {
+			retval += separator + array[i];
+		}
+	}
+	return retval;
+}
+
+function saneMap(array, cb) {
+	let retval = new Array(array.length);
+	for (let i=0; i<retval.length; ++i) {
+		retval[i] = cb(array[i]);
+	}
+	return retval;
+}

@@ -5,11 +5,19 @@
 
 let g_worker = null;
 
-function loader_kill_worker() {
+function killWorker() {
 	if (g_worker) {
 		g_worker.terminate();
 		g_worker = null;
 	}
+}
+
+function stopWorker() {
+	let message = {
+		action: 'stop'
+	};
+	g_worker.postMessage(message);
+	g_worker = null;
 }
 
 function startWorker() {
@@ -108,14 +116,6 @@ function startWorker() {
 
 }
 
-function stopWorker() {
-	let message = {
-		action: 'stop'
-	};
-	g_worker.postMessage(message);
-	g_worker = null;
-}
-
 function makePagePreview(filename, is_cached, cb) {
 	if (! is_cached) {
 		getCachedFile('big', filename, function(blob) {
@@ -191,7 +191,58 @@ function loader_load_file(blob, filename) {
 				db_names.push(filename);
 				settings_set_db_names(db_names);
 			}
-			g_worker.postMessage(blob);
+
+			let fileReader = new FileReader();
+			fileReader.onload = function() {
+				let array_buffer = this.result;
+				if (isPdfFile(array_buffer)) {
+					onPDF(array_buffer);
+				} else {
+					g_worker.postMessage(blob);
+				}
+			};
+			fileReader.readAsArrayBuffer(blob);
 		});
 	}
+}
+
+function onPDF(blob) {
+	document.body.innerHTML = '';
+	PDFJS.getDocument(blob).then(function(pdf_doc) {
+		//console.log(pdf_doc);
+		pdf_doc.getPage(3).then(function(page) {
+			//console.log(page);
+			let viewport = page.getViewport(1);
+
+			let canvas = document.createElement('canvas');
+			canvas.style.border = "2px solid red";
+			canvas.width = viewport.width;
+			canvas.height = viewport.height;
+			//document.body.appendChild(canvas);
+
+			let renderContext = {
+					canvasContext: canvas.getContext('2d'),
+					viewport: viewport
+			};
+			page.render(renderContext).then(function() {
+				let image = new Image();
+				image.src = canvas.toDataURL("image/png");
+				document.body.appendChild(image);
+			});
+		});
+	});	
+}
+
+function isPdfFile(array_buffer) {
+	// The PDF header
+	var pdf_header = saneJoin([0x25, 0x50, 0x44, 0x46], ', ');
+
+	// Just return false if the file is smaller than the header
+	if (array_buffer.byteLength < 4) {
+		return false;
+	}
+
+	// Return true if the header matches the PDF header
+	var header = saneJoin(new Uint8Array(array_buffer).slice(0, 4), ', ');
+	return (header === pdf_header);
 }
