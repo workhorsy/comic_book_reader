@@ -249,7 +249,7 @@ function onPDF(blob) {
 							if (! is_success) {
 								onStorageFull(filename);
 							} else {
-								onUncompressedEach(filename, i, true, is_last);
+								onUncompressedEach(filename, i, false, is_last);
 								onEach(i + 1);
 							}
 						});

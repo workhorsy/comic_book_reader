@@ -856,7 +856,7 @@ function main() {
 
 	// Load the selected file
 	$('#fileInput').addEventListener('change', function() {
-		loadComic();		
+		loadComic();
 	});
 
 	// Key events
