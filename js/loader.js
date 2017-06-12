@@ -20,6 +20,53 @@ function stopWorker() {
 	g_worker = null;
 }
 
+function onUncompressedStart(count) {
+	// Update the progress
+	g_image_count = count;
+	$('#loadingProgress').innerHTML = 'Loading 0.0% ...';
+	show('#loadingProgress');
+
+	// Create empty pages to hold all the images
+	let container = $('#horizontalScroller');
+	for (let i = 0; i < g_image_count; ++i) {
+		let page = document.createElement('div');
+		page.className = 'verticalScroller unselectable';
+		container.appendChild(page);
+	}
+}
+
+function onUncompressedDone() {
+	$('#comicPanel').scrollLeft = 0;
+	overlayShow();
+}
+
+function onUncompressedEach(filename, index, is_cached, is_last) {
+	g_titles[index] = filename;
+
+	$('#loadingProgress').innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
+
+	makePagePreview(filename, is_cached, function() {
+		// Load the image into the page
+		let container = $('#horizontalScroller');
+		let page = container.children[index];
+		loadImage(page, index, function() {
+			//
+		});
+
+		if (is_last) {
+			stopWorker();
+
+			hide('#loadingProgress');
+			$('#loadingProgress').innerHTML = '';
+			$('#btnFileLoad').disabled = false;
+			$('#btnLibrary').disabled = false;
+			$('#btnSettings').disabled = false;
+
+			startWorker();
+		}
+	});
+}
+
 function startWorker() {
 	g_worker = new Worker('js/web_worker.js');
 
@@ -33,57 +80,16 @@ function startWorker() {
 
 		switch (e.data.action) {
 			case 'storage_full':
-				filename = e.data.filename;
-				onStorageFull(filename);
+				onStorageFull(e.data.filename);
 				break;
 			case 'uncompressed_start':
-				// Update the progress
-				g_image_count =  e.data.count;
-				$('#loadingProgress').innerHTML = 'Loading 0.0% ...';
-				show('#loadingProgress');
-
-				// Create empty pages to hold all the images
-				let container = $('#horizontalScroller');
-				for (let i = 0; i < g_image_count; ++i) {
-					let page = document.createElement('div');
-					page.className = 'verticalScroller unselectable';
-					container.appendChild(page);
-				}
+				onUncompressedStart(e.data.count);
 				break;
 			case 'uncompressed_done':
-				$('#comicPanel').scrollLeft = 0;
-				overlayShow();
+				onUncompressedDone();
 				break;
 			case 'uncompressed_each':
-				filename = e.data.filename;
-				index = e.data.index;
-				let is_cached = e.data.is_cached;
-				let is_last = e.data.is_last;
-
-				g_titles[index] = filename;
-
-				$('#loadingProgress').innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
-
-				makePagePreview(filename, is_cached, function() {
-					// Load the image into the page
-					let container = $('#horizontalScroller');
-					let page = container.children[index];
-					loadImage(page, index, function() {
-						//
-					});
-
-					if (is_last) {
-						stopWorker();
-
-						hide('#loadingProgress');
-						$('#loadingProgress').innerHTML = '';
-						$('#btnFileLoad').disabled = false;
-						$('#btnLibrary').disabled = false;
-						$('#btnSettings').disabled = false;
-
-						startWorker();
-					}
-				});
+				onUncompressedEach(e.data.filename, e.data.index, e.data.is_cached, e.data.is_last);
 				break;
 			case 'invalid_file':
 				filename = e.data.filename;
@@ -207,35 +213,50 @@ function loader_load_file(blob, filename) {
 }
 
 function onPDF(blob) {
-	document.body.innerHTML = '';
+	dbClose();
+	let filename = '';
+
 	PDFJS.getDocument(blob).then(function(pdf_doc) {
-		//console.log(pdf_doc);
-		pdf_doc.getPage(3).then(function(page) {
-			//console.log(page);
-			let viewport = page.getViewport(1);
+		let len = pdf_doc.pdfInfo.numPages;
+		console.log(pdf_doc);
+		console.log(len);
+		onUncompressedStart(len);
 
-			let canvas = document.createElement('canvas');
-			canvas.style.border = "2px solid red";
-			canvas.width = viewport.width;
-			canvas.height = viewport.height;
-			//document.body.appendChild(canvas);
+		for (let i=0; i<len; ++i) {
+			pdf_doc.getPage(i+1).then(function(page) {
+				//console.log(i);
+				let filename = "page_" + i + ".png";
+				let is_last = (i === len - 1);
+				//console.log(page);
+				let viewport = page.getViewport(1);
 
-			let renderContext = {
+				let canvas = document.createElement('canvas');
+				canvas.style.border = "2px solid red";
+				canvas.width = viewport.width;
+				canvas.height = viewport.height;
+				//document.body.appendChild(canvas);
+
+				let renderContext = {
 					canvasContext: canvas.getContext('2d'),
 					viewport: viewport
-			};
-			page.render(renderContext).then(function() {
-				let image = new Image();
-				image.src = canvas.toDataURL("image/png");
-				document.body.appendChild(image);
+				};
+				page.render(renderContext).then(function() {
+					let image = new Image();
+					image.src = canvas.toDataURL("image/png");
+					//document.body.appendChild(image);
+					//console.log(filename, i, true, is_last);
+					onUncompressedEach(filename, i, true, is_last);
+				});
 			});
-		});
+		}
+
+		onUncompressedDone();
 	});	
 }
 
 function isPdfFile(array_buffer) {
 	// The PDF header
-	var pdf_header = saneJoin([0x25, 0x50, 0x44, 0x46], ', ');
+	let pdf_header = saneJoin([0x25, 0x50, 0x44, 0x46], ', ');
 
 	// Just return false if the file is smaller than the header
 	if (array_buffer.byteLength < 4) {
@@ -243,6 +264,6 @@ function isPdfFile(array_buffer) {
 	}
 
 	// Return true if the header matches the PDF header
-	var header = saneJoin(new Uint8Array(array_buffer).slice(0, 4), ', ');
+	let header = saneJoin(new Uint8Array(array_buffer).slice(0, 4), ', ');
 	return (header === pdf_header);
 }
