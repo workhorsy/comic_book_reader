@@ -232,9 +232,13 @@ function onPDF(blob) {
 				let filename = "page_" + i + ".png";
 				let is_last = (i === len - 1);
 				//console.log(page);
-				let viewport = page.getViewport(1);
+				let actual_width = page.view[2];
+				let scale = (actual_width < 1000 ? 1000 / actual_width : actual_width);
+				let viewport = page.getViewport(scale);
 
 				let canvas = document.createElement('canvas');
+				canvas.style.imageRendering = "-moz-crisp-edges";
+				canvas.style.imageRendering = "pixelated";
 				canvas.width = viewport.width;
 				canvas.height = viewport.height;
 				//document.body.appendChild(canvas);
