@@ -152,7 +152,7 @@ function makePagePreview(filename, is_cached, cb) {
 							cb = null;
 						}
 					});
-				});
+				}, 'image/jpeg', 0.95);
 			};
 			img.onerror = function(e) {
 				if (url) {
@@ -229,7 +229,7 @@ function onPDF(blob) {
 			}
 
 			pdf_doc.getPage(i+1).then(function(page) {
-				let filename = "page_" + i + ".png";
+				let filename = "page_" + i + ".jpg";
 				let is_last = (i === len - 1);
 				//console.log(page);
 				let actual_width = page.view[2];
@@ -257,7 +257,7 @@ function onPDF(blob) {
 								onEach(i + 1);
 							}
 						});
-					});
+					}, 'image/jpeg', 0.95);
 				});
 			});
 		};

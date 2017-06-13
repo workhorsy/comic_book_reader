@@ -41,12 +41,12 @@ function imageToCanvas(img, width, height) {
 	return canvas;
 }
 
-function resizeImage(img, width, height, use_higher_quality, cb) {
+function resizeImage(img, width, height, use_higher_quality, cb, type, quality) {
 	if (! use_higher_quality) {
 		let source = imageToCanvas(img, width, height);
 		source.toBlob(function(small_blob) {
 			cb(small_blob);
-		});
+		}, type, quality);
 	} else {
 		let source = imageToCanvas(img, img.width, img.height);
 
@@ -63,7 +63,7 @@ function resizeImage(img, width, height, use_higher_quality, cb) {
 			}, function (err) {
 				dest.toBlob(function(small_blob) {
 					cb(small_blob);
-				});
+				}, type, quality);
 			}
 		);
 	}
