@@ -229,7 +229,8 @@ function onPDF(blob) {
 			}
 
 			pdf_doc.getPage(i+1).then(function(page) {
-				let filename = "page_" + i + ".jpg";
+				//console.log(i);
+				let filename = "page_" + (i.toString().padStart(5, '0')) + ".jpg";
 				let is_last = (i === len - 1);
 				//console.log(page);
 				let actual_width = page.view[2];
