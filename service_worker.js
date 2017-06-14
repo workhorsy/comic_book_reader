@@ -14,6 +14,7 @@ const PRECACHE_URLS = [
 	'invalid_image.png',
 	'main.js',
 	'service_worker.js',
+	'js/compatibility.js',
 	'js/db.js',
 	'js/jszip.js',
 	'js/libunrar.js',
