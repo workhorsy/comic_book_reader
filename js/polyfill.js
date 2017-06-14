@@ -50,7 +50,21 @@ if (!Array.prototype.includes) {
   };
 }
 
-// https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
+// Polyfill for missing array slice method (IE 11)
+if (typeof Uint8Array !== 'undefined') {
+if (! Uint8Array.prototype.slice) {
+	Uint8Array.prototype.slice = function(start, end) {
+		let retval = new Uint8Array(end - start);
+		let j = 0;
+		for (let i=start; i<end; ++i) {
+			retval[j] = this[i];
+			j++;
+		}
+		return retval;
+	};
+}
+}
+
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
 if (!String.prototype.padStart) {
     String.prototype.padStart = function padStart(targetLength,padString) {
@@ -67,6 +81,51 @@ if (!String.prototype.padStart) {
             return padString.slice(0,targetLength) + String(this);
         }
     };
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
+if (!String.prototype.repeat) {
+  String.prototype.repeat = function(count) {
+    'use strict';
+    if (this == null) {
+      throw new TypeError('can\'t convert ' + this + ' to object');
+    }
+    let str = '' + this;
+    count = +count;
+    if (count != count) {
+      count = 0;
+    }
+    if (count < 0) {
+      throw new RangeError('repeat count must be non-negative');
+    }
+    if (count == Infinity) {
+      throw new RangeError('repeat count must be less than infinity');
+    }
+    count = Math.floor(count);
+    if (str.length == 0 || count == 0) {
+      return '';
+    }
+    // Ensuring count is a 31-bit integer allows us to heavily optimize the
+    // main part. But anyway, most current (August 2014) browsers can't handle
+    // strings 1 << 28 chars or longer, so:
+    if (str.length * count >= 1 << 28) {
+      throw new RangeError('repeat count must not overflow maximum string size');
+    }
+    let rpt = '';
+    for (;;) {
+      if ((count & 1) == 1) {
+        rpt += str;
+      }
+      count >>>= 1;
+      if (count == 0) {
+        break;
+      }
+      str += str;
+    }
+    // Could we try:
+    // return Array(count + 1).join(this);
+    return rpt;
+  }
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob

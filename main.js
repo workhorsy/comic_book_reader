@@ -941,6 +941,7 @@ documentOnReady(function() {
 			});
 		} else {
 			console.info('Service workers are not supported ...');
+			PDFJS.disableWorker = true;
 			main();
 		}
 	});
