@@ -937,7 +937,8 @@ documentOnReady(function() {
 
 				main();
 			}).catch(function(error) {
-				console.error('Failed to register service worker: ' + error);
+				console.error('Failed to register service worker: ');
+				console.error(error);
 			});
 		} else {
 			console.info('Service workers are not supported ...');
