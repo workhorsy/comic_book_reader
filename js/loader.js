@@ -23,7 +23,7 @@ function stopWorker() {
 function onUncompressedStart(count) {
 	// Update the progress
 	g_image_count = count;
-	$('#loadingProgress').innerHTML = 'Loading 0.0% ...';
+	$('#loadingProgress').innerHTML = L('Loading') + ' 0.0% ...';
 	show('#loadingProgress');
 
 	// Create empty pages to hold all the images
@@ -44,7 +44,7 @@ function onUncompressedEach(filename, index, is_cached, is_last) {
 	//console.log(filename, index, is_cached, is_last);
 	g_titles[index] = filename;
 
-	$('#loadingProgress').innerHTML = 'Loading ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
+	$('#loadingProgress').innerHTML = L('Loading') + ' ' + ((index / (g_image_count - 1)) * 100.0).toFixed(1) + '% ...';
 
 	makePagePreview(filename, is_cached, function() {
 		// Load the image into the page

@@ -314,7 +314,7 @@ function showLibrary() {
 
 	let onStart = function(count) {
 		if (count === 0) {
-			libraryMenu.innerHTML = 'Library is empty';
+			libraryMenu.innerHTML = L('Library is empty');
 		}
 	};
 	let onEach = function(filename, pagename, blob) {
@@ -389,7 +389,7 @@ function loadComic() {
 }
 
 function friendlyPageNumber() {
-	return '(' + (g_image_index + 1) + ' of ' + g_image_count + ')';
+	return '(' + (g_image_index + 1) + ' ' + L('of') + ' ' + g_image_count + ')';
 }
 
 function loadImage(page, index, cb) {
@@ -490,7 +490,7 @@ function onLoaded(blob, filename) {
 function onError(msg) {
 	hide('#comicPanel');
 	setComicData('');
-	$('#loadError').textContent = 'Error: ' + msg;
+	$('#loadError').textContent = L('Error') + ': ' + L(msg);
 	show('#loadError');
 	showTopMenu(1.0, true);
 
@@ -549,7 +549,7 @@ function monitorTotalUsersOnline() {
 
 	httpGet(url, function(data, status) {
 		if (data && status === 200) {
-			$('#totalUsersOnline').textContent = "Total users online: " + parseInt(data);
+			$('#totalUsersOnline').textContent = L("Total users online") + ": " + parseInt(data);
 		} else {
 			console.info(data);
 			console.info(status);
@@ -696,6 +696,8 @@ function onChangePage(is_right) {
 }
 
 function main() {
+	translateElementLanguages();
+
 	// Show the welcome screen if this is the first run
 	if (settings_get_is_first_run()) {
 		show('#welcomeScreen');
@@ -838,7 +840,7 @@ function main() {
 				$('#totalDBSize').textContent = '. . .';
 				getTotalSize(function(length) {
 					$('#totalDBSize').textContent = toFriendlySize(length);
-					alert('Done clearing all data');
+					alert(L('Done clearing all data'));
 				});
 			}
 		}

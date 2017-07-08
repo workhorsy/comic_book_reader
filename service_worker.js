@@ -4,7 +4,7 @@
 "use strict";
 
 
-const PRECACHE = 'precache-v8';
+const PRECACHE = 'precache-v9';
 const RUNTIME = 'runtime';
 
 const PRECACHE_URLS = [
@@ -16,7 +16,9 @@ const PRECACHE_URLS = [
 	'service_worker.js',
 	'js/compatibility.js',
 	'js/db.js',
+	'js/i18n.js',
 	'js/jszip.js',
+	'js/languages.js',
 	'js/libunrar.js',
 	'js/libunrar.js.mem',
 	'js/libuntar.js',
