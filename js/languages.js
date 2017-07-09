@@ -39,7 +39,7 @@ const g_i18n_storage = {
 		"ar": "تحقق من التحديثات",
 		"de" : "Auf Updates prüfen",
 		"es": "Buscar actualizaciones",
-		"fr": "",
+		"fr": "Vérifier les mises à jour",
 		"ja": "アップデートを確認",
 		"pt": "Verifique atualizações",
 		"ru": "Проверить наличие обновлений",
