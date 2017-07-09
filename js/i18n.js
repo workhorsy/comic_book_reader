@@ -5,30 +5,25 @@
 
 
 const g_lang = (window.navigator.userLanguage || window.navigator.language).split('-')[0].trim();
+const g_lang_default = 'en';
 
-let g_i18n_storage = {};
-const importString = function(lang, key, value) {
-	g_i18n_storage[lang] = g_i18n_storage[lang] || {};
-
-	g_i18n_storage[lang][key] = value;
-};
 
 function translateElementLanguages() {
 	const all = document.querySelectorAll("*");
-	const lang = g_lang || 'en';
 	all.forEach(function(element) {
-		const before = element.innerHTML.trim();
-		if (g_i18n_storage.hasOwnProperty(lang) && g_i18n_storage[lang].hasOwnProperty(before)) {
-			element.innerHTML = g_i18n_storage[lang][before];
+		const original = element.innerHTML;
+		const translated = L(original);
+		if (original !== translated) {
+			element.innerHTML = translated;
 		}
 	});
 }
 
 function L(string) {
-	const before = string.trim();
-	const lang = g_lang || 'en';
-	if (g_i18n_storage.hasOwnProperty(lang) && g_i18n_storage[lang].hasOwnProperty(before)) {
-		return g_i18n_storage[lang][before];
+	const lang = g_lang || g_lang_default;
+	const key = string.trim();
+	if (g_i18n_storage.hasOwnProperty(key) && g_i18n_storage[key].hasOwnProperty(lang)) {
+		return g_i18n_storage[key][lang];
 	} else {
 		return string;
 	}
