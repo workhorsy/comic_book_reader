@@ -7,7 +7,7 @@
 const g_i18n_storage = {
 	"A touch friendly HTML5 comic book reader that reads CBR, CBZ, CBT, and PDF files.": {
 		"ar": "لمسة ودية HTML5 قارئ الكتاب الهزلي الذي يقرأ كبر، كبز، كبت، وملفات بدف.",
-		"de" : "Ein berührungsfreier HTML5-Comic-Leser, der CBR-, CBZ-, CBT- und PDF-Dateien liest.",
+		"de": "Ein berührungsfreier HTML5-Comic-Leser, der CBR-, CBZ-, CBT- und PDF-Dateien liest.",
 		"es": "Un lector de cómics HTML5 amigable al tacto que lee CBR, CBZ, CBT y archivos PDF",
 		"fr": "Un lecteur de bande dessinée HTML5 convivial qui lit les fichiers CBR, CBZ, CBT et PDF.",
 		"ja": "CBR、CBZ、CBT、およびPDFファイルを読み取るタッチフレンドリーなHTML5コミックブックリーダーです。",
@@ -17,7 +17,7 @@ const g_i18n_storage = {
 	},
 	"Allow right click": {
 		"ar": "السماح بالنقر بزر الماوس الأيمن",
-		"de" : "Klicken Sie mit der rechten Maustaste",
+		"de": "Klicken Sie mit der rechten Maustaste",
 		"es": "Permitir clic derecho",
 		"fr": "Autoriser le clic droit",
 		"ja": "右クリックを許可する",
@@ -27,7 +27,7 @@ const g_i18n_storage = {
 	},
 	"Archive contains no images.": {
 		"ar": "لا يحتوي الأرشيف على أية صور.",
-		"de" : "Archiv enthält keine Bilder.",
+		"de": "Archiv enthält keine Bilder.",
 		"es": "El archivo no contiene imágenes.",
 		"fr": "Archive ne contient aucune image.",
 		"ja": "アーカイブに画像がありません。",
@@ -37,7 +37,7 @@ const g_i18n_storage = {
 	},
 	"Check for updates": {
 		"ar": "تحقق من التحديثات",
-		"de" : "Auf Updates prüfen",
+		"de": "Auf Updates prüfen",
 		"es": "Buscar actualizaciones",
 		"fr": "Vérifier les mises à jour",
 		"ja": "アップデートを確認",
@@ -47,7 +47,7 @@ const g_i18n_storage = {
 	},
 	"Check for updates now": {
 		"ar": "تحقق من وجود تحديثات الآن",
-		"de" : "Überprüfen Sie jetzt auf Updates",
+		"de": "Überprüfen Sie jetzt auf Updates",
 		"es": "Buscar actualizaciones ahora",
 		"fr": "Vérifier les mises à jour",
 		"ja": "今すぐ更新を確認する",
@@ -57,7 +57,7 @@ const g_i18n_storage = {
 	},
 	"Clear all data": {
 		"ar": "محو جميع البيانات",
-		"de" : "Löschen Sie alle Daten",
+		"de": "Löschen Sie alle Daten",
 		"es": "Borrar todos los datos",
 		"fr": "Effacer toutes les données",
 		"ja": "すべてのデータを消去する",
@@ -67,7 +67,7 @@ const g_i18n_storage = {
 	},
 	"Comic Book Reader": {
 		"ar": "قارئ الكتاب الهزلي",
-		"de" : "Comic-Leser",
+		"de": "Comic-Leser",
 		"es": "Lector de Cómic",
 		"fr": "Lecteur de bande dessinée",
 		"ja": "コミックブックリーダー",
@@ -77,7 +77,7 @@ const g_i18n_storage = {
 	},
 	"Done clearing all data": {
 		"ar": "تم محو جميع البيانات",
-		"de" : "Löschen aller Daten",
+		"de": "Löschen aller Daten",
 		"es": "Hecho borrar todos los datos",
 		"fr": "Terminé de supprimer toutes les données",
 		"ja": "すべてのデータの消去を完了",
@@ -87,7 +87,7 @@ const g_i18n_storage = {
 	},
 	"Error": {
 		"ar": "خطأ",
-		"de" : "Fehler",
+		"de": "Fehler",
 		"es": "Error",
 		"fr": "Erreur",
 		"ja": "エラー",
@@ -97,7 +97,7 @@ const g_i18n_storage = {
 	},
 	"Failed to open 'rar' archive.": {
 		"ar": "أخفق فتح أرشيف 'رار'.",
-		"de" : "Das 'rar'-Archiv konnte nicht geöffnet werden.",
+		"de": "Das 'rar'-Archiv konnte nicht geöffnet werden.",
 		"es": "Error al abrir archivo 'rar'.",
 		"fr": "Impossible d'ouvrir l'archive 'rar'.",
 		"ja": "'rar'アーカイブを開けませんでした。",
@@ -107,7 +107,7 @@ const g_i18n_storage = {
 	},
 	"Failed to open 'tar' archive.": {
 		"ar": "أخفق فتح أرشيف 'تار'.",
-		"de" : "Das 'tar'-Archiv konnte nicht geöffnet werden.",
+		"de": "Das 'tar'-Archiv konnte nicht geöffnet werden.",
 		"es": "Error al abrir archivo 'tar'.",
 		"fr": "Impossible d'ouvrir l'archive 'tar'.",
 		"ja": "'tar'アーカイブを開けませんでした。",
@@ -117,7 +117,7 @@ const g_i18n_storage = {
 	},
 	"Failed to open 'zip' archive.": {
 		"ar": "أخفق فتح أرشيف 'زيب'.",
-		"de" : "Das 'zip'-Archiv konnte nicht geöffnet werden.",
+		"de": "Das 'zip'-Archiv konnte nicht geöffnet werden.",
 		"es": "Error al abrir archivo 'zip'.",
 		"fr": "Impossible d'ouvrir l'archive 'zip'.",
 		"ja": "'zip'アーカイブを開けませんでした。",
@@ -127,7 +127,7 @@ const g_i18n_storage = {
 	},
 	"Full Screen": {
 		"ar": "تكبير الشاشة",
-		"de" : "Vollbild",
+		"de": "Vollbild",
 		"es": "Pantalla completa",
 		"fr": "Plein écran",
 		"ja": "全画面表示",
@@ -137,7 +137,7 @@ const g_i18n_storage = {
 	},
 	"Library": {
 		"ar": "مكتبة",
-		"de" : "Bibliothek",
+		"de": "Bibliothek",
 		"es": "Biblioteca",
 		"fr": "Bibliothèque",
 		"ja": "としょうかん",
@@ -147,7 +147,7 @@ const g_i18n_storage = {
 	},
 	"Library is empty": {
 		"ar": "المكتبة فارغة",
-		"de" : "Bibliothek ist leer",
+		"de": "Bibliothek ist leer",
 		"es": "La biblioteca está vacía",
 		"fr": "La bibliothèque est vide",
 		"ja": "ライブラリが空です",
@@ -157,7 +157,7 @@ const g_i18n_storage = {
 	},
 	"Loading": {
 		"ar": "جار التحميل",
-		"de" : "Laden",
+		"de": "Laden",
 		"es": "Cargando",
 		"fr": "Chargement",
 		"ja": "読み込み中",
@@ -167,7 +167,7 @@ const g_i18n_storage = {
 	},
 	"None": {
 		"ar": "لا شيء",
-		"de" : "Keiner",
+		"de": "Keiner",
 		"es": "Ninguna",
 		"fr": "Aucun",
 		"ja": "なし",
@@ -177,7 +177,7 @@ const g_i18n_storage = {
 	},
 	"of": {
 		"ar": "من",
-		"de" : "von",
+		"de": "von",
 		"es": "de",
 		"fr": "de",
 		"ja": "の",
@@ -187,7 +187,7 @@ const g_i18n_storage = {
 	},
 	"Open comic file": {
 		"ar": "فتح ملف فكاهي",
-		"de" : "Comic-Datei öffnen",
+		"de": "Comic-Datei öffnen",
 		"es": "Abrir archivo cómico",
 		"fr": "Ouvrir un fichier comique",
 		"ja": "コミックファイルを開く",
@@ -197,7 +197,7 @@ const g_i18n_storage = {
 	},
 	"Settings": {
 		"ar": "إعدادات",
-		"de" : "Einstellungen",
+		"de": "Einstellungen",
 		"es": "Ajustes",
 		"fr": "Paramètres",
 		"ja": "設定",
@@ -207,7 +207,7 @@ const g_i18n_storage = {
 	},
 	"Software Version:": {
 		"ar": "إصدار البرنامج:",
-		"de" : "Softwareversion:",
+		"de": "Softwareversion:",
 		"es": "Versión del software:",
 		"fr": "Une version de logiciel:",
 		"ja": "ソフトウェアバージョン：",
@@ -217,7 +217,7 @@ const g_i18n_storage = {
 	},
 	"Start": {
 		"ar": "بداية",
-		"de" : "Anfang",
+		"de": "Anfang",
 		"es": "Comienzo",
 		"fr": "Début",
 		"ja": "開始",
@@ -227,7 +227,7 @@ const g_i18n_storage = {
 	},
 	"Storage used:": {
 		"ar": "التخزين المستخدم:",
-		"de" : "Verwendete Lagerung:",
+		"de": "Verwendete Lagerung:",
 		"es": "Almacenamiento utilizado:",
 		"fr": "",
 		"ja": "使用されたストレージ：",
@@ -237,7 +237,7 @@ const g_i18n_storage = {
 	},
 	"The archive type is unknown": {
 		"ar": "نوع الأرشيف غير معروف",
-		"de" : "Der Archivtyp ist unbekannt",
+		"de": "Der Archivtyp ist unbekannt",
 		"es": "El tipo de archivo es desconocido",
 		"fr": "Stockage utilisé:",
 		"ja": "アーカイブタイプが不明です",
@@ -247,7 +247,7 @@ const g_i18n_storage = {
 	},
 	"Total users online": {
 		"ar": "إجمالي المستخدمين عبر الإنترنت",
-		"de" : "Alle Benutzer online",
+		"de": "Alle Benutzer online",
 		"es": "Total de usuarios en línea",
 		"fr": "Nombre total d'utilisateurs en ligne",
 		"ja": "オンラインユーザー総数",
@@ -257,7 +257,7 @@ const g_i18n_storage = {
 	},
 	"Use higher quality page previews": {
 		"ar": "استخدام معاينات صفحة عالية الجودة",
-		"de" : "Verwenden Sie höherwertige Seitenvorschau",
+		"de": "Verwenden Sie höherwertige Seitenvorschau",
 		"es": "Utilizar previsualizaciones de páginas de mayor calidad",
 		"fr": "Utilisez des aperçus de page de meilleure qualité",
 		"ja": "より高品質のページプレビューを使用する",
@@ -267,7 +267,7 @@ const g_i18n_storage = {
 	},
 	"Use smoothing when resizing images": {
 		"ar": "استخدام تمهيد عند تغيير حجم الصور",
-		"de" : "Verwenden Sie Glättung bei der Größenänderung von Bildern",
+		"de": "Verwenden Sie Glättung bei der Größenänderung von Bildern",
 		"es": "Utilizar el suavizado al cambiar el tamaño de las imágenes",
 		"fr": "Utiliser le lissage lors du redimensionnement des images",
 		"ja": "画像のサイズを変更するときにスムージングを使用する",
@@ -277,7 +277,7 @@ const g_i18n_storage = {
 	},
 	"Visit home page at github": {
 		"ar": "زيارة الصفحة الرئيسية في جيثب",
-		"de" : "Besuchen Sie die Homepage bei github",
+		"de": "Besuchen Sie die Homepage bei github",
 		"es": "Visita la página de inicio en github",
 		"fr": "Visiter la page d'accueil chez github",
 		"ja": "githubでホームページをご覧ください",
