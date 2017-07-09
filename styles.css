@@ -97,6 +97,7 @@ input:checked + .touchLabel::after {
 	border: 2px solid white;
 	background-color: #61AFEF;
 	cursor: pointer;
+	word-wrap: break-word;
 }
 
 .unselectable {
