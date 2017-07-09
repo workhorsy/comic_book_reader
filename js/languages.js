@@ -73,13 +73,13 @@ const g_i18n_storage = {
 		"sp": "Ninguna",
 		"de" : "Keiner",
 	},
-	"Open comic file": {
-		"sp": "Abrir archivo cómico",
-		"de" : "Comic-Datei öffnen",
-	},
 	"of": {
 		"sp": "de",
 		"de" : "von",
+	},
+	"Open comic file": {
+		"sp": "Abrir archivo cómico",
+		"de" : "Comic-Datei öffnen",
 	},
 	"Settings": {
 		"sp": "Ajustes",
