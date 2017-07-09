@@ -77,10 +77,6 @@ const g_i18n_storage = {
 		"sp": "Abrir archivo cómico",
 		"de" : "Comic-Datei öffnen",
 	},
-	"Loading": {
-		"sp": "Cargando",
-		"de" : "Laden",
-	},
 	"of": {
 		"sp": "de",
 		"de" : "von",
