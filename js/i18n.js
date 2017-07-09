@@ -10,13 +10,14 @@ const g_lang_default = 'en';
 
 function translateElementLanguages() {
 	const all = document.querySelectorAll("*");
-	all.forEach(function(element) {
+	for (let i=0; i<all.length; ++i) {
+		let element = all[i];
 		const original = element.innerHTML;
 		const translated = L(original);
 		if (original !== translated) {
 			element.innerHTML = translated;
 		}
-	});
+	}
 }
 
 function L(string) {
