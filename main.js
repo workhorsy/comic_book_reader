@@ -770,6 +770,22 @@ function main() {
 		}
 	});
 
+	// Language Select
+	$('#btnSelectLanguage').addEventListener('change', function() {
+		const prev_lang = g_lang;
+		g_lang = $('#btnSelectLanguage').value;
+
+		const all = document.querySelectorAll("*[translatable=true]");
+		for (let i=0; i<all.length; ++i) {
+			let element = all[i];
+			const original = element.innerHTML;
+			const translated = L(original);
+			if (original !== translated) {
+				element.innerHTML = translated;
+			}
+		}
+	});
+
 	// Right click toggle
 	$('#btnDisableRightClick').checked = settings_get_right_click_enabled();
 	$('#btnDisableRightClick').addEventListener('click', function() {
