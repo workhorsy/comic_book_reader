@@ -549,7 +549,8 @@ function monitorTotalUsersOnline() {
 
 	httpGet(url, function(data, status) {
 		if (data && status === 200) {
-			$('#totalUsersOnline').textContent = L("Total users online") + ": " + parseInt(data);
+			show('#lblTotalUsersOnline');
+			$('#totalUsersOnline').textContent = ": " + parseInt(data);
 		} else {
 			console.info(data);
 			console.info(status);
