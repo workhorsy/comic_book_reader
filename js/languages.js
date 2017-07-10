@@ -135,6 +135,16 @@ const g_i18n_storage = {
 		"ru": "Полноэкранный",
 		"zh": "全屏",
 	},
+	"Language:": {
+		"ar": "لغة:",
+		"de": "Sprache:",
+		"es": "Idioma:",
+		"fr": "La langue:",
+		"ja": "言語：",
+		"pt": "Língua:",
+		"ru": "Язык:",
+		"zh": "语言：",
+	},
 	"Library": {
 		"ar": "مكتبة",
 		"de": "Bibliothek",
