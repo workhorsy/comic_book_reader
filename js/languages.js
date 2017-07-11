@@ -239,7 +239,7 @@ const g_i18n_storage = {
 		"ar": "التخزين المستخدم:",
 		"de": "Verwendete Lagerung:",
 		"es": "Almacenamiento utilizado:",
-		"fr": "",
+		"fr": "Stockage utilisé:",
 		"ja": "使用されたストレージ：",
 		"pt": "Armazenamento utilizado:",
 		"ru": "Используемое хранилище:",
