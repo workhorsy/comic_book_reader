@@ -771,6 +771,18 @@ function main() {
 		}
 	});
 
+	// Set the default selected language, if it is in the supported list
+	{
+		let btnSelectLanguage = $('#btnSelectLanguage');
+		let options = [];
+		for (let i=0; i<btnSelectLanguage.length; ++i) {
+			options.push(btnSelectLanguage.options[i].value);
+		}
+		if (options.includes(g_lang)) {
+			$('#btnSelectLanguage').value = g_lang;
+		}
+	}
+
 	// Language Select
 	$('#btnSelectLanguage').addEventListener('change', function() {
 		const prev_lang = g_lang;

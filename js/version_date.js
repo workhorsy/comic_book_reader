@@ -1,1 +1,1 @@
-function getVersionDate() { return "July 10, 2017 - 21:18:24"; }
+function getVersionDate() { return "July 12, 2017 - 09:45:06"; }
