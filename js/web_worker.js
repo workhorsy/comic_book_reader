@@ -46,7 +46,7 @@ function onUncompress(archive) {
 
 	// Show an error if there are no images
 	if (entries.length === 0) {
-		let error = 'Archive contains no images.';
+		let error = L('Archive contains no images.');
 		let message = {
 			action: 'invalid_file',
 			error: error,

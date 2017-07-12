@@ -32,6 +32,7 @@
 				window.location = new_url;
 			}
 		</script>
+		<script src="js/i18n.js"></script>
 		<script src="js/no_more_jquery.js"></script>
 		<script src="js/utility.js"></script>
 		<script src="js/settings.js"></script>
@@ -42,6 +43,7 @@
 		<script src="js/pdf.worker.js"></script>
 		<script src="js/version_date.js"></script>
 		<script src="js/loader.js"></script>
+		<script src="js/languages.js"></script>
 		<script src="main.js"></script>
 	</head>
 	<body>
@@ -50,13 +52,12 @@
 
 		<div id="welcomeScreen">
 			<div>
-				<h1>Comic Book Reader</h1>
-				<p>
-					A touch friendly HTML5 comic book reader that reads
-					CBR, CBZ, CBT, and PDF files.
+				<h1 translatable=true>Comic Book Reader</h1>
+				<p translatable=true>
+					A touch friendly HTML5 comic book reader that reads CBR, CBZ, CBT, and PDF files.
 				</p>
 				<p>
-					<button id="btnInputTouch" class="touchButton">Start</button>
+					<button id="btnInputTouch" class="touchButton" translatable=true>Start</button>
 				</p>
 				<footer>
 					Copyright &copy; 2017 <a href="https://github.com/workhorsy/comic_book_reader">
@@ -69,10 +70,10 @@
 			<div id="topMenu">
 				<div id="topMenuPanel" class="unselectable">
 					<div id="topMenuButtons">
-						<button id="btnFileLoad" class="touchButton">Open comic file</button>
-						<button id="btnLibrary" class="touchButton">Library</button>
-						<button id="btnFullScreen" class="touchButton">Full Screen</button>
-						<button id="btnSettings" class="touchButton">Settings</button>
+						<button id="btnFileLoad" class="touchButton" translatable=true>Open comic file</button>
+						<button id="btnLibrary" class="touchButton" translatable=true>Library</button>
+						<button id="btnFullScreen" class="touchButton" translatable=true>Full Screen</button>
+						<button id="btnSettings" class="touchButton" translatable=true>Settings</button>
 					</div>
 
 					<p><span id="loadError"></span></p>
@@ -81,45 +82,62 @@
 					</div>
 
 					<div>
-						<span id="totalUsersOnline"></span>
+						<div id="lblTotalUsersOnline" style="display: none;">
+							<label translatable=true>Total users online</label> <span id="totalUsersOnline">?</span>
+						</div>
 					</div>
 
 					<div id="settingsMenu">
 						<div>
 							<p>
+								<label translatable=true>Language: </label>
+								<select id="btnSelectLanguage">
+									<option value="en">English</option>
+									<option value="ar">Arabic (عربى)</option>
+									<option value="zh">Chinese (中文)</option>
+									<option value="fr">French (français)</option>
+									<option value="de">German (Deutsche)</option>
+									<option value="ja">Japanese (日本語)</option>
+									<option value="pt">Portuguese (Português)</option>
+									<option value="ru">Russian (русский)</option>
+									<option value="es">Spanish (Español)</option>
+								</select>
+							</p>
+							<hr />
+							<p>
 								<input id="btnDisableRightClick" class="touchCheckBox" type="checkbox" />
-								<label for="btnDisableRightClick" class="touchLabel">Allow right click</label>
+								<label for="btnDisableRightClick" class="touchLabel" translatable=true>Allow right click</label>
 							</p>
 							<p>
 								<input id="btnEnableInstallUpdates" class="touchCheckBox" type="checkbox" />
-								<label for="btnEnableInstallUpdates" class="touchLabel">Check for updates</label>
+								<label for="btnEnableInstallUpdates" class="touchLabel" translatable=true>Check for updates</label>
 							</p>
 							<p>
 								<input id="btnUseHigherQualityPreviews" class="touchCheckBox" type="checkbox" />
-								<label for="btnUseHigherQualityPreviews" class="touchLabel">Use higher quality page previews</label>
+								<label for="btnUseHigherQualityPreviews" class="touchLabel" translatable=true>Use higher quality page previews</label>
 							</p>
 							<p>
 								<input id="btnUseSmoothingWhenResizingImages" class="touchCheckBox" type="checkbox" />
-								<label for="btnUseSmoothingWhenResizingImages" class="touchLabel">Use smoothing when resizing images</label>
+								<label for="btnUseSmoothingWhenResizingImages" class="touchLabel" translatable=true>Use smoothing when resizing images</label>
 							</p>
 							<hr />
 							<p>
-								<label>Storage used:</label>
+								<label translatable=true>Storage used:</label>
 								<span id="totalDBSize" style="margin: 4px;">. . .</span>
 							</p>
 							<p>
-								<button id="btnClearAllData" class="touchButton">Clear all data</button>
+								<button id="btnClearAllData" class="touchButton" translatable=true>Clear all data</button>
 							</p>
 							<hr />
 							<p>
-								<label>Software Version:</label>
+								<label translatable=true>Software Version:</label>
 								<span id="versionDate" style="margin: 4px;">...</span>
 							</p>
 							<p>
-								<button id="btnCheckForUpdatesNow" class="touchButton" style="display: none;">Check for updates now</button>
+								<button id="btnCheckForUpdatesNow" class="touchButton" translatable=true style="display: none;">Check for updates now</button>
 							</p>
 							<p>
-								<button id="btnHomepage" class="touchButton">Visit home page at github</button>
+								<button id="btnHomepage" class="touchButton" translatable=true>Visit home page at github</button>
 							</p>
 						</div>
 					</div>
