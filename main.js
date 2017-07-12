@@ -3,7 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
-const g_use_service_worker = true;
+const g_use_service_worker = false;//true;
 let g_is_terminated = false;
 let g_file_name = null;
 let g_image_index = 0;
@@ -772,16 +772,11 @@ function main() {
 	});
 
 	// Set the default selected language, if it is in the supported list
-	{
-		let btnSelectLanguage = $('#btnSelectLanguage');
-		let options = [];
-		for (let i=0; i<btnSelectLanguage.length; ++i) {
-			options.push(btnSelectLanguage.options[i].value);
-		}
-		if (options.includes(g_lang)) {
+	Array.from($('#btnSelectLanguage').options).forEach(function(option) {
+		if (option.value === g_lang) {
 			$('#btnSelectLanguage').value = g_lang;
 		}
-	}
+	});
 
 	// Language Select
 	$('#btnSelectLanguage').addEventListener('change', function() {
