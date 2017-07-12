@@ -3,7 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
-const g_use_service_worker = false;//true;
+const g_use_service_worker = true;
 let g_is_terminated = false;
 let g_file_name = null;
 let g_image_index = 0;
