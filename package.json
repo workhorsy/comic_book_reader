@@ -35,6 +35,17 @@
 			}
 		}
 	},
+	"eslintIgnore": [
+		"src/lib/pdf.js",
+		"src/lib/pdf.worker.js",
+		"src/lib/compatibility.js",
+		"src/lib/uncompress.js",
+		"src/lib/jszip.js",
+		"src/lib/libunrar.js",
+		"src/lib/libunrar.js.mem",
+		"src/lib/ibuntar.js",
+		"src/lib/pica.js"
+	],
 	"devDependencies": {
 		"eslint": "^4.2.0",
 		"eslint-config-synacor": "^1.0.1",
