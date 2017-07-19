@@ -1,0 +1,34 @@
+@import 'helpers';
+
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+
+* {
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+html {
+	min-height: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	overflow: hidden;
+	min-height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+/* Make scroll bars small and blue on Chrome */
+::-webkit-scrollbar {
+	height: 5px;
+	width: 5px;
+}
+::-webkit-scrollbar-track {
+}
+::-webkit-scrollbar-thumb {
+	background: #61AFEF;
+}

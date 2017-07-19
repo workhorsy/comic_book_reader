@@ -1,0 +1,59 @@
+@import '~style/helpers';
+
+.comic_check_box {
+
+}
+
+.comic_check_box label {
+	display: block;
+	position: relative;
+	margin: 10px 0;
+	padding-left: 5vmin;
+	font-size: 4vmin;
+	cursor: pointer;
+}
+
+.comic_check_box label::before, .comic_check_box label::after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	content: '';
+}
+
+.comic_check_box label::before {
+	display: block;
+	width: 3.5vmin;
+	height: 3.5vmin;
+	border: 0.5vmin solid white;
+	margin: 0;
+	padding: 0;
+}
+
+.comic_check_box label::after {
+	display: none;
+	width: 2vmin;
+	height: 2vmin;
+	margin: 0;
+	padding: 0;
+	top: 0.75vmin;
+	left: 0.75vmin;
+	background-color: #61AFEF;
+}
+
+.comic_check_box input[type=radio] + label::before,
+.comic_check_box input[type=radio] + label::after {
+	border-radius: 50%;
+}
+
+.comic_check_box input[type=checkbox] {
+	position: absolute;
+	left: -999px;
+}
+
+.comic_check_box input:focus + label::before {
+	border-color: #61AFEF;
+}
+
+.comic_check_box input:checked + label::after {
+	display: block;
+}

@@ -3,7 +3,7 @@
 // http://github.com/workhorsy/comic_book_reader
 "use strict";
 
-
+/*
 function hasTouchSupport() {
 	return 'ontouchstart' in window || navigator.MaxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 }
@@ -68,9 +68,10 @@ function resizeImage(img, width, height, use_higher_quality, cb, type, quality) 
 		);
 	}
 }
+*/
 
 //https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
-function toggleFullScreen() {
+export function toggleFullScreen() {
 	if (!document.fullscreenElement &&
 		!document.mozFullScreenElement &&
 		!document.webkitFullscreenElement &&
