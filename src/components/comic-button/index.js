@@ -8,9 +8,7 @@ export default class ComicButton extends Component {
 
 	handleMouseUp = (event) => {
 		//console.log(this.props.children[0]);
-		if (this.props.onClick) {
-			this.props.onClick(event);
-		}
+		this.props.onClick && this.props.onClick(event);
 	};
 
 	componentDidMount() {
@@ -18,12 +16,13 @@ export default class ComicButton extends Component {
 	}
 
 	render() {
+		let { props, state } = this;
 		return (
 			<button
 				class={style.comic_button}
 				onMouseUp={this.handleMouseUp}
 			>
-				{this.props.children.length > 0 ? this.props.children[0] : null}
+				{ props.children.length > 0 && props.children[0] }
 			</button>
 		);
 	}

@@ -17,11 +17,12 @@ export default class ComicMenu extends Component {
 	}
 
 	onBtnSettings = () => {
-		this.setState({ is_showing_settings: !this.state.is_showing_settings });
+		this.setState(prevState => ({ is_showing_settings: !prevState.is_showing_settings }));
 		this.setState({ is_showing_library: false });
 	}
 
 	render() {
+		let { props, state } = this;
 		return (
 			<div class={style.comic_menu}>
 				<div id={style.topMenuPanel}>
@@ -43,10 +44,8 @@ export default class ComicMenu extends Component {
 						</div>
 					</div>
 
-					{ this.state.is_showing_settings ? <ComicSettings /> : null }
+					{ state.is_showing_settings && <ComicSettings /> }
 
-					<div id="libraryMenu">
-					</div>
 				</div>
 			</div>
 		);

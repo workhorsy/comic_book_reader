@@ -10,11 +10,12 @@ export default class ComicCheckBox extends Component {
 	}
 
 	render() {
+		let { props, state } = this;
 		return (
 			<div class={style.comic_check_box}>
-				<input id={this.props.id} type="checkbox" />
-				<label for={this.props.id}>
-					{this.props.children.length > 0 ? this.props.children[0] : null}
+				<input id={props.id} type="checkbox" />
+				<label for={props.id}>
+					{ props.children.length > 0 && props.children[0] }
 				</label>
 			</div>
 		);
