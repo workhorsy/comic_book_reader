@@ -7,6 +7,17 @@ import ComicSettings from '../comic-settings';
 import ComicLibrary from '../comic-library';
 import ComicButton from '../comic-button';
 
+//Test data for ComicLibrary ( remove this )
+const TestData = {
+	items: [
+		{ title: 'Issue #1', cover: './assets/undefined.png' },
+		{ title: 'Issue #2', cover: './assets/undefined.png' },
+		{ title: 'Issue #3', cover: './assets/undefined.png' },
+		{ title: 'Issue #4', cover: './assets/undefined.png' },
+		{ title: 'Issue #5', cover: './assets/undefined.png' }
+	]
+}
+
 export default class ComicMenu extends Component {
 	state = {
 		is_showing_settings: false,
@@ -51,7 +62,7 @@ export default class ComicMenu extends Component {
 					</div>
 
 					{ state.is_showing_settings && <ComicSettings /> }
-					{ state.is_showing_library && <ComicLibrary /> }
+					{ state.is_showing_library && <ComicLibrary {...TestData}/> }
 
 				</div>
 			</div>
