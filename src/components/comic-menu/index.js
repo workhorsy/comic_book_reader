@@ -4,6 +4,7 @@ import style from './style';
 import { toggleFullScreen } from '../../lib/utility';
 
 import ComicSettings from '../comic-settings';
+import ComicLibrary from '../comic-library';
 import ComicButton from '../comic-button';
 
 export default class ComicMenu extends Component {
@@ -21,6 +22,11 @@ export default class ComicMenu extends Component {
 		this.setState({ is_showing_library: false });
 	}
 
+	onBtnLibrary = () => {
+		this.setState(prevState => ({ is_showing_library: !prevState.is_showing_library }));
+		this.setState({ is_showing_settings: false });
+	}
+
 	render() {
 		let { props, state } = this;
 		return (
@@ -28,7 +34,7 @@ export default class ComicMenu extends Component {
 				<div id={style.topMenuPanel}>
 					<div id={style.topMenuButtons}>
 						<ComicButton id="btnFileLoad" translatable="true">Open comic file</ComicButton>
-						<ComicButton id="btnLibrary" translatable="true">Library</ComicButton>
+						<ComicButton id="btnLibrary" translatable="true" onClick={this.onBtnLibrary}>Library</ComicButton>
 						<ComicButton id="btnFullScreen" translatable="true" onClick={this.onBtnFullScreen}>Full Screen</ComicButton>
 						<ComicButton id="btnSettings" translatable="true" onClick={this.onBtnSettings}>Settings</ComicButton>
 					</div>
@@ -45,6 +51,7 @@ export default class ComicMenu extends Component {
 					</div>
 
 					{ state.is_showing_settings && <ComicSettings /> }
+					{ state.is_showing_library && <ComicLibrary /> }
 
 				</div>
 			</div>
