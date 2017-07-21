@@ -4,7 +4,19 @@ import style from './style';
 import { toggleFullScreen } from '../../lib/utility';
 
 import ComicSettings from '../comic-settings';
+import ComicLibrary from '../comic-library';
 import ComicButton from '../comic-button';
+
+//Test data for ComicLibrary ( remove this )
+const TestData = {
+	items: [
+		{ title: 'Issue #1', cover: './assets/undefined.png' },
+		{ title: 'Issue #2', cover: './assets/undefined.png' },
+		{ title: 'Issue #3', cover: './assets/undefined.png' },
+		{ title: 'Issue #4', cover: './assets/undefined.png' },
+		{ title: 'Issue #5', cover: './assets/undefined.png' }
+	]
+}
 
 export default class ComicMenu extends Component {
 	state = {
@@ -17,17 +29,23 @@ export default class ComicMenu extends Component {
 	}
 
 	onBtnSettings = () => {
-		this.setState({ is_showing_settings: !this.state.is_showing_settings });
+		this.setState(prevState => ({ is_showing_settings: !prevState.is_showing_settings }));
 		this.setState({ is_showing_library: false });
 	}
 
+	onBtnLibrary = () => {
+		this.setState(prevState => ({ is_showing_library: !prevState.is_showing_library }));
+		this.setState({ is_showing_settings: false });
+	}
+
 	render() {
+		let { props, state } = this;
 		return (
 			<div class={style.comic_menu}>
 				<div id={style.topMenuPanel}>
 					<div id={style.topMenuButtons}>
 						<ComicButton id="btnFileLoad" translatable="true">Open comic file</ComicButton>
-						<ComicButton id="btnLibrary" translatable="true">Library</ComicButton>
+						<ComicButton id="btnLibrary" translatable="true" onClick={this.onBtnLibrary}>Library</ComicButton>
 						<ComicButton id="btnFullScreen" translatable="true" onClick={this.onBtnFullScreen}>Full Screen</ComicButton>
 						<ComicButton id="btnSettings" translatable="true" onClick={this.onBtnSettings}>Settings</ComicButton>
 					</div>
@@ -43,10 +61,9 @@ export default class ComicMenu extends Component {
 						</div>
 					</div>
 
-					{ this.state.is_showing_settings ? <ComicSettings /> : null }
+					{ state.is_showing_settings && <ComicSettings /> }
+					{ state.is_showing_library && <ComicLibrary {...TestData}/> }
 
-					<div id="libraryMenu">
-					</div>
 				</div>
 			</div>
 		);
