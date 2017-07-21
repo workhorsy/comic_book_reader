@@ -1,6 +1,10 @@
 import { h, Component } from 'preact';
 //import { Link } from 'preact-router/match';
+import { connect } from 'preact-redux';
+import { bindActions } from '../../util';
+import reduce from '../../reducers';
 import style from './style';
+import * as actions from '../../actions';
 import { toggleFullScreen } from '../../lib/utility';
 
 import ComicSettings from '../comic-settings';
@@ -18,6 +22,7 @@ const TestData = {
 	]
 }
 
+@connect(reduce, bindActions(actions))
 export default class ComicMenu extends Component {
 	state = {
 		is_showing_settings: false,
@@ -26,6 +31,12 @@ export default class ComicMenu extends Component {
 
 	onBtnFullScreen = () => {
 		toggleFullScreen();
+	}
+
+	onbtnOpenFile = () => {
+		alert("FIXME: onbtnOpenFile");
+		this.setState({ text: 'ADD_COMIC' });
+		console.log(this.state.text);
 	}
 
 	onBtnSettings = () => {
@@ -44,7 +55,7 @@ export default class ComicMenu extends Component {
 			<div class={style.comic_menu}>
 				<div id={style.topMenuPanel}>
 					<div id={style.topMenuButtons}>
-						<ComicButton id="btnFileLoad" translatable="true">Open comic file</ComicButton>
+						<ComicButton id="btnFileLoad" translatable="true" onClick={this.onbtnOpenFile}>Open comic file</ComicButton>
 						<ComicButton id="btnLibrary" translatable="true" onClick={this.onBtnLibrary}>Library</ComicButton>
 						<ComicButton id="btnFullScreen" translatable="true" onClick={this.onBtnFullScreen}>Full Screen</ComicButton>
 						<ComicButton id="btnSettings" translatable="true" onClick={this.onBtnSettings}>Settings</ComicButton>
