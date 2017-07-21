@@ -57,6 +57,8 @@
 	"dependencies": {
 		"preact": "^8.2.1",
 		"preact-compat": "^3.16.0",
-		"preact-router": "^2.5.5"
+		"preact-redux": "^2.0.2",
+		"preact-router": "^2.5.5",
+		"redux": "^3.7.2"
 	}
 }
