@@ -24,7 +24,7 @@ npm start
 ```
 
 
-# Install git hooks to automatically generate js/version_date.js file on commit
+# Install git hooks to automatically generate src/lib/version_date.js file on commit
 ```bash
 ./bin/install_hooks.sh
 ```
