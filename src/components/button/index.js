@@ -4,7 +4,7 @@ import style from './style';
 
 import Icon from '../../components/icon'
 
-export default class ComicButton extends Component {
+export default class Button extends Component {
 	state = {
 	};
 
@@ -23,7 +23,7 @@ export default class ComicButton extends Component {
 			<button
 				class={style.comic_button}
 				onMouseUp={this.handleMouseUp}
-			>   {props.icon && <Icon name={props.icon} />}
+			>   {props.icon ? <Icon name={props.icon}/> : null}
 				{ props.children.length > 0 && props.children[0] }
 			</button>
 		);

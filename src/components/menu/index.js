@@ -6,10 +6,30 @@ import reduce from '../../reducers';
 import style from './style';
 import * as actions from '../../actions';
 import { toggleFullScreen } from '../../lib/utility';
+import Icon from '../../components/icon'
 
-import ComicSettings from '../comic-settings';
-import ComicLibrary from '../comic-library';
-import ComicButton from '../comic-button';
+
+const Item = ({label, icon, onClick}) => {
+	const action = (event) => onClick && onClick(event);
+	return (
+		<div class={style.item}>
+			{icon && <Icon name={icon}/>}
+        	<span class={style.label}>{label}</span>
+		</div>
+    );
+};
+
+// Internal button
+const Button =  ({label, icon, onClick}) => {
+		const action = (event) => onClick && onClick(event);
+		return (
+			<button class={style.button} title={label} onClick={action}>
+				{icon && <Icon name={icon}/>}
+				<div class={style.line}></div>
+			</button>
+		);
+};
+
 
 
 //Test data for ComicLibrary ( remove this )
@@ -24,7 +44,7 @@ const TestData = {
 }
 
 @connect(reduce, bindActions(actions))
-export default class ComicMenu extends Component {
+export default class Menu extends Component {
 	state = {
 		is_showing_settings: false,
 		is_showing_library: false
@@ -33,7 +53,7 @@ export default class ComicMenu extends Component {
 	onBtnFullScreen = () => {
 		toggleFullScreen();
 	}
-
+	/*
 	onbtnOpenFile = () => {
 		alert("FIXME: onbtnOpenFile");
 		this.setState({ text: 'ADD_COMIC' });
@@ -50,34 +70,19 @@ export default class ComicMenu extends Component {
 		this.setState({ is_showing_settings: false });
 	}
 
+	<Button id="btnFileLoad" onClick={null} icon={'folder'}/>
+	<Button id="btnLibrary" onClick={null} icon={'bookmark'} />
+	<Button id="btnFullScreen" onClick={null} icon={'expand'}/>
+	<Button id="btnSettings" onClick={null} icon={'cog'} />
+	*/
+
 	render() {
 		let { props, state } = this;
 		return (
-			<div class={style.comic_menu}>
-				<div id={style.topMenuPanel}>
-					<div id={style.topMenuButtons}>
-						<ComicButton id="btnFileLoad" onClick={this.onbtnOpenFile} icon={'open'}/>
-						<ComicButton id="btnLibrary" translatable="true" onClick={this.onBtnLibrary}>Library</ComicButton>
-						<ComicButton id="btnFullScreen" translatable="true" onClick={this.onBtnFullScreen}>Full Screen</ComicButton>
-						<ComicButton id="btnSettings" translatable="true" onClick={this.onBtnSettings}>Settings</ComicButton>
-					</div>
-
-					<p><span id="loadError"></span></p>
-					<div id="comicData">
-						<span id="nameValue"></span><br />
-					</div>
-
-					<div>
-						<div id="lblTotalUsersOnline" style="display: none;">
-							<label translatable="true">Total users online</label> <span id="totalUsersOnline">?</span>
-						</div>
-					</div>
-
-					{ state.is_showing_settings && <ComicSettings /> }
-					{ state.is_showing_library && <ComicLibrary {...TestData}/> }
-
-				</div>
-			</div>
+			<nav class={style.comic_menu}>
+			  <Item label={"CBR"} />
+			  <Button id="btnFileLoad" onClick={null} icon={'bars'}/>
+			</nav>
 		);
 	}
 }

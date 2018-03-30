@@ -3,6 +3,7 @@ import { Router } from 'preact-router';
 
 import Welcome from '../routes/welcome';
 import ShowComics from '../routes/show-comics';
+import Menu from './menu';
 
 export default class App extends Component {
 	handleRoute = e => {
@@ -12,6 +13,7 @@ export default class App extends Component {
 	render() {
 		return (
 			<div id="app">
+			    <Menu />
 				<Router onChange={this.handleRoute}>
 					<Welcome path="/" />
 					<ShowComics path="/show" />

@@ -1,8 +1,6 @@
 import { h, Component } from 'preact';
 import style from './style';
 
-import ComicMenu from '../../components/comic-menu';
-
 export default class ShowComics extends Component {
 	state = {
 	};
@@ -19,7 +17,6 @@ export default class ShowComics extends Component {
 	render() {
 		return (
 			<div class={style.show_comics}>
-				<ComicMenu />
 			</div>
 		);
 	}
