@@ -5,12 +5,37 @@ import { route } from 'preact-router';
 import Icon from '../../components/icon';
 import Button from '../../components/button';
 
+
+const FileInput = ({filters, ref, onChange}) => (
+		<input type="file" ref={ref}
+		  style={{display: 'none'}}
+		  accept={filters.join(', ')}
+		  onChange={event => onChange(event.target.files[0])}
+		  />
+	  );
+
 export default class File extends Component {
 	state = {
+		file: null,
 	};
 
-	showApp(e) {
-		route('/show');
+	constructor(props) {
+		super(props);
+		this.filters = ['.pdf', '.cbr', '.cbt', '.cbz'];
+	}
+
+	OpenLibrary() {
+		route('/library');
+	}
+
+	handleFile(file) {
+		this.setState({file: file});
+	}
+
+	ChooseFile() {
+		// Open file dialog
+		console.log(this.fileInput);
+		this.fileInput.base.click();
 	}
 
 	// gets called when this route is navigated to
@@ -30,9 +55,9 @@ export default class File extends Component {
 				<p class={style.description} translatable="true">
 				Choose a file or drop it here.
 				</p>
-				<Button icon="folder">Choose file</Button>
-				<Button icon="bookmark" type="secondary">Open library</Button>
-
+				<FileInput ref={c => this.fileInput = c} filters={this.filters} onChange={this.handleFile}/>
+				<Button icon="folder" onClick={this.ChooseFile.bind(this)}>Choose file</Button>
+				<Button icon="bookmark" type="secondary" onClick={this.OpenLibrary}>Open library</Button>
 			</div>
 		);
 	}

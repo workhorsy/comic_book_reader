@@ -14,6 +14,7 @@ export default class Button extends Component {
 	};
 
 	componentDidMount() {
+		
 		//console.log(this.props.text);
 	}
 
