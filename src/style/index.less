@@ -1,4 +1,5 @@
 @import 'helpers';
+@import 'vars';
 
 *, *::before, *::after {
 	box-sizing: border-box;
@@ -16,11 +17,12 @@ html {
 }
 
 body {
+	background: var(--bg-color);
+	color: var(--text-color);
 	overflow: hidden;
 	min-height: 100%;
 	margin: 0;
 	padding: 0;
-	background: #2f3640;
     font-size: 1em;
 }
 
