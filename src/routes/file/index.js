@@ -6,8 +6,8 @@ import Icon from '../../components/icon';
 import Button from '../../components/button';
 
 
-const FileInput = ({filters, ref, onChange}) => (
-		<input type="file" ref={ref}
+const FileInput = ({filters, onChange}) => (
+		<input type="file"
 		  style={{display: 'none'}}
 		  accept={filters.join(', ')}
 		  onChange={event => onChange(event.target.files[0])}
@@ -48,7 +48,7 @@ export default class File extends Component {
 
 	render() {
 		return (
-			<div class={style.welcome}>
+			<div class={style.view}>
 				<h1 class={style.title} translatable="true">
 					<Icon name={'arrow-down'}/>
 				</h1>

@@ -22,7 +22,7 @@ export default class Welcome extends Component {
 
 	render() {
 		return (
-			<div class={style.welcome}>
+			<div class={style.view}>
 				<h1 class={style.title} translatable="true">Comic Book Reader</h1>
 				<p class={style.description} translatable="true">
 					A touch friendly HTML5 comic book reader that reads <br/> CBR, CBZ, CBT, and PDF files.
