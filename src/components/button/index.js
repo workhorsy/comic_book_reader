@@ -18,10 +18,11 @@ export default class Button extends Component {
 	}
 
 	render() {
-		let { props, state } = this;
+		const { props, state } = this;
+		const type = props.type ? style[props.type] : '';
 		return (
 			<button
-				class={style.comic_button}
+				class={`${style.comic_button} ${type}`}
 				onMouseUp={this.handleMouseUp}
 			>   {props.icon ? <Icon name={props.icon}/> : null}
 				{ props.children.length > 0 && props.children[0] }

@@ -25,7 +25,7 @@ const Button =  ({label, icon, onClick}) => {
 		return (
 			<button class={style.button} title={label} onClick={action}>
 				{icon && <Icon name={icon}/>}
-				<div class={style.line}></div>
+				<div class={style.line}>{label}</div>
 			</button>
 		);
 };
@@ -81,7 +81,7 @@ export default class Menu extends Component {
 		return (
 			<nav class={style.comic_menu}>
 			  <Item label={"CBR"} />
-			  <Button id="btnFileLoad" onClick={null} icon={'bars'}/>
+			  <Button id="btnFileLoad" onClick={null} icon={'bars'} />
 			</nav>
 		);
 	}

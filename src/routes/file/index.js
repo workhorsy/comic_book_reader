@@ -2,14 +2,15 @@ import { h, Component } from 'preact';
 import style from './style';
 
 import { route } from 'preact-router';
+import Icon from '../../components/icon';
 import Button from '../../components/button';
 
-export default class Welcome extends Component {
+export default class File extends Component {
 	state = {
 	};
 
 	showApp(e) {
-		route('/file');
+		route('/show');
 	}
 
 	// gets called when this route is navigated to
@@ -23,17 +24,15 @@ export default class Welcome extends Component {
 	render() {
 		return (
 			<div class={style.welcome}>
-				<h1 class={style.title} translatable="true">Comic Book Reader</h1>
+				<h1 class={style.title} translatable="true">
+					<Icon name={'arrow-down'}/>
+				</h1>
 				<p class={style.description} translatable="true">
-					A touch friendly HTML5 comic book reader that reads <br/> CBR, CBZ, CBT, and PDF files.
+				Choose a file or drop it here.
 				</p>
+				<Button icon="folder">Choose file</Button>
+				<Button icon="bookmark" type="secondary">Open library</Button>
 
-					<Button onClick={this.showApp} translatable="true">Start</Button>
-
-				<footer>
-					Copyright &copy; 2017 <a href="https://github.com/workhorsy/comic_book_reader">
-						Matthew Brennan Jones</a>
-				</footer>
 			</div>
 		);
 	}

@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { Router } from 'preact-router';
 
 import Welcome from '../routes/welcome';
-import ShowComics from '../routes/show-comics';
+import File from '../routes/file';
 import Menu from './menu';
 
 export default class App extends Component {
@@ -16,7 +16,7 @@ export default class App extends Component {
 			    <Menu />
 				<Router onChange={this.handleRoute}>
 					<Welcome path="/" />
-					<ShowComics path="/show" />
+					<File path="/file" />
 				</Router>
 			</div>
 		);
