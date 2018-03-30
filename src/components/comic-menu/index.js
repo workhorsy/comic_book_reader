@@ -11,6 +11,7 @@ import ComicSettings from '../comic-settings';
 import ComicLibrary from '../comic-library';
 import ComicButton from '../comic-button';
 
+
 //Test data for ComicLibrary ( remove this )
 const TestData = {
 	items: [
@@ -55,7 +56,7 @@ export default class ComicMenu extends Component {
 			<div class={style.comic_menu}>
 				<div id={style.topMenuPanel}>
 					<div id={style.topMenuButtons}>
-						<ComicButton id="btnFileLoad" translatable="true" onClick={this.onbtnOpenFile}>Open comic file</ComicButton>
+						<ComicButton id="btnFileLoad" onClick={this.onbtnOpenFile} icon={'open'}/>
 						<ComicButton id="btnLibrary" translatable="true" onClick={this.onBtnLibrary}>Library</ComicButton>
 						<ComicButton id="btnFullScreen" translatable="true" onClick={this.onBtnFullScreen}>Full Screen</ComicButton>
 						<ComicButton id="btnSettings" translatable="true" onClick={this.onBtnSettings}>Settings</ComicButton>

@@ -2,6 +2,8 @@ import { h, Component } from 'preact';
 //import { Link } from 'preact-router/match';
 import style from './style';
 
+import Icon from '../../components/icon'
+
 export default class ComicButton extends Component {
 	state = {
 	};
@@ -21,7 +23,7 @@ export default class ComicButton extends Component {
 			<button
 				class={style.comic_button}
 				onMouseUp={this.handleMouseUp}
-			>
+			>   {props.icon && <Icon name={props.icon} />}
 				{ props.children.length > 0 && props.children[0] }
 			</button>
 		);

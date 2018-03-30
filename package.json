@@ -16,9 +16,9 @@
 	"scripts": {
 		"test": "eslint src && preact test",
 		"start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
-		"build": "preact build",
-		"serve": "preact build && preact serve",
-		"dev": "preact watch",
+		"build": "preact build --template src/index.html",
+		"serve": "npm run build && preact serve",
+		"dev": "preact watch  --template src/index.html",
 		"lint": "eslint src"
 	},
 	"eslintConfig": {
