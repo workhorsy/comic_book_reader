@@ -3,21 +3,29 @@
 .view {
 	position: absolute;
 	top: 45px;
-	bottom: 0px;
+	bottom: 0;
 	left: 0;
 	right: 0;
+	padding: 0 5%;
 	text-align: center;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-	color: white;
 	font-size: 1.25em;
+	overflow: auto;
 }
 
 .view p {
-	margin:  25px;
+	margin: 5% 0;
+	max-width: 50%;
 	color: var(--text-message-color);
+	line-height: 1.5;
+}
+
+.view .focus {
+	color: #c8d6e5;
+	font-weight: bold;
 }
 
 .view button {
@@ -25,28 +33,33 @@
 }
 
 .view footer {
-	font-size: 0.95em;
-	line-height: 10vmin;
+	font-size: 0.9em;
+	width: 100%;
 	position: absolute;
 	bottom: 0;
-	width: 100%;
-	left: 0;
-	right: 0;
-	margin: auto;
+	left:0;
+	margin: 32px auto;
+	color: var(--text-message-color);
 }
 
-/*
-@media (max-width: 379px) {
-	.welcome {
+.view footer a {
+	margin: 0 4px;
+}
+
+
+@media (max-width: 400px) {
+	.view  {
+		font-size: 14px;
+	}
+	.view p {
+		max-width: 100%;
+	}
+
+	.view button {
 		font-size: 14px;
 	}
 
-	.welcome button {
-		font-size: 14px;
-	}
-
-	.welcome footer {
+	.view footer {
 		font-size: 14px;
 	}
 }
-*/

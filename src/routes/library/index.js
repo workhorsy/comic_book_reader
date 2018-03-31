@@ -50,7 +50,7 @@ export default class Library extends Component {
 		const {items} = this.props;
 
 		const EmptyMessage = (props) => (
-			<p> Your library is empty, try to <Link href="/file">add</Link> some files first. </p>
+			<span> Your library is empty, <Link href="/file">add</Link> some files first. </span>
 		);
 
 		return (

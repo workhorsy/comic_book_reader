@@ -28,7 +28,7 @@ export default class EmptyState extends Component {
 					<Icon name={props.icon}/>
 					<div class={style.title}>{props.title}</div>
 				</h1>
-				<p class={style.description} translatable="true">{Message && <Message/>}</p>
+				<p class={style.message} translatable="true">{Message && <Message/>}</p>
 				<div class={style.actions}></div>
 			</div>);
 	}

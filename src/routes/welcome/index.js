@@ -25,7 +25,7 @@ export default class Welcome extends Component {
 			<div class={style.view}>
 				<h1 class={style.title} translatable="true">Comic Book Reader</h1>
 				<p class={style.description} translatable="true">
-					A touch friendly HTML5 comic book reader that reads <br/> CBR, CBZ, CBT, and PDF files.
+					A touch friendly HTML5 comic book reader that reads <span class={style.focus}>CBR,</span> <span class={style.focus}>CBZ,</span> <span class={style.focus}>CBT,</span> and <span class={style.focus}>PDF files.</span>
 				</p>
 
 					<Button onClick={this.showApp} translatable="true">Start</Button>
