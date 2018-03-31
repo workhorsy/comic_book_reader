@@ -1,9 +1,10 @@
 import { h, Component } from 'preact'
 import { Router } from 'preact-router'
 
-import Welcome from '../routes/welcome'
 import File from '../routes/file'
+import Welcome from '../routes/welcome'
 import Library from '../routes/library'
+import Settings from '../routes/settings'
 
 import Menu from './menu'
 
@@ -20,6 +21,7 @@ export default class App extends Component {
           <Welcome path="/" />
           <File path="/file" />
           <Library path="/library" />
+          <Settings path="/settings" />
         </Router>
       </div>
     )
