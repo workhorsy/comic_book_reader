@@ -1,9 +1,9 @@
 {
-	"name": "Comic Book Reader",
-	"short_name": "Comic Book Reader",
-	"start_url": "/",
-	"display": "standalone",
-	"orientation": "any",
-	"background_color": "#fff",
-	"theme_color": "#ffb400",
+  "name": "Comic Book Reader",
+  "short_name": "Comic Book Reader",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff",
+  "theme_color": "#ffb400"
 }

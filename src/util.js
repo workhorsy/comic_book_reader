@@ -1,7 +1,7 @@
-import { bindActionCreators } from 'redux';
+import { bindActionCreators } from 'redux'
 
 export function bindActions(actions) {
-	return dispatch => ({
-		...bindActionCreators(actions, dispatch)
-	});
+  return dispatch => ({
+    ...bindActionCreators(actions, dispatch),
+  })
 }

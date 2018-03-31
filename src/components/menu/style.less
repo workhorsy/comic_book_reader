@@ -1,85 +1,83 @@
 @import '~style/helpers';
 
 .comic_menu {
-	background: transparent;
-	border-bottom: 0px solid #57606f;
-	color: white;
-	box-sizing: border-box;
-	opacity: 0.9;
-	width: 100%;
-	margin: 0;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	font-size: 1.5em;
-	height: 64px;
-	padding: 0 32px;
+  background: transparent;
+  border-bottom: 0px solid #57606f;
+  color: white;
+  box-sizing: border-box;
+  opacity: 0.9;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5em;
+  height: 64px;
+  padding: 0 32px;
 }
 
 .item,
 .button {
-	padding: 0;
-	margin: 0;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .item {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .item a {
-	color: inherit;
-	display: inline-block;
-	text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  text-decoration: none;
 }
 
-
 .button {
-	color: black;
-	border: 0;
-	cursor: pointer;
-	font-size: 1em;
-	color: inherit;
-	background: transparent;
-	opacity: 0.5;
-	transition: opacity 0.3s ease;
+  color: black;
+  border: 0;
+  cursor: pointer;
+  font-size: 1em;
+  color: inherit;
+  background: transparent;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
 }
 
 .button i {
-	display: block;
-	padding: 0;
-	margin: 0;
+  display: block;
+  padding: 0;
+  margin: 0;
 }
 
-
 .button:hover {
-	opacity: 1;
+  opacity: 1;
 }
 
 .tab .line {
-	height: 2px;
-	width: 0%;
-	opacity: 0;
-	background: white;
-	margin: 0;
+  height: 2px;
+  width: 0%;
+  opacity: 0;
+  background: white;
+  margin: 0;
 }
 
 .tab:active .line {
-	animation-name: active;
-	animation-duration: 0.3s;
-	animation-fill-mode: forwards;
-	animation-timing-function: ease;
+  animation-name: active;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 @keyframes active {
-	from {
-		opacity: 0;
-		width: 0;
-	}
-	to {
-		opacity: 1;
-		width: 100%;
-	}
+  from {
+    opacity: 0;
+    width: 0;
+  }
+  to {
+    opacity: 1;
+    width: 100%;
+  }
 }

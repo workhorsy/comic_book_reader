@@ -1,23 +1,19 @@
-import { h, Component } from 'preact';
+import { h, Component } from 'preact'
 //import { Link } from 'preact-router/match';
-import style from './style';
+import style from './style'
 
 export default class ComicCheckBox extends Component {
-	state = {
-	};
+  state = {}
 
-	componentDidMount() {
-	}
+  componentDidMount() {}
 
-	render() {
-		let { props, state } = this;
-		return (
-			<div class={style.comic_check_box}>
-				<input id={props.id} type="checkbox" />
-				<label for={props.id}>
-					{ props.children.length > 0 && props.children[0] }
-				</label>
-			</div>
-		);
-	}
+  render() {
+    let { props, state } = this
+    return (
+      <div class={style.comic_check_box}>
+        <input id={props.id} type="checkbox" />
+        <label for={props.id}>{props.children.length > 0 && props.children[0]}</label>
+      </div>
+    )
+  }
 }

@@ -1,42 +1,44 @@
 @import 'helpers';
 @import 'vars';
 
-*, *::before, *::after {
-	box-sizing: border-box;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 * {
-	font-family: Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 html {
-	min-height: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
+  min-height: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-	background: var(--bg-color);
-	color: var(--text-color);
-	overflow: hidden;
-	min-height: 100%;
-	margin: 0;
-	padding: 0;
-    font-size: 1em;
+  background: var(--bg-color);
+  color: var(--text-color);
+  overflow: hidden;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
 }
 
 a {
-	color: var(--link-color);
+  color: var(--link-color);
 }
 
 /* Make scroll bars small and blue on Chrome */
 ::-webkit-scrollbar {
-	height: 5px;
-	width: 5px;
+  height: 5px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
 }
 ::-webkit-scrollbar-thumb {
-	background: #61AFEF;
+  background: #61afef;
 }

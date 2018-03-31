@@ -1,14 +1,13 @@
-
 export function addComic(text) {
-	return {
-		type: 'ADD_COMIC',
-		text
-	};
+  return {
+    type: 'ADD_COMIC',
+    text,
+  }
 }
 
 export function removeComic(comic) {
-	return {
-		type: 'REMOVE_COMIC',
-		comic
-	};
+  return {
+    type: 'REMOVE_COMIC',
+    comic,
+  }
 }

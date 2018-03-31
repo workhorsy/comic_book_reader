@@ -1,59 +1,58 @@
-import { h, Component } from 'preact';
-import { Link } from 'preact-router';
-import { connect } from 'preact-redux';
-import { bindActions } from '../../util';
-import reduce from '../../reducers';
-import style from './style';
-import * as actions from '../../actions';
-import { toggleFullScreen } from '../../lib/utility';
+import { h, Component } from 'preact'
+import { Link } from 'preact-router'
+import { connect } from 'preact-redux'
+import { bindActions } from '../../util'
+import reduce from '../../reducers'
+import style from './style'
+import * as actions from '../../actions'
+import { toggleFullScreen } from '../../lib/utility'
 import Icon from '../../components/icon'
 
-
-const Item = ({label, icon, href, onClick}) => {
-	const action = (event) => onClick && onClick(event);
-	return (
-		<div class={style.item}>
-			{icon && <Icon name={icon}/>}
-        	<Link href={href}><span class={style.label}>{label}</span></Link>
-		</div>
-    );
-};
+const Item = ({ label, icon, href, onClick }) => {
+  const action = event => onClick && onClick(event)
+  return (
+    <div class={style.item}>
+      {icon && <Icon name={icon} />}
+      <Link href={href}>
+        <span class={style.label}>{label}</span>
+      </Link>
+    </div>
+  )
+}
 
 // Internal button
-const Button =  ({label, icon, onClick}) => {
-		const action = (event) => onClick && onClick(event);
-		return (
-			<button class={style.button} title={label} onClick={action}>
-				{icon && <Icon name={icon}/>}
-				<div class={style.line}>{label}</div>
-			</button>
-		);
-};
-
-
+const Button = ({ label, icon, onClick }) => {
+  const action = event => onClick && onClick(event)
+  return (
+    <button class={style.button} title={label} onClick={action}>
+      {icon && <Icon name={icon} />}
+      <div class={style.line}>{label}</div>
+    </button>
+  )
+}
 
 //Test data for ComicLibrary ( remove this )
 const TestData = {
-	items: [
-		{ title: 'Issue #1', cover: './assets/undefined.png' },
-		{ title: 'Issue #2', cover: './assets/undefined.png' },
-		{ title: 'Issue #3', cover: './assets/undefined.png' },
-		{ title: 'Issue #4', cover: './assets/undefined.png' },
-		{ title: 'Issue #5', cover: './assets/undefined.png' }
-	]
+  items: [
+    { title: 'Issue #1', cover: './assets/undefined.png' },
+    { title: 'Issue #2', cover: './assets/undefined.png' },
+    { title: 'Issue #3', cover: './assets/undefined.png' },
+    { title: 'Issue #4', cover: './assets/undefined.png' },
+    { title: 'Issue #5', cover: './assets/undefined.png' },
+  ],
 }
 
 @connect(reduce, bindActions(actions))
 export default class Menu extends Component {
-	state = {
-		is_showing_settings: false,
-		is_showing_library: false
-	};
+  state = {
+    is_showing_settings: false,
+    is_showing_library: false,
+  }
 
-	onBtnFullScreen = () => {
-		toggleFullScreen();
-	}
-	/*
+  onBtnFullScreen = () => {
+    toggleFullScreen()
+  }
+  /*
 	onbtnOpenFile = () => {
 		alert("FIXME: onbtnOpenFile");
 		this.setState({ text: 'ADD_COMIC' });
@@ -76,13 +75,13 @@ export default class Menu extends Component {
 	<Button id="btnSettings" onClick={null} icon={'cog'} />
 	*/
 
-	render() {
-		let { props, state } = this;
-		return (
-			<nav class={style.comic_menu}>
-			  <Item label={"CBR"} href={"/"} />
-			  <Button id="btnFileLoad" onClick={null} icon={'bars'} />
-			</nav>
-		);
-	}
+  render() {
+    let { props, state } = this
+    return (
+      <nav class={style.comic_menu}>
+        <Item label={'CBR'} href={'/'} />
+        <Button id="btnFileLoad" onClick={null} icon={'bars'} />
+      </nav>
+    )
+  }
 }
