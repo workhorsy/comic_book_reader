@@ -3,6 +3,8 @@ import { Router } from 'preact-router';
 
 import Welcome from '../routes/welcome';
 import File from '../routes/file';
+import Library from '../routes/library';
+
 import Menu from './menu';
 
 export default class App extends Component {
@@ -17,6 +19,7 @@ export default class App extends Component {
 				<Router onChange={this.handleRoute}>
 					<Welcome path="/" />
 					<File path="/file" />
+					<Library path="/library" />
 				</Router>
 			</div>
 		);

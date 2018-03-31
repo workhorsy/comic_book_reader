@@ -39,17 +39,17 @@ class Item extends Component {
 	}
 }
 
-export default class ComicLibrary extends Component {
+export default class Library extends Component {
 
 	static defaultProps = {
 		items: []
 	}
 
 	render() {
-		let { props, state } = this;
+		const {items} = this.props;
 		return (
-			<div id="libraryMenu" class={style.library}>
-				{ props.items.map((i, k) => <Item key={k} {...i}/>) }
+			<div id="libraryMenu" class={style.view}>
+				{ items && items.length ? items.map((i, k) => <Item key={k} {...i}/>) : <h1>Empty</h1> }
 			</div>
 		);
 	}

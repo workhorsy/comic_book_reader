@@ -25,15 +25,15 @@ export default class File extends Component {
 		this.filters = ['.pdf', '.cbr', '.cbt', '.cbz'];
 	}
 
-	OpenLibrary() {
+	openLibrary() {
 		route('/library');
 	}
 
 	handleFile(file) {
-		this.setState({file: file});
+		file && this.setState({file});
 	}
 
-	ChooseFile() {
+	openFile() {
 		// Open file dialog
 		console.log(this.fileInput);
 		this.fileInput.base.click();
@@ -76,8 +76,8 @@ export default class File extends Component {
 				</p>
 				<FileInput ref={c => this.fileInput = c} filters={this.filters} onChange={this.handleFile}/>
 				<div class={style.actions}>
-				  <Button icon="folder" onClick={this.ChooseFile.bind(this)}>Choose file</Button>
-				  <Button icon="bookmark" type="secondary" onClick={this.OpenLibrary}>Open library</Button>
+				  <Button icon="folder" onClick={this.openFile.bind(this)}>Choose file</Button>
+				  <Button icon="bookmark" type="secondary" onClick={this.openLibrary}>Open library</Button>
 				</div>
 			</div>
 		);
