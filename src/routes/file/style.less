@@ -20,20 +20,29 @@
 	opacity: 0.5;
 }
 
-.view i {
+.view h1 i {
+	opacity: 0.5;
+}
+.drag p {
+	opacity: 1;
 }
 
-.view:hover i {
+.drag .actions {
+	opacity: 0.25;
+	pointer-events: none;
+}
+
+
+
+.drag h1 i {
 	display: block;
 	transform: translateY(0px);
-	/*
 	animation-name: drop;
 	animation-duration: 0.35s;
 	animation-fill-mode: both;
 	animation-timing-function: ease;
 	animation-iteration-count: infinite;
 	animation-direction: alternate;
-	*/
 }
 
 .view button {

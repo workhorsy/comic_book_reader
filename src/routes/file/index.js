@@ -17,6 +17,7 @@ const FileInput = ({filters, onChange}) => (
 export default class File extends Component {
 	state = {
 		file: null,
+		drag: false
 	};
 
 	constructor(props) {
@@ -38,6 +39,22 @@ export default class File extends Component {
 		this.fileInput.base.click();
 	}
 
+	handleDrop(event) {
+		event.preventDefault();
+		const { files } = event.dataTransfer;
+		const file = files ? files[0] : null;
+		this.setState({file, drag: false});
+	}
+
+	handleDragOver(event) {
+		event.preventDefault();
+		this.setState({ drag: true});
+	}
+	handleDragLeave() {
+		this.setState({drag: false});
+	}
+
+
 	// gets called when this route is navigated to
 	componentDidMount() {
 	}
@@ -47,8 +64,10 @@ export default class File extends Component {
 	}
 
 	render() {
+		const drag = this.state.drag ? style.drag : "";
+
 		return (
-			<div class={style.view}>
+			<div class={`${style.view} ${drag}`} ondrop={this.handleDrop.bind(this)} ondragleave={this.handleDragLeave.bind(this)} ondragover={this.handleDragOver.bind(this)}>
 				<h1 class={style.title} translatable="true">
 					<Icon name={'arrow-down'}/>
 				</h1>
@@ -56,8 +75,10 @@ export default class File extends Component {
 				Choose a file or drop it here.
 				</p>
 				<FileInput ref={c => this.fileInput = c} filters={this.filters} onChange={this.handleFile}/>
-				<Button icon="folder" onClick={this.ChooseFile.bind(this)}>Choose file</Button>
-				<Button icon="bookmark" type="secondary" onClick={this.OpenLibrary}>Open library</Button>
+				<div class={style.actions}>
+				  <Button icon="folder" onClick={this.ChooseFile.bind(this)}>Choose file</Button>
+				  <Button icon="bookmark" type="secondary" onClick={this.OpenLibrary}>Open library</Button>
+				</div>
 			</div>
 		);
 	}
