@@ -5,7 +5,6 @@ import { bindActions } from '../../util'
 import reduce from '../../reducers'
 import style from './style'
 import * as actions from '../../actions'
-import { toggleFullScreen } from '../../lib/utility'
 import Icon from '../../components/icon'
 
 const Item = ({ id, label, icon, href, onClick }) => {

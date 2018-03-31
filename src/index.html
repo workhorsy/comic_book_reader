@@ -11,17 +11,31 @@
 		<div id=root></div>
         <script defer src="/bundle.js"></script>
         <script>
-		  // Fix fontawesome bug
+		  /* TODO: Move somewhere else! */
+		  // Fontawesome bug
           FontAwesomeConfig = { autoReplaceSvg: 'nest' }
-		  // Prevent DragDrop
+		  // Prevent Drag
 		  window.addEventListener("dragover",function(e){
 			  e = e || event;
 			  e.preventDefault();
 		  },false);
+		  // Prevent Drop
 		  window.addEventListener("drop",function(e){
 			  e = e || event;
 			  e.preventDefault();
 		  },false);
+		  // Stop the right click menu from popping up
+		  window.addEventListener('contextmenu', function(e) {
+		      if (! settings_get_right_click_enabled()) {
+		          e.preventDefault();
+		      }
+		  });
+		  // Resize everything when the browser resizes
+		  window.addEventListener('resize', function() {
+		      let width = window.innerWidth;
+		      let height = window.innerHeight;
+		      //onResize(width, height);
+		  });
         </script>
 	</body>
 </html>
