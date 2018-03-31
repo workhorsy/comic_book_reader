@@ -1,5 +1,35 @@
-// Show an error message if any required browser features are missing
+//https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
+export function toggleFullScreen() {
+	if (!document.fullscreenElement &&
+		!document.mozFullScreenElement &&
+		!document.webkitFullscreenElement &&
+		!document.msFullscreenElement) {
+		console.info('Calling full screen ................');
+		if (document.documentElement.requestFullscreen) {
+			document.documentElement.requestFullscreen();
+		} else if (document.documentElement.msRequestFullscreen) {
+			document.documentElement.msRequestFullscreen();
+		} else if (document.documentElement.mozRequestFullScreen) {
+			document.documentElement.mozRequestFullScreen();
+		} else if (document.documentElement.webkitRequestFullscreen) {
+			document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		}
+	} else {
+		console.info('Calling exit full screen ................');
+		if (document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if (document.msExitFullscreen) {
+			document.msExitFullscreen();
+		} else if (document.mozCancelFullScreen) {
+			document.mozCancelFullScreen();
+		} else if (document.webkitExitFullscreen) {
+			document.webkitExitFullscreen();
+		}
+	}
+}
 
+
+// Show an error message if any required browser features are missing
 export function requireBrowserFeatures(cb) {
 	let errors = [];
 	if ( !('transform' in document.body.style)) {
