@@ -1,4 +1,6 @@
 import { h, Component } from 'preact';
+import { Link } from 'preact-router';
+import EmptyState from '../../components/empty-state';
 import style from './style';
 
 class Item extends Component {
@@ -44,12 +46,22 @@ export default class Library extends Component {
 	static defaultProps = {
 		items: []
 	}
-
 	render() {
 		const {items} = this.props;
+
+		const EmptyMessage = (props) => (
+			<p> Your library is empty, try to <Link href="/file">add</Link> some files first. </p>
+		);
+
 		return (
 			<div id="libraryMenu" class={style.view}>
-				{ items && items.length ? items.map((i, k) => <Item key={k} {...i}/>) : <h1>Empty</h1> }
+				{ items && items.length ?
+					items.map((i, k) => <Item key={k} {...i}/>) :
+					<EmptyState
+					    icon="bookmark"
+						title="No comics yet"
+						message={EmptyMessage}/>
+				}
 			</div>
 		);
 	}

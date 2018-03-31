@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-//import { Link } from 'preact-router/match';
+import { Link } from 'preact-router';
 import { connect } from 'preact-redux';
 import { bindActions } from '../../util';
 import reduce from '../../reducers';
@@ -9,12 +9,12 @@ import { toggleFullScreen } from '../../lib/utility';
 import Icon from '../../components/icon'
 
 
-const Item = ({label, icon, onClick}) => {
+const Item = ({label, icon, href, onClick}) => {
 	const action = (event) => onClick && onClick(event);
 	return (
 		<div class={style.item}>
 			{icon && <Icon name={icon}/>}
-        	<span class={style.label}>{label}</span>
+        	<Link href={href}><span class={style.label}>{label}</span></Link>
 		</div>
     );
 };
@@ -80,7 +80,7 @@ export default class Menu extends Component {
 		let { props, state } = this;
 		return (
 			<nav class={style.comic_menu}>
-			  <Item label={"CBR"} />
+			  <Item label={"CBR"} href={"/"} />
 			  <Button id="btnFileLoad" onClick={null} icon={'bars'} />
 			</nav>
 		);
