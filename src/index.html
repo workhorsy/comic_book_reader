@@ -9,9 +9,19 @@
 	</head>
 	<body>
 		<div id=root></div>
-        <script defer="" src="/bundle.js"></script>
+        <script defer src="/bundle.js"></script>
         <script>
+		  // Fix fontawesome bug
           FontAwesomeConfig = { autoReplaceSvg: 'nest' }
+		  // Prevent DragDrop
+		  window.addEventListener("dragover",function(e){
+			  e = e || event;
+			  e.preventDefault();
+		  },false);
+		  window.addEventListener("drop",function(e){
+			  e = e || event;
+			  e.preventDefault();
+		  },false);
         </script>
 	</body>
 </html>
