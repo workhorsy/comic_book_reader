@@ -1,7 +1,7 @@
 import { h, Component } from 'preact'
 import { Router } from 'preact-router'
 
-import File from '../routes/file'
+import Files from '../routes/files'
 import Welcome from '../routes/welcome'
 import Library from '../routes/library'
 import Settings from '../routes/settings'
@@ -19,7 +19,7 @@ export default class App extends Component {
         <Menu />
         <Router onChange={this.handleRoute}>
           <Welcome path="/" />
-          <File path="/file" />
+          <Files path="/files" />
           <Library path="/library" />
           <Settings path="/settings" />
         </Router>

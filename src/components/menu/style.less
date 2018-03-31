@@ -5,28 +5,28 @@
   border-bottom: 0px solid #57606f;
   color: white;
   box-sizing: border-box;
-  opacity: 0.9;
   width: 100%;
   margin: 0;
+  position: fixed;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.5em;
+  font-size: 1.25em;
   height: 64px;
-  padding: 0 32px;
+  padding: 0 16px;
+  z-index: 1;
 }
 
-.item,
+#appName {
+  font-weight: bold;
+}
+
 .button {
   padding: 0;
   margin: 0;
   display: flex;
   justify-content: space-around;
   align-items: center;
-}
-
-.item {
-  font-weight: bold;
 }
 
 .item a {
@@ -69,6 +69,42 @@
   animation-duration: 0.3s;
   animation-fill-mode: forwards;
   animation-timing-function: ease;
+}
+
+.overlay {
+  background: var(--bg-color);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.75;
+}
+
+.slider {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  min-width: 250px;
+  background: #1f232b; //var(--bg-color);
+  z-index: 1;
+  text-align: left;
+  transform: translateX(250px);
+  transition: all 0.3s ease;
+}
+
+.slider.open {
+  transform: translateX(0px);
+}
+
+.slider .item {
+  margin: 32px 16px;
+}
+
+.slider .item i {
+  margin-right: 16px;
 }
 
 @keyframes active {

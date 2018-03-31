@@ -8,7 +8,7 @@ export default class Welcome extends Component {
   state = {}
 
   showApp(e) {
-    route('/file')
+    route('/files')
   }
 
   // gets called when this route is navigated to

@@ -8,14 +8,27 @@ import * as actions from '../../actions'
 import { toggleFullScreen } from '../../lib/utility'
 import Icon from '../../components/icon'
 
-const Item = ({ label, icon, href, onClick }) => {
+const Item = ({ id, label, icon, href, onClick }) => {
   const action = event => onClick && onClick(event)
   return (
-    <div class={style.item}>
-      {icon && <Icon name={icon} />}
+    <div id={id} class={style.item}>
       <Link href={href}>
+        {icon && <Icon name={icon} />}
         <span class={style.label}>{label}</span>
       </Link>
+    </div>
+  )
+}
+
+const Slider = props => {
+  return (
+    <div class={`${style.slider} ${props.open ? style.open : ''}`}>
+      <div class={style.links}>
+        <Item icon="folder" label="Files" href="/files" />
+        <Item icon="bookmark" label="Library" href="/library" />
+        <Item icon="question-circle" label="About" href="/" />
+        <Item icon="cog" label="Settings" href="/settings" />
+      </div>
     </div>
   )
 }
@@ -45,42 +58,29 @@ const TestData = {
 @connect(reduce, bindActions(actions))
 export default class Menu extends Component {
   state = {
-    is_showing_settings: false,
-    is_showing_library: false,
+    openSlider: false,
   }
 
   onBtnFullScreen = () => {
     toggleFullScreen()
   }
-  /*
-	onbtnOpenFile = () => {
-		alert("FIXME: onbtnOpenFile");
-		this.setState({ text: 'ADD_COMIC' });
-		console.log(this.state.text);
-	}
 
-	onBtnSettings = () => {
-		this.setState(prevState => ({ is_showing_settings: !prevState.is_showing_settings }));
-		this.setState({ is_showing_library: false });
-	}
+  toggleSlider = () => {
+    this.setState(prevState => ({ openSlider: !prevState.openSlider }))
+  }
 
-	onBtnLibrary = () => {
-		this.setState(prevState => ({ is_showing_library: !prevState.is_showing_library }));
-		this.setState({ is_showing_settings: false });
-	}
-
-	<Button id="btnFileLoad" onClick={null} icon={'folder'}/>
-	<Button id="btnLibrary" onClick={null} icon={'bookmark'} />
-	<Button id="btnFullScreen" onClick={null} icon={'expand'}/>
-	<Button id="btnSettings" onClick={null} icon={'cog'} />
-	*/
+  closeSlider = () => {
+    this.setState({ openSlider: false })
+  }
 
   render() {
     let { props, state } = this
     return (
       <nav class={style.comic_menu}>
-        <Item label={'CBR'} href={'/'} />
-        <Button id="btnFileLoad" onClick={null} icon={'bars'} />
+        <Item id={style.appName} label={'CBR'} href={'/'} />
+        <Slider open={state.openSlider} />
+        {state.openSlider && <div class={style.overlay} onClick={this.closeSlider} />}
+        <Button id="btnFileLoad" onClick={this.toggleSlider} icon={'bars'} />
       </nav>
     )
   }

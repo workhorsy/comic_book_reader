@@ -14,7 +14,7 @@ const FileInput = ({ filters, onChange }) => (
   />
 )
 
-export default class File extends Component {
+export default class Files extends Component {
   state = {
     file: null,
     drag: false,

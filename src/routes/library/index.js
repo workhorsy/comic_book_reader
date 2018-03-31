@@ -50,8 +50,7 @@ export default class Library extends Component {
 
     const EmptyMessage = props => (
       <span>
-        {' '}
-        Your library is empty, <Link href="/file">add</Link> some files first.{' '}
+        Your library is empty, <Link href="/files">add</Link> some files first.{' '}
       </span>
     )
 
