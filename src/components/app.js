@@ -1,27 +1,53 @@
 import { h, Component } from 'preact'
-import { Router } from 'preact-router'
+import { Router, route } from 'preact-router'
+import { requireBrowserFeatures } from '../utils/browser'
 
-import Files from '../routes/files'
+import Files from '../routes/settings'
 import Welcome from '../routes/welcome'
 import Library from '../routes/library'
 import Settings from '../routes/settings'
 
+// Errors
+import Unsupported from '../routes/unsupported'
+
 import Menu from './menu'
 
 export default class App extends Component {
-  handleRoute = e => {
-    this.currentUrl = e.url
+  state = {
+    currentRoute: null,
+    compatible: true,
+  }
+
+  componentDidMount() {
+    this.hasErrors()
+  }
+
+  hasErrors = () => {
+    // Test browser features
+    requireBrowserFeatures((errors, warnings) => {
+      errors.length > 0 && this.setState({ compatible: false })
+    })
+  }
+
+  handleRoute = page => {
+    const { compatible } = this.state
+    this.setState({ currentRoute: page })
+    // Redirect to error
+    !compatible && route('/unsupported')
+    // Redirect to welcome page
+    page.url === '/unsupported' && compatible && route('/')
   }
 
   render() {
     return (
       <div id="app">
-        <Menu />
+        {this.state.compatible && <Menu />}
         <Router onChange={this.handleRoute}>
-          <Welcome path="/" />
+          <Welcome path="/" default />
           <Files path="/files" />
           <Library path="/library" />
           <Settings path="/settings" />
+          <Unsupported path="/unsupported" />
         </Router>
       </div>
     )
