@@ -18,14 +18,16 @@ Comic Book Reader
 npm install
 ```
 
-# Run for development
+## Run for development
 ```bash
 npm start
 ```
 
 
-# Install git hooks to automatically generate src/lib/version_date.js file on commit
+## Install git hooks to automatically generate src/lib/version_date.js file on commit
 ```bash
 ./bin/install_hooks.sh
 ```
+## Contributors
 
+This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification.

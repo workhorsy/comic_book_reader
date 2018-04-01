@@ -18,7 +18,9 @@
     "serve": "npm run build && preact serve",
     "dev": "preact watch  --template src/index.html",
     "lint": "eslint src",
-    "format": "pretty-quick --branch preact"
+    "format": "pretty-quick --branch preact",
+    "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate"
   },
   "eslintConfig": {
     "extends": "eslint-config-synacor",
@@ -38,6 +40,7 @@
   },
   "eslintIgnore": ["src/lib/*"],
   "devDependencies": {
+    "all-contributors-cli": "^4.11.1",
     "eslint": "^4.2.0",
     "eslint-config-synacor": "^1.0.1",
     "husky": "^0.14.3",
