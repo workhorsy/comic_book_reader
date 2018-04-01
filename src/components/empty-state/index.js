@@ -6,11 +6,6 @@ import Icon from '../../components/icon'
 export default class EmptyState extends Component {
   state = {}
 
-  handleMouseUp = event => {
-    //console.log(this.props.children[0]);
-    this.props.onClick && this.props.onClick(event)
-  }
-
   componentDidMount() {
     //console.log(this.props.text);
   }

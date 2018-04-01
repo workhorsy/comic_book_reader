@@ -3,7 +3,7 @@
   "projectName": "comic_book_reader",
   "files": ["README.md"],
   "imageSize": 100,
-  "commit": true,
+  "commit": false,
   "contributorsPerLine": 4,
   "contributors": [
     {

@@ -2,6 +2,7 @@ import { h, Component } from 'preact'
 import style from './style'
 
 import { route } from 'preact-router'
+import Footer from '../../components/footer'
 import Button from '../../components/button'
 
 export default class Welcome extends Component {
@@ -33,10 +34,7 @@ export default class Welcome extends Component {
           Start
         </Button>
 
-        <footer>
-          Copyright &copy; 2017{' '}
-          <a href="https://github.com/workhorsy/comic_book_reader">Matthew Brennan Jones</a>
-        </footer>
+        <Footer />
       </div>
     )
   }
