@@ -99,7 +99,7 @@ export function requireBrowserFeatures(cb) {
 
 	if (! hasErrors(errors)) {
 		// Test the Web Workers requirements
-		let worker = new Worker('./lib/test_requirements_worker.js');
+		let worker = new Worker('./lib/ws/test_requirements_worker.js');
 		worker.onmessage = function(e) {
 			if (e.data.action === 'test_requirements') {
 				let errors = e.data.errors;
@@ -128,11 +128,11 @@ export function requireBrowserFeatures(cb) {
 	cb();
 }
 
-
+/*
 const test = () => requireBrowserFeatures(function() {
     // Start the service worker
     if (g_use_service_worker && 'serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./lib/service_worker.js', { scope: '/' }).then(function(reg) {
+        navigator.serviceWorker.register('./lib/ws/service_worker.js', { scope: '/' }).then(function(reg) {
             if (reg.installing) {
                 console.log('Service worker installing');
             } else if (reg.waiting) {
@@ -151,3 +151,4 @@ const test = () => requireBrowserFeatures(function() {
         //main();
     }
 });
+*/
