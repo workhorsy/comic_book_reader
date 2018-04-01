@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "description": "A browser based touch friendly comic book reader",
   "homepage": "https://github.com/workhorsy/comic_book_reader",
-  "keywords": [
-    "comics"
-  ],
+  "keywords": ["comics"],
   "author": "Matthew Brennan Jones <matthew.brennan.jones@gmail.com>",
   "license": "AGPL-3.0",
   "main": "index.js",
@@ -38,9 +36,7 @@
       }
     }
   },
-  "eslintIgnore": [
-    "src/lib/*"
-  ],
+  "eslintIgnore": ["src/lib/*"],
   "devDependencies": {
     "eslint": "^4.2.0",
     "eslint-config-synacor": "^1.0.1",
@@ -55,8 +51,7 @@
   "dependencies": {
     "preact": "^8.2.7",
     "preact-compat": "^3.18.0",
-    "preact-redux": "^2.0.3",
     "preact-router": "^2.6.0",
-    "redux": "^3.7.2"
+    "unistore": "^3.0.4"
   }
 }

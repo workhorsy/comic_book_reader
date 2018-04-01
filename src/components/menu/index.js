@@ -1,8 +1,5 @@
 import { h, Component } from 'preact'
 import { Link } from 'preact-router/match'
-import { connect } from 'preact-redux'
-import { bindActions } from '../../util'
-import reduce from '../../reducers'
 import style from './style'
 import * as actions from '../../actions'
 import Icon from '../../components/icon'
@@ -10,10 +7,10 @@ import Icon from '../../components/icon'
 const Item = ({ id, label, icon, href, onClick }) => {
   const action = event => onClick && onClick(event)
   return (
-      <Link id={id} class={style.item} activeClassName={style.active} href={href}>
-        {icon && <Icon name={icon} />}
-        <span class={style.label}>{label}</span>
-      </Link>
+    <Link id={id} class={style.item} activeClassName={style.active} href={href}>
+      {icon && <Icon name={icon} />}
+      <span class={style.label}>{label}</span>
+    </Link>
   )
 }
 
@@ -52,7 +49,6 @@ const TestData = {
   ],
 }
 
-@connect(reduce, bindActions(actions))
 export default class Menu extends Component {
   state = {
     openSlider: false,

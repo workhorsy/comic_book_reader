@@ -1,5 +1,5 @@
 import { h, render } from 'preact'
-import { Provider } from 'preact-redux'
+import { Provider } from 'unistore/preact'
 import store from './store'
 import App from './components/app'
 import './style'
