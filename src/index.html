@@ -24,12 +24,6 @@
 			  e = e || event;
 			  e.preventDefault();
 		  },false);
-		  // Stop the right click menu from popping up
-		  window.addEventListener('contextmenu', function(e) {
-		      if (! settings_get_right_click_enabled()) {
-		          e.preventDefault();
-		      }
-		  });
 		  // Resize everything when the browser resizes
 		  window.addEventListener('resize', function() {
 		      let width = window.innerWidth;
