@@ -1,13 +1,11 @@
-export function addComic(text) {
-  return {
-    type: 'ADD_COMIC',
-    text,
-  }
-}
+const actions = store => ({
+  // for count
+  setSettings(prevState, data) {
+    const { settings } = prevState
+    settings[data.key] = data.value
+    console.log({ ...prevState, settings })
+    return { ...prevState, settings }
+  },
+})
 
-export function removeComic(comic) {
-  return {
-    type: 'REMOVE_COMIC',
-    comic,
-  }
-}
+export default actions

@@ -3,7 +3,7 @@ import { Router, route } from 'preact-router'
 import { requireBrowserFeatures } from '../../utils/browser'
 
 // Routes
-import Files from '../../routes/settings'
+import Files from '../../routes/files'
 import Welcome from '../../routes/welcome'
 import Library from '../../routes/library'
 import Settings from '../../routes/settings'
@@ -22,7 +22,7 @@ export default class App extends Component {
 
   componentDidMount() {
     // Test settings
-    console.log(this.props.settings);
+    console.log(this.props.settings)
     this.hasErrors()
   }
 
