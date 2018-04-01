@@ -1,10 +1,7 @@
 {
   "projectOwner": "workhorsy",
   "projectName": "comic_book_reader",
-  "files": [
-    "README.md",
-    "package.json"
-  ],
+  "files": ["README.md"],
   "imageSize": 100,
   "commit": true,
   "contributorsPerLine": 4,

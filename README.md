@@ -1,8 +1,7 @@
 http://comic-book-reader.com
 
-# Warning
-
-This branch is a port to Preact, and does not work yet!
+> ### :warning: Warning
+> This branch is a port to Preact, and does not work yet!
 
 # Comic Book Reader
 
@@ -13,7 +12,7 @@ This branch is a port to Preact, and does not work yet!
 * Works when offline thanks to Service Workers.
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
-## Install Requirements
+### Install Requirements
 
 ```bash
 npm install
@@ -30,7 +29,7 @@ yarn dev
 yarn format
 ```
 
-# Contributors
+## Contributors
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification.
 

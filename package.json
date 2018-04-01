@@ -5,6 +5,7 @@
   "homepage": "https://github.com/workhorsy/comic_book_reader",
   "keywords": ["comics"],
   "author": "Matthew Brennan Jones <matthew.brennan.jones@gmail.com>",
+  "contributors": ["Baltazar Gomez <btzr.io@gmail.com> (https://github.com/btzr-io)"],
   "license": "AGPL-3.0",
   "main": "index.js",
   "repository": {
