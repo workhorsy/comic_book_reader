@@ -13,25 +13,24 @@ This branch is a port to Preact, and does not work yet!
 * Works when offline thanks to Service Workers.
 * Regularly tested in Firefox, Chrome, and Internet Explorer
 
-# Install Requirements
+## Install Requirements
 
 ```bash
 npm install
 ```
 
-## Run for development
+### Run for development
 
 ```bash
-npm start
+yarn dev
 ```
 
-## Install git hooks to automatically generate src/lib/version_date.js file on commit
-
+### Format code
 ```bash
-./bin/install_hooks.sh
+yarn format
 ```
 
-## Contributors
+# Contributors
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification.
 
