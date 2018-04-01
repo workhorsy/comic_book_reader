@@ -9,15 +9,28 @@ export default class Settings extends Component {
   state = {}
 
   // gets called when this route is navigated to
-  componentDidMount() {}
+  componentDidMount() {
+    window.addEventListener('beforeunload', this.storeSettings)
+  }
 
   // gets called just before navigating away from the route
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    this.storeSettings()
+    window.removeEventListener('beforeunload', () => {
+      this.storeSettings()
+    })
+  }
+
+  storeSettings = () => {
+    // Save settings to localStorage (persistent data)
+    const { settings } = this.props
+    console.log(settings)
+    localStorage.setItem('settings', JSON.stringify(settings))
+  }
 
   updateSettings = (key, value) => {
     const { setSettings } = this.props
     setSettings({ key, value })
-    console.log({ key, value })
   }
 
   render() {
@@ -46,8 +59,8 @@ export default class Settings extends Component {
           <p>
             <CheckBox
               id="btnDisableRightClick"
-              checked={settings.rigth_click_enabled}
-              onChange={value => this.updateSettings('rigth_click_enabled', value)}
+              checked={settings.right_click_enabled}
+              onChange={value => this.updateSettings('right_click_enabled', value)}
             >
               Allow right click
             </CheckBox>

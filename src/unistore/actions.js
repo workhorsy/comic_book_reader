@@ -1,9 +1,8 @@
 const actions = store => ({
   // for count
-  setSettings(prevState, data) {
+  setSettings(prevState, { key, value }) {
     const { settings } = prevState
-    settings[data.key] = data.value
-    console.log({ ...prevState, settings })
+    if (settings[key] !== undefined) settings[key] = value
     return { ...prevState, settings }
   },
 })

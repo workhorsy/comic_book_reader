@@ -22,7 +22,7 @@ export default class App extends Component {
 
   componentDidMount() {
     // Test settings
-    console.log(this.props.settings)
+    console.log('Init settings:', this.props.settings)
     this.hasErrors()
   }
 
