@@ -1,7 +1,7 @@
 import { h, Component } from 'preact'
 import style from './style'
 import Button from '../../components/button'
-import ComicCheckBox from '../../components/comic-check-box'
+import CheckBox from '../../components/checkbox'
 
 import { route } from 'preact-router'
 
@@ -35,20 +35,20 @@ export default class Settings extends Component {
           </p>
           <hr />
           <p>
-            <ComicCheckBox id="btnDisableRightClick">Allow right click</ComicCheckBox>
+            <CheckBox id="btnDisableRightClick">Allow right click</CheckBox>
           </p>
           <p>
-            <ComicCheckBox id="btnEnableInstallUpdates">Check for updates</ComicCheckBox>
+            <CheckBox id="btnEnableInstallUpdates">Check for updates</CheckBox>
           </p>
           <p>
-            <ComicCheckBox id="btnUseHigherQualityPreviews">
+            <CheckBox id="btnUseHigherQualityPreviews">
               Use higher quality page previews
-            </ComicCheckBox>
+            </CheckBox>
           </p>
           <p>
-            <ComicCheckBox id="btnUseSmoothingWhenResizingImages">
+            <CheckBox id="btnUseSmoothingWhenResizingImages">
               Use smoothing when resizing images
-            </ComicCheckBox>
+            </CheckBox>
           </p>
           <hr />
           <p>
@@ -56,8 +56,9 @@ export default class Settings extends Component {
             <span id="totalDBSize" style="margin: 4px;">
               . . .
             </span>
+            <Button id="btnClearAllData" type="secondary">Clear all data</Button>
           </p>
-          <Button id="btnClearAllData" type="secondary">Clear all data</Button>
+
           <hr />
           <p>
             <label>Software Version:</label>
@@ -65,8 +66,6 @@ export default class Settings extends Component {
               ...
             </span>
           </p>
-          <Button id="btnCheckForUpdatesNow">Check for updates now</Button>
-          <Button id="btnHomepage" type="secondary">Visit home page at github</Button>
         </div>
       </div>
     )
