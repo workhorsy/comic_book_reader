@@ -6,8 +6,8 @@
     "package.json"
   ],
   "imageSize": 100,
-  "commit": false,
-  "contributorsPerLine": 6,
+  "commit": true,
+  "contributorsPerLine": 4,
   "contributors": [
     {
       "login": "workhorsy",
