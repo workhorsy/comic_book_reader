@@ -1,7 +1,6 @@
 import { h, Component } from 'preact'
 import { Link } from 'preact-router/match'
 import style from './style'
-import * as actions from '../../actions'
 import Icon from '../../components/icon'
 
 const Item = ({ id, label, icon, href, onClick }) => {

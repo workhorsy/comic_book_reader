@@ -1,6 +1,6 @@
 import { h, render } from 'preact'
 import { Provider } from 'unistore/preact'
-import store from './store'
+import store from './unistore/store'
 import App from './components/app'
 import './style'
 

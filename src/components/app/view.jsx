@@ -1,16 +1,18 @@
 import { h, Component } from 'preact'
 import { Router, route } from 'preact-router'
-import { requireBrowserFeatures } from '../utils/browser'
+import { requireBrowserFeatures } from '../../utils/browser'
 
-import Files from '../routes/settings'
-import Welcome from '../routes/welcome'
-import Library from '../routes/library'
-import Settings from '../routes/settings'
+// Routes
+import Files from '../../routes/settings'
+import Welcome from '../../routes/welcome'
+import Library from '../../routes/library'
+import Settings from '../../routes/settings'
 
 // Errors
-import Unsupported from '../routes/unsupported'
+import Unsupported from '../../routes/unsupported'
 
-import Menu from './menu'
+// Components
+import Menu from '../menu'
 
 export default class App extends Component {
   state = {
@@ -19,6 +21,8 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    // Test settings
+    console.log(this.props.settings);
     this.hasErrors()
   }
 
