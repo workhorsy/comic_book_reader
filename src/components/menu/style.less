@@ -27,7 +27,7 @@
   align-items: center;
 }
 
-.item a {
+.item{
   color: inherit;
   display: inline-block;
   text-decoration: none;
@@ -91,6 +91,10 @@
   text-align: left;
   transform: translateX(250px);
   transition: all 0.3s ease;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .slider.open {
@@ -98,7 +102,15 @@
 }
 
 .slider .item {
-  margin: 32px 16px;
+  margin: 64px 32px;
+  opacity: 0.5;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.slider .item.active,
+.slider .item:hover {
+  opacity: 1;
 }
 
 .slider .item i {

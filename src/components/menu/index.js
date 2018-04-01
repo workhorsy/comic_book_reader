@@ -1,5 +1,5 @@
 import { h, Component } from 'preact'
-import { Link } from 'preact-router'
+import { Link } from 'preact-router/match'
 import { connect } from 'preact-redux'
 import { bindActions } from '../../util'
 import reduce from '../../reducers'
@@ -10,12 +10,10 @@ import Icon from '../../components/icon'
 const Item = ({ id, label, icon, href, onClick }) => {
   const action = event => onClick && onClick(event)
   return (
-    <div id={id} class={style.item}>
-      <Link href={href}>
+      <Link id={id} class={style.item} activeClassName={style.active} href={href}>
         {icon && <Icon name={icon} />}
         <span class={style.label}>{label}</span>
       </Link>
-    </div>
   )
 }
 
