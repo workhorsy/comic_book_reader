@@ -19,6 +19,7 @@ export default class Settings extends Component {
       <div class={style.view}>
         <div class="settings">
           <h1>Settings</h1>
+          { /*
           <p>
             <label>Language: </label>
             <select id="btnSelectLanguage">
@@ -33,6 +34,7 @@ export default class Settings extends Component {
               <option value="es">Spanish (Español)</option>
             </select>
           </p>
+          */}
           <hr />
           <p>
             <CheckBox id="btnDisableRightClick">Allow right click</CheckBox>
@@ -54,16 +56,15 @@ export default class Settings extends Component {
           <p>
             <label>Storage used:</label>
             <span id="totalDBSize" style="margin: 4px;">
-              . . .
+              0
             </span>
-            <Button id="btnClearAllData" type="secondary">Clear all data</Button>
           </p>
-
+          <Button id="btnClearAllData" type="secondary">Clear all data</Button>
           <hr />
           <p>
             <label>Software Version:</label>
             <span id="versionDate" style="margin: 4px;">
-              ...
+            0.0.1
             </span>
           </p>
         </div>
