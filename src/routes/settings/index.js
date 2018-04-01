@@ -57,9 +57,7 @@ export default class Settings extends Component {
               . . .
             </span>
           </p>
-          <p>
-            <Button id="btnClearAllData">Clear all data</Button>
-          </p>
+          <Button id="btnClearAllData" type="secondary">Clear all data</Button>
           <hr />
           <p>
             <label>Software Version:</label>
@@ -67,14 +65,8 @@ export default class Settings extends Component {
               ...
             </span>
           </p>
-          <p>
-            <Button id="btnCheckForUpdatesNow" style="display: none;">
-              Check for updates now
-            </Button>
-          </p>
-          <p>
-            <Button id="btnHomepage">Visit home page at github</Button>
-          </p>
+          <Button id="btnCheckForUpdatesNow">Check for updates now</Button>
+          <Button id="btnHomepage" type="secondary">Visit home page at github</Button>
         </div>
       </div>
     )
