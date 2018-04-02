@@ -21,10 +21,19 @@ export default class App extends Component {
     compatible: true,
   }
 
+  constructor(props) {
+    super(props)
+  }
+
   componentDidMount() {
     // Test settings
     console.log('Init settings:', this.props.settings)
     this.hasErrors()
+  }
+
+  shouldComponentUpdate(props, state) {
+    console.log(props.settings.night_mode_enabled, this.props.settings.night_mode_enabled)
+    return true
   }
 
   hasErrors = () => {
@@ -48,7 +57,6 @@ export default class App extends Component {
 
     // Select theme
     const theme = settings.night_mode_enabled ? style.themeDark : style.themeLight
-    console.log(theme)
 
     return (
       <div id="app" class={`${style.app} ${theme}`}>
