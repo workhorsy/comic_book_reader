@@ -9,8 +9,8 @@
 	</head>
 	<body>
 		<div id=root></div>
-        <script defer src="/bundle.js"></script>
-        <script>
+        <script defer src="/bundle.js" crossorigin="anonymous"></script>
+        <script crossorigin="anonymous">
 		  /* TODO: Move somewhere else! */
 		  // Fontawesome bug
           FontAwesomeConfig = { autoReplaceSvg: 'nest' }
@@ -29,6 +29,10 @@
 		      let width = window.innerWidth;
 		      let height = window.innerHeight;
 		      //onResize(width, height);
+		  });
+		  // Test
+		  window.addEventListener('error', function(err) {
+			  alert(JSON.stringify(err));
 		  });
         </script>
 	</body>

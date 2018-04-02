@@ -2,7 +2,7 @@ import { h, Component } from 'preact'
 import style from './style'
 import Button from '../../components/button'
 import CheckBox from '../../components/checkbox'
-
+import { defaultSettings, updateSettings, getDefaultSettings } from '../../settings.js'
 import { route } from 'preact-router'
 
 export default class Settings extends Component {
@@ -24,17 +24,21 @@ export default class Settings extends Component {
   storeSettings = () => {
     // Save settings to localStorage (persistent data)
     const { settings } = this.props
-    console.log(settings)
-    localStorage.setItem('settings', JSON.stringify(settings))
+    settings && updateSettings(settings)
   }
 
-  updateSettings = (key, value) => {
+  setSetting = (key, value) => {
     const { setSettings } = this.props
     setSettings({ key, value })
   }
 
   render() {
     const { settings } = this.props
+
+    const checkboxes = Object.entries(defaultSettings).filter(
+      ([item, data]) => data.type === 'checkbox'
+    )
+
     return (
       <div class={style.view}>
         <div class="settings">
@@ -56,26 +60,17 @@ export default class Settings extends Component {
           </p>
           */}
           <hr />
-          <p>
-            <CheckBox
-              id="btnDisableRightClick"
-              checked={settings.right_click_enabled}
-              onChange={value => this.updateSettings('right_click_enabled', value)}
-            >
-              Allow right click
-            </CheckBox>
-          </p>
-          <p>
-            <CheckBox id="btnEnableInstallUpdates">Check for updates</CheckBox>
-          </p>
-          <p>
-            <CheckBox id="btnUseHigherQualityPreviews">Use higher quality page previews</CheckBox>
-          </p>
-          <p>
-            <CheckBox id="btnUseSmoothingWhenResizingImages">
-              Use smoothing when resizing images
-            </CheckBox>
-          </p>
+          {checkboxes.map(([item, data]) => (
+            <p>
+              <CheckBox
+                key={item}
+                checked={settings[item]}
+                onChange={value => this.setSetting(item, value)}
+              >
+                {data.label}
+              </CheckBox>
+            </p>
+          ))}
           <hr />
           <p>
             <label>Storage used:</label>

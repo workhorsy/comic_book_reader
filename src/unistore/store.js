@@ -1,13 +1,11 @@
 import { createStore, connect } from 'unistore/full/preact'
-import { defaultSettings } from '../settings.js'
+import { getSettings } from '../settings.js'
 
 // Set initialState
-const initialState = { count: 0 }
-
-const storedSettings = localStorage.getItem('settings')
+const initialState = {}
 
 // Load settings
-initialState.settings = (storedSettings && JSON.parse(storedSettings)) || defaultSettings
+initialState.settings = getSettings()
 
 // Create store
 export default createStore(initialState)
