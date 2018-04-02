@@ -73,7 +73,11 @@ export default class Settings extends Component {
             </p>
           ))}
           <hr />
-          <Switch checked={false} label={"Night Mode"} onChange={value => this.setSetting('theme', value)}/>
+          <Switch
+            checked={settings['night_mode_enabled']}
+            label={'Night Mode'}
+            onChange={value => this.setSetting('night_mode_enabled', value)}
+          />
           <hr />
           <p>
             <label>Storage used:</label>

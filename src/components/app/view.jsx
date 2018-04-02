@@ -13,6 +13,7 @@ import Unsupported from '../../routes/unsupported'
 
 // Components
 import Menu from '../menu'
+import style from './style'
 
 export default class App extends Component {
   state = {
@@ -43,8 +44,14 @@ export default class App extends Component {
   }
 
   render() {
+    const { settings } = this.props
+
+    // Select theme
+    const theme = settings.night_mode_enabled ? style.themeDark : style.themeLight
+    console.log(theme)
+
     return (
-      <div id="app">
+      <div id="app" class={`${style.app} ${theme}`}>
         {this.state.compatible && <Menu />}
         <Router onChange={this.handleRoute}>
           <Welcome path="/" default />

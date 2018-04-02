@@ -3,7 +3,10 @@ const actions = store => ({
   setSettings(prevState, { key, value }) {
     const { settings } = prevState
     if (settings[key] !== undefined) settings[key] = value
-    return { ...prevState, settings }
+    return {
+      ...prevState,
+      settings: { ...settings },
+    }
   },
 })
 
