@@ -1,40 +1,40 @@
 .switch {
---switch-size: 24px;
---switch-padding: 2px;
---switch-slider-size: calc(var(--switch-size) - 2 * var(--switch-padding));
- cursor: pointer;
- display: inline-block;
- margin: 16px 0;
-
+  --switch-size: 24px;
+  --switch-padding: 2px;
+  --switch-slider-size: calc(var(--switch-size) - 2 * var(--switch-padding));
+  --switch-bg-color: rgba(164, 176, 190, 0.5);
+  cursor: pointer;
+  display: inline-block;
+  margin: 16px 0;
 }
 
-.switch input {display: none;}
+.switch input {
+  display: none;
+}
 
 .slider {
-position: relative;
-
+  position: relative;
   width: calc(2 * (var(--switch-size) - var(--switch-padding)));
   height: var(--switch-size);
   display: inline-block;
   vertical-align: middle;
-  background-color: var(--text-message-color);
+  background-color: var(--switch-bg-color);
   border-radius: var(--switch-size);
-   opacity: 0.75;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: var(--switch-slider-size);
   width: var(--switch-slider-size);
   left: var(--switch-padding);
   bottom: var(--switch-padding);
   background-color: white;
-    border-radius: 50%;
-  -webkit-transition: .4s;
-  transition: .4s;
+  border-radius: 50%;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
 }
 
 .label {
@@ -42,25 +42,22 @@ position: relative;
   vertical-align: middle;
   margin: 16px;
   color: var(--text-message-color);
-  opacity: 0.75;
 }
 
 .switch input:checked + .slider {
-  background-color:  var(--main-color);
-   opacity: 1;
+  background-color: var(--main-color);
 }
 
 .switch input:focus + .slider {
-  box-shadow: 0 0 1px  var(--main-color);
+  box-shadow: 0 0 1px var(--main-color);
 }
 
 .switch input:checked + .slider + .label {
-   color:  var(--text-color);
-   opacity: 1;
+  color: var(--text-color);
 }
 
 .switch input:checked + .slider:before {
   -webkit-transform: translateX(var(--switch-slider-size));
-  -ms-transform:  translateX(var(--switch-slider-size));
+  -ms-transform: translateX(var(--switch-slider-size));
   transform: translateX(var(--switch-slider-size));
 }

@@ -1,10 +1,15 @@
 .checkbox {
+  --checkbox-bg-color: rgba(164, 176, 190, 0.5);
   position: relative;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.checkbox:disabled {
+  opacity: 0.25;
 }
 
 .checkbox input {
@@ -14,10 +19,9 @@
 }
 
 .checkbox .label {
-    padding: 16px;
-    opacity: 0.75;
-    display: inline-block;
-    vertical-align: middle;
+  padding: 16px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .mark {
@@ -28,35 +32,31 @@
   margin: 0;
   padding: 0;
   border-radius: 3px;
-  background-color: var(--text-message-color);
-  opacity: 0.5;
+  background-color: var(--checkbox-bg-color);
   margin: 12px 0;
   float: left;
-  transition: all 0.2s;
+  transition: background-color 0.2s;
 }
 
-.checkbox input:checked~.mark {
-    background-color: var(--main-color);
-    opacity: 1;
+.checkbox input:checked ~ .mark {
+  background-color: var(--main-color);
 }
 
 /* Add the following css rule: */
-.checkbox input:checked~.label {
-  opacity: 1;
+.checkbox input:checked ~ .label {
   color: var(--text-color);
 }
 
 .mark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }
 
-.checkbox input:checked~.mark {
-    opacity: 1;
+.checkbox input:checked ~ .mark {
 }
 
-.checkbox input:checked~.mark:after {
+.checkbox input:checked ~ .mark:after {
   display: block;
 }
 
