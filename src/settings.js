@@ -10,7 +10,11 @@ export const defaultSettings = {
     defaultValue: false,
     label: 'Check for updates',
   },
-
+  night_mode_enabled: {
+    type: 'switch',
+    defaultValue: true,
+    label: 'Night Mode',
+  },
   right_click_enabled: {
     type: 'checkbox',
     defaultValue: false,
@@ -25,7 +29,7 @@ export const defaultSettings = {
     type: 'checkbox',
     defaultValue: false,
     label: 'Use smoothing when resizing images',
-  }
+  },
 }
 
 export function getDefaultSettings() {
@@ -39,14 +43,11 @@ export function getDefaultSettings() {
 export function getSettings() {
   let settings = {}
   try {
-    const stored = JSON.parse(localStorage.getItem('settings'))
-    settings = stored ? stored : getDefaultSettings()
+    settings = JSON.parse(localStorage.getItem('settings'))
   } catch (error) {
-    // Default settings
-    settings = getDefaultSettings()
     throw new Error('Settings failed to load!')
   } finally {
-    return settings
+    return Object.assign(getDefaultSettings(), settings)
   }
 }
 
