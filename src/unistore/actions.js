@@ -1,4 +1,4 @@
-// Immutable state
+// Immutable state: quick hack [FIX IT]
 const deepClone = state => JSON.parse(JSON.stringify(state))
 
 const actions = store => ({

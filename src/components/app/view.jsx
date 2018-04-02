@@ -32,8 +32,11 @@ export default class App extends Component {
   }
 
   shouldComponentUpdate(props, state) {
-    console.log(props.settings.night_mode_enabled, this.props.settings.night_mode_enabled)
-    return true
+    if (props.settings.night_mode_enabled !== this.props.settings.night_mode_enabled) {
+      // Update theme
+      return true
+    }
+    return false
   }
 
   hasErrors = () => {
