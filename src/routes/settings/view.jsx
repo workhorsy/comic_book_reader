@@ -2,6 +2,7 @@ import { h, Component } from 'preact'
 import style from './style'
 import Button from '../../components/button'
 import CheckBox from '../../components/checkbox'
+import Switch from '../../components/switch'
 import { defaultSettings, updateSettings, getDefaultSettings } from '../../settings.js'
 import { route } from 'preact-router'
 
@@ -71,6 +72,8 @@ export default class Settings extends Component {
               </CheckBox>
             </p>
           ))}
+          <hr />
+          <Switch checked={false} label={"Night Mode"} onChange={value => this.setSetting('theme', value)}/>
           <hr />
           <p>
             <label>Storage used:</label>

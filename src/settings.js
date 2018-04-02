@@ -2,7 +2,7 @@ export const defaultSettings = {
   theme: {
     type: 'select',
     values: ['dark', 'light'],
-    defaultValue: 'theme',
+    defaultValue: 'dark',
     label: 'Select a theme',
   },
   install_updates_enabled: {
