@@ -1,34 +1,58 @@
-@import 'helpers';
+@import 'vars.less';
 
-*, *::before, *::after {
-	box-sizing: border-box;
-}
-
-* {
-	font-family: Helvetica, Arial, sans-serif;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html {
-	min-height: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
+  min-height: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-	overflow: hidden;
-	min-height: 100%;
-	margin: 0;
-	padding: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  overflow: hidden;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+  font-size: 1em;
+}
+
+a {
+  color: var(--link-color);
+}
+
+hr {
+  border: 0;
+  height: 2px;
+  background: var(--text-message-color);
+  opacity: 0.25;
+}
+
+#outer {
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
 }
 
 /* Make scroll bars small and blue on Chrome */
 ::-webkit-scrollbar {
-	height: 5px;
-	width: 5px;
+  height: 5px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
 }
 ::-webkit-scrollbar-thumb {
-	background: #61AFEF;
+  background: #61afef;
 }

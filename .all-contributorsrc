@@ -1,0 +1,34 @@
+{
+  "projectOwner": "workhorsy",
+  "projectName": "comic_book_reader",
+  "files": ["README.md"],
+  "imageSize": 100,
+  "commit": false,
+  "contributorsPerLine": 4,
+  "contributors": [
+    {
+      "login": "workhorsy",
+      "name": "Matthew Brennan Jones",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/2733986?v=4",
+      "profile": "http://workhorsy.org",
+      "contributions": [
+        "code",
+        "translation",
+        "bug",
+        "question"
+      ]
+    },
+    {
+      "login": "btzr-io",
+      "name": "Baltazar Gomez",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/14793624?v=4",
+      "profile": "http://codepen.io/btzr-io",
+      "contributions": [
+        "design",
+        "platform",
+        "code"
+      ]
+    }
+  ],
+  "repoType": "github"
+}

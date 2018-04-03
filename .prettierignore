@@ -1,0 +1,9 @@
+node_modules
+bin
+dist
+test
+build
+/src/assets
+/src/lib
+*.lock
+*.log

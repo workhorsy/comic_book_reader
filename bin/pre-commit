@@ -1,4 +1,0 @@
-#!/bin/sh
-
-printf "function getVersionDate() { return \"`date +"%B %d, %Y - %T"`\"; }\r\n" > src/lib/version_date.js
-git add src/lib/version_date.js
