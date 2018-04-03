@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+		<title>Comic Book Reader</title>
+		<script src="openseadragon.min.js"></script>
+	</head>
+	<body>
+
+		<div id="toolbarDiv" style="background-color: white; padding: 10px;">
+			<a id="previous" href="#previous-page">Previous</a> |
+			<a id="next" href="#next-page">Next</a> |
+			<a id="zoom-in" href="#zoom-in">Zoom In</a> |
+			<a id="zoom-out" href="#zoom-out">Zoom Out</a> |
+			<a id="home" href="#home">Home</a> |
+			<a id="full-page" href="#full-page">Full Page</a>
+		</div>
+
+		<div id="openseadragon1" style="width: 800px; height: 600px;"></div>
+
+		<script>
+			let viewer = OpenSeadragon({
+				id: "openseadragon1",
+				tileSources: [
+					{ type: 'image', url:  'example/page 001.png' },
+					{ type: 'image', url:  'example/page 002.png' },
+					{ type: 'image', url:  'example/page 003.png' },
+					{ type: 'image', url:  'example/page 004.png' },
+					{ type: 'image', url:  'example/page 005.png' },
+					{ type: 'image', url:  'example/page 006.png' }
+				],
+
+				zoomInButton:   "zoom-in",
+				zoomOutButton:  "zoom-out",
+				homeButton:     "home",
+				fullPageButton: "full-page",
+				nextButton:     "next",
+				previousButton: "previous",
+
+				toolbar:        "toolbarDiv",
+				showNavigator:  true,
+				sequenceMode: true,
+
+			});
+		</script>
+	</body>
+</html>
