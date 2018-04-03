@@ -1,37 +1,22 @@
 .view {
+  composes: view from '../../style/module/view.css';
+
   position: absolute;
   top: 45px;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 0 5%;
+  display: inline-block;
   text-align: left;
   overflow: auto;
 }
 
 .view p {
-  color: var(--text-message-color);
+  margin: 0;
 }
 
 .view button {
   display: inline-block;
   margin: 16px 0;
-}
-
-@media (max-width: 400px) {
-  .view {
-    font-size: 14px;
-    padding: 0 2%;
-  }
-  .view p {
-    max-width: 100%;
-  }
-
-  .view button {
-    font-size: 14px;
-  }
-
-  .view footer {
-    font-size: 14px;
-  }
 }

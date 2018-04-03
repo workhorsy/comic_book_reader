@@ -4,8 +4,9 @@
   --switch-slider-size: calc(var(--switch-size) - 2 * var(--switch-padding));
   --switch-bg-color: rgba(164, 176, 190, 0.5);
   cursor: pointer;
-  display: inline-block;
-  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
 }
 
 .switch input {
@@ -16,13 +17,8 @@
   position: relative;
   width: calc(2 * (var(--switch-size) - var(--switch-padding)));
   height: var(--switch-size);
-  display: inline-block;
-  vertical-align: middle;
   background-color: var(--switch-bg-color);
   border-radius: var(--switch-size);
-  /* -webkit-transition: 0.3s ease;
-  transition: 0.3s ease;
-  */
 }
 
 .slider:before {
@@ -39,9 +35,7 @@
 }
 
 .label {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 16px;
+  padding: 0 16px;
   color: var(--text-message-color);
 }
 

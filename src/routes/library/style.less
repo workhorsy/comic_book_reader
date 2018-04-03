@@ -1,20 +1,5 @@
 .view {
-  position: absolute;
-  top: 45px;
-  bottom: 0px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  font-size: 1.25em;
-}
-
-.view h1 i {
-  color: var(--text-message-color);
-  opacity: 0.5;
+  composes: view from '../../style/module/view.css';
 }
 
 .view .item {
