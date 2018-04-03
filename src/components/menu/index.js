@@ -62,8 +62,16 @@ export default class Menu extends Component {
     this.setState(prevState => ({ openSlider: !prevState.openSlider }))
   }
 
+  hideSlider = () => {
+      // Fast
+      this.setState({ openSlider: false })
+  }
+
   closeSlider = () => {
-    this.setState({ openSlider: false })
+    // Wait
+    setTimeout(() => {
+        this.setState({ openSlider: false })
+    }, 250);
   }
 
   render() {
@@ -71,9 +79,9 @@ export default class Menu extends Component {
     return (
       <nav class={style.comic_menu}>
         <Item id={style.appName} label={'CBR'} href={'/'} />
-        <Slider open={state.openSlider} closeSlider={this.closeSlider} />
-        {state.openSlider && <div class={style.overlay} onClick={this.closeSlider} />}
+        { <div class={style.overlay} style={ state.openSlider && {height: '100vh', opacity: 0.75}} onClick={this.hideSlider} />}
         <Button id="btnFileLoad" onClick={this.toggleSlider} icon={'bars'} />
+        <Slider open={state.openSlider} closeSlider={this.closeSlider} />
       </nav>
     )
   }

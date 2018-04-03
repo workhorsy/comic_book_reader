@@ -14,11 +14,14 @@
   overflow: auto;
 }
 
+
 .view p {
-  margin: 5% 0;
-  max-width: 50%;
+  margin: 5%;
   color: var(--text-message-color);
+  /*  limit characters per line*/
+  max-width: calc(25em);
   line-height: 1.5;
+  word-break: keep-all;
 }
 
 .view .focus {
@@ -57,6 +60,14 @@
     font-size: 14px;
   }
 
+  .view footer {
+    font-size: 14px;
+    position: static;
+  }
+}
+
+
+@media (max-height: 600px) {
   .view footer {
     font-size: 14px;
     position: static;
