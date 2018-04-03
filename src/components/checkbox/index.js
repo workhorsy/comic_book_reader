@@ -19,13 +19,9 @@ export default class ComicCheckBox extends Component {
     let { props, state } = this
     return (
       <label class={style.checkbox}>
-        <input
-          type="checkbox"
-          onChange={this.handleInputChange}
-          checked={state.checked}
-        />
-        <span class={style.label}>{props.children && props.children[0]}</span>
+        <input type="checkbox" onChange={this.handleInputChange} checked={state.checked} />
         <span class={style.mark} />
+        <span class={style.label}>{props.children && props.children[0]}</span>
       </label>
     )
   }
