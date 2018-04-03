@@ -1,75 +1,9 @@
 .view {
-  position: absolute;
-  top: 45px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 0 5%;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  font-size: 1.25em;
-  overflow: auto;
-}
-
-
-.view p {
-  margin: 5%;
-  color: var(--text-message-color);
-  /*  limit characters per line*/
-  max-width: calc(25em);
-  line-height: 1.5;
-  word-break: keep-all;
+  composes: view from '../../style/module/view.css';
 }
 
 .view .focus {
   color: var(--text-color);
   opacity: 0.75;
   font-weight: bold;
-}
-
-.view button {
-  width: 100%;
-}
-
-.view footer {
-  font-size: 0.9em;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  margin: 32px auto;
-  color: var(--text-message-color);
-}
-
-.view footer a {
-  margin: 0 4px;
-}
-
-@media (max-width: 400px) {
-  .view {
-    font-size: 14px;
-  }
-  .view p {
-    max-width: 100%;
-  }
-
-  .view button {
-    font-size: 14px;
-  }
-
-  .view footer {
-    font-size: 14px;
-    position: static;
-  }
-}
-
-
-@media (max-height: 600px) {
-  .view footer {
-    font-size: 14px;
-    position: static;
-  }
 }

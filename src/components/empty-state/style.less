@@ -1,16 +1,5 @@
 .view {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0;
-  right: 0;
-  padding: 0 5%;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  font-size: 1em;
+  composes: view from '../../style/module/view.css';
 }
 
 .view .message {
@@ -27,11 +16,4 @@
   font-size: 2.5em;
   color: var(--text-message-color);
   opacity: 0.5;
-}
-
-.actions {
-}
-
-.view button {
-  width: 100%;
 }

@@ -1,25 +1,6 @@
 .view {
-  position: absolute;
-  top: 45px;
-  bottom: 0px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  font-size: 1.25em;
-}
-
-.view p {
-  margin: 25px;
-  color: var(--text-message-color);
-}
-
-.view h1 i {
-  color: var(--text-message-color);
-  opacity: 0.5;
+  composes: view from '../../style/module/view.css';
+  padding: 0;
 }
 
 .drag p {
@@ -43,20 +24,6 @@
   animation-timing-function: ease;
   animation-iteration-count: infinite;
   animation-direction: alternate;
-}
-
-.view button {
-  width: 100%;
-}
-
-.view footer {
-  font-size: 0.85em;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  left: 0;
-  right: 0;
-  margin: auto;
 }
 
 @keyframes drop {
