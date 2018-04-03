@@ -88,13 +88,6 @@ export default class Settings extends Component {
           <Button id="btnClearAllData" type="secondary">
             Clear all data
           </Button>
-          <hr />
-          <p>
-            <label>Software Version:</label>
-            <span id="versionDate" style="margin: 4px;">
-              0.0.1
-            </span>
-          </p>
         </div>
       </div>
     )

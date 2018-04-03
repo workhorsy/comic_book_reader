@@ -16,10 +16,11 @@ const Item = ({ id, label, icon, href, onClick }) => {
 const Slider = props => {
   return (
     <div class={`${style.slider} ${props.open ? style.open : ''}`}>
-      <div class={style.links}>
+      <div class={style.items}>
         <Item icon="folder" label="Files" href="/files" />
         <Item icon="bookmark" label="Library" href="/library" />
         <Item icon="question-circle" label="About" href="/" />
+        <hr />
         <Item icon="cog" label="Settings" href="/settings" />
       </div>
     </div>

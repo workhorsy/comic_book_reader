@@ -82,12 +82,12 @@
   bottom: 0;
   right: 0;
   height: 100%;
-  min-width: 250px;
+  width: 250px;
   background: var(--menu-bg-color);
   z-index: 1;
   text-align: left;
   transform: translateX(250px);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
@@ -98,8 +98,14 @@
   transform: translateX(0px);
 }
 
+.slider .items {
+  margin: 0;
+  width: 100%;
+}
+
 .slider .item {
-  margin: 64px 32px;
+  padding: 16px;
+  margin: 16px 0;
   opacity: 0.5;
   display: block;
   transition: all 0.3s ease;
@@ -112,6 +118,11 @@
 
 .slider .item i {
   margin-right: 16px;
+}
+
+.slider hr {
+  margin: 16px;
+  height: 2px;
 }
 
 @keyframes active {
