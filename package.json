@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "description": "A browser based touch friendly comic book reader",
   "homepage": "https://github.com/workhorsy/comic_book_reader",
-  "keywords": ["comics"],
+  "keywords": [
+    "comics"
+  ],
   "author": "Matthew Brennan Jones <matthew.brennan.jones@gmail.com>",
-  "contributors": ["Baltazar Gomez <btzr.io@gmail.com> (https://github.com/btzr-io)"],
+  "contributors": [
+    "Baltazar Gomez <btzr.io@gmail.com> (https://github.com/btzr-io)"
+  ],
   "license": "AGPL-3.0",
   "main": "index.js",
   "repository": {
@@ -15,7 +19,7 @@
   "scripts": {
     "test": "eslint src && preact test",
     "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
-    "build": "preact build --template src/index.html",
+    "build": "preact build -p   --template src/static.html",
     "serve": "npm run build && preact serve",
     "dev": "preact watch  --template src/index.html",
     "lint": "eslint src",
@@ -39,7 +43,9 @@
       }
     }
   },
-  "eslintIgnore": ["src/lib/*"],
+  "eslintIgnore": [
+    "src/lib/*"
+  ],
   "devDependencies": {
     "all-contributors-cli": "^4.11.1",
     "eslint": "^4.2.0",
@@ -57,6 +63,7 @@
     "@fortawesome/fontawesome-free-brands": "^5.0.9",
     "@fortawesome/fontawesome-free-solid": "^5.0.9",
     "@fortawesome/react-fontawesome": "^0.0.18",
+    "history": "^4.7.2",
     "preact": "^8.2.7",
     "preact-compat": "^3.18.0",
     "preact-router": "^2.6.0",

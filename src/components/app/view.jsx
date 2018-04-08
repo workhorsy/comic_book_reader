@@ -1,6 +1,7 @@
 import { h, Component } from 'preact'
 import { Router, route } from 'preact-router'
 import { requireBrowserFeatures } from '../../utils/browser'
+import createHashHistory from 'history/createHashHistory';
 
 // Routes
 import Files from '../../routes/files'
@@ -64,7 +65,7 @@ export default class App extends Component {
     return (
       <div id="app" class={`${style.app} ${theme}`}>
         {this.state.compatible && <Menu />}
-        <Router onChange={this.handleRoute}>
+        <Router onChange={this.handleRoute} history={createHashHistory()}>
           <Welcome path="/" default />
           <Files path="/files" />
           <Library path="/library" />
