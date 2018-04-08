@@ -1,7 +1,7 @@
-http://comic-book-reader.com
-
 > ### :warning: Warning
 > This branch is a port to Preact, and does not work yet!
+
+> :rocket: Preview: https://btzr-io.github.io/comic_book_reader/
 
 # Comic Book Reader
 
