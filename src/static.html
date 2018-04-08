@@ -1,32 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		<title>Comic Book Reader</title>
-		<link type="image/x-icon" href="favicon.ico" rel="shortcut icon" />
-	    <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700" rel="stylesheet">
+		<meta charset="utf-8">
+		<title><%= htmlWebpackPlugin.options.title %></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath %>manifest.json">
+		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
+			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
+		<% } %>
+		<% for (var chunk of webpack.chunks) { %>
+		 <% if (chunk.names.length === 1 && chunk.names[0] === 'polyfills') continue; %>
+			<% for (var file of chunk.files) { %>
+				<% if (htmlWebpackPlugin.options.preload && file.match(/\.(js|css)$/)) { %>
+					<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>">
+				<% } else if (file.match(/manifest\.json$/)) { %>
+					<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
+				<% } %>
+			<% } %>
+		<% } %>
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:500,700" rel="stylesheet">
 	</head>
 	<body>
-		<div id=root></div>
-        <script defer src="./bundle.js" crossorigin="anonymous"></script>
-        <script crossorigin="anonymous">
-		  // Prevent Drag
-		  window.addEventListener("dragover",function(e){
-			  e = e || event;
-			  e.preventDefault();
-		  },false);
-		  // Prevent Drop
-		  window.addEventListener("drop",function(e){
-			  e = e || event;
-			  e.preventDefault();
-		  },false);
-		  // Resize everything when the browser resizes
-		  window.addEventListener('resize', function() {
-		      let width = window.innerWidth;
-		      let height = window.innerHeight;
-		      //onResize(width, height);
-		  });
-        </script>
+		<%= htmlWebpackPlugin.options.ssr({
+			url: '/'
+		}) %>
+		<script defer src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
+		<script>window.fetch||document.write('<script src="<%= htmlWebpackPlugin.files.chunks["polyfills"].entry %>"><\/script>')</script>
 	</body>
 </html>

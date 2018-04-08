@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "description": "A browser based touch friendly comic book reader",
   "homepage": "https://github.com/workhorsy/comic_book_reader",
-  "keywords": [
-    "comics"
-  ],
+  "keywords": ["comics"],
   "author": "Matthew Brennan Jones <matthew.brennan.jones@gmail.com>",
   "contributors": [
     "Baltazar Gomez <btzr.io@gmail.com> (https://github.com/btzr-io)"
@@ -19,7 +17,8 @@
   "scripts": {
     "test": "eslint src && preact test",
     "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
-    "build": "preact build -p   --template src/static.html",
+    "build":
+      "preact build --production --no-prerender  --template src/static.html",
     "serve": "npm run build && preact serve",
     "dev": "preact watch  --template src/index.html",
     "lint": "eslint src",
@@ -43,9 +42,7 @@
       }
     }
   },
-  "eslintIgnore": [
-    "src/lib/*"
-  ],
+  "eslintIgnore": ["src/lib/*"],
   "devDependencies": {
     "all-contributors-cli": "^4.11.1",
     "eslint": "^4.2.0",
