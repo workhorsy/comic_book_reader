@@ -10,10 +10,15 @@ export default class Footer extends Component {
 
   render() {
     const { props, state } = this
-    const year = (new Date()).getFullYear()
+    const year = new Date().getFullYear()
 
     return (
-        <footer>Copyright &copy; 2017 - {year} Comic Book Reader <a href="https://github.com/workhorsy/comic_book_reader#contributors">Developers</a></footer>
+      <footer>
+        Copyright &copy; 2017 - {year} Comic Book Reader{' '}
+        <a href="https://github.com/workhorsy/comic_book_reader/tree/preact#contributors">
+          Developers
+        </a>
+      </footer>
     )
   }
 }
