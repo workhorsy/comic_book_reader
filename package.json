@@ -18,7 +18,7 @@
     "test": "eslint src && preact test",
     "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
     "build":
-      "preact build --production --no-prerender  --template src/static.html",
+      "preact build --production --no-prerender --config preact.config.js --template src/static.html",
     "serve": "npm run build && preact serve",
     "dev": "preact watch  --template src/index.html",
     "lint": "eslint src",
