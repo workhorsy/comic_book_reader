@@ -6,7 +6,13 @@ import Icon from '../../components/icon'
 const Item = ({ id, label, icon, href, onClick }) => {
   const action = event => onClick && onClick(event)
   return (
-    <Link id={id} class={style.item} activeClassName={style.active} href={href} onClick={action}>
+    <Link
+      id={id}
+      class={style.item}
+      activeClassName={style.active}
+      href={href}
+      onClick={action}
+    >
       {icon && <Icon name={icon} />}
       <span class={style.label}>{label}</span>
     </Link>
@@ -18,10 +24,25 @@ const Slider = ({ closeSlider, open }) => {
     <div class={`${style.slider} ${open ? style.open : ''}`}>
       <div class={style.items}>
         <Item icon="folder" label="Files" href="/files" onClick={closeSlider} />
-        <Item icon="bookmark" label="Library" href="/library" onClick={closeSlider} />
-        <Item icon="question-circle" label="About" href="/" onClick={closeSlider} />
+        <Item
+          icon="bookmark"
+          label="Library"
+          href="/library"
+          onClick={closeSlider}
+        />
+        <Item
+          icon="question-circle"
+          label="About"
+          href="/"
+          onClick={closeSlider}
+        />
         <hr />
-        <Item icon="cog" label="Settings" href="/settings" onClick={closeSlider} />
+        <Item
+          icon="cog"
+          label="Settings"
+          href="/settings"
+          onClick={closeSlider}
+        />
       </div>
     </div>
   )
@@ -63,24 +84,30 @@ export default class Menu extends Component {
   }
 
   hideSlider = () => {
-      // Fast
-      this.setState({ openSlider: false })
+    // Fast
+    this.setState({ openSlider: false })
   }
 
   closeSlider = () => {
     // Wait
     setTimeout(() => {
-        this.setState({ openSlider: false })
-    }, 250);
+      //this.setState({ openSlider: false })
+    }, 250)
   }
 
   render() {
     let { props, state } = this
     return (
       <nav class={style.comic_menu}>
+        <Button onClick={this.toggleSlider} icon={'bars'} />
         <Item id={style.appName} label={'CBR'} href={'/'} />
-        { <div class={style.overlay} style={ state.openSlider && {height: '100vh', opacity: 0.75}} onClick={this.hideSlider} />}
-        <Button id="btnFileLoad" onClick={this.toggleSlider} icon={'bars'} />
+        {
+          <div
+            class={style.overlay}
+            style={state.openSlider && { height: '100vh', opacity: 0 }}
+            onClick={this.hideSlider}
+          />
+        }
         <Slider open={state.openSlider} closeSlider={this.closeSlider} />
       </nav>
     )

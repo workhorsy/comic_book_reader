@@ -1,6 +1,6 @@
 .view {
   position: absolute;
-  top: 45px;
+  top: var(--nav-height);
   bottom: 0;
   left: 0;
   right: 0;
@@ -16,7 +16,7 @@
 
 .view p {
   margin: 5%;
-  color: var(--text-message-color);
+  color: #b0b4c4;
   /*  limit characters per line*/
   max-width: calc(25em);
   line-height: 1.5;
@@ -26,15 +26,13 @@
 .view footer {
   font-size: 0.9em;
   width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  margin: 32px auto;
-  color: var(--text-message-color);
-}
-
-.view button {
-  width: 100%;
+  margin: 0 auto;
+  height: var(--nav-height);
+  color: #1c1d1f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
 }
 
 .view footer a {

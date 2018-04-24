@@ -12,6 +12,8 @@ import faCog from '@fortawesome/fontawesome-free-solid/faCog'
 import faBars from '@fortawesome/fontawesome-free-solid/faBars'
 import faBookmark from '@fortawesome/fontawesome-free-solid/faBookmark'
 import faArrowDown from '@fortawesome/fontawesome-free-solid/faArrowDown'
+import faFileArchive from '@fortawesome/fontawesome-free-solid/faFileArchive'
+import faFileCode from '@fortawesome/fontawesome-free-solid/faFileCode'
 import faQuestionCircle from '@fortawesome/fontawesome-free-solid/faQuestionCircle'
 
 fontawesome.library.add(
@@ -20,8 +22,10 @@ fontawesome.library.add(
   faFolder,
   faBookmark,
   faBars,
+  faFileArchive,
   faQuestionCircle,
-  faArrowDown
+  faArrowDown,
+  faFileCode
 )
 
 render(

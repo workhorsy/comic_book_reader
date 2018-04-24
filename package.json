@@ -61,6 +61,7 @@
     "@fortawesome/fontawesome-free-solid": "^5.0.9",
     "@fortawesome/react-fontawesome": "^0.0.18",
     "history": "^4.7.2",
+    "openseadragon": "^2.3.1",
     "preact": "^8.2.7",
     "preact-compat": "^3.18.0",
     "preact-router": "^2.6.0",

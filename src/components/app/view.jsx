@@ -1,13 +1,14 @@
 import { h, Component } from 'preact'
 import { Router, route } from 'preact-router'
 import { requireBrowserFeatures } from '../../utils/browser'
-import createHashHistory from 'history/createHashHistory';
+import createHashHistory from 'history/createHashHistory'
 
 // Routes
-import Files from '../../routes/files'
+//import Files from '../../routes/files'
 import Welcome from '../../routes/welcome'
-import Library from '../../routes/library'
-import Settings from '../../routes/settings'
+//import Library from '../../routes/library'
+//import Settings from '../../routes/settings'
+import Viewer from '../../routes/viewer'
 
 // Errors
 import Unsupported from '../../routes/unsupported'
@@ -33,7 +34,10 @@ export default class App extends Component {
   }
 
   shouldComponentUpdate(props, state) {
-    if (props.settings.night_mode_enabled !== this.props.settings.night_mode_enabled) {
+    if (
+      props.settings.night_mode_enabled !==
+      this.props.settings.night_mode_enabled
+    ) {
       // Update theme
       return true
     }
@@ -60,16 +64,20 @@ export default class App extends Component {
     const { settings } = this.props
 
     // Select theme
-    const theme = settings.night_mode_enabled ? style.themeDark : style.themeLight
+    const theme = settings.night_mode_enabled
+      ? style.themeDark
+      : style.themeLight
 
     return (
       <div id="app" class={`${style.app} ${theme}`}>
-        {this.state.compatible && <Menu />}
         <Router onChange={this.handleRoute} history={createHashHistory()}>
           <Welcome path="/" default />
-          <Files path="/files" />
-          <Library path="/library" />
-          <Settings path="/settings" />
+          <Viewer path="/viewer/:params?" />
+          {/*
+              <Settings path="/settings" />
+              <Files path="/files" />
+              <Library path="/library" />
+          */}
           <Unsupported path="/unsupported" />
         </Router>
       </div>
