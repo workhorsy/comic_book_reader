@@ -15,6 +15,10 @@ import faArrowDown from '@fortawesome/fontawesome-free-solid/faArrowDown'
 import faFileArchive from '@fortawesome/fontawesome-free-solid/faFileArchive'
 import faFileCode from '@fortawesome/fontawesome-free-solid/faFileCode'
 import faQuestionCircle from '@fortawesome/fontawesome-free-solid/faQuestionCircle'
+import faArrowRight from '@fortawesome/fontawesome-free-solid/faArrowRight'
+import faArrowLeft from '@fortawesome/fontawesome-free-solid/faArrowLeft'
+import faAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight'
+import faAngleLeft from '@fortawesome/fontawesome-free-solid/faAngleLeft'
 
 fontawesome.library.add(
   brands,
@@ -25,7 +29,11 @@ fontawesome.library.add(
   faFileArchive,
   faQuestionCircle,
   faArrowDown,
-  faFileCode
+  faFileCode,
+  faArrowLeft,
+  faArrowRight,
+  faAngleLeft,
+  faAngleRight
 )
 
 render(

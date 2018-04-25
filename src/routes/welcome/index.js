@@ -41,7 +41,7 @@ export default class Welcome extends Component {
             <div class={style.card}>
               <Icon name={'file-archive'} className={style.thumbnail} />
               <h3>Archives</h3>
-              <p>Reads the most used comic book formats.</p>
+              <p>Read the most used comic book formats.</p>
             </div>
             <div class={style.card}>
               <Icon name={'file-code'} className={style.thumbnail} />

@@ -1,44 +1,12 @@
 .view {
-  composes: view from '../../style/module/view.css';
-  padding: 0;
-}
-
-.drag p {
-  color: var(--text-color);
-}
-
-.drag .actions {
-  opacity: 0.25;
-  pointer-events: none;
-}
-
-.actions button {
-  width: auto;
-}
-
-.view h1 {
-  position: relative;
-}
-
-.view h1 i {
-  display: block;
-  margin-bottom: 0;
-  font-size: 2em;
-  color: var(--text-message-color);
-  opacity: 0.5;
-  transform: translateY(0px);
-}
-
-.drag h1 i {
-  opacity: 1;
-  animation-name: drop;
-  animation-duration: 0.3s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-
-  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 720px;
+  height: 480px;
 }
 
 @keyframes drop {
