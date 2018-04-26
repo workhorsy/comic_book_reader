@@ -4,11 +4,12 @@ import { requireBrowserFeatures } from '../../utils/browser'
 import createHashHistory from 'history/createHashHistory'
 
 // Routes
-//import Files from '../../routes/files'
 import Welcome from '../../routes/welcome'
+import Viewer from '../../routes/viewer'
+
+//import Files from '../../routes/files'
 //import Library from '../../routes/library'
 //import Settings from '../../routes/settings'
-import Viewer from '../../routes/viewer'
 
 // Errors
 import Unsupported from '../../routes/unsupported'

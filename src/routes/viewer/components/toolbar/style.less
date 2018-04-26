@@ -13,10 +13,31 @@
 
 .toolbar .item {
   margin: 0 8px;
-  font-size: 24px;
+  font-size: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar .item[disabled]{
+    opacity: 0.25;
+    pointer-events: none;
+    text-align: center;
 }
 
 .toolbar .item .label {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
+}
+
+.nav {
+    margin: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 150px;
+}
+.nav .item {
+    margin: 0;
 }
