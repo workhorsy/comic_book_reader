@@ -33,16 +33,11 @@ export default class App extends Component {
     this.hasErrors()
   }
 
+  /*
   shouldComponentUpdate(props, state) {
-    if (
-      props.settings.night_mode_enabled !==
-      this.props.settings.night_mode_enabled
-    ) {
-      // Update theme
-      return true
-    }
-    return false
+      return false
   }
+  */
 
   hasErrors = () => {
     // Test browser features
@@ -63,22 +58,17 @@ export default class App extends Component {
   render() {
     const { settings } = this.props
 
-    // Select theme
-    const theme = settings.night_mode_enabled
-      ? style.themeDark
-      : style.themeLight
-
     return (
-      <div id="app" class={`${style.app} ${theme}`}>
+      <div id="app" class={`${style.app}`}>
         <Router onChange={this.handleRoute} history={createHashHistory()}>
           <Welcome path="/" default />
-          <Viewer path="/viewer/:params?" />
+          <Viewer path="/api/:params?" />
           {/*
               <Settings path="/settings" />
               <Files path="/files" />
               <Library path="/library" />
+              <Unsupported path="/unsupported" />
           */}
-          <Unsupported path="/unsupported" />
         </Router>
       </div>
     )

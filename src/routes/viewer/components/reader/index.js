@@ -59,28 +59,13 @@ export default class Reader extends Component {
     viewport.fitBoundsWithConstraints(bounds, true)
   }
 
-  // helper function to load image using promises
-  loadImage = src =>
-    new Promise(function(resolve, reject) {
-      var img = document.createElement('img')
-      img.addEventListener('load', function() {
-        resolve(img)
-      })
-      img.addEventListener('error', function(err) {
-        reject(404)
-      })
-      img.src = src
-    })
-
   initOpenSeaDragon() {
     let { id, source } = this.props
 
     this.viewer = OpenSeaDragon({
       id: id,
-      ...OSDConfig,
-
-      // Cover
       tileSources: pages,
+      ...OSDConfig,
     })
 
     this.viewer.addHandler('open', () => {
@@ -94,9 +79,6 @@ export default class Reader extends Component {
 
       // Render Book mode
       this.renderBookModeLayout()
-
-      // Center viewer
-      //viewport.goHome(true)
     })
   }
 

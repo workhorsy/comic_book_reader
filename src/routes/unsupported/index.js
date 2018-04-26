@@ -11,10 +11,6 @@ export default class Unsupported extends Component {
         <p class={style.description} translatable="true">
           Your browser is missing features required to run this program.
         </p>
-        <footer>
-          Copyright &copy; 2017{' '}
-          <a href="https://github.com/workhorsy/comic_book_reader">Matthew Brennan Jones</a>
-        </footer>
       </div>
     )
   }
