@@ -2,6 +2,7 @@ import { h, Component } from 'preact'
 import OpenSeaDragon from 'openseadragon'
 import style from './style'
 import OSDConfig from './osd.config.js'
+import Toolbar from '../toolbar';
 
 // Test
 const pages = [
@@ -16,6 +17,17 @@ const pages = [
       'https://laughingsquid.com/wp-content/uploads/2013/09/20130916-17283299-2.png',
     buildPyramid: false,
   },
+  {
+    type: 'image',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Little_nemo_the_walking_bed.jpg',
+    buildPyramid: false,
+  },
+  {
+    type: 'image',
+    url:
+      'https://upload.wikimedia.org/wikipedia/commons/6/6b/Little_nemo_the_walking_bed.jpg',
+    buildPyramid: false,
+},
 ]
 
 export default class Reader extends Component {
@@ -24,7 +36,16 @@ export default class Reader extends Component {
     this.viewer = null
     this.state = {
       currentPage: 0,
+      bookMode: true,
     }
+  }
+
+  getPages(index) {
+      const pageIndex = index - 1;
+      const page = pages[pageIndex]; // Add fallback;
+      const nextPage = pages[pageIndex + 1];
+      const bookMode = this.state.bookMode; // && (index % 2 == 0);
+      return (bookMode && nextPage) ? [page, nextPage] : page;
   }
 
   getCurrentPage() {
@@ -43,6 +64,12 @@ export default class Reader extends Component {
     this.viewer.viewport.zoomTo(targetZoom, null, true)
   }
 
+  renderPage(index) {
+      const pages = this.getPages(index);
+      console.log(pages, index);
+      pages && this.viewer.open(pages, 1);
+  }
+
   renderBookModeLayout() {
     let tiledImage, bounds
     const { viewport, world } = this.viewer
@@ -52,7 +79,7 @@ export default class Reader extends Component {
     for (let i = 0; i < count; i++) {
       tiledImage = world.getItemAt(i)
       bounds = tiledImage.getBounds()
-      tiledImage.setPosition(pos)
+      tiledImage.setPosition(pos, false)
       pos.x += bounds.width + margin
     }
     bounds.width = (bounds.width + margin) * 2
@@ -64,7 +91,7 @@ export default class Reader extends Component {
 
     this.viewer = OpenSeaDragon({
       id: id,
-      tileSources: pages,
+      tileSources: this.getPages(1),
       ...OSDConfig,
     })
 
@@ -96,6 +123,11 @@ export default class Reader extends Component {
 
   render() {
     const { id } = this.props
-    return <div id={id} className={style.viewer} />
+    return (
+        <div>
+          <Toolbar totalPages={pages.length} onPageChange={this.renderPage.bind(this)} />
+          <div  id={id} className={style.viewer} />
+        </div>
+    )
   }
 }

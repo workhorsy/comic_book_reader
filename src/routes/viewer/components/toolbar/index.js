@@ -11,15 +11,17 @@ class PageNav extends Component {
         currentPage: 1,
         isFirstPage: true,
         isLastPage: false,
-        totalPages: 100,
+        totalPages: this.props.totalPages,
     }
   }
 
   nextPage() {
+      const { onPageChange } = this.props;
       this.setState((prevState) => {
           const {currentPage, totalPages} = prevState;
           const nextPage = currentPage + 1;
           if(nextPage < prevState.totalPages) {
+              onPageChange(nextPage);
               // Go to next page
               return { isFirstPage: false, currentPage: nextPage }
           } else {
@@ -30,12 +32,15 @@ class PageNav extends Component {
   }
 
   previousPage() {
+         const { onPageChange } = this.props;
           this.setState((prevState) => {
               const prevPage = prevState.currentPage - 1;
               if (prevPage > 1) {
+                  onPageChange(prevPage);
                   // Go to previous page
-                  return { isFirstPage: false, currentPage: prevPage}
+                  return { isFirstPage: false, isLastPage: false, currentPage: prevPage}
               } else {
+                  onPageChange(1);
                   // Go to First page (Book cover)
                  return {isFirstPage: true, currentPage: 1}
               }
@@ -73,9 +78,10 @@ export default class Toolbar extends Component {
   componentWillUnmount() {}
 
   render() {
+    const { onPageChange, totalPages } = this.props;
     return (
       <div className={style.toolbar}>
-        <PageNav />
+        <PageNav totalPages={totalPages} onPageChange={onPageChange}/>
       </div>
     )
   }

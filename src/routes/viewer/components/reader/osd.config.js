@@ -17,7 +17,7 @@ const config = {
   immediateRender: true,
 
   // Animations
-  springStiffness: 15,
+  springStiffness: 20,
 }
 
 export default config
