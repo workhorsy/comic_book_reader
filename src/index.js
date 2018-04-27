@@ -12,6 +12,7 @@ import faCog from '@fortawesome/fontawesome-free-solid/faCog'
 import faBars from '@fortawesome/fontawesome-free-solid/faBars'
 import faBookmark from '@fortawesome/fontawesome-free-solid/faBookmark'
 import faArrowDown from '@fortawesome/fontawesome-free-solid/faArrowDown'
+import faFile from '@fortawesome/fontawesome-free-solid/faFile'
 import faFileArchive from '@fortawesome/fontawesome-free-solid/faFileArchive'
 import faFileCode from '@fortawesome/fontawesome-free-solid/faFileCode'
 import faQuestionCircle from '@fortawesome/fontawesome-free-solid/faQuestionCircle'
@@ -19,6 +20,7 @@ import faArrowRight from '@fortawesome/fontawesome-free-solid/faArrowRight'
 import faArrowLeft from '@fortawesome/fontawesome-free-solid/faArrowLeft'
 import faAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight'
 import faAngleLeft from '@fortawesome/fontawesome-free-solid/faAngleLeft'
+import faColumns from '@fortawesome/fontawesome-free-solid/faColumns'
 
 fontawesome.library.add(
   brands,
@@ -26,6 +28,7 @@ fontawesome.library.add(
   faFolder,
   faBookmark,
   faBars,
+  faFile,
   faFileArchive,
   faQuestionCircle,
   faArrowDown,
@@ -33,7 +36,8 @@ fontawesome.library.add(
   faArrowLeft,
   faArrowRight,
   faAngleLeft,
-  faAngleRight
+  faAngleRight,
+  faColumns
 )
 
 render(

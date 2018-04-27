@@ -2,7 +2,7 @@ import { h, Component } from 'preact'
 import OpenSeaDragon from 'openseadragon'
 import style from './style'
 import OSDConfig from './osd.config.js'
-import Toolbar from '../toolbar';
+import Toolbar from '../toolbar'
 
 // Test
 const pages = [
@@ -19,7 +19,8 @@ const pages = [
   },
   {
     type: 'image',
-    url: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Little_nemo_the_walking_bed.jpg',
+    url:
+      'https://upload.wikimedia.org/wikipedia/commons/6/6b/Little_nemo_the_walking_bed.jpg',
     buildPyramid: false,
   },
   {
@@ -27,7 +28,7 @@ const pages = [
     url:
       'https://upload.wikimedia.org/wikipedia/commons/6/6b/Little_nemo_the_walking_bed.jpg',
     buildPyramid: false,
-},
+  },
 ]
 
 export default class Reader extends Component {
@@ -35,22 +36,23 @@ export default class Reader extends Component {
     super(props)
     this.viewer = null
     this.state = {
-      currentPage: 0,
-      bookMode: true,
+      currentPage: 1,
+      bookMode: false,
     }
   }
 
   getPages(index) {
-      const pageIndex = index - 1;
-      const page = pages[pageIndex]; // Add fallback;
-      const nextPage = pages[pageIndex + 1];
-      const bookMode = this.state.bookMode; // && (index % 2 == 0);
-      return (bookMode && nextPage) ? [page, nextPage] : page;
+    console.log(index)
+    const pageIndex = index - 1
+    const page = pages[pageIndex] // Add fallback;
+    const nextPage = pages[pageIndex + 1]
+    const bookMode = this.state.bookMode // && (index % 2 == 0);
+    return bookMode && nextPage ? [page, nextPage] : page
   }
 
   getCurrentPage() {
     const { currentPage } = this.state
-    return this.viewer.world.getItemAt(currentPage)
+    return this.viewer.world.getItemAt(0)
   }
 
   getTargetZoom() {
@@ -65,9 +67,10 @@ export default class Reader extends Component {
   }
 
   renderPage(index) {
-      const pages = this.getPages(index);
-      console.log(pages, index);
-      pages && this.viewer.open(pages, 1);
+    const pages = this.getPages(index)
+    console.log(pages, index)
+    pages && this.viewer.open(pages, 1)
+    this.setState({ currentPage: index })
   }
 
   renderBookModeLayout() {
@@ -84,6 +87,11 @@ export default class Reader extends Component {
     }
     bounds.width = (bounds.width + margin) * 2
     viewport.fitBoundsWithConstraints(bounds, true)
+  }
+
+  toggleMode(mode) {
+    this.setState({ bookMode: mode })
+    this.renderPage(this.state.currentPage)
   }
 
   initOpenSeaDragon() {
@@ -124,10 +132,14 @@ export default class Reader extends Component {
   render() {
     const { id } = this.props
     return (
-        <div>
-          <Toolbar totalPages={pages.length} onPageChange={this.renderPage.bind(this)} />
-          <div  id={id} className={style.viewer} />
-        </div>
+      <div>
+        <Toolbar
+          totalPages={pages.length}
+          onPageChange={this.renderPage.bind(this)}
+          onBookMode={this.toggleMode.bind(this)}
+        />
+        <div id={id} className={style.viewer} />
+      </div>
     )
   }
 }
