@@ -49,6 +49,7 @@ class PageNav extends Component {
           className={style.item}
           onClick={this.previousPage.bind(this)}
           disabled={isFirstPage}
+          title={'Previous page'}
         >
           <Icon name={'angle-left'} />
         </div>
@@ -61,6 +62,7 @@ class PageNav extends Component {
           className={style.item}
           onClick={this.nextPage.bind(this)}
           disabled={isLastPage}
+          title={'Next page'}
         >
           <Icon name={'angle-right'} />
         </div>
