@@ -41,11 +41,14 @@ export default class Reader extends Component {
     }
   }
 
-  getPages(index) {
-    const pageIndex = index - 1
+  getPages(pageNumber) {
+    const pageIndex = pageNumber - 1
     const page = pages[pageIndex] // TODO: Add fallback
-    // Get next page to render / false on first page (cover)
-    const nextPage = pageIndex === 0 ? false : pages[pageIndex + 1]
+    // Get next page to render / false on first page (cover) and last page
+    const nextPage =
+      pageIndex === 0 || pageNumber === pages.length
+        ? null
+        : pages[pageIndex + 1]
     const bookMode = this.state.bookMode
     return bookMode && nextPage ? [page, nextPage] : page
   }
@@ -99,6 +102,9 @@ export default class Reader extends Component {
 
   toggleMode(mode) {
     this.setState({ bookMode: mode })
+    console.log(this.state.currentPage)
+
+    // Re-render layout
     this.renderPage(this.state.currentPage)
   }
 

@@ -123,13 +123,34 @@ export default class Toolbar extends Component {
 
   render() {
     const { onPageChange, totalPages, onBookMode, onFitPages } = this.props
+
+    const actions = [
+      {
+        icon: 'expand',
+        toggle: false,
+        onClick: e => {
+          onFitPages()
+        },
+      },
+      {
+        icon: 'columns',
+        toggle: true,
+        onClick: onBookMode,
+      },
+      {
+        icon: 'arrows-alt',
+        toggle: true,
+        onClick: e => {},
+      },
+    ]
+
     return (
       <div className={style.toolbar}>
         <PageNav totalPages={totalPages} onPageChange={onPageChange} />
         <div className={style['toolbar-actions']}>
-          <ToolbarAction icon="columns" toggle={true} onClick={onBookMode} />
-          <ToolbarAction icon="expand" onClick={e => onFitPages()} />
-          <ToolbarAction icon="arrows-alt" toggle={true} active={true} />
+          {actions.map((actionProps, i) => (
+            <ToolbarAction key={i} {...actionProps} />
+          ))}
         </div>
       </div>
     )
