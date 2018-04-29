@@ -5,7 +5,8 @@ import OSDConfig from './osd.config.js'
 import Toolbar from '../toolbar'
 
 // Test
-// https://bookofbadarguments.comconst pages = [
+// https://bookofbadarguments.com
+
 const pages = [
   {
     type: 'image',
@@ -42,9 +43,10 @@ export default class Reader extends Component {
 
   getPages(index) {
     const pageIndex = index - 1
-    const page = pages[pageIndex] // Add fallback;
-    const nextPage = pages[pageIndex + 1]
-    const bookMode = this.state.bookMode // && (index % 2 == 0);
+    const page = pages[pageIndex] // TODO: Add fallback
+    // Get next page to render / false on first page (cover)
+    const nextPage = pageIndex === 0 ? false : pages[pageIndex + 1]
+    const bookMode = this.state.bookMode
     return bookMode && nextPage ? [page, nextPage] : page
   }
 
