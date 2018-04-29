@@ -127,6 +127,7 @@ export default class Toolbar extends Component {
     const actions = [
       {
         icon: 'expand',
+        title: 'Fit All',
         toggle: false,
         onClick: e => {
           onFitPages()
@@ -134,11 +135,13 @@ export default class Toolbar extends Component {
       },
       {
         icon: 'columns',
+        title: 'Book Mode',
         toggle: true,
         onClick: onBookMode,
       },
       {
         icon: 'arrows-alt',
+        title: 'Drag Tool',
         toggle: true,
         onClick: e => {},
       },
