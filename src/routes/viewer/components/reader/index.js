@@ -5,7 +5,13 @@ import OSDConfig from './osd.config.js'
 import Toolbar from '../toolbar'
 
 // Test
+// https://bookofbadarguments.comconst pages = [
 const pages = [
+  {
+    type: 'image',
+    url: 'https://bookofbadarguments.com/images/1.jpg',
+    buildPyramid: false,
+  },
   {
     type: 'image',
     url: 'https://bookofbadarguments.com/images/appeal_to_consequences.png',
@@ -13,31 +19,15 @@ const pages = [
   },
   {
     type: 'image',
-    url:
-      'https://laughingsquid.com/wp-content/uploads/2013/09/20130916-17283299-2.png',
+    url: 'https://bookofbadarguments.com/images/irrelevant_authority.png',
     buildPyramid: false,
   },
   {
     type: 'image',
-    url:
-      'https://upload.wikimedia.org/wikipedia/commons/6/6b/Little_nemo_the_walking_bed.jpg',
-    buildPyramid: false,
-  },
-  {
-    type: 'image',
-    url:
-      'https://upload.wikimedia.org/wikipedia/commons/6/6b/Little_nemo_the_walking_bed.jpg',
+    url: 'https://bookofbadarguments.com/images/strawman.png',
     buildPyramid: false,
   },
 ]
-
-// Heavy test
-pages.push({
-  type: 'image',
-  url:
-    'https://www.bluecross.org.uk/sites/default/files/assets/images/Cat%20for%20lost%20page.jpg',
-  buildPyramid: false,
-})
 
 export default class Reader extends Component {
   constructor(props) {
@@ -150,6 +140,7 @@ export default class Reader extends Component {
 */
   // gets called when this route is navigated to
   componentDidMount() {
+    // Initializa OSD instance
     this.initOpenSeaDragon()
   }
 
