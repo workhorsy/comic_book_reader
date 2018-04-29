@@ -25,17 +25,18 @@ class PageNav extends Component {
   previousPage() {
     const { onPageChange, totalPages, currentPage } = this.props
     const prevPage = currentPage - 1
-    const isFirstPage = currentPage === 1 || prevPage === 1
+    const isFirstPage = currentPage === 1 || prevPage === 1 || currentPage === 0
     const selectPage = isFirstPage ? 1 : prevPage
     onPageChange(selectPage)
-    this.setState({ isLastPage: false, isFirstPage })
+
+    this.setState({ isFirstPage, isLastPage: false })
   }
 
   componentDidMount() {
     const { currentPage, totalPages } = this.props
     this.setState({
-      isLastPage: currentPage === totalPages,
       isFirstPage: currentPage === 1,
+      isLastPage: currentPage === totalPages,
     })
   }
 
@@ -80,11 +81,13 @@ class ToolbarAction extends Component {
   }
 
   handleClick() {
-    const { onClick, toggle } = this.props
+    const { onAction, toggle } = this.props
     this.setState(prevState => {
       const { active } = prevState
-      onClick && onClick(!active)
-      return { active: toggle ? !active : false }
+      onAction && onAction(!active)
+      return {
+        active: toggle ? !active : false,
+      }
     })
   }
 
@@ -123,6 +126,7 @@ export default class Toolbar extends Component {
       onBookMode,
       onFitPages,
       currentPage,
+      bookMode,
     } = this.props
 
     const actions = [
@@ -130,7 +134,7 @@ export default class Toolbar extends Component {
         icon: 'expand',
         title: 'Fit All',
         toggle: false,
-        onClick: e => {
+        onAction: e => {
           onFitPages()
         },
       },
@@ -138,13 +142,17 @@ export default class Toolbar extends Component {
         icon: 'columns',
         title: 'Book Mode',
         toggle: true,
-        onClick: onBookMode,
+        active: bookMode,
+        onAction: e => {
+          onBookMode(e)
+        },
       },
       {
         icon: 'arrows-alt',
         title: 'Drag Tool',
         toggle: true,
-        onClick: e => {},
+        active: true,
+        onAction: e => {},
       },
     ]
 
