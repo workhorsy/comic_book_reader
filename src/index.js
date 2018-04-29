@@ -21,6 +21,8 @@ import faArrowLeft from '@fortawesome/fontawesome-free-solid/faArrowLeft'
 import faAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight'
 import faAngleLeft from '@fortawesome/fontawesome-free-solid/faAngleLeft'
 import faColumns from '@fortawesome/fontawesome-free-solid/faColumns'
+import faExpand from '@fortawesome/fontawesome-free-solid/faExpand'
+import faArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt'
 
 fontawesome.library.add(
   brands,
@@ -37,7 +39,9 @@ fontawesome.library.add(
   faArrowRight,
   faAngleLeft,
   faAngleRight,
-  faColumns
+  faColumns,
+  faExpand,
+  faArrowsAlt
 )
 
 render(

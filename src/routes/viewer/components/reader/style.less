@@ -1,9 +1,64 @@
 .viewer {
-  position: absolute;
-  height: calc(100% - 45px);
-  width: 100%;
+  position: relative;
+  height: calc(100vh - 45px);
+  width: 100vw;
   margin: 0;
   padding: 0;
   top: 45px;
-  background: rgba(0, 0, 0, 0.35);
+  background: #23262f;
+}
+
+.overlay {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  background: #23262f;
+  z-index: 1;
+  animation-name: show;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
+}
+
+.overlay.hide {
+  animation-name: hide;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
+  animation-delay: 0.3s;
+}
+
+@keyframes show {
+  0% {
+    opacity: 0;
+    display: none;
+  }
+  1% {
+    opacity: 0;
+    display: block;
+  }
+
+  80% {
+    opacity: 1;
+    display: block;
+    pointer-events: inherit;
+  }
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+  }
 }

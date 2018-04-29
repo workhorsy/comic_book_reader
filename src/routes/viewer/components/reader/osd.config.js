@@ -16,6 +16,8 @@ const config = {
   showFullPageControl: false,
   immediateRender: true,
 
+  //Flick bug -> placeholderFillStyle: '#FFF',
+
   // Animations
   springStiffness: 20,
 }

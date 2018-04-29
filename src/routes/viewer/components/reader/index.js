@@ -31,6 +31,14 @@ const pages = [
   },
 ]
 
+// Heavy test
+pages.push({
+  type: 'image',
+  url:
+    'https://www.bluecross.org.uk/sites/default/files/assets/images/Cat%20for%20lost%20page.jpg',
+  buildPyramid: false,
+})
+
 export default class Reader extends Component {
   constructor(props) {
     super(props)
@@ -38,11 +46,11 @@ export default class Reader extends Component {
     this.state = {
       currentPage: 1,
       bookMode: false,
+      loading: true,
     }
   }
 
   getPages(index) {
-    console.log(index)
     const pageIndex = index - 1
     const page = pages[pageIndex] // Add fallback;
     const nextPage = pages[pageIndex + 1]
@@ -68,25 +76,33 @@ export default class Reader extends Component {
 
   renderPage(index) {
     const pages = this.getPages(index)
-    console.log(pages, index)
     pages && this.viewer.open(pages, 1)
     this.setState({ currentPage: index })
   }
 
   renderBookModeLayout() {
-    let tiledImage, bounds
     const { viewport, world } = this.viewer
-    const margin = 16 / viewport.getContainerSize().x
+    const margin = 8 / viewport.getContainerSize().x
     const pos = new OpenSeaDragon.Point(0, 0)
     const count = world.getItemCount()
     for (let i = 0; i < count; i++) {
-      tiledImage = world.getItemAt(i)
-      bounds = tiledImage.getBounds()
-      tiledImage.setPosition(pos, false)
+      const tiledImage = world.getItemAt(i)
+      const bounds = tiledImage.getBounds()
+      tiledImage.setPosition(pos, true)
       pos.x += bounds.width + margin
     }
-    bounds.width = (bounds.width + margin) * 2
-    viewport.fitBoundsWithConstraints(bounds, true)
+
+    this.fitPages(true)
+  }
+
+  fitPages(fast = false) {
+    const { viewport, world } = this.viewer
+    const count = world.getItemCount()
+    const tiledImage = world.getItemAt(0)
+    const bounds = tiledImage.getBounds()
+    const margin = 8 / viewport.getContainerSize().x
+    bounds.width = (bounds.width + margin) * count
+    viewport.fitBoundsWithConstraints(bounds, fast)
   }
 
   toggleMode(mode) {
@@ -109,18 +125,29 @@ export default class Reader extends Component {
 
       // Set Zoom options
       viewport.maxZoomLevel = targetZoom
-      viewport.defaultZoomLevel = targetZoom
-      viewport.minZoomLevel = targetZoom / 2
 
       // Render Book mode
       this.renderBookModeLayout()
+      this.setState({ loading: false })
     })
+
+    this.viewer.addHandler('close', () => {
+      this.setState({ loading: true })
+    })
+
+    /* Handle First render */
+    const tileDrawnHandler = () => {
+      this.viewer.removeHandler('tile-drawn', tileDrawnHandler)
+      this.setState({ loading: false })
+    }
+    this.viewer.addHandler('tile-drawn', tileDrawnHandler)
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return false
+  /*
+  componentShouldUpdate() {
+      return false;
   }
-
+*/
   // gets called when this route is navigated to
   componentDidMount() {
     this.initOpenSeaDragon()
@@ -131,13 +158,16 @@ export default class Reader extends Component {
 
   render() {
     const { id } = this.props
+    const { loading } = this.state
     return (
       <div>
         <Toolbar
+          onFitPages={this.fitPages.bind(this)}
           totalPages={pages.length}
           onPageChange={this.renderPage.bind(this)}
           onBookMode={this.toggleMode.bind(this)}
         />
+        <div className={style.overlay + ' ' + (loading ? '' : style.hide)} />
         <div id={id} className={style.viewer} />
       </div>
     )

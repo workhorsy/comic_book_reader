@@ -26,6 +26,7 @@ class PageNav extends Component {
         return { isFirstPage: false, currentPage: nextPage }
       } else {
         // Go to last page
+        onPageChange(totalPages)
         return { isLastPage: true, currentPage: totalPages }
       }
     })
@@ -75,29 +76,35 @@ class PageNav extends Component {
   }
 }
 
-class ViewerMode extends Component {
+class ToolbarAction extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      bookMode: false,
+      active: this.props.active || false,
     }
   }
 
-  toggleMode() {
-    const { onToggle } = this.props
+  handleClick() {
+    const { onClick, toggle } = this.props
     this.setState(prevState => {
-      const { bookMode } = prevState
-      const toggleMode = !bookMode
-      onToggle && onToggle(toggleMode)
-      return { bookMode: toggleMode }
+      const { active } = prevState
+      onClick && onClick(!active)
+      return { active: toggle ? !active : false }
     })
   }
 
   render() {
-    const { bookMode } = this.state
+    const { title, icon } = this.props
+    const { active } = this.state
     return (
-      <div className={style.item} onClick={this.toggleMode.bind(this)}>
-        <Icon name={bookMode ? 'columns' : 'file'} />
+      <div
+        className={[style['toolbar-action'], active ? style.active : ''].join(
+          ' '
+        )}
+        onClick={this.handleClick.bind(this)}
+        title={title}
+      >
+        <Icon name={icon} />
       </div>
     )
   }
@@ -115,11 +122,15 @@ export default class Toolbar extends Component {
   componentWillUnmount() {}
 
   render() {
-    const { onPageChange, totalPages, onBookMode } = this.props
+    const { onPageChange, totalPages, onBookMode, onFitPages } = this.props
     return (
       <div className={style.toolbar}>
         <PageNav totalPages={totalPages} onPageChange={onPageChange} />
-        <ViewerMode onToggle={onBookMode} />
+        <div className={style['toolbar-actions']}>
+          <ToolbarAction icon="columns" toggle={true} onClick={onBookMode} />
+          <ToolbarAction icon="expand" onClick={e => onFitPages()} />
+          <ToolbarAction icon="arrows-alt" toggle={true} active={true} />
+        </div>
       </div>
     )
   }
