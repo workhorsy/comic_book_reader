@@ -8,48 +8,41 @@ class PageNav extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentPage: 1,
       isFirstPage: true,
       isLastPage: false,
-      totalPages: this.props.totalPages,
     }
   }
 
   nextPage() {
-    const { onPageChange } = this.props
-    this.setState(prevState => {
-      const { currentPage, totalPages } = prevState
-      const nextPage = currentPage + 1
-      if (nextPage < prevState.totalPages) {
-        onPageChange(nextPage)
-        // Go to next page
-        return { isFirstPage: false, currentPage: nextPage }
-      } else {
-        // Go to last page
-        onPageChange(totalPages)
-        return { isLastPage: true, currentPage: totalPages }
-      }
-    })
+    const { onPageChange, totalPages, currentPage } = this.props
+    const nextPage = currentPage + 1
+    const isLastPage = currentPage === totalPages || nextPage === totalPages
+    const selectPage = isLastPage ? totalPages : nextPage
+    onPageChange(selectPage)
+    this.setState({ isLastPage, isFirstPage: false })
   }
 
   previousPage() {
-    const { onPageChange } = this.props
-    this.setState(prevState => {
-      const prevPage = prevState.currentPage - 1
-      if (prevPage > 1) {
-        onPageChange(prevPage)
-        // Go to previous page
-        return { isFirstPage: false, isLastPage: false, currentPage: prevPage }
-      } else {
-        onPageChange(1)
-        // Go to First page (Book cover)
-        return { isFirstPage: true, currentPage: 1 }
-      }
+    const { onPageChange, totalPages, currentPage } = this.props
+    const prevPage = currentPage - 1
+    const isFirstPage = currentPage === 1 || prevPage === 1
+    const selectPage = isFirstPage ? 1 : prevPage
+    onPageChange(selectPage)
+    this.setState({ isLastPage: false, isFirstPage })
+  }
+
+  componentDidMount() {
+    const { currentPage, totalPages } = this.props
+    this.setState({
+      isLastPage: currentPage === totalPages,
+      isFirstPage: currentPage === 1,
     })
   }
 
   render() {
-    const { currentPage, isFirstPage, isLastPage, totalPages } = this.state
+    const { currentPage, totalPages } = this.props
+    const { isFirstPage, isLastPage } = this.state
+
     return (
       <div className={style.nav}>
         <div
@@ -122,7 +115,13 @@ export default class Toolbar extends Component {
   componentWillUnmount() {}
 
   render() {
-    const { onPageChange, totalPages, onBookMode, onFitPages } = this.props
+    const {
+      onPageChange,
+      totalPages,
+      onBookMode,
+      onFitPages,
+      currentPage,
+    } = this.props
 
     const actions = [
       {
@@ -149,7 +148,11 @@ export default class Toolbar extends Component {
 
     return (
       <div className={style.toolbar}>
-        <PageNav totalPages={totalPages} onPageChange={onPageChange} />
+        <PageNav
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={onPageChange}
+        />
         <div className={style['toolbar-actions']}>
           {actions.map((actionProps, i) => (
             <ToolbarAction key={i} {...actionProps} />

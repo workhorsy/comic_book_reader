@@ -35,7 +35,7 @@ export default class Reader extends Component {
     super(props)
     this.viewer = null
     this.state = {
-      currentPage: 1,
+      currentPage: 4,
       bookMode: false,
       loading: true,
     }
@@ -69,10 +69,16 @@ export default class Reader extends Component {
     this.viewer.viewport.zoomTo(targetZoom, null, true)
   }
 
-  renderPage(index) {
-    const pages = this.getPages(index)
-    pages && this.viewer.open(pages, 1)
+  jumpToPage(index) {
+    console.log('jump:', index)
     this.setState({ currentPage: index })
+    this.renderPage()
+  }
+
+  renderPage() {
+    const { currentPage } = this.state
+    const pages = this.getPages(currentPage)
+    pages && this.viewer.open(pages, 1)
   }
 
   renderBookModeLayout() {
@@ -105,16 +111,16 @@ export default class Reader extends Component {
     console.log(this.state.currentPage)
 
     // Re-render layout
-    this.renderPage(this.state.currentPage)
+    this.renderPage()
   }
 
   initOpenSeaDragon() {
-    let { id, source } = this.props
-
+    const { id, source } = this.props
+    const { currentPage } = this.state
     this.viewer = OpenSeaDragon({
-      id: id,
-      tileSources: this.getPages(1),
+      id,
       ...OSDConfig,
+      tileSources: this.getPages(currentPage),
     })
 
     this.viewer.addHandler('open', () => {
@@ -157,13 +163,14 @@ export default class Reader extends Component {
 
   render() {
     const { id } = this.props
-    const { loading } = this.state
+    const { loading, currentPage } = this.state
     return (
       <div>
         <Toolbar
           onFitPages={this.fitPages.bind(this)}
           totalPages={pages.length}
-          onPageChange={this.renderPage.bind(this)}
+          currentPage={currentPage}
+          onPageChange={this.jumpToPage.bind(this)}
           onBookMode={this.toggleMode.bind(this)}
         />
         <div className={style.overlay + ' ' + (loading ? '' : style.hide)} />
