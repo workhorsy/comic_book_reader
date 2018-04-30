@@ -7,10 +7,6 @@ import createHashHistory from 'history/createHashHistory'
 import Welcome from '../../routes/welcome'
 import Viewer from '../../routes/viewer'
 
-//import Files from '../../routes/files'
-//import Library from '../../routes/library'
-//import Settings from '../../routes/settings'
-
 // Errors
 import Unsupported from '../../routes/unsupported'
 
@@ -63,13 +59,7 @@ export default class App extends Component {
       <div id="app" class={`${style.app}`}>
         <Router onChange={this.handleRoute} history={createHashHistory()}>
           <Welcome path="/" default />
-          <Viewer path="/api/:params?" />
-          {/*
-              <Settings path="/settings" />
-              <Files path="/files" />
-              <Library path="/library" />
-              <Unsupported path="/unsupported" />
-          */}
+          <Viewer path="/reader" />
         </Router>
       </div>
     )

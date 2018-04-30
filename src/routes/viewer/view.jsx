@@ -36,16 +36,29 @@ export default class Viewer extends Component {
     const { addPage } = this.props
   }
 
+  // Embed API
+  handleQuery() {
+    const { matches, setCurrentPage, reader } = this.props
+    const { file, pg } = matches
+
+    /* Load file */
+    file && console.log('Loading...')
+
+    /* Set initial page */
+    const pageNumber = parseInt(pg, 10)
+    pg && pg > 0 && pg != reader.currentPage && setCurrentPage(pageNumber)
+  }
+
   // gets called when this route is navigated to
   componentDidMount() {
     const { addPage } = this.props
 
+    // Embed API
+    this.handleQuery()
+
     // Test
+    // https://bookofbadarguments.com
     addPage('https://bookofbadarguments.com/images/1.jpg')
-    addPage('https://bookofbadarguments.com/images/appeal_to_consequences.png')
-    addPage('https://bookofbadarguments.com/images/irrelevant_authority.png')
-    addPage('https://bookofbadarguments.com/images/appeal_to_consequences.png')
-    addPage('https://bookofbadarguments.com/images/irrelevant_authority.png')
     addPage('https://bookofbadarguments.com/images/appeal_to_consequences.png')
     addPage('https://bookofbadarguments.com/images/irrelevant_authority.png')
   }
@@ -55,6 +68,7 @@ export default class Viewer extends Component {
 
   render() {
     const { pages, isLoading } = this.props.reader
+
     return (
       <div className={`${style.view}`}>
         <div className={style.overlay + ' ' + (isLoading ? '' : style.hide)} />
