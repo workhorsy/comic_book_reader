@@ -19,7 +19,7 @@ const config = {
   //Flick bug -> placeholderFillStyle: '#FFF',
 
   // Animations
-  springStiffness: 20,
+  springStiffness: 18.0,
 }
 
 export default config

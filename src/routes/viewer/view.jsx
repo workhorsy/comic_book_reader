@@ -45,16 +45,79 @@ export default class Viewer extends Component {
     const { file, pg } = matches
 
     /* Load file */
-    file && console.log('Loading...')
+    file && this.handleUncompress(file)
 
     /* Set initial page */
     const pageNumber = parseInt(pg, 10)
     pg && pg > 0 && pg != reader.currentPage && setCurrentPage(pageNumber)
   }
+
+  handleUncompress(file) {
+    // FIX: (Use fetch API)
+    function httpRequest(url, method, cb, timeout) {
+      timeout = timeout || 10000
+      let xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function() {
+        if (this.readyState === 4) {
+          cb(this.response, this.status)
+        } else if (this.readyState === 0) {
+          cb(null)
+        }
+      }
+      xhr.onerror = function() {
+        cb(null)
+      }
+      xhr.open(method, url, true)
+      xhr.timeout = timeout
+      xhr.responseType = 'blob'
+      xhr.send(null)
+    }
+
+    // TEST: Broken!
+    const worker = this.worker
+    httpRequest(file, 'GET', (response, status) => {
+      if (status === 200) {
+        let fileReader = new FileReader()
+        fileReader.onload = function() {
+          let array_buffer = this.result
+
+          // Debug
+          console.log('Reading archive: ', file)
+          console.log({
+            file_name: 'example_rar_5.rar',
+            password: null,
+            array_buffer,
+          })
+
+          worker.postMessage({
+            action: 'uncompress:start',
+            data: {
+              file_name: 'example_rar_5.rar',
+              password: null,
+              array_buffer,
+            },
+          })
+        }
+        fileReader.readAsArrayBuffer(response)
+      } else {
+        console.error('Failed to download file with status: ', status)
+      }
+    })
+    /*
+      fetch('').then(res => res.arrayBuffer()).then(buffer => {
+          this.worker.postMessage({action: 'uncompress:start', data: {
+              array_buffer: buffer, file_name: 'example.rar', password: null
+          }});
+      })
+      */
+  }
+
   componentWillMount() {
     // Embed API
-    this.handleQuery()
+
     this.worker = new readerWorker()
+    this.worker.onmessage = e => console.log(e.data)
+    this.handleQuery()
 
     // Test: REMOVE
     // https://bookofbadarguments.com

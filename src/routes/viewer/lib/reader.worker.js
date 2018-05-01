@@ -10,113 +10,78 @@ loadArchiveFormats(['rar', 'zip', 'tar'], function() {
   console.info('Worker ready ...')
 })
 
-// FIXME: This function is super inefficient
-function isValidImageType(file_name) {
-  file_name = file_name.toLowerCase()
-  return (
-    file_name.endsWith('.jpeg') ||
-    file_name.endsWith('.jpg') ||
-    file_name.endsWith('.png') ||
-    file_name.endsWith('.bmp') ||
-    file_name.endsWith('.webp') ||
-    file_name.endsWith('.gif')
-  )
+// Regex to detect image type
+const regexImage = new RegExp('^.+.(jpeg|jpg|png|bpm|webp|gif)$')
+const isValidImageType = name => regexImage.test(name)
+
+// Regex to detect metadata
+const regexMeta = new RegExp('^.+.(acbf|xml|json)$')
+const isValidMetadata = name => regexMeta.test(name)
+
+// Extract file MIME Type
+const getFileMimeType = name => {
+  const mime = regxImage.exec(name)
+  return `image/${mime ? mime[1] : 'jpeg'}`
 }
 
-// FIXME: This function is super inefficient
-function getFileMimeType(file_name) {
-  file_name = file_name.toLowerCase()
-  if (file_name.endsWith('.jpeg') || file_name.endsWith('.jpg')) {
-    return 'image/jpeg'
-  } else if (file_name.endsWith('.png')) {
-    return 'image/png'
-  } else if (file_name.endsWith('.bmp')) {
-    return 'image/bmp'
-  } else if (file_name.endsWith('.webp')) {
-    return 'image/webp'
-  } else if (file_name.endsWith('.gif')) {
-    return 'image/gif'
-  } else {
-    // Uses jpeg as default mime type
-    return 'image/jpeg'
-  }
-}
-
-function onUncompress(archive) {
-  // Get only the entries that are images
-  let entries = []
-  archive.entries.forEach(function(entry) {
-    if (isValidImageType(entry.name)) {
-      entries.push(entry)
-    }
-  })
-
-  // Uncompress each entry and send it to the client
-  let onEach = function(i) {
-    if (i >= entries.length) {
+const hanleEntry = (entry, index, totalEntries) => {
+  entry.readData((data, error) => {
+    // Hanlde error
+    if (error) {
+      // Sen error to main thead
+      self.postMessage({ action: 'error', error })
       return
     }
 
-    let entry = entries[i]
-    entry.readData(function(data, err) {
-      if (err) {
-        let message = {
-          action: 'error',
-          error: err,
-        }
-        self.postMessage(message)
-        return
+    // Ignore folders
+    if (entry.is_file && data) {
+      let size = data.byteLength
+      let name = entry.name
+      let blob = new Blob([data], { type: getFileMimeType(entry.name) })
+      let url = URL.createObjectURL(blob)
+
+      // Create message
+      let message = {
+        action: 'uncompress:each',
+        archive: { totalEntries },
+        file: { url, name, size, index },
       }
 
-      if (entry.is_file && data) {
-        let blob = new Blob([data], { type: getFileMimeType(entry.name) })
-        let url = URL.createObjectURL(blob)
-
-        let message = {
-          action: 'uncompress_each',
-          file_name: entry.name,
-          url: url,
-          index: i,
-          size: data.byteLength,
-        }
-        self.postMessage(message)
-      }
-
-      onEach(i + 1)
-    })
-  }
-  onEach(0)
+      // Send entry to main thread
+      self.postMessage(message)
+    }
+  })
 }
 
-self.addEventListener(
-  'message',
-  function(e) {
-    switch (e.data.action) {
-      case 'uncompress_start':
-        // Get the file data
-        let array_buffer = e.data.array_buffer
-        let file_name = e.data.file_name
-        let password = e.data.password
+const handleUncompress = archive => {
+  // Debug archive
+  console.info('Uncompressing:', archive)
+  // Get only the entries that are images
+  let entries = archive.entries.filter(entry => isValidImageType(entry.name))
+  // Uncompress each entry and send it to the client
+  for (let index = 0, count = entries.length; index < count; index++) {
+    handleEntry(entries[index], index, count)
+  }
+}
 
-        // Open the array buffer as an archive
-        try {
-          let archive = archiveOpenArrayBuffer(
-            file_name,
-            password,
-            array_buffer
-          )
-          console.info('Uncompressing ' + archive.archive_type + ' ...')
-          onUncompress(archive)
-          // Otherwise show an error
-        } catch (e) {
-          let message = {
-            action: 'error',
-            error: e.message,
-          }
-          self.postMessage(message)
-        }
-        break
+const tasks = {
+  'uncompress:start': data => {
+    let { file_name, password, array_buffer } = data
+    try {
+      // Open the array buffer as an archive
+      let archive = archiveOpenArrayBuffer(file_name, password, array_buffer)
+      //archive && handleUncompress(archive)
+    } catch (e) {
+      // Handle error
+      let message = { action: 'error', error: e.message }
+      self.postMessage(message)
     }
   },
-  false
-)
+}
+
+const handleTask = event => {
+  const { action, data } = event.data
+  tasks[action] && tasks[action](data)
+}
+
+self.addEventListener('message', handleTask, false)
