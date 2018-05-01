@@ -4,4 +4,9 @@ export default function(config, env, helpers) {
   if (env.production) {
     config.output.publicPath = './'
   }
+
+  config.module.loaders.push({
+    test: /\.worker\.js$/,
+    use: { loader: 'worker-loader' },
+  })
 }

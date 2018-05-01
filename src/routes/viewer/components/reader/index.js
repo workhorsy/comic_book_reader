@@ -127,11 +127,10 @@ export default class Reader extends Component {
       showLoadingScreen(true)
     })
   }
-  /*
+
   componentShouldUpdate() {
-      return false;
+    return false
   }
-  */
 
   // gets called when this route is navigated to
   componentDidMount() {
