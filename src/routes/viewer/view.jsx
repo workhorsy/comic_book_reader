@@ -80,14 +80,8 @@ export default class Viewer extends Component {
         let fileReader = new FileReader()
         fileReader.onload = function() {
           let array_buffer = this.result
-
           // Debug
           console.log('Reading archive: ', file)
-          console.log({
-            file_name: 'example_rar_5.rar',
-            password: null,
-            array_buffer,
-          })
 
           worker.postMessage({
             action: 'uncompress:start',
@@ -117,7 +111,6 @@ export default class Viewer extends Component {
 
     this.worker = new readerWorker()
     this.worker.onmessage = e => console.log(e.data)
-    this.handleQuery()
 
     // Test: REMOVE
     // https://bookofbadarguments.com
@@ -128,7 +121,9 @@ export default class Viewer extends Component {
   }
 
   // gets called when this route is navigated to
-  componentDidMount() {}
+  componentDidMount() {
+    this.handleQuery()
+  }
 
   // gets called just before navigating away from the route
   componentWillUnmount() {}

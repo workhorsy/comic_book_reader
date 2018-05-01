@@ -67,6 +67,7 @@ const handleUncompress = archive => {
 const tasks = {
   'uncompress:start': data => {
     let { file_name, password, array_buffer } = data
+    console.log(data)
     try {
       // Open the array buffer as an archive
       let archive = archiveOpenArrayBuffer(file_name, password, array_buffer)
