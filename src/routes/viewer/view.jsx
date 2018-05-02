@@ -50,9 +50,14 @@ export default class Viewer extends Component {
     this.worker = new uncompressWorker()
     this.worker.onmessage = e => {
       // Handle errors
-      if (e.data.action === 'error') {
-        console.error(e.data.error)
-        this.worker.terminate()
+      switch (e.data.action) {
+        case 'error':
+          console.error(e.data.error)
+          this.worker.terminate()
+          break
+        case 'ready':
+          this.handleQuery()
+          break
       }
     }
 
@@ -66,7 +71,6 @@ export default class Viewer extends Component {
 
   // gets called when this route is navigated to
   componentDidMount() {
-    this.handleQuery()
   }
 
   // gets called just before navigating away from the route

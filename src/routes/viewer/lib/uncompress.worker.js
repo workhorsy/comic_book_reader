@@ -5,10 +5,6 @@
 
 importScripts('./lib/js/uncompress.js')
 
-// Load all the archive formats
-self.loadArchiveFormats(['rar', 'zip', 'tar'], function() {
-  console.info('Worker ready ...')
-})
 
 // Regex to detect image type
 const regexImage = new RegExp('^.+.(jpeg|jpg|png|bpm|webp|gif)$')
@@ -85,4 +81,9 @@ const handleTask = event => {
   tasks[action] && tasks[action](event.data)
 }
 
-self.addEventListener('message', handleTask, false)
+// Load all the archive formats
+self.loadArchiveFormats(['rar', 'zip', 'tar'], function() {
+    self.addEventListener('message', handleTask, false)
+    self.postMessage({ action: 'ready' })
+    console.info('Worker ready ...');
+})
