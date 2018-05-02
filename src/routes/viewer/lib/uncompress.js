@@ -1,35 +1,18 @@
-// Copyright (c) 2017 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
-// This software is licensed under a MIT License
-// https://github.com/workhorsy/uncompress.js
-'use strict'
-
-importScripts('./lib/js/uncompress.js')
-
-// Load all the archive formats
-loadArchiveFormats(['rar', 'zip', 'tar'], function() {
-  console.info('Worker ready ...')
-})
-
-// Regex to detect image type
 const regexImage = new RegExp('^.+.(jpeg|jpg|png|bpm|webp|gif)$')
 const isValidImageType = name => regexImage.test(name)
 
-// Regex to detect metadata
-const regexMeta = new RegExp('^.+.(acbf|xml|json)$')
-const isValidMetadata = name => regexMeta.test(name)
-
 // Extract file MIME Type
 const getFileMimeType = name => {
-  const mime = regxImage.exec(name)
+  const mime = regexImage.exec(name)
   return `image/${mime ? mime[1] : 'jpeg'}`
 }
 
-const hanleEntry = (entry, index, totalEntries) => {
+const handleEntry = (entry, index, totalEntries) => {
   entry.readData((data, error) => {
     // Hanlde error
     if (error) {
       // Sen error to main thead
-      self.postMessage({ action: 'error', error })
+      console.error({ action: 'error', error })
       return
     }
 
@@ -48,12 +31,12 @@ const hanleEntry = (entry, index, totalEntries) => {
       }
 
       // Send entry to main thread
-      self.postMessage(message)
+      console.log(message)
     }
   })
 }
 
-const handleUncompress = archive => {
+const handleUncompress = data => {
   // Debug archive
   console.info('Uncompressing:', archive)
   // Get only the entries that are images
@@ -64,25 +47,20 @@ const handleUncompress = archive => {
   }
 }
 
-const tasks = {
-  'uncompress:start': data => {
-    let { file_name, password, array_buffer } = data
-    console.log(data)
+const uncompressArchive = data => {
+  // Load all the archive formats
+  loadArchiveFormats(['rar', 'zip', 'tar'], e => {
     try {
+      const { file_name, password, array_buffer } = data
       // Open the array buffer as an archive
-      let archive = archiveOpenArrayBuffer(file_name, password, array_buffer)
-      //archive && handleUncompress(archive)
+      const archive = archiveOpenArrayBuffer(file_name, password, array_buffer)
+      handleUncompress(archive)
     } catch (e) {
       // Handle error
       let message = { action: 'error', error: e.message }
-      self.postMessage(message)
+      console.error(message)
     }
-  },
+  })
 }
 
-const handleTask = event => {
-  const { action, data } = event.data
-  tasks[action] && tasks[action](data)
-}
-
-self.addEventListener('message', handleTask, false)
+export default uncompressArchive

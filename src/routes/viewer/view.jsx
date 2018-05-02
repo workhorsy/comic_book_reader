@@ -3,34 +3,9 @@ import style from './style'
 
 import { route } from 'preact-router'
 import Reader from './components/reader'
-
-import readerWorker from './lib/reader.worker.js'
-
-// Test
-// https://bookofbadarguments.com
-
-const pages = [
-  {
-    type: 'image',
-    url: 'https://bookofbadarguments.com/images/1.jpg',
-    buildPyramid: false,
-  },
-  {
-    type: 'image',
-    url: 'https://bookofbadarguments.com/images/appeal_to_consequences.png',
-    buildPyramid: false,
-  },
-  {
-    type: 'image',
-    url: 'https://bookofbadarguments.com/images/irrelevant_authority.png',
-    buildPyramid: false,
-  },
-  {
-    type: 'image',
-    url: 'https://bookofbadarguments.com/images/strawman.png',
-    buildPyramid: false,
-  },
-]
+import fetchArchive from './lib/fetchArchive.js'
+import uncompressArchive from './lib/uncompress.js'
+import uncompressWorker from './lib/uncompress.worker.js'
 
 export default class Viewer extends Component {
   constructor(props) {
@@ -53,64 +28,33 @@ export default class Viewer extends Component {
   }
 
   handleUncompress(file) {
-    // FIX: (Use fetch API)
-    function httpRequest(url, method, cb, timeout) {
-      timeout = timeout || 10000
-      let xhr = new XMLHttpRequest()
-      xhr.onreadystatechange = function() {
-        if (this.readyState === 4) {
-          cb(this.response, this.status)
-        } else if (this.readyState === 0) {
-          cb(null)
-        }
-      }
-      xhr.onerror = function() {
-        cb(null)
-      }
-      xhr.open(method, url, true)
-      xhr.timeout = timeout
-      xhr.responseType = 'blob'
-      xhr.send(null)
-    }
+    const { worker } = this
 
-    // TEST: Broken!
-    const worker = this.worker
-    httpRequest(file, 'GET', (response, status) => {
-      if (status === 200) {
-        let fileReader = new FileReader()
-        fileReader.onload = function() {
-          let array_buffer = this.result
-          // Debug
-          console.log('Reading archive: ', file)
-
-          worker.postMessage({
-            action: 'uncompress:start',
-            data: {
-              file_name: 'example_rar_5.rar',
-              password: null,
-              array_buffer,
-            },
-          })
-        }
-        fileReader.readAsArrayBuffer(response)
-      } else {
-        console.error('Failed to download file with status: ', status)
+    fetchArchive(file, array_buffer => {
+      // Build message
+      const message = {
+        action: 'uncompress:start',
+        file_name: 'example.rar',
+        password: null,
+        array_buffer,
       }
+
+      worker.postMessage(message)
+      //uncompressArchive(data);
     })
-    /*
-      fetch('').then(res => res.arrayBuffer()).then(buffer => {
-          this.worker.postMessage({action: 'uncompress:start', data: {
-              array_buffer: buffer, file_name: 'example.rar', password: null
-          }});
-      })
-      */
   }
 
   componentWillMount() {
     // Embed API
 
-    this.worker = new readerWorker()
-    this.worker.onmessage = e => console.log(e.data)
+    this.worker = new uncompressWorker()
+    this.worker.onmessage = e => {
+      // Handle errors
+      if (e.data.action === 'error') {
+        console.error(e.data.error)
+        this.worker.terminate()
+      }
+    }
 
     // Test: REMOVE
     // https://bookofbadarguments.com
