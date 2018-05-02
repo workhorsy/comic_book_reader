@@ -10,12 +10,13 @@ const fetchArchive = (url, callback) => {
   fetch(url, { mode: 'cors' })
     .then(status)
     .then(res => {
-      console.log(res.headers.get('Content-Type'))
+      // Get content-type
+      const contentType = res.headers.get('Content-Type')
       return res.arrayBuffer()
     })
     .then(buffer => callback(buffer))
     .catch(error => {
-      console.log('Request failed', error)
+      console.error('Request failed', error)
     })
 }
 

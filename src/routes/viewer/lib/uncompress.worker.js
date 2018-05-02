@@ -5,9 +5,10 @@
 
 importScripts('./lib/js/uncompress.js')
 
-
 // Regex to detect image type
 const regexImage = new RegExp('^.+.(jpeg|jpg|png|bpm|webp|gif)$')
+
+// Check if file is a valid image-type
 const isValidImageType = name => regexImage.test(name)
 
 // Extract file MIME Type
@@ -22,22 +23,22 @@ const handleEntry = (entry, index, totalEntries) => {
     if (error) {
       // Sen error to main thead
       self.postMessage({ action: 'error-data', error })
+      return false
     }
-
     // Ignore folders
     if (entry.is_file && data) {
-      let size = data.byteLength
-      let name = entry.name
-      let blob = new Blob([data], { type: getFileMimeType(entry.name) })
-      let url = URL.createObjectURL(blob)
-
+      const size = data.byteLength
+      const name = entry.name
+      const blob = new Blob([data], { type: getFileMimeType(entry.name) })
+      const url = URL.createObjectURL(blob)
       // Create message
-      let message = {
-        action: 'uncompress:each',
-        archive: { totalEntries },
-        file: { url, name, size, index },
+      const message = {
+        action: 'uncompress_each',
+        payload: {
+          archive: { totalEntries },
+          file: { index, url, name, size },
+        },
       }
-
       // Send entry to main thread
       self.postMessage(message)
     }
@@ -45,8 +46,6 @@ const handleEntry = (entry, index, totalEntries) => {
 }
 
 const handleUncompress = archive => {
-  // Debug archive
-  console.info('Uncompressing:', archive)
   // Get only the entries that are images
   let entries = archive.entries.filter(entry => isValidImageType(entry.name))
   // Uncompress each entry and send it to the client
@@ -56,12 +55,11 @@ const handleUncompress = archive => {
 }
 
 const tasks = {
-  'uncompress:start': data => {
-    let { file_name, password, array_buffer } = data
-    console.log(data)
+  uncompress_start: data => {
     try {
       // Open the array buffer as an archive
-      let archive = self.archiveOpenArrayBuffer(
+      const { file_name, password, array_buffer } = data
+      const archive = self.archiveOpenArrayBuffer(
         file_name,
         password,
         array_buffer
@@ -76,14 +74,13 @@ const tasks = {
 }
 
 const handleTask = event => {
-  const { action } = event.data
-
-  tasks[action] && tasks[action](event.data)
+  const { action, payload } = event.data
+  tasks[action] && tasks[action](payload)
 }
 
 // Load all the archive formats
 self.loadArchiveFormats(['rar', 'zip', 'tar'], function() {
-    self.addEventListener('message', handleTask, false)
-    self.postMessage({ action: 'ready' })
-    console.info('Worker ready ...');
+  self.addEventListener('message', handleTask, false)
+  self.postMessage({ action: 'ready' })
+  console.info('Worker ready ...')
 })

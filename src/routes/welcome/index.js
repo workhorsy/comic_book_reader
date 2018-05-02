@@ -10,7 +10,7 @@ export default class Welcome extends Component {
   state = {}
 
   showApp(e) {
-    route('/files')
+    route('/reader')
   }
 
   // gets called when this route is navigated to
@@ -23,12 +23,12 @@ export default class Welcome extends Component {
     return (
       <div class={style.view}>
         <section className={style.main}>
-          <img src="/assets/logo.svg" className={style.logo} alt="" />
+          <img src="./assets/logo.svg" className={style.logo} alt="" />
           <p class={style.description} translatable="true">
             An open source and touch friendly <br />{' '}
             <span class={style.focus}>Html5</span> comic book reader.
           </p>
-          <Button>Try it now</Button>
+          <Button onClick={e => this.showApp()}>Try it now</Button>
         </section>
 
         <section className={style.light}>

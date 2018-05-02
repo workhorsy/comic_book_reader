@@ -4,18 +4,16 @@ import style from './style'
 import { route } from 'preact-router'
 import Reader from './components/reader'
 import fetchArchive from './lib/fetchArchive.js'
-import uncompressArchive from './lib/uncompress.js'
 import uncompressWorker from './lib/uncompress.worker.js'
 
 export default class Viewer extends Component {
   constructor(props) {
     super(props)
-    const { addPage } = this.props
     this.worker = null
   }
 
-  // Embed API
   handleQuery() {
+    // Embed API
     const { matches, setCurrentPage, reader } = this.props
     const { file, pg } = matches
 
@@ -28,54 +26,61 @@ export default class Viewer extends Component {
   }
 
   handleUncompress(file) {
-    const { worker } = this
-
     fetchArchive(file, array_buffer => {
       // Build message
       const message = {
-        action: 'uncompress:start',
-        file_name: 'example.rar',
-        password: null,
-        array_buffer,
+        action: 'uncompress_start',
+        payload: {
+          file_name: 'archive',
+          password: null,
+          array_buffer,
+        },
       }
-
-      worker.postMessage(message)
-      //uncompressArchive(data);
+      // Post message to worker
+      this.worker.postMessage(message)
     })
   }
 
   componentWillMount() {
-    // Embed API
-
-    this.worker = new uncompressWorker()
-    this.worker.onmessage = e => {
-      // Handle errors
-      switch (e.data.action) {
-        case 'error':
-          console.error(e.data.error)
-          this.worker.terminate()
-          break
-        case 'ready':
-          this.handleQuery()
-          break
-      }
+    const { addPage } = this.props
+    // Worker Events
+    const actions = {
+      ready: data => {
+        this.handleQuery()
+      },
+      error: data => {
+        console.error(data.error)
+        this.worker.terminate()
+      },
     }
 
-    // Test: REMOVE
-    // https://bookofbadarguments.com
-    const { addPage } = this.props
-    addPage('https://bookofbadarguments.com/images/1.jpg')
-    addPage('https://bookofbadarguments.com/images/appeal_to_consequences.png')
-    addPage('https://bookofbadarguments.com/images/irrelevant_authority.png')
+    actions.uncompress_each = payload => {
+      addPage(payload.file.url)
+      console.log(payload.file)
+    }
+
+    // Handle messages from worker thread
+    const handleMessage = (action, data) => {
+      actions[action] && actions[action](data)
+    }
+
+    // Create new worker
+    this.worker = new uncompressWorker()
+
+    // Listen messages from worker
+    this.worker.onmessage = e => {
+      const { action, payload } = e.data
+      handleMessage(action, payload)
+    }
   }
 
-  // gets called when this route is navigated to
-  componentDidMount() {
-  }
+  // Gets called when this route is navigated to
+  componentDidMount() {}
 
-  // gets called just before navigating away from the route
+  // Gets called just before navigating away from the route
   componentWillUnmount() {}
 
+  // Prevent updates
   componentShouldUpdate() {
     return fasle
   }

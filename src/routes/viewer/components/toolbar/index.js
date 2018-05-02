@@ -2,8 +2,6 @@ import { h, Component } from 'preact'
 import Icon from '../../../../components/icon'
 import style from './style'
 
-// Test
-
 class PageNav extends Component {
   constructor(props) {
     super(props)
@@ -28,8 +26,17 @@ class PageNav extends Component {
     const isFirstPage = currentPage === 1 || prevPage === 1 || currentPage === 0
     const selectPage = isFirstPage ? 1 : prevPage
     onPageChange(selectPage)
-
     this.setState({ isFirstPage, isLastPage: false })
+  }
+
+  componentWillUpdate(nexProps) {
+    const { currentPage, totalPages } = this.props
+    if (totalPages != nexProps.totalPages) {
+      this.setState({
+        isFirstPage: currentPage === 1,
+        isLastPage: currentPage === totalPages,
+      })
+    }
   }
 
   componentDidMount() {
