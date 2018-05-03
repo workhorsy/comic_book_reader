@@ -4,12 +4,13 @@ import style from './style'
 
 const Progress = ({ current, total }) => {
   const loaded = Math.round(current / total * 100)
+  const progress = Math.round(loaded / 10) * 10
+  console.log(progress)
 
   return (
-    <div
-      className={[style.progress, loaded === 100 ? style.hide : ''].join(' ')}
-      style={{ width: loaded + '%' }}
-    />
+    <div className={[style.bar, loaded === 100 ? style.hide : ''].join(' ')}>
+      <div className={style.progress} style={{ width: progress + '%' }} />
+    </div>
   )
 }
 

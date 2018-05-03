@@ -79,22 +79,32 @@
   border-radius: 4px;
 }
 
-.progress {
-  width: 5%;
-  height: 2px;
+.bar {
   position: absolute;
   top: 0;
   left: 0;
+  right: 0;
+  margin: 0 auto;
+  height: 2px;
   background: rgba(255, 255, 255, 0.5);
+}
+
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #fff;
+  height: 2px;
   display: block;
-  transition: 0.2s linear;
+  transition: width 0.4s ease;
 }
 
 .hide {
   animation-name: hide;
-  animation-duration: 0.2s;
-  animation-timing-function: ease;
+  animation-duration: 0.4s;
+  animation-timing-function: linear;
   animation-fill-mode: forwards;
+  animation-delay: 0.4s;
 }
 
 @keyframes hide {
