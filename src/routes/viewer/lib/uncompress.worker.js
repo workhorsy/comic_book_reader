@@ -3,7 +3,7 @@
 // https://github.com/workhorsy/uncompress.js
 'use strict'
 
-importScripts('./lib/js/uncompress.js')
+importScripts('./assets/js/uncompress.js')
 
 // Regex to detect image type
 const regexImage = new RegExp('^.+.(jpeg|jpg|png|bpm|webp|gif)$')
