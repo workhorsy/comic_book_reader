@@ -2,6 +2,17 @@ import { h, Component } from 'preact'
 import Icon from '../../../../components/icon'
 import style from './style'
 
+const Progress = ({ progress }) => {
+  const loaded = `${progress}%`
+  console.log(loaded)
+  return (
+    <div
+      className={[style.progress, progress === 100 ? style.hide : ''].join(' ')}
+      style={{ width: loaded }}
+    />
+  )
+}
+
 class PageNav extends Component {
   constructor(props) {
     super(props)
@@ -175,6 +186,8 @@ export default class Toolbar extends Component {
             <ToolbarAction key={i} {...actionProps} />
           ))}
         </div>
+
+        <Progress progress={totalPages * 100 / 6} />
       </div>
     )
   }

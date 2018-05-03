@@ -78,3 +78,32 @@
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
+
+.progress {
+  width: 5%;
+  height: 2px;
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  background: #fff;
+  display: block;
+  opacity: 0.75;
+  transition: 0.2s ease;
+}
+
+.hide {
+  animation-name: hide;
+  animation-duration: 0.3s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

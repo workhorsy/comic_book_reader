@@ -1,8 +1,12 @@
 import { h, Component } from 'preact'
 import style from './style'
 
+// Components
 import { route } from 'preact-router'
 import Reader from './components/reader'
+import Loader from './components/loader'
+
+// Utils
 import fetchArchive from './lib/fetchArchive.js'
 import uncompressWorker from './lib/uncompress.worker.js'
 
@@ -91,7 +95,7 @@ export default class Viewer extends Component {
     return (
       <div className={`${style.view}`}>
         <div className={style.overlay + ' ' + (isLoading ? '' : style.hide)}>
-          <h1>Loading...</h1>
+          <Loader />
         </div>
         {pages.length > 0 && <Reader id={'OSD'} {...this.props} />}
       </div>
