@@ -46,7 +46,7 @@ export default class Viewer extends Component {
   }
 
   componentWillMount() {
-    const { addPage } = this.props
+    const { addPage, setLoadedArchive } = this.props
     // Worker Events
     const actions = {
       ready: data => {
@@ -60,7 +60,11 @@ export default class Viewer extends Component {
 
     actions.uncompress_each = payload => {
       addPage(payload.file.url)
-      console.log(payload.file)
+    }
+
+    actions.uncompress_cover = payload => {
+      setLoadedArchive(payload.archive)
+      addPage(payload.file.url)
     }
 
     // Handle messages from worker thread

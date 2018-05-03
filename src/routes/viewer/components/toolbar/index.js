@@ -2,13 +2,13 @@ import { h, Component } from 'preact'
 import Icon from '../../../../components/icon'
 import style from './style'
 
-const Progress = ({ progress }) => {
-  const loaded = `${progress}%`
-  console.log(loaded)
+const Progress = ({ current, total }) => {
+  const loaded = Math.round(current / total * 100)
+
   return (
     <div
-      className={[style.progress, progress === 100 ? style.hide : ''].join(' ')}
-      style={{ width: loaded }}
+      className={[style.progress, loaded === 100 ? style.hide : ''].join(' ')}
+      style={{ width: loaded + '%' }}
     />
   )
 }
@@ -144,6 +144,7 @@ export default class Toolbar extends Component {
       onBookMode,
       onFitPages,
       currentPage,
+      loadedPages,
       bookMode,
     } = this.props
 
@@ -187,7 +188,7 @@ export default class Toolbar extends Component {
           ))}
         </div>
 
-        <Progress progress={totalPages * 100 / 6} />
+        <Progress current={loadedPages} total={totalPages} />
       </div>
     )
   }

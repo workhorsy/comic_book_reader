@@ -9,6 +9,21 @@ const Page = (source, index) => {
 }
 
 const actions = store => ({
+  setLoadedArchive(prevState, archive) {
+    const { reader } = prevState
+    // const {name, totalPages}
+    return {
+      ...prevState,
+      reader: {
+        ...reader,
+        archive: {
+          ...reader.archive,
+          ...archive,
+        },
+      },
+    }
+  },
+
   setCurrentPage(prevState, pageNumber) {
     return {
       ...prevState,
@@ -41,7 +56,7 @@ const actions = store => ({
       ...prevState,
       reader: {
         ...reader,
-        totalPages: reader.totalPages + 1,
+        loadedPages: reader.loadedPages + 1,
         pages: reader.pages.concat(page),
       },
     }

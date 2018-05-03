@@ -14,7 +14,7 @@ export default class Reader extends Component {
   }
 
   getPages(pageNumber, renderMode) {
-    const { bookMode, pages, totalPages, currentPage } = this.props.reader
+    const { bookMode, pages, currentPage } = this.props.reader
     const pageIndex = pageNumber - 1
     const page = pages[pageIndex] || false
 
@@ -154,12 +154,14 @@ export default class Reader extends Component {
 
   render() {
     const { id, reader } = this.props
-    const { isLoading, currentPage, totalPages, bookMode } = reader
+    const { isLoading, currentPage, loadedPages, archive, bookMode } = reader
+    const { totalPages } = archive
     return (
       <div>
         <Toolbar
           onFitPages={this.fitPages.bind(this)}
           totalPages={totalPages}
+          loadedPages={loadedPages}
           currentPage={currentPage}
           bookMode={bookMode}
           onBookMode={e => this.handleBookMode(e)}

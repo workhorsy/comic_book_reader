@@ -17,12 +17,12 @@ const getFileMimeType = name => {
   return `image/${mime ? mime[1] : 'jpeg'}`
 }
 
-const handleEntry = (entry, index, totalEntries) => {
+const handleEntry = (index, entry, archive) => {
   entry.readData((data, error) => {
     // Hanlde error
     if (error) {
       // Sen error to main thead
-      self.postMessage({ action: 'error-data', error })
+      self.postMessage({ action: 'error', payload: { error } })
       return false
     }
     // Ignore folders
@@ -35,9 +35,13 @@ const handleEntry = (entry, index, totalEntries) => {
       const message = {
         action: 'uncompress_each',
         payload: {
-          archive: { totalEntries },
           file: { index, url, name, size },
         },
+      }
+      // Uncompress cover
+      if (index === 0) {
+        message.action = 'uncompress_cover'
+        message.payload.archive = archive
       }
       // Send entry to main thread
       self.postMessage(message)
@@ -47,10 +51,11 @@ const handleEntry = (entry, index, totalEntries) => {
 
 const handleUncompress = archive => {
   // Get only the entries that are images
-  let entries = archive.entries.filter(entry => isValidImageType(entry.name))
+  const { file_name: name, entries } = archive
+  const pages = entries.filter(entry => isValidImageType(entry.name))
   // Uncompress each entry and send it to the client
-  for (let index = 0, count = entries.length; index < count; index++) {
-    handleEntry(entries[index], index, count)
+  for (let index = 0, totalPages = pages.length; index < totalPages; index++) {
+    handleEntry(index, pages[index], { name, totalPages })
   }
 }
 
@@ -65,9 +70,12 @@ const tasks = {
         array_buffer
       )
       archive && handleUncompress(archive)
-    } catch (e) {
+    } catch (error) {
       // Handle error
-      let message = { action: 'error', error: e.message }
+      let message = {
+        action: 'error',
+        payload: { error: error.message },
+      }
       self.postMessage(message)
     }
   },
