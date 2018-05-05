@@ -1,9 +1,7 @@
 import { h, Component } from 'preact'
+import Icon from '../../../../components/icon'
+import Button from '../../../../components/button'
 import style from './style'
-
-import { route } from 'preact-router'
-import Icon from '../../components/icon'
-import Button from '../../components/button'
 
 const FileInput = ({ filters, onChange }) => (
   <input
@@ -26,17 +24,16 @@ export default class Files extends Component {
   }
 
   openLibrary() {
-    route('/library')
+    route('library')
   }
 
   handleFile(file) {
     const { onUpload } = this.props
-    onUpload && file && onUpload(file)
+    file && onUpload && onUpload(file)
   }
 
   openFile() {
     // Open file dialog
-    console.log(this.fileInput)
     this.fileInput.base.click()
   }
 
@@ -71,24 +68,19 @@ export default class Files extends Component {
         ondragleave={this.handleDragLeave.bind(this)}
         ondragover={this.handleDragOver.bind(this)}
       >
-        <h1 class={style.title} translatable="true">
-          <Icon name={'arrow-down'} />
-        </h1>
+        <div class={style.icon} translatable="true">
+          <Icon name={'file-archive'} />
+        </div>
         <p class={style.description} translatable="true">
           Choose a file or drop it here.
         </p>
         <FileInput
           ref={c => (this.fileInput = c)}
           filters={this.filters}
-          onChange={this.handleFile}
+          onChange={this.handleFile.bind(this)}
         />
         <div class={style.actions}>
-          <Button icon="folder" onClick={this.openFile.bind(this)}>
-            Choose file
-          </Button>
-          <Button icon="bookmark" type="secondary" onClick={this.openLibrary}>
-            Open library
-          </Button>
+          <Button onClick={this.openFile.bind(this)}>Choose file</Button>
         </div>
       </div>
     )

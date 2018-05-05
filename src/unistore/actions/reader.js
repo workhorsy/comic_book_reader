@@ -16,10 +16,12 @@ const actions = store => ({
       ...prevState,
       reader: {
         ...reader,
+        pages: [],
         archive: {
           ...reader.archive,
           ...archive,
         },
+        isLoading: true,
       },
     }
   },

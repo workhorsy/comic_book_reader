@@ -60,7 +60,7 @@ const handleUncompress = archive => {
 }
 
 const tasks = {
-  uncompress_start: data => {
+  uncompress_buffer_start: data => {
     try {
       // Open the array buffer as an archive
       const { file_name, password, array_buffer } = data
@@ -70,6 +70,30 @@ const tasks = {
         array_buffer
       )
       archive && handleUncompress(archive)
+    } catch (error) {
+      // Handle error
+      let message = {
+        action: 'error',
+        payload: { error: error.message },
+      }
+      self.postMessage(message)
+    }
+  },
+  uncompress_file_start: data => {
+    try {
+      // Open the array buffer as an archive
+      const { file, password } = data
+      self.archiveOpenFile(file, password, (archive, error) => {
+        if (error) {
+          let message = {
+            action: 'error',
+            payload: { error: error },
+          }
+          self.postMessage(message)
+          return false
+        }
+        archive && handleUncompress(archive)
+      })
     } catch (error) {
       // Handle error
       let message = {

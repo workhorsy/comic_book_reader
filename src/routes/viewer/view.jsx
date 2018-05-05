@@ -3,6 +3,7 @@ import style from './style'
 
 // Components
 import { route } from 'preact-router'
+import Files from './components/files'
 import Reader from './components/reader'
 import Loader from './components/loader'
 
@@ -33,7 +34,7 @@ export default class Viewer extends Component {
     fetchArchive(file, array_buffer => {
       // Build message
       const message = {
-        action: 'uncompress_start',
+        action: 'uncompress_buffer_start',
         payload: {
           file_name: 'archive',
           password: null,
@@ -43,6 +44,15 @@ export default class Viewer extends Component {
       // Post message to worker
       this.worker.postMessage(message)
     })
+  }
+
+  handleUpload(file) {
+    const message = {
+      action: 'uncompress_file_start',
+      payload: { file, password: null },
+    }
+    // Post message to worker
+    this.worker.postMessage(message)
   }
 
   componentWillMount() {
@@ -94,14 +104,14 @@ export default class Viewer extends Component {
   }
 
   render() {
-    const { pages, isLoading } = this.props.reader
-
+    const { file, reader } = this.props
+    const { pages, isLoading } = reader
+    const showReader = pages.length > 0
     return (
       <div className={`${style.view}`}>
-        <div className={style.overlay + ' ' + (isLoading ? '' : style.hide)}>
-          <Loader />
-        </div>
-        {pages.length > 0 && <Reader id={'OSD'} {...this.props} />}
+        {showReader && <Loader isLoading={isLoading} />}
+        {!file && <Files onUpload={this.handleUpload.bind(this)} />}
+        {showReader && <Reader id={'OSD'} {...this.props} />}
       </div>
     )
   }
