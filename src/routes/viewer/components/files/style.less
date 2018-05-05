@@ -5,6 +5,7 @@
 
 .view p {
   margin: 32px 0;
+  padding: 8px;
 }
 
 .drag p {
@@ -23,7 +24,7 @@
 
 .view .icon {
   position: relative;
-  font-size: 7em;
+  font-size: 6em;
   color: var(--text-message-color);
 }
 
@@ -32,19 +33,19 @@
   margin-bottom: 0;
   opacity: 0.75;
   transform: translateY(0px);
+  transition: opacity 0.3s;
 }
 
 .drag .icon svg {
   opacity: 1;
-  /*
-    animation-name: drop;
-    animation-duration: 0.3s;
-    animation-fill-mode: forwards;
-    animation-timing-function: ease;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-    transition: opacity 0.3s ease;
-    */
+
+  animation-name: drop;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  transition: opacity 0.3s ease;
 }
 
 @keyframes drop {

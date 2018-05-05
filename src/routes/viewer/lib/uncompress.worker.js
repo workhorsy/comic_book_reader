@@ -81,7 +81,7 @@ const tasks = {
   },
   uncompress_file_start: data => {
     try {
-      // Open the array buffer as an archive
+      // Open the file as an archive
       const { file, password } = data
       self.archiveOpenFile(file, password, (archive, error) => {
         if (error) {

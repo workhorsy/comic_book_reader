@@ -27,9 +27,18 @@ export default class Files extends Component {
     route('library')
   }
 
+  filterFile(name) {
+    // Regex to detect archive type
+    const regexArchive = new RegExp('^.+.(cbr|cbz|cbt)$')
+
+    // Check if file is a valid archive
+    return regexArchive.test(name)
+  }
+
   handleFile(file) {
     const { onUpload } = this.props
-    file && onUpload && onUpload(file)
+    const valid = file && this.filterFile(file.name)
+    valid && onUpload(file)
   }
 
   openFile() {
@@ -41,35 +50,45 @@ export default class Files extends Component {
     event.preventDefault()
     const { files } = event.dataTransfer
     const file = files ? files[0] : null
-    this.setState({ file, drag: false })
+    this.handleFile(file)
+    this.setState({ drag: false })
   }
 
   handleDragOver(event) {
     event.preventDefault()
-    this.setState({ drag: true })
+    !this.state.drag && this.setState({ drag: true })
   }
+
   handleDragLeave() {
-    this.setState({ drag: false })
+    this.state.drag && this.setState({ drag: false })
+  }
+
+  handleError() {
+    this.setState({ error: true })
   }
 
   // gets called when this route is navigated to
-  componentDidMount() {}
+  componentDidMount() {
+    window.addEventListener('drop', this.handleDrop.bind(this))
+    window.addEventListener('dragover', this.handleDragOver.bind(this))
+    window.addEventListener('dragleave', this.handleDragLeave.bind(this))
+  }
 
   // gets called just before navigating away from the route
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    window.removeEventListener('drop', this.handleDrop.bind(this))
+    window.removeEventListener('dragover', this.handleDragOver.bind(this))
+    window.removeEventListener('dragleave', this.handleDragLeave.bind(this))
+  }
 
   render() {
+    const error = this.state.error ? style.error : ''
     const drag = this.state.drag ? style.drag : ''
 
     return (
-      <div
-        class={`${style.view} ${drag}`}
-        ondrop={this.handleDrop.bind(this)}
-        ondragleave={this.handleDragLeave.bind(this)}
-        ondragover={this.handleDragOver.bind(this)}
-      >
+      <div class={`${style.view} ${drag} ${error}`}>
         <div class={style.icon} translatable="true">
-          <Icon name={'file-archive'} />
+          <Icon name={drag ? 'arrow-down' : 'file-archive'} />
         </div>
         <p class={style.description} translatable="true">
           Choose a file or drop it here.
