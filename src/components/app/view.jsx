@@ -18,6 +18,7 @@ export default class App extends Component {
   state = {
     currentRoute: null,
     compatible: true,
+    hideMenu: false,
   }
 
   constructor(props) {
@@ -45,7 +46,8 @@ export default class App extends Component {
 
   handleRoute = page => {
     const { compatible } = this.state
-    this.setState({ currentRoute: page })
+    this.setState({ currentRoute: page, hideMenu: false })
+
     // Redirect to error
     !compatible && route('/unsupported')
     // Redirect to welcome page

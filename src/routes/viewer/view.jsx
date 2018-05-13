@@ -104,13 +104,14 @@ export default class Viewer extends Component {
   }
 
   render() {
-    const { file, reader } = this.props
+    const { matches, reader } = this.props
     const { pages, isLoading } = reader
+    const { file } = matches
     const showReader = pages.length > 0
     return (
       <div className={`${style.view}`}>
         {showReader && <Loader isLoading={isLoading} />}
-        {!file && <Files onUpload={this.handleUpload.bind(this)} />}
+        {!showReader && <Files onUpload={this.handleUpload.bind(this)} />}
         {showReader && <Reader id={'OSD'} {...this.props} />}
       </div>
     )

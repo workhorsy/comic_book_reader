@@ -17,22 +17,23 @@
 .view p {
   margin: 5%;
   color: #b0b4c4;
-  /*  limit characters per line*/
   max-width: calc(25em);
   line-height: 1.5;
   word-break: keep-all;
 }
 
 .view footer {
-  font-size: 0.9em;
+  font-size: 1em;
   width: 100%;
   margin: 0 auto;
-  height: var(--nav-height);
-  color: #1c1d1f;
+  padding: 16px;
+  color: #727b85;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background: #fff;
+  border-top: 1px solid var(--divider-color);
 }
 
 .view footer a {
@@ -48,7 +49,8 @@
   }
 
   .view button {
-    font-size: 14px;
+    padding: 12px 24px;
+    font-size: 16px;
   }
 
   .view footer {

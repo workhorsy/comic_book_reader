@@ -5,16 +5,23 @@
   margin: 0;
   position: fixed;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  font-size: 1.25em;
+  font-size: 1em;
   height: var(--nav-height);
   padding: 0 16px;
   z-index: 1;
+  color: #b0b4c4;
 }
 
 #appName {
   font-weight: bold;
+  font-size: 1.15em;
+  color: #fff;
+}
+
+#appName .label:after {
+  background: transparent;
 }
 
 .item {
@@ -22,6 +29,34 @@
   display: inline-block;
   text-decoration: none;
   margin: 16px;
+}
+
+.item.active {
+  color: #fff;
+}
+.item {
+  text-align: center;
+  position: relative;
+}
+
+.item .label {
+  display: block;
+}
+
+.item .label:after {
+  content: ' ';
+  height: 2px;
+  width: 0%;
+  display: block;
+  background: #fff;
+  transition: width 0.3s ease;
+  position: absolute;
+  bottom: -4px;
+  border-radius: 4px;
+}
+
+.item.active .label:after {
+  width: 100%;
 }
 
 .button {

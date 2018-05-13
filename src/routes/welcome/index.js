@@ -13,6 +13,10 @@ export default class Welcome extends Component {
     route('/reader')
   }
 
+  navigate(url) {
+    window.location.href = url
+  }
+
   // gets called when this route is navigated to
   componentDidMount() {}
 
@@ -32,21 +36,49 @@ export default class Welcome extends Component {
         </section>
 
         <section className={style.light}>
+          <h1 className={style.title}>Made with ❤️ for the web!</h1>
           <div clasName={style.cards}>
             <div class={style.card}>
               <Icon name={['fab', 'github']} className={style.thumbnail} />
               <h3>Open source</h3>
               <p>MIT license, feel free to visit the Github project page.</p>
+              <Button
+                onClick={e =>
+                  this.navigate(
+                    'https://github.com/workhorsy/comic_book_reader'
+                  )
+                }
+              >
+                Learn More
+              </Button>
             </div>
             <div class={style.card}>
               <Icon name={'file-archive'} className={style.thumbnail} />
               <h3>Archives</h3>
-              <p>Read the most used comic book formats.</p>
+              <p>Compatible with most digital comic book archives. </p>
+              <Button
+                onClick={e =>
+                  this.navigate(
+                    'https://en.wikipedia.org/wiki/Comic_book_archive'
+                  )
+                }
+              >
+                Learn More
+              </Button>
             </div>
             <div class={style.card}>
               <Icon name={'file-code'} className={style.thumbnail} />
               <h3>Metadata</h3>
               <p>Read metadata from your comics files.</p>
+              <Button
+                onClick={e =>
+                  this.navigate(
+                    'https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=3168&context=libphilprac'
+                  )
+                }
+              >
+                Learn More
+              </Button>
             </div>
           </div>
         </section>

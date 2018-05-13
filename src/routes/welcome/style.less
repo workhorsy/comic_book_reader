@@ -10,7 +10,7 @@
 
 .view section {
   background: var(--bg-color);
-  min-height: calc(100vh - var(--nav-height));
+  min-height: 100%; //calc(100vh - var(--nav-height));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,13 +20,13 @@
   overflow: hidden;
 }
 
-.view section.main {
-  font-size: 1.25em;
+.view section .title {
+  font-size: 2.15em;
+  margin-top: 48px;
 }
 
-.view h1 {
-  font-size: 4vw;
-  margin: 0;
+.view section.main {
+  font-size: 1.25em;
 }
 
 .view .description {
@@ -41,7 +41,7 @@
 }
 
 .view .focus {
-  color: var(--text-color);
+  color: #fff;
   font-weight: bold;
 }
 
@@ -51,21 +51,30 @@
 }
 
 .card {
-  padding: 16px;
+  padding: 24px;
   border-radius: 8px;
   display: inline-block;
-  margin: 32px;
-  max-width: 300px;
+  margin: 24px;
+  max-width: 340px;
   background: #fff;
+  border: 1px solid #a4b0be;
+  color: var(--text-color);
+  box-shadow: 0 4px 18px #727b8833;
+}
+
+.card button {
+  box-shadow: 0 2px 8px #727b8833;
+}
+
+.card p {
+  margin: 16px 8px;
+  color: inherit;
 }
 
 .card .thumbnail {
-  color: var(--text-message-color);
+  color: #a4b0be;
   font-size: 4em;
-}
-
-.card:hover {
-  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.15);
+  margin: 16px;
 }
 
 .box {

@@ -19,35 +19,6 @@ const Item = ({ id, label, icon, href, onClick }) => {
   )
 }
 
-const Slider = ({ closeSlider, open }) => {
-  return (
-    <div class={`${style.slider} ${open ? style.open : ''}`}>
-      <div class={style.items}>
-        <Item icon="folder" label="Files" href="/files" onClick={closeSlider} />
-        <Item
-          icon="bookmark"
-          label="Library"
-          href="/library"
-          onClick={closeSlider}
-        />
-        <Item
-          icon="question-circle"
-          label="About"
-          href="/"
-          onClick={closeSlider}
-        />
-        <hr />
-        <Item
-          icon="cog"
-          label="Settings"
-          href="/settings"
-          onClick={closeSlider}
-        />
-      </div>
-    </div>
-  )
-}
-
 // Internal button
 const Button = ({ label, icon, onClick }) => {
   const action = event => onClick && onClick(event)
@@ -57,17 +28,6 @@ const Button = ({ label, icon, onClick }) => {
       <div class={style.line}>{label}</div>
     </button>
   )
-}
-
-//Test data for ComicLibrary ( remove this )
-const TestData = {
-  items: [
-    { title: 'Issue #1', cover: './assets/undefined.png' },
-    { title: 'Issue #2', cover: './assets/undefined.png' },
-    { title: 'Issue #3', cover: './assets/undefined.png' },
-    { title: 'Issue #4', cover: './assets/undefined.png' },
-    { title: 'Issue #5', cover: './assets/undefined.png' },
-  ],
 }
 
 export default class Menu extends Component {
@@ -99,8 +59,13 @@ export default class Menu extends Component {
     let { props, state } = this
     return (
       <nav class={style.comic_menu}>
-        <Button onClick={this.toggleSlider} icon={'bars'} />
-        <Item id={style.appName} label={'CBR'} href={'/'} />
+        {/* <Button onClick={this.toggleSlider} icon={'bars'} /> */}
+        <Item id={style.appName} label={'CB-Reader'} href={'/'} />
+        <div className={style.links}>
+          <Item label={'Home'} href={'/'} />
+          <Item label={'Docs'} href={'/fix'} />
+          <Item label={'API'} href={'/fix'} />
+        </div>
         {
           <div
             class={style.overlay}
@@ -108,7 +73,6 @@ export default class Menu extends Component {
             onClick={this.hideSlider}
           />
         }
-        <Slider open={state.openSlider} closeSlider={this.closeSlider} />
       </nav>
     )
   }
