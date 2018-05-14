@@ -9,7 +9,7 @@
 }
 
 .drag p {
-  color: var(--text-color);
+  color: #FFF;
 }
 
 .drag .actions {
@@ -23,22 +23,21 @@
 }
 
 .view .icon {
+  color: #FFF;
   position: relative;
   font-size: 6em;
-  color: var(--text-message-color);
 }
 
 .view .icon svg {
+  opacity: 0.64;
   display: block;
   margin-bottom: 0;
-  opacity: 0.75;
   transform: translateY(0px);
   transition: opacity 0.3s;
 }
 
 .drag .icon svg {
   opacity: 1;
-
   animation-name: drop;
   animation-duration: 0.3s;
   animation-fill-mode: forwards;
