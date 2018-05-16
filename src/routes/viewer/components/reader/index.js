@@ -68,7 +68,6 @@ export default class Reader extends Component {
 
   renderBookModeLayout() {
     const { viewport, world } = this.viewer
-    const margin = 8 / viewport.getContainerSize().x
     const pos = new OpenSeaDragon.Point(0, 0)
     const count = world.getItemCount()
     for (let i = 0; i < count; i++) {
@@ -77,7 +76,7 @@ export default class Reader extends Component {
       if (tiledImage) {
         const bounds = tiledImage.getBounds()
         tiledImage.setPosition(pos, true)
-        pos.x += bounds.width + margin
+        pos.x += bounds.width
       }
     }
 
