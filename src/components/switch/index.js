@@ -10,7 +10,6 @@ export default class Switch extends Component {
     const { onChange } = this.props
     const { checked } = event.target
     onChange && onChange(checked)
-    console.log(checked)
     this.setState({ checked })
   }
 
@@ -18,7 +17,11 @@ export default class Switch extends Component {
     let { props, state } = this
     return (
       <label class={style.switch}>
-        <input type="checkbox" onChange={this.handleInputChange} checked={state.checked} />
+        <input
+          type="checkbox"
+          onChange={this.handleInputChange}
+          checked={state.checked}
+        />
         <span class={style.slider} />
         <span class={style.label}>{props.label}</span>
       </label>

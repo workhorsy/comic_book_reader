@@ -50,7 +50,6 @@ const actions = store => ({
 
   addPage(prevState, page) {
     const { reader } = prevState
-    console.info(page)
     return {
       ...prevState,
       reader: {
