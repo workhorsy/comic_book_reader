@@ -160,7 +160,7 @@ export default class Toolbar extends Component {
         },
       },
       {
-        icon: 'columns',
+        icon: 'book-open',
         title: 'Book Mode',
         toggle: true,
         active: bookMode,
