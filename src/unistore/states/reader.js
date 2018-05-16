@@ -1,5 +1,6 @@
 const defaultState = {
   pages: [],
+  error: false,
   bookMode: false,
   currentPage: 1,
   loadedPages: 0,

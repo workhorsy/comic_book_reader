@@ -1,13 +1,3 @@
-const Page = (source, index) => {
-  return {
-    //index,
-    index,
-    url: source,
-    type: 'image',
-    buildPyramid: false,
-  }
-}
-
 const actions = store => ({
   setLoadedArchive(prevState, archive) {
     const { reader } = prevState
@@ -50,10 +40,17 @@ const actions = store => ({
     }
   },
 
-  addPage(prevState, source) {
+  showError(prevState, show) {
     const { reader } = prevState
-    const index = reader.pages.length || 0
-    const page = Page(source, index)
+    return {
+      ...prevState,
+      reader: { ...reader, error: show },
+    }
+  },
+
+  addPage(prevState, page) {
+    const { reader } = prevState
+    console.info(page)
     return {
       ...prevState,
       reader: {

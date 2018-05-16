@@ -35,7 +35,7 @@ const handleEntry = (index, entry, archive) => {
       const message = {
         action: 'uncompress_each',
         payload: {
-          file: { index, url, name, size },
+          file: { index, url, name, size, type: 'image', buildPyramid: false },
         },
       }
       // Uncompress cover

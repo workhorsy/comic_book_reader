@@ -6,6 +6,7 @@ import { route } from 'preact-router'
 import Files from './components/files'
 import Reader from './components/reader'
 import Loader from './components/loader'
+import ErrorMessage from './components/error'
 
 // Utils
 import fetchArchive from './lib/fetchArchive.js'
@@ -14,6 +15,7 @@ import uncompressWorker from './lib/uncompress.worker.js'
 export default class Viewer extends Component {
   constructor(props) {
     super(props)
+    this.reader = null
     this.worker = null
   }
 
@@ -69,12 +71,14 @@ export default class Viewer extends Component {
     }
 
     actions.uncompress_each = payload => {
-      addPage(payload.file.url)
+      const { file } = payload
+      addPage(file)
     }
 
     actions.uncompress_cover = payload => {
-      setLoadedArchive(payload.archive)
-      addPage(payload.file.url)
+      const { file, archive } = payload
+      archive && setLoadedArchive(archive)
+      file && addPage(file)
     }
 
     // Handle messages from worker thread
@@ -105,14 +109,27 @@ export default class Viewer extends Component {
 
   render() {
     const { matches, reader } = this.props
-    const { pages, isLoading } = reader
+    const { pages, isLoading, error } = reader
     const { file } = matches
     const showReader = pages.length > 0
+
+    let toolbar = null
+    if (this.reader) {
+      toolbar = this.reader.toolbar
+    }
+
     return (
       <div className={`${style.view}`}>
-        {showReader && <Loader isLoading={isLoading} />}
         {!showReader && <Files onUpload={this.handleUpload.bind(this)} />}
-        {showReader && <Reader id={'OSD'} {...this.props} />}
+        {error && (
+          <ErrorMessage
+            action={() => toolbar && toolbar.navigation.nextPage()}
+          />
+        )}
+        {showReader && <Loader isLoading={isLoading} />}
+        {showReader && (
+          <Reader id={'OSD'} {...this.props} ref={c => (this.reader = c)} />
+        )}
       </div>
     )
   }

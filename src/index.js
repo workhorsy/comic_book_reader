@@ -23,6 +23,7 @@ import faAngleLeft from '@fortawesome/fontawesome-free-solid/faAngleLeft'
 import faColumns from '@fortawesome/fontawesome-free-solid/faColumns'
 import faExpand from '@fortawesome/fontawesome-free-solid/faExpand'
 import faArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt'
+import faExclamationTriangle from '@fortawesome/fontawesome-free-solid/faExclamationTriangle'
 
 fontawesome.library.add(
   brands,
@@ -41,7 +42,8 @@ fontawesome.library.add(
   faAngleRight,
   faColumns,
   faExpand,
-  faArrowsAlt
+  faArrowsAlt,
+  faExclamationTriangle
 )
 
 render(

@@ -130,6 +130,7 @@ class ToolbarAction extends Component {
 export default class Toolbar extends Component {
   constructor(props) {
     super(props)
+    this.navigation = null
   }
 
   // gets called when this route is navigated to
@@ -182,6 +183,7 @@ export default class Toolbar extends Component {
           totalPages={totalPages}
           currentPage={currentPage}
           onPageChange={onPageChange}
+          ref={c => (this.navigation = c)}
         />
         <div className={style['toolbar-actions']}>
           {actions.map((actionProps, i) => (

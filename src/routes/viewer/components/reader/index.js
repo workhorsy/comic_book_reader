@@ -7,6 +7,7 @@ import Toolbar from '../toolbar'
 export default class Reader extends Component {
   constructor(props) {
     super(props)
+    this.toolbar = null
     this.viewer = null
     this.state = {
       currentMode: 'slides',
@@ -102,7 +103,7 @@ export default class Reader extends Component {
   }
 
   initOpenSeaDragon() {
-    const { id, reader, showLoadingScreen } = this.props
+    const { id, reader, showLoadingScreen, showError } = this.props
     const { currentPage } = reader
     this.viewer = OpenSeaDragon({
       id,
@@ -120,10 +121,19 @@ export default class Reader extends Component {
       // Render Book mode
       this.renderBookModeLayout()
       showLoadingScreen(false)
+      // Clear error
+      showError(false)
     })
 
     this.viewer.addHandler('close', () => {
       showLoadingScreen(true)
+    })
+
+    /* Handle errors */
+    this.viewer.addHandler('open-failed', e => {
+      showError(true)
+      console.error(e)
+      showLoadingScreen(false)
     })
   }
 
@@ -165,6 +175,7 @@ export default class Reader extends Component {
           bookMode={bookMode}
           onBookMode={e => this.handleBookMode(e)}
           onPageChange={this.jumpToPage.bind(this)}
+          ref={c => (this.toolbar = c)}
         />
         <div id={id} className={style.viewer} />
       </div>
