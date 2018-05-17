@@ -4,12 +4,26 @@ import style from './style'
 import { route } from 'preact-router'
 import Footer from '../../components/footer'
 import Button from '../../components/button'
+import Icon from '../../components/icon'
+
+import Card from './components/card'
+import GithubCorner from './components/githubCorner'
+
+// Links
+const ArchiveLink = 'https://en.wikipedia.org/wiki/Comic_book_archive'
+const MetadataLink =
+  'https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=3168&context=libphilprac'
+const RepositoryLink = 'https://github.com/workhorsy/comic_book_reader'
 
 export default class Welcome extends Component {
   state = {}
 
   showApp(e) {
-    route('/files')
+    route('/reader')
+  }
+
+  navigate(url) {
+    window.location.href = url
   }
 
   // gets called when this route is navigated to
@@ -21,18 +35,41 @@ export default class Welcome extends Component {
   render() {
     return (
       <div class={style.view}>
-        <h1 class={style.title} translatable="true">
-          Comic Book Reader
-        </h1>
-        <p class={style.description} translatable="true">
-          A touch friendly HTML5 comic book reader that reads <span class={style.focus}>CBR,</span>{' '}
-          <span class={style.focus}>CBZ,</span> <span class={style.focus}>CBT,</span> and{' '}
-          <span class={style.focus}>PDF files.</span>
-        </p>
+        <section className={style.main}>
+          <GithubCorner repository={RepositoryLink} />
+          <img src="./assets/logo.svg" className={style.logo} alt="" />
+          <p class={style.description} translatable="true">
+            An open source and touch friendly <br />{' '}
+            <span class={style.focus}>Html5</span> comic book reader.
+          </p>
+          <Button onClick={e => this.showApp()}>Try it now</Button>
+        </section>
 
-        <Button onClick={this.showApp} translatable="true">
-          Start
-        </Button>
+        <section className={style.light}>
+          <h1 className={style.title}>Made with ❤️ for the web!</h1>
+          <div clasName={style.cards}>
+            <Card
+              icon={['fab', 'github']}
+              title={'Open source'}
+              description={
+                'MIT license, feel free to visit the Github project page.'
+              }
+              link={RepositoryLink}
+            />
+            <Card
+              icon={'file-archive'}
+              title={'Archives'}
+              description={'Compatible with most digital comic book archives.'}
+              link={ArchiveLink}
+            />
+            <Card
+              icon={'file-code'}
+              title={'Metadata'}
+              description={'Read metadata from your comics files.'}
+              link={MetadataLink}
+            />
+          </div>
+        </section>
 
         <Footer />
       </div>

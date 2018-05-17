@@ -53,7 +53,8 @@
     "less-loader": "^4.1.0",
     "preact-cli": "^2.2.1",
     "prettier": "^1.11.1",
-    "pretty-quick": "^1.4.1"
+    "pretty-quick": "^1.4.1",
+    "worker-loader": "^1.1.1"
   },
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.5",
@@ -61,6 +62,7 @@
     "@fortawesome/fontawesome-free-solid": "^5.0.9",
     "@fortawesome/react-fontawesome": "^0.0.18",
     "history": "^4.7.2",
+    "openseadragon": "^2.3.1",
     "preact": "^8.2.7",
     "preact-compat": "^3.18.0",
     "preact-router": "^2.6.0",

@@ -1,0 +1,117 @@
+.toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 45px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #dadfe4;
+  font-weight: lighter;
+  font-size: 1em;
+}
+
+.item {
+  margin: 0 8px;
+  font-size: 26px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar .item[disabled] {
+  opacity: 0.25;
+  pointer-events: none;
+  text-align: center;
+}
+
+.toolbar .item .label {
+  font-size: 16px;
+  font-weight: bold;
+  flex-grow: 2;
+  text-align: center;
+  width: 100px;
+}
+
+.toolbar .item .label span {
+  opacity: 0.75;
+}
+
+.nav {
+  margin: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 4px;
+  border-radius: 4px;
+}
+.nav .item {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar-action {
+  composes: item;
+  padding: 6px;
+  border-radius: 16px;
+  transition: 0.3s ease;
+}
+
+.toolbar-action.active {
+  color: #fff;
+  background: rgba(250, 255, 250, 0.2);
+  border-radius: 4px;
+}
+
+.toolbar-action:hover:not(.active) {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #fff;
+  height: 2px;
+  display: block;
+  transition: width 0.4s ease;
+}
+
+.hide {
+  animation-name: hide;
+  animation-duration: 0.4s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  animation-delay: 0.4s;
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

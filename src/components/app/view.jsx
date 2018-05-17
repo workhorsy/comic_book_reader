@@ -1,13 +1,11 @@
 import { h, Component } from 'preact'
 import { Router, route } from 'preact-router'
 import { requireBrowserFeatures } from '../../utils/browser'
-import createHashHistory from 'history/createHashHistory';
+import createHashHistory from 'history/createHashHistory'
 
 // Routes
-import Files from '../../routes/files'
 import Welcome from '../../routes/welcome'
-import Library from '../../routes/library'
-import Settings from '../../routes/settings'
+import Viewer from '../../routes/viewer'
 
 // Errors
 import Unsupported from '../../routes/unsupported'
@@ -20,6 +18,7 @@ export default class App extends Component {
   state = {
     currentRoute: null,
     compatible: true,
+    hideMenu: false,
   }
 
   constructor(props) {
@@ -32,13 +31,11 @@ export default class App extends Component {
     this.hasErrors()
   }
 
+  /*
   shouldComponentUpdate(props, state) {
-    if (props.settings.night_mode_enabled !== this.props.settings.night_mode_enabled) {
-      // Update theme
-      return true
-    }
-    return false
+      return false
   }
+  */
 
   hasErrors = () => {
     // Test browser features
@@ -49,7 +46,8 @@ export default class App extends Component {
 
   handleRoute = page => {
     const { compatible } = this.state
-    this.setState({ currentRoute: page })
+    this.setState({ currentRoute: page, hideMenu: false })
+
     // Redirect to error
     !compatible && route('/unsupported')
     // Redirect to welcome page
@@ -59,18 +57,11 @@ export default class App extends Component {
   render() {
     const { settings } = this.props
 
-    // Select theme
-    const theme = settings.night_mode_enabled ? style.themeDark : style.themeLight
-
     return (
-      <div id="app" class={`${style.app} ${theme}`}>
-        {this.state.compatible && <Menu />}
+      <div id="app" class={`${style.app}`}>
         <Router onChange={this.handleRoute} history={createHashHistory()}>
           <Welcome path="/" default />
-          <Files path="/files" />
-          <Library path="/library" />
-          <Settings path="/settings" />
-          <Unsupported path="/unsupported" />
+          <Viewer path="/reader" />
         </Router>
       </div>
     )
